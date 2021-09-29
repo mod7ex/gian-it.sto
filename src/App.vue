@@ -5,6 +5,8 @@
 import Buttons from './components/Examples/Buttons.vue';
 import Badges from './components/Examples/Badges.vue';
 import Inputs from './components/Examples/Inputs.vue';
+import Selects from './components/Examples/Selects.vue';
+import Toggles from './components/Examples/Toggles.vue';
 </script>
 
 <template>
@@ -12,6 +14,8 @@ import Inputs from './components/Examples/Inputs.vue';
       <Badges />
       <Buttons />
       <Inputs />
+      <Selects />
+      <Toggles />
     </div>
 </template>
 

@@ -32,6 +32,11 @@ const props = defineProps({
     required: false,
     default: '',
   },
+  view: {
+    type: String,
+    required: false,
+    default: 'default', // default, inset, over
+  },
   classMap: {
     type: Array,
     required: false,
@@ -85,7 +90,7 @@ if (props.error.length > 0) {
       {{ props.help }}
     </p>
 
-    <p class="mt-2 text-sm text-red-600" id="email-error" v-if="props.error.length > 0">
+    <p class="mt-2 text-sm text-red-600" v-if="props.error.length > 0">
       {{ props.error }}
     </p>
   </div>

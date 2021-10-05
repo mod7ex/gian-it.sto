@@ -7,6 +7,8 @@ import Badges from './components/Examples/Badges.vue';
 import Inputs from './components/Examples/Inputs.vue';
 import Selects from './components/Examples/Selects.vue';
 import Toggles from './components/Examples/Toggles.vue';
+import Tables from './components/Examples/Tables.vue';
+import Dialogs from './components/Examples/Dialogs.vue';
 </script>
 
 <template>
@@ -16,6 +18,8 @@ import Toggles from './components/Examples/Toggles.vue';
       <Inputs />
       <Selects />
       <Toggles />
+      <Tables />
+      <Dialogs />
     </div>
 </template>
 

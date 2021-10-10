@@ -42,6 +42,44 @@ if (props.type === 'secondary') {
   text = '';
 }
 
+// for prod parser
+const colors = [
+  'focus:ring-indigo-500',
+  'bg-indigo-600',
+  'hover:bg-indigo-700',
+  'focus:border-indigo-500',
+
+  'focus:ring-yellow-500',
+  'bg-yellow-600',
+  'hover:bg-yellow-700',
+  'focus:border-yellow-500',
+
+  'focus:ring-red-500',
+  'bg-red-600',
+  'hover:bg-red-700',
+  'focus:border-red-500',
+
+  'focus:ring-purple-500',
+  'bg-purple-600',
+  'hover:bg-purple-700',
+  'focus:border-purple-500',
+
+  'focus:ring-blue-500',
+  'bg-blue-600',
+  'hover:bg-blue-700',
+  'focus:border-blue-500',
+
+  'focus:ring-green-500',
+  'bg-green-600',
+  'hover:bg-green-700',
+  'focus:border-green-500',
+
+  'focus:ring-gray-500',
+  'bg-gray-600',
+  'hover:bg-gray-700',
+  'focus:border-gray-500',
+];
+
 const styles = [
   'relative inline-flex items-center border font-medium shadow-sm focus:outline-none',
   `focus:ring-${ring}-500 bg-${bg}-600 hover:bg-${bg}-700`,

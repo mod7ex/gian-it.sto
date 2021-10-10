@@ -9,6 +9,14 @@ import Selects from './components/Examples/Selects.vue';
 import Toggles from './components/Examples/Toggles.vue';
 import Tables from './components/Examples/Tables.vue';
 import Dialogs from './components/Examples/Dialogs.vue';
+import Avatars from './components/Examples/Avatars.vue';
+import DescriptionLists from './components/Examples/DescriptionLists.vue';
+import Stats from './components/Examples/Stats.vue';
+import StackedList from './components/Examples/StackedLists.vue';
+import Feeds from './components/Examples/Feeds.vue';
+import Alerts from './components/Examples/Alerts.vue';
+import Empties from './components/Examples/Empties.vue';
+import NavBars from './components/Examples/NavBars.vue';
 </script>
 
 <template>
@@ -20,6 +28,14 @@ import Dialogs from './components/Examples/Dialogs.vue';
       <Toggles />
       <Tables />
       <Dialogs />
+      <Avatars />
+      <DescriptionLists />
+      <Stats />
+      <StackedList />
+      <Feeds />
+      <Alerts />
+      <Empties />
+      <NavBars />
     </div>
 </template>
 

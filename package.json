@@ -10,7 +10,9 @@
     "@headlessui/vue": "^1.4.1",
     "@heroicons/vue": "^1.0.4",
     "@tailwindcss/forms": "^0.3.3",
-    "vue": "^3.2.6"
+    "lodash": "^4.17.21",
+    "vue": "^3.2.6",
+    "vue-router": "^4.0.11"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.6.0",

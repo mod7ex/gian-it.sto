@@ -9,9 +9,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <a :href="props.href" class="font-medium text-indigo-600 hover:text-indigo-500">
+  <router-link :to="props.href" class="inline-block font-medium text-indigo-600 hover:text-indigo-500">
     <slot></slot>
-  </a>
+  </router-link>
 </template>
 
 <style scoped>

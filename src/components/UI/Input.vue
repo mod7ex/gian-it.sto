@@ -42,9 +42,13 @@ const props = defineProps({
     required: false,
     default: [],
   },
+  icon: {
+    type: Object,
+    required: false,
+  },
   modelValue: {
     type: String,
-  }
+  },
 });
 
 const styles = props.classMap.concat(['shadow-sm block w-full sm:text-sm rounded-md']);
@@ -53,6 +57,10 @@ if (props.error.length > 0) {
   styles.push('pr-10 border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500')
 } else {
   styles.push('focus:ring-indigo-500 focus:border-indigo-500 border-gray-300')
+}
+
+if (props.icon) {
+  styles.push('pl-10');
 }
 </script>
 
@@ -69,7 +77,12 @@ if (props.error.length > 0) {
     </div>
 
     <div class="mt-1 relative rounded-md shadow-sm">
-      <slot name="before"></slot>
+      <slot name="before">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true" v-if="props.icon">
+          <component :is="props.icon" class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
+        </div>
+      </slot>
+
       <input :type="props.type"
              :class="styles"
              :placeholder="props.placeholder"

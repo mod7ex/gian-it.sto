@@ -9,11 +9,7 @@ import { ArrowNarrowLeftIcon } from '@heroicons/vue/outline';
 </script>
 
 <template>
-  <LoginLayout>
-    <template v-slot:title>
-      Придумайте новый пароль?
-    </template>
-
+  <LoginLayout title="Придумайте новый пароль?">
     <div class="mt-8">
       <div class="mt-6">
         <form action="#" method="POST" class="space-y-6">

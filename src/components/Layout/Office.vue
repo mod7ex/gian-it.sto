@@ -1,31 +1,29 @@
 <script setup>
 import {ref} from 'vue';
+import { MenuButton, } from '@headlessui/vue';
+import {
+  ClockIcon,
+  HomeIcon,
+  ViewListIcon,
+  MenuAlt1Icon,
+  ChartBarIcon,
+  UserGroupIcon,
+  PuzzleIcon,
+  PresentationChartLineIcon,
+  ChipIcon,
+  TableIcon,
+  CogIcon,
+  CurrencyDollarIcon,
+  CollectionIcon,
+} from '@heroicons/vue/outline'
+import { SearchIcon, SelectorIcon, } from '@heroicons/vue/solid';
 import Avatar from '@/UI/Avatar.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import NavBar from '@/UI/NavBar.vue';
+import SecondNavbar from '@/UI/SecondNavbar.vue';
 import Input from '@/UI/Input.vue';
-import {
-  Dialog,
-  DialogOverlay,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  TransitionChild,
-  TransitionRoot,
-} from '@headlessui/vue'
-import { ClockIcon, HomeIcon, MenuAlt1Icon, ViewListIcon, XIcon } from '@heroicons/vue/outline'
-import {
-  ChevronRightIcon,
-  DotsVerticalIcon,
-  DuplicateIcon,
-  PencilAltIcon,
-  SearchIcon,
-  SelectorIcon,
-  TrashIcon,
-  UserAddIcon,
-} from '@heroicons/vue/solid'
-
+import Sidebar from '@/UI/Sidebar.vue';
+import { setTitle } from '~/meta.js';
 
 const props = defineProps({
   title: {
@@ -34,53 +32,46 @@ const props = defineProps({
   },
 });
 
+setTitle(props.title);
+
 const sidebarOpen = ref(false);
 const userMenu = [
   [{label: 'Профиль', href: '/profile'}],
-  [{label: 'Выход', href: '/logout'}]
+  [{label: 'Выход', href: '/'}],
 ];
 const menu = [
-  { label: 'Home', href: '#', icon: HomeIcon, current: true },
-  { label: 'My tasks', href: '#', icon: ViewListIcon, current: false },
-  { label: 'Recent', href: '#', icon: ClockIcon, current: false },
+  { label: 'Главная', href: '#', icon: PresentationChartLineIcon, current: false },
+  { label: 'Заказ-наряды', href: '#', icon: ChipIcon, current: false },
+  { label: 'Задачи', href: '#', icon: TableIcon, current: false },
+  { label: 'Рабочие процессы', href: '#', icon: PuzzleIcon, current: false },
+  { label: 'Склад', href: '#', icon: CollectionIcon, current: false },
+  { label: 'Клиенты', href: '#', icon: UserGroupIcon, current: false },
+  { label: 'Сотрудники', href: '#', icon: UserGroupIcon, current: false },
+  { label: 'Финансы', href: '#', icon: CurrencyDollarIcon, current: false },
+  { label: 'Настройки', href: '#', icon: CogIcon, current: false },
+];
+
+const departments = [
+  { label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow'},
+  { label: 'Ростов-на-Дону / Западный', href: '#', color: 'green'},
+  { label: 'Краснодар / Центр', href: '#', color: 'indigo'},
 ];
 </script>
 
 <template>
   <div class="relative h-screen flex overflow-hidden bg-white">
-    <!-- Mobile @todo перенести в компонент сайдбар -->
-    <TransitionRoot as="template" :show="sidebarOpen">
-      <Dialog as="div" class="fixed inset-0 flex z-40 lg:hidden" @close="sidebarOpen = false">
-        <TransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100" leave-to="opacity-0">
-          <DialogOverlay class="fixed inset-0 bg-gray-600 bg-opacity-75" />
-        </TransitionChild>
-        <TransitionChild as="template" enter="transition ease-in-out duration-300 transform" enter-from="-translate-x-full" enter-to="translate-x-0" leave="transition ease-in-out duration-300 transform" leave-from="translate-x-0" leave-to="-translate-x-full">
-          <div class="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-white">
-            <TransitionChild as="template" enter="ease-in-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-300" leave-from="opacity-100" leave-to="opacity-0">
-              <div class="absolute top-0 right-0 -mr-12 pt-2">
-                <button type="button" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" @click="sidebarOpen = false">
-                  <span class="sr-only">Закрыть</span>
-                  <XIcon class="h-6 w-6 text-white" aria-hidden="true" />
-                </button>
-              </div>
-            </TransitionChild>
+    <Sidebar :open="sidebarOpen" @close="sidebarOpen = false">
+      <!-- Mobile logo -->
+      <div class="flex-shrink-0 flex items-center px-4">
+        <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-purple-500-mark-gray-700-text.svg" alt="Workflow" />
+      </div>
 
-            <!-- Mobile logo -->
-            <div class="flex-shrink-0 flex items-center px-4">
-              <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-purple-500-mark-gray-700-text.svg" alt="Workflow" />
-            </div>
-
-            <!-- Mobile Nav -->
-            <div class="mt-5 flex-1 h-0 overflow-y-auto">
-              <NavBar :items="menu" class="px-2" />
-            </div>
-          </div>
-        </TransitionChild>
-        <div class="flex-shrink-0 w-14" aria-hidden="true">
-          <!-- Dummy element to force sidebar to shrink to fit close icon -->
-        </div>
-      </Dialog>
-    </TransitionRoot>
+      <!-- Mobile Nav -->
+      <div class="mt-5 flex-1 h-0 overflow-y-auto">
+        <NavBar :items="menu" class="px-2" />
+        <SecondNavbar :items="departments" title="Отделы" class="mt-8" />
+      </div>
+    </Sidebar>
 
     <!-- Static sidebar for desktop -->
     <div class="hidden lg:flex lg:flex-shrink-0">
@@ -92,16 +83,18 @@ const menu = [
 
         <!-- Sidebar -->
         <div class="h-0 flex-1 flex flex-col overflow-y-auto">
-          <Dropdown :items="userMenu" class="px-3 mt-6">
-            <span class="flex w-full justify-between items-center">
-              <Avatar
-                  image="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
-                  title="Дядя Фёдор"
-                  subtitle="Администратор"
-              />
+          <Dropdown :items="userMenu" direction="justify" class="px-3 mt-6">
+            <MenuButton class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
+              <span class="flex w-full justify-between items-center">
+                <Avatar
+                    image="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+                    title="Дядя Фёдор"
+                    subtitle="Администратор"
+                />
 
-              <SelectorIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
-            </span>
+                <SelectorIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+              </span>
+            </MenuButton>
           </Dropdown>
 
           <!-- Sidebar Search -->
@@ -111,6 +104,7 @@ const menu = [
 
           <!-- Navigation -->
           <NavBar :items="menu" class="px-3 mt-6" />
+          <SecondNavbar :items="departments" title="Отделы" class="mt-8 px-3" />
         </div>
       </div>
     </div>
@@ -125,61 +119,29 @@ const menu = [
 
         <div class="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
           <div class="flex-1 flex">
-
+            <form class="w-full flex md:ml-0" action="#" method="GET">
+              <div class="relative w-full text-gray-400 focus-within:text-gray-600">
+                <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+                  <SearchIcon class="h-5 w-5" aria-hidden="true" />
+                </div>
+                <input class="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-transparent focus:placeholder-gray-400 sm:text-sm" placeholder="Поиск" type="search" />
+              </div>
+            </form>
           </div>
           <div class="flex items-center">
-
-
             <!-- Profile dropdown @todo поправить компонент дропдаун -->
-            <Dropdown :items="userMenu" class="ml-3 relative">
-              <div class="bg-white">
+            <Dropdown :items="userMenu" direction="right" class="ml-3 relative">
+              <MenuButton class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                 <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-              </div>
+              </MenuButton>
             </Dropdown>
-
-            <Menu as="div" class="ml-3 relative">
-              <div>
-                <MenuButton class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                  <span class="sr-only">Open user menu</span>
-                  <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-                </MenuButton>
-              </div>
-              <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                <MenuItems class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
-                  <div class="py-1">
-                    <MenuItem v-slot="{ active }">
-                      <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">View profile</a>
-                    </MenuItem>
-                    <MenuItem v-slot="{ active }">
-                      <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Settings</a>
-                    </MenuItem>
-                    <MenuItem v-slot="{ active }">
-                      <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Notifications</a>
-                    </MenuItem>
-                  </div>
-                  <div class="py-1">
-                    <MenuItem v-slot="{ active }">
-                      <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Get desktop app</a>
-                    </MenuItem>
-                    <MenuItem v-slot="{ active }">
-                      <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Support</a>
-                    </MenuItem>
-                  </div>
-                  <div class="py-1">
-                    <MenuItem v-slot="{ active }">
-                      <a href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Logout</a>
-                    </MenuItem>
-                  </div>
-                </MenuItems>
-              </transition>
-            </Menu>
           </div>
         </div>
       </div>
 
       <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
         <!-- Page title & actions -->
-        <div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div class="border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between px-3 sm:px-4 lg:px-5">
           <div class="flex-1 min-w-0">
             <slot name="title">
               <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">
@@ -193,7 +155,9 @@ const menu = [
           </div>
         </div>
 
-        <slot></slot>
+        <div class="mt-6 px-3 sm:px-4 lg:px-5">
+          <slot></slot>
+        </div>
       </main>
     </div>
   </div>

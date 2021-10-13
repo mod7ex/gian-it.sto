@@ -1,5 +1,14 @@
 <script setup>
+import {setTitle} from '~/meta.js';
 
+const props = defineProps({
+  title: {
+    type: String,
+    required: false,
+  },
+});
+
+setTitle(props.title);
 </script>
 
 <template>
@@ -10,7 +19,9 @@
           <img class="h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow" />
 
           <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
-            <slot name="title"></slot>
+            <slot name="title">
+              {{ props.title }}
+            </slot>
           </h2>
         </div>
         <slot></slot>

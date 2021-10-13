@@ -1,6 +1,6 @@
 <script setup>
-import StatGroup from './../UI/StatGroup.vue';
-import Stat from './../UI/Stat.vue';
+import StatGroup from '@/UI/StatGroup.vue';
+import Stat from '@/UI/Stat.vue';
 import { CursorClickIcon, MailOpenIcon, UsersIcon } from '@heroicons/vue/outline';
 
 const stats = [

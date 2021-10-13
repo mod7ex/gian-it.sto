@@ -14,11 +14,7 @@ function login () {
 </script>
 
 <template>
-  <LoginLayout>
-    <template v-slot:title>
-      Войдите в ваш аккаунт
-    </template>
-
+  <LoginLayout title="Войдите в ваш аккаунт">
     <div class="mt-8">
       <div class="mt-6">
         <form action="#" method="POST" class="space-y-6">

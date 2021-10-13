@@ -15,11 +15,7 @@ function refresh () {
 </script>
 
 <template>
-    <LoginLayout>
-      <template v-slot:title>
-        Забыли пароль?
-      </template>
-
+    <LoginLayout title="Забыли пароль?">
       <div class="mt-8">
         <div class="mt-6">
           <form action="#" method="POST" class="space-y-6">

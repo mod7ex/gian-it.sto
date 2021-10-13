@@ -12,7 +12,7 @@ const props = defineProps({
     {{ props.title }}
   </h3>
 
-  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+  <dl class="mt-2 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
     <slot></slot>
   </dl>
 </template>

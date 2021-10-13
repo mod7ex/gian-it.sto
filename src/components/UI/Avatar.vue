@@ -24,7 +24,7 @@ const props = defineProps({
   <div class="flex-shrink-0 group block">
     <div class="flex items-center">
       <div>
-        <img class="inline-block h-9 w-9 rounded-full" :src="props.image" alt="" />
+        <img class="inline-block h-9 w-9 rounded-full" :src="props.image" alt="" style="min-width: 40px; min-height: 40px" />
       </div>
 
       <slot name="detail">

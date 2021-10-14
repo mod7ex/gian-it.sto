@@ -9,7 +9,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="flex -space-x-1 overflow-hidden">
+  <div class="flex -space-x-1 overflow-auto">
     <slot>
       <img v-for="(image, i) in props.images"
            class="inline-block h-9 w-9 rounded-full ring-2 ring-white"

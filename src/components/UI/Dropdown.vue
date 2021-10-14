@@ -19,11 +19,16 @@ const props = defineProps({
   direction: {
     type: String,
     required: false,
-    default: 'center',
+    default: 'center', // center, justify, right, left
+  },
+  position: {
+    type: String,
+    required: false,
+    default: 'center', // bottom, center
   },
 });
 
-const menuStyles = ['mt-2 absolute rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none'];
+const menuStyles = ['mt-2 absolute rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none z-10'];
 if (props.direction === 'center') {
   menuStyles.push('z-10 mx-3 origin-top right-0 left-0 w-48');
 }
@@ -38,6 +43,10 @@ if (props.direction === 'right') {
 
 if (props.direction === 'left') {
   menuStyles.push('origin-top-left left-0 w-48');
+}
+
+if (props.position === 'center') {
+  menuStyles.push('-top-full');
 }
 </script>
 
@@ -62,14 +71,20 @@ if (props.direction === 'left') {
                     :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'w-full text-left block px-4 py-2 text-sm']"
                     @click="item.click"
                 >
-                  {{ item.label }}
+                  <span class="flex">
+                    <component :is="item.icon" class="w-5 h-5 mr-1" v-if="item.icon" />
+                    {{ item.label }}
+                  </span>
                 </button>
                 <router-link
                     v-else
                     :to="item.href || '#'"
                     :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'w-full text-left block px-4 py-2 text-sm']"
                 >
-                  {{ item.label }}
+                  <span class="flex">
+                    <component :is="item.icon" class="w-5 h-5 mr-1" v-if="item.icon" />
+                    {{ item.label }}
+                  </span>
                 </router-link>
             </MenuItem>
           </div>

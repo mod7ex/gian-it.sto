@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from 'vue';
-import { MenuButton, } from '@headlessui/vue';
+import {MenuButton} from '@headlessui/vue';
 import {
   ClockIcon,
   HomeIcon,
@@ -15,15 +15,15 @@ import {
   CogIcon,
   CurrencyDollarIcon,
   CollectionIcon,
-} from '@heroicons/vue/outline'
-import { SearchIcon, SelectorIcon, } from '@heroicons/vue/solid';
+} from '@heroicons/vue/outline';
+import {SearchIcon, SelectorIcon} from '@heroicons/vue/solid';
 import Avatar from '@/UI/Avatar.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import NavBar from '@/UI/NavBar.vue';
 import SecondNavbar from '@/UI/SecondNavbar.vue';
 import Input from '@/UI/Input.vue';
 import Sidebar from '@/UI/Sidebar.vue';
-import { setTitle } from '~/meta.js';
+import {setTitle} from '~/meta.js';
 
 const props = defineProps({
   title: {
@@ -40,21 +40,21 @@ const userMenu = [
   [{label: 'Выход', href: '/'}],
 ];
 const menu = [
-  { label: 'Главная', href: '#', icon: PresentationChartLineIcon, current: false },
-  { label: 'Заказ-наряды', href: '#', icon: ChipIcon, current: false },
-  { label: 'Задачи', href: '#', icon: TableIcon, current: false },
-  { label: 'Рабочие процессы', href: '#', icon: PuzzleIcon, current: false },
-  { label: 'Склад', href: '#', icon: CollectionIcon, current: false },
-  { label: 'Клиенты', href: '#', icon: UserGroupIcon, current: false },
-  { label: 'Сотрудники', href: '#', icon: UserGroupIcon, current: false },
-  { label: 'Финансы', href: '#', icon: CurrencyDollarIcon, current: false },
-  { label: 'Настройки', href: '#', icon: CogIcon, current: false },
+  {label: 'Главная', href: '/dashboard', icon: PresentationChartLineIcon, current: false},
+  {label: 'Заказ-наряды', href: '/orders', icon: ChipIcon, current: false},
+  {label: 'Задачи', href: '/tasks', icon: TableIcon, current: false},
+  {label: 'Рабочие процессы', href: '/processes', icon: PuzzleIcon, current: false},
+  {label: 'Склад', href: '/storage', icon: CollectionIcon, current: false},
+  {label: 'Клиенты', href: '/clients', icon: UserGroupIcon, current: false},
+  {label: 'Сотрудники', href: '/employers', icon: UserGroupIcon, current: false},
+  {label: 'Финансы', href: '/finances', icon: CurrencyDollarIcon, current: false},
+  {label: 'Настройки', href: '/settings', icon: CogIcon, current: false},
 ];
 
 const departments = [
-  { label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow'},
-  { label: 'Ростов-на-Дону / Западный', href: '#', color: 'green'},
-  { label: 'Краснодар / Центр', href: '#', color: 'indigo'},
+  {label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow'},
+  {label: 'Ростов-на-Дону / Западный', href: '#', color: 'green'},
+  {label: 'Краснодар / Центр', href: '#', color: 'indigo'},
 ];
 </script>
 
@@ -63,13 +63,15 @@ const departments = [
     <Sidebar :open="sidebarOpen" @close="sidebarOpen = false">
       <!-- Mobile logo -->
       <div class="flex-shrink-0 flex items-center px-4">
-        <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-purple-500-mark-gray-700-text.svg" alt="Workflow" />
+        <img class="h-8 w-auto"
+             src="https://tailwindui.com/img/logos/workflow-logo-purple-500-mark-gray-700-text.svg"
+             alt="Workflow"/>
       </div>
 
       <!-- Mobile Nav -->
       <div class="mt-5 flex-1 h-0 overflow-y-auto">
-        <NavBar :items="menu" class="px-2" />
-        <SecondNavbar :items="departments" title="Отделы" class="mt-8" />
+        <NavBar :items="menu" class="px-2"/>
+        <SecondNavbar :items="departments" title="Отделы" class="mt-8"/>
       </div>
     </Sidebar>
 
@@ -78,33 +80,36 @@ const departments = [
       <div class="flex flex-col w-64 border-r border-gray-200 pt-5 pb-4 bg-gray-100">
         <!-- Logo -->
         <div class="flex items-center flex-shrink-0 px-6">
-          <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/workflow-logo-purple-500-mark-gray-700-text.svg" alt="Workflow" />
+          <img class="h-8 w-auto"
+               src="https://tailwindui.com/img/logos/workflow-logo-purple-500-mark-gray-700-text.svg"
+               alt="Workflow"/>
         </div>
 
         <!-- Sidebar -->
         <div class="h-0 flex-1 flex flex-col overflow-y-auto">
           <Dropdown :items="userMenu" direction="justify" class="px-3 mt-6">
-            <MenuButton class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
+            <MenuButton
+              class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
               <span class="flex w-full justify-between items-center">
                 <Avatar
-                    image="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
-                    title="Дядя Фёдор"
-                    subtitle="Администратор"
+                  image="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+                  title="Дядя Фёдор"
+                  subtitle="Администратор"
                 />
 
-                <SelectorIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+                <SelectorIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true"/>
               </span>
             </MenuButton>
           </Dropdown>
 
           <!-- Sidebar Search -->
           <div class="px-3 mt-5">
-            <Input placeholder="Поиск" :icon="SearchIcon" />
+            <Input placeholder="Поиск" :icon="SearchIcon"/>
           </div>
 
           <!-- Navigation -->
-          <NavBar :items="menu" class="px-3 mt-6" />
-          <SecondNavbar :items="departments" title="Отделы" class="mt-8 px-3" />
+          <NavBar :items="menu" class="px-3 mt-6"/>
+          <SecondNavbar :items="departments" title="Отделы" class="mt-8 px-3"/>
         </div>
       </div>
     </div>
@@ -112,9 +117,11 @@ const departments = [
     <div class="flex flex-col w-0 flex-1 overflow-hidden">
       <!-- Mobile -->
       <div class="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
-        <button type="button" class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden" @click="sidebarOpen = true">
+        <button type="button"
+                class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden"
+                @click="sidebarOpen = true">
           <span class="sr-only">Открыть меню</span>
-          <MenuAlt1Icon class="h-6 w-6" aria-hidden="true" />
+          <MenuAlt1Icon class="h-6 w-6" aria-hidden="true"/>
         </button>
 
         <div class="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
@@ -122,17 +129,22 @@ const departments = [
             <form class="w-full flex md:ml-0" action="#" method="GET">
               <div class="relative w-full text-gray-400 focus-within:text-gray-600">
                 <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                  <SearchIcon class="h-5 w-5" aria-hidden="true" />
+                  <SearchIcon class="h-5 w-5" aria-hidden="true"/>
                 </div>
-                <input class="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-transparent focus:placeholder-gray-400 sm:text-sm" placeholder="Поиск" type="search" />
+                <input
+                  class="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-0 focus:border-transparent focus:placeholder-gray-400 sm:text-sm"
+                  placeholder="Поиск" type="search"/>
               </div>
             </form>
           </div>
           <div class="flex items-center">
             <!-- Profile dropdown @todo поправить компонент дропдаун -->
             <Dropdown :items="userMenu" direction="right" class="ml-3 relative">
-              <MenuButton class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+              <MenuButton
+                class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <img class="h-8 w-8 rounded-full"
+                     src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                     alt=""/>
               </MenuButton>
             </Dropdown>
           </div>
@@ -141,7 +153,8 @@ const departments = [
 
       <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
         <!-- Page title & actions -->
-        <div class="border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between px-3 sm:px-4 lg:px-5">
+        <div
+          class="border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between px-3 sm:px-4 lg:px-5">
           <div class="flex-1 min-w-0">
             <slot name="title">
               <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">
@@ -151,7 +164,9 @@ const departments = [
           </div>
 
           <div class="mt-4 flex sm:mt-0 sm:ml-4">
-            <slot name="actions"></slot>
+            <div class="flex gap-2">
+              <slot name="actions"></slot>
+            </div>
           </div>
         </div>
 

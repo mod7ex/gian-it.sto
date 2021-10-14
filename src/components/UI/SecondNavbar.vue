@@ -29,12 +29,12 @@ const colors = [
     </h3>
 
     <div class="mt-1 space-y-1" role="group">
-      <a v-for="item in items" :key="item.label" :href="item.href" class="group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
+      <router-link v-for="item in items" :key="item.label" :to="item.href" class="group flex items-center px-3 py-2 text-sm leading-5 font-medium text-gray-600 rounded-md hover:text-gray-900 hover:bg-gray-50">
         <span :class="[`bg-${item.color}-500`, 'w-2.5 h-2.5 mr-2 rounded-full']" aria-hidden="true" />
         <span class="truncate">
           {{ item.label }}
         </span>
-      </a>
+      </router-link>
     </div>
   </div>
 </template>

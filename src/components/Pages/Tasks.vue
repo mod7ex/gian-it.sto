@@ -12,6 +12,7 @@ import ButtonGroup from '@/UI/ButtonGroup.vue';
 import Header from '@/UI/Header.vue';
 import Input from '@/UI/Input.vue';
 import Label from '@/UI/Label.vue';
+import Link from '@/UI/Link.vue';
 import Select from '@/UI/Select.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Badge from '@/UI/Badge.vue';
@@ -88,7 +89,7 @@ const tasks = [
       <div class="flex gap-2">
         <Button color="blue">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>
-          Создать задачу
+          Создать
         </Button>
       </div>
     </template>
@@ -159,7 +160,9 @@ const tasks = [
       <TBody>
         <Tr v-for="(task, index) in tasks" :key="task.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
           <Td>
-            {{ task.name }}
+            <Link>
+              {{ task.name }}
+            </Link>
           </Td>
           <Td>
             <Avatar

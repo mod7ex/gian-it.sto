@@ -275,9 +275,9 @@ const orders = [
       <TBody>
       <Tr v-for="(order, index) in orders" :key="order.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
         <Td>
-          <div class="flex items-center gap-1">
+          <div class="flex items-center">
             <div :class="[`bg-${order.color}-500`, 'flex-shrink-0 w-2.5 h-2.5 rounded-full mr-1']" aria-hidden="true" />
-            <span>{{ order.department }}</span>
+            <span class="mr-1">{{ order.department }}</span>
             <span class="text-gray-500 font-normal">{{ order.city }}</span>
           </div>
         </Td>

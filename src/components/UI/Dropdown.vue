@@ -24,7 +24,7 @@ const props = defineProps({
   position: {
     type: String,
     required: false,
-    default: 'center', // bottom, center
+    default: 'bottom', // bottom, center
   },
 });
 

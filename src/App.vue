@@ -8,6 +8,7 @@
 </template>
 
 <style>
+@import 'vue-toastification/dist/index.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

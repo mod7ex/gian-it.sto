@@ -10,7 +10,6 @@ import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import Input from '@/UI/Input.vue';
-import Label from '@/UI/Label.vue';
 import Select from '@/UI/Select.vue';
 import Header from '@/UI/Header.vue';
 

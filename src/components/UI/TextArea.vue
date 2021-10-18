@@ -43,7 +43,7 @@ const props = defineProps({
     default: [],
   },
   icon: {
-    type: Function,
+    type: Object,
     required: false,
   },
   modelValue: {
@@ -83,12 +83,13 @@ if (props.icon) {
         </div>
       </slot>
 
-      <input :type="props.type"
+      <textarea
              :class="styles"
              :placeholder="props.placeholder"
              :value="props.modelValue"
              @input="event => $emit('update:modelValue', event.target.value)"
-      />
+            :rows="$attrs.rows"
+      ></textarea>
 
       <slot name="after">
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"

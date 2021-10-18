@@ -260,7 +260,7 @@ const orders = [
     </StatGroup>
 
     <Header>
-      Активные заказ-заказ наряды
+      Активные заказ-наряды
     </Header>
 
     <Table class="mt-1">

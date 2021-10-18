@@ -5,6 +5,7 @@ import Dashboard from '@/Pages/Dashboard.vue';
 import Orders from '@/Pages/Orders.vue';
 import Tasks from '@/Pages/Tasks.vue';
 import Processes from '@/Pages/Processes.vue';
+import Process from '@/Pages/Process.vue';
 import Storage from '@/Pages/Storage.vue';
 import Clients from '@/Pages/Clients.vue';
 import Employers from '@/Pages/Employers.vue';
@@ -21,6 +22,7 @@ export default [
     { path: '/orders', component: Orders },
     { path: '/tasks', component: Tasks },
     { path: '/processes', component: Processes },
+    { path: '/processes/1', component: Process },
     { path: '/storage', component: Storage },
     { path: '/clients', component: Clients },
     { path: '/employers', component: Employers },

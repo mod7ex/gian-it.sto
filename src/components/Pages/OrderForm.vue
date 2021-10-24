@@ -134,7 +134,7 @@ const comments = [
     </template>
 
     <template #before>
-      <Tabs v-model="tabs" class="px-3 sm:px-4 lg:px-5"/>
+      <Tabs v-model="tabs" class="px-3 sm:px-4 lg:px-5" />
     </template>
 
     <div class="grid grid-cols-12 gap-6" v-if="tabs.form.current">

@@ -14,8 +14,11 @@ const update = (index) => {
     items.value[key].current = false;
   }
 
-  items.value[index].current = true;
-  return items;
+  if(items.value[index] && items.value[index].current !== undefined) {
+    items.value[index].current = true;
+  }
+
+  return items.value;
 };
 </script>
 
@@ -24,7 +27,11 @@ const update = (index) => {
     <div class="sm:hidden">
       <label for="tabs" class="sr-only">Выберите пункт</label>
       <select class="block mt-4 w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" @change="$emit('update:modelValue', update($event.target.value))">
-        <option v-for="(tab, index) in items" :key="tab.label" :selected="tab.current" :value="index">
+        <option v-for="(tab, index) in items"
+                :key="tab.label"
+                :selected="tab.current"
+                :value="index"
+        >
           {{ tab.label }}
         </option>
       </select>

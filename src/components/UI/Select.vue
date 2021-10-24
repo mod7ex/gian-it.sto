@@ -30,7 +30,7 @@ const props = defineProps({
   },
 });
 
-const styles = ['mt-1 block w-full py-2 text-base focus:outline-none sm:text-sm rounded-md'];
+const styles = ['mt-1 block w-full py-2 text-base focus:outline-none sm:text-sm rounded-md shadow-sm'];
 
 if (props.multiple) {
   styles.push('px-2');

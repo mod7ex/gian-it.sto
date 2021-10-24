@@ -10,6 +10,7 @@
     "@headlessui/vue": "^1.4.1",
     "@heroicons/vue": "^1.0.4",
     "@tailwindcss/forms": "^0.3.3",
+    "@vueup/vue-quill": "^1.0.0-beta.7",
     "lodash": "^4.17.21",
     "tailwindcss": "^2.2.11",
     "vue": "^3.2.6",

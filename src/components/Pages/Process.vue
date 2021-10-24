@@ -49,17 +49,15 @@ const tasks = [
 <template>
   <OfficeLayout title="Название процесса / Список задач">
     <template #actions>
-      <div class="flex gap-2">
-        <Button type="secondary">
-          <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-          Вернуться
+        <Button type="secondary" link="/processes">
+            <ArrowLeftIcon class="w-5 h-5 mr-1"/>
+            Вернуться
         </Button>
 
-        <Button color="blue">
-          <PlusCircleIcon class="w-5 h-5 mr-1"/>
-          Создать
+        <Button color="blue" link="/processes/1/create">
+            <PlusCircleIcon class="w-5 h-5 mr-1"/>
+            Создать
         </Button>
-      </div>
     </template>
 
     <!-- Table -->

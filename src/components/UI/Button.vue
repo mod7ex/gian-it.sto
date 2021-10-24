@@ -29,6 +29,10 @@ const props = defineProps({
     type: String,
     required: false,
     default: 'primary', // primary, secondary
+  },
+  link: {
+    type: String,
+    required: false,
   }
 });
 let ring = props.color;
@@ -169,9 +173,13 @@ if (props.circle) {
 </script>
 
 <template>
-  <button type="button" :class="styles">
+  <button type="button" :class="styles.concat($attrs.class)" v-if="!props.link">
     <slot></slot>
   </button>
+
+  <router-link :class="styles.concat($attrs.class)" :to="props.link" v-else>
+    <slot></slot>
+  </router-link>
 </template>
 
 <style scoped>

@@ -24,12 +24,10 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
 <template>
     <OfficeLayout title="Личные данные">
       <template #actions>
-        <div class="flex gap-2">
-          <Button color="green">
-            <CheckIcon class="w-5 h-5 mr-1"/>
-            Сохранить
-          </Button>
-        </div>
+        <Button color="green">
+          <CheckIcon class="w-5 h-5 mr-1"/>
+          Сохранить
+        </Button>
       </template>
 
       <div class="flex flex-col lg:flex-row">

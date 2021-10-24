@@ -66,7 +66,7 @@ if (props.icon) {
 
 <template>
   <div>
-    <div class="flex justify-between">
+    <div class="flex justify-between mb-1" v-if="props.label.length || props.meta.length">
       <label class="block text-sm font-medium text-gray-700" v-if="props.label.length > 0">
         {{ props.label }}
       </label>
@@ -76,7 +76,7 @@ if (props.icon) {
       </span>
     </div>
 
-    <div class="mt-1 relative rounded-md shadow-sm">
+    <div class="relative rounded-md shadow-sm">
       <slot name="before">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true" v-if="props.icon">
           <component :is="props.icon" class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />

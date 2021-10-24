@@ -39,12 +39,10 @@ const processes = [
 <template>
     <OfficeLayout title="Рабочие процессы">
       <template #actions>
-        <div class="flex gap-2">
-          <Button color="blue">
-            <PlusCircleIcon class="w-5 h-5 mr-1"/>
-            Создать
-          </Button>
-        </div>
+        <Button color="blue" link="/processes/create">
+          <PlusCircleIcon class="w-5 h-5 mr-1"/>
+          Создать
+        </Button>
       </template>
 
       <!-- Table -->

@@ -160,11 +160,13 @@ const departments = [
           </div>
 
           <div class="mt-4 flex sm:mt-0 sm:ml-4">
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
               <slot name="actions"></slot>
             </div>
           </div>
         </div>
+
+        <slot name="before"></slot>
 
         <div class="mt-6 px-3 sm:px-4 lg:px-5">
           <slot></slot>

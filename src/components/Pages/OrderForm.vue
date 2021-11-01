@@ -9,6 +9,9 @@ import {
   CurrencyDollarIcon,
   QuestionMarkCircleIcon,
   CogIcon,
+  DotsHorizontalIcon,
+  PlusCircleIcon,
+  ChipIcon,
 } from '@heroicons/vue/outline';
 import {ref} from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -27,15 +30,83 @@ import UploadImage from '@/UI/UploadImage.vue';
 import Toggle from '@/UI/Toggle.vue';
 import List from '@/UI/List.vue';
 import Select from '@/UI/Select.vue';
+import Comments from '@/Partials/Comments.vue';
+import Dropdown from '@/UI/Dropdown.vue';
+import DescriptionLists from '@/Examples/DescriptionLists.vue';
+import {MenuButton} from '@headlessui/vue';
 import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {DescriptionList, DescriptionListItems, DescriptionListItem} from '@/UI/DescriptionList/index.js';
 
 const editor = 'Текст задачи';
 
-const tasks = ref([
+const microtasks = ref([
   {
     text: '',
   },
 ]);
+
+const tasks = [
+  {
+    id: 1,
+    user: {
+      name: 'Иванов Иван',
+      role: 'Турбинный цех',
+      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    },
+    name: 'Разобрать турбину',
+    created_at: '11.08.2021',
+    deadline: '20.09.2021',
+    status: 'В работе',
+    order: 'Заказ наряд 1',
+    pipeline: 'Турбинный цех',
+    color: 'green',
+  },
+  {
+    id: 2,
+    user: {
+      name: 'Петров Пётр',
+      role: 'Бухгалтер',
+      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    },
+    name: 'Предоставить отчёт за месяц',
+    created_at: '20.05.2021',
+    deadline: '21.06.2021',
+    status: 'Ожидает',
+    order: '',
+    pipeline: '',
+    color: 'yellow',
+  },
+  {
+    id: 3,
+    user: {
+      name: 'Пушкова Светлана',
+      role: 'Слесарный цех',
+      image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    },
+    name: 'Распилить дверь',
+    created_at: '08.11.2021',
+    deadline: '10.12.2021',
+    status: 'Завершена',
+    order: '',
+    pipeline: '',
+    color: 'purple',
+  },
+  {
+    id: 4,
+    user: {
+      name: 'Фаустов Дмитрий',
+      role: 'Менеджер',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    },
+    name: 'Принять работу',
+    created_at: '22.12.2021',
+    deadline: '28.12.2021',
+    status: 'В работе',
+    order: '',
+    pipeline: '',
+    color: 'green',
+  },
+];
 
 const tabs = ref({
   form: {
@@ -43,8 +114,8 @@ const tabs = ref({
     current: true,
     href: '#',
   },
-  comments: {
-    label: 'Комментарии',
+  tasks: {
+    label: 'Задачи',
     current: false,
     href: '#',
   },
@@ -63,68 +134,38 @@ const tabs = ref({
     current: false,
     href: '#',
   },
+  works: {
+    label: 'Работы',
+    current: false,
+    href: '#',
+  },
+  diagnostic: {
+    label: 'Диагностическая карта',
+    current: false,
+    href: '#',
+  },
+  comments: {
+    label: 'Комментарии',
+    current: false,
+    href: '#',
+  },
 });
 
-const user = {
-  name: 'Whitney Francis',
-  email: 'whitney@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80',
-};
-const comments = [
-  {
-    id: 1,
-    name: 'Leslie Alexander',
-    date: '4 дня назад',
-    imageId: '1494790108377-be9c29b29330',
-    body:
-      'Ducimus quas delectus ad maxime totam doloribus reiciendis ex. Tempore dolorem maiores. Similique voluptatibus tempore non ut.',
-  },
-  {
-    id: 2,
-    name: 'Michael Foster',
-    date: '4 дня назад',
-    imageId: '1519244703995-f4e0f30006d5',
-    body:
-      'Et ut autem. Voluptatem eum dolores sint necessitatibus quos. Quis eum qui dolorem accusantium voluptas voluptatem ipsum. Quo facere iusto quia accusamus veniam id explicabo et aut.',
-  },
-  {
-    id: 3,
-    name: 'Dries Vincent',
-    date: '4 дня назад',
-    imageId: '1506794778202-cad84cf45f1d',
-    body:
-      'Expedita consequatur sit ea voluptas quo ipsam recusandae. Ab sint et voluptatem repudiandae voluptatem et eveniet. Nihil quas consequatur autem. Perferendis rerum et.',
-  },
-];
+const order = ref({
+  number: '#00001',
+});
 </script>
 
 <template>
   <OfficeLayout title="Создание нового заказ наряда">
     <template #actions>
+      <div class="mr-2 text-lg">
+        Сумма: <span class="font-bold">100 000 ₽</span>
+      </div>
+
       <Button type="secondary" link="/orders">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>
         К заказ-нарядам
-      </Button>
-
-      <Button color="gray">
-        <CurrencyDollarIcon class="w-5 h-5 mr-1"/>
-        Принять оплату
-      </Button>
-
-      <Button color="gray">
-        <DocumentTextIcon class="w-5 h-5 mr-1"/>
-        Выписать документ
-      </Button>
-
-      <Button color="gray">
-        <CogIcon class="w-5 h-5 mr-1"/>
-        Нужна запчасть
-      </Button>
-
-      <Button color="green">
-        <CheckIcon class="w-5 h-5 mr-1"/>
-        Сохранить
       </Button>
 
       <Button color="red">
@@ -137,124 +178,144 @@ const comments = [
       <Tabs v-model="tabs" class="px-3 sm:px-4 lg:px-5" />
     </template>
 
-    <div class="grid grid-cols-12 gap-6" v-if="tabs.form.current">
-      <div class="col-span-12 sm:col-span-3">
-        <Input label="Название заказ-наряда"/>
-      </div>
-
-      <div class="col-span-12 sm:col-span-3">
-        <Select label="Ответственный" :options="[{label: 'Не выбрано'}]"/>
-      </div>
-
-      <div class="col-span-12 sm:col-span-3">
-        <Select label="Клиент" :options="[{label: 'Не выбрано'}]"/>
-      </div>
-
-      <div class="col-span-12 sm:col-span-3">
-        <Select label="Автомобиль" :options="[{label: 'Не выбрано'}]"/>
-      </div>
-
-      <div class="col-span-12 sm:col-span-4">
-        <Input label="Крайний срок" type="datetime-local"/>
-      </div>
-
-      <div class="col-span-12 sm:col-span-4">
-        <Select label="Процесс" :options="[{label: 'Не выбрано'}]"/>
-      </div>
-
-      <div class="col-span-12 sm:col-span-4">
-        <Select label="Воронка" :options="[{label: 'Не выбрано'}]"/>
-      </div>
-
-      <div class="col-span-12 sm:col-span-12">
-        <Wysiwyg v-model="editor" label="Описание"/>
-      </div>
-
-      <div class="col-span-12 sm:col-span-12">
-        <label class="block text-sm font-medium text-gray-700 mb-2">
-          Общий чек лист
-        </label>
-        <ul>
-          <li v-for="(task, index) in tasks" class="flex items-center mb-2">
-            <span class="mr-2 w-5">{{ index + 1 }}</span>
-            <Input v-model="task.text" rows="1" class="flex-grow" placeholder="Текст задачи" />
-            <Button color="red" class="ml-2" size="sm" @click="delete tasks.splice(index, 1)">
-              Удалить
-            </Button>
-          </li>
-        </ul>
-        <Button size="xs" class="mt-4" @click="tasks.push({text: ''})">
-          Добавить
+    <div v-show="tabs.form.current">
+      <div class="mb-5">
+        <Button color="blue">
+          <CheckIcon class="w-5 h-5 mr-1"/>
+          Сохранить
         </Button>
       </div>
 
-      <div class="col-span-12 sm:col-span-12">
-        <Upload/>
+      <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-12 sm:col-span-3">
+          <Input label="Номер заказ-наряда" :disabled="true" v-model="order.number" />
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+          <Select label="Ответственный" :options="[{label: 'Не выбрано'}]"/>
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+          <Select label="Клиент" :options="[{label: 'Не выбрано'}]"/>
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+          <Select label="Автомобиль" :options="[{label: 'Не выбрано'}]"/>
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+          <Input label="Дата создания" type="datetime-local"/>
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+          <Select label="Причина обращения" :options="[{label: 'Не выбрано'}]"/>
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+          <Select label="Процесс" :options="[{label: 'Не выбрано'}]"/>
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+          <Select label="Воронка" :options="[{label: 'Не выбрано'}]"/>
+        </div>
+
+        <div class="col-span-12 sm:col-span-12">
+          <TextArea label="Комментарий"/>
+        </div>
+
+        <div class="col-span-12 sm:col-span-12">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Общий чек лист
+          </label>
+          <ul>
+            <li v-for="(task, index) in microtasks" class="flex items-center mb-2">
+              <span class="mr-2 w-5">{{ index + 1 }}</span>
+              <Input v-model="task.text" rows="1" class="flex-grow" placeholder="Текст задачи" />
+              <Button color="red" class="ml-2" size="sm" @click="delete tasks.splice(index, 1)">
+                Удалить
+              </Button>
+            </li>
+          </ul>
+          <Button size="xs" class="mt-4" @click="tasks.push({text: ''})">
+            Добавить
+          </Button>
+        </div>
+
+        <div class="col-span-12 sm:col-span-12">
+          <Upload/>
+        </div>
       </div>
     </div>
 
-    <div v-if="tabs.comments.current">
-      <section aria-labelledby="notes-title">
-        <div class="bg-white shadow sm:rounded-lg sm:overflow-hidden">
-          <div class="divide-y divide-gray-200">
-            <div class="px-4 py-5 sm:px-6">
-              <h2 id="notes-title" class="text-lg font-medium text-gray-900">Комментарии / Заметки</h2>
-            </div>
-            <div class="px-4 py-6 sm:px-6">
-              <ul role="list" class="space-y-8">
-                <li v-for="comment in comments" :key="comment.id">
-                  <div class="flex space-x-3">
-                    <div class="flex-shrink-0">
-                      <img class="h-10 w-10 rounded-full" :src="`https://images.unsplash.com/photo-${comment.imageId}?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`" alt="" />
-                    </div>
-                    <div>
-                      <div class="text-sm">
-                        <a href="#" class="font-medium text-gray-900">{{ comment.name }}</a>
-                      </div>
-                      <div class="mt-1 text-sm text-gray-700">
-                        <p>{{ comment.body }}</p>
-                      </div>
-                      <div class="mt-2 text-sm space-x-2">
-                        <span class="text-gray-500 font-medium">{{ comment.date }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="bg-gray-50 px-4 py-6 sm:px-6">
-            <div class="flex space-x-3">
-              <div class="flex-shrink-0">
-                <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
-              </div>
-              <div class="min-w-0 flex-1">
-                <form action="#">
-                  <div>
-                    <label for="comment" class="sr-only">Комментарий</label>
-                    <TextArea placeholder="Текст вашего комментария..." rows="3" />
-                  </div>
-                  <div class="mt-3 flex items-center justify-between">
-                    <span class="group inline-flex items-start text-sm space-x-2 text-gray-500 hover:text-gray-900">
-                      <QuestionMarkCircleIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+    <div v-if="tabs.tasks.current">
+      <div class="mb-5">
+        <Button color="blue" >
+          <PlusCircleIcon class="w-5 h-5 mr-1"/>
+          Добавить задачу
+        </Button>
+      </div>
+      <!-- Table -->
+      <Table>
+        <THead>
+        <Tr>
+          <Th>Название</Th>
+          <Th>Ответственный</Th>
+          <Th>Статус</Th>
+          <Th>Дата создания</Th>
+          <Th>Крайний срок</Th>
+          <Th>Действия</Th>
+        </Tr>
+        </THead>
+        <TBody>
+        <Tr v-for="(task, index) in tasks" :key="task.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+          <Td>
+            <Link to="/tasks/1">
+              {{ task.name }}
+            </Link>
+          </Td>
+          <Td>
+            <Avatar
+              :title="task.user.name"
+              :subtitle="task.user.role"
+              :image="task.user.image"
+            />
+          </Td>
+          <Td>
+            <Badge :point="true" :color="task.color">
+              {{ task.status }}
+            </Badge>
+          </Td>
+          <Td>{{ task.created_at }}</Td>
+          <Td>{{ task.deadline }}</Td>
+          <Td class="text-center">
+            <Dropdown
+              :items="[[{label: 'Изменить', click: '', icon: PencilIcon}, {label: 'Удалить', click: '', icon: XIcon}]]"
+              direction="right"
+              position="center"
+            >
+              <MenuButton>
+                <Button type="secondary" :circle="true">
+                  <DotsHorizontalIcon class="w-4 h-4" />
+                </Button>
+              </MenuButton>
+            </Dropdown>
+          </Td>
+        </Tr>
+        </TBody>
+      </Table>
+    </div>
 
-                      <span>
-                        Только текст, HTML запрещён
-                      </span>
-                    </span>
-                    <Button color="purple">
-                      Отправить
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div v-if="tabs.comments.current">
+      <Comments />
     </div>
 
     <div v-if="tabs.pays.current">
+      <div class="mb-5">
+        <Button color="blue">
+          <CurrencyDollarIcon class="w-5 h-5 mr-1"/>
+          Добавить оплату
+        </Button>
+      </div>
       <Table>
         <THead>
         <Tr>
@@ -289,7 +350,63 @@ const comments = [
       </Table>
     </div>
 
+    <div v-if="tabs.works.current">
+      <div class="mb-5">
+        <Button color="blue">
+          <ChipIcon class="w-5 h-5 mr-1"/>
+          Добавить работу
+        </Button>
+      </div>
+      <Table>
+        <THead>
+        <Tr>
+          <Th>Наименование</Th>
+          <Th>Исполнитель</Th>
+          <Th>Цена</Th>
+          <Th class="text-center">Действия</Th>
+        </Tr>
+        </THead>
+        <TBody>
+        <Tr>
+          <Td>
+            Снятие и установка турбокомпрессора
+          </Td>
+          <Td>
+            <Avatar
+              title="Василий Пупкин"
+              subtitle="Турбинный цех"
+              image="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            />
+          </Td>
+          <Td>
+            7 000 ₽
+          </Td>
+          <Td class="text-center">
+            <Dropdown
+              :items="[[{label: 'Изменить', click: '', icon: PencilIcon}, {label: 'Удалить', click: '', icon: XIcon}]]"
+              direction="right"
+              position="center"
+            >
+              <MenuButton>
+                <Button type="secondary" :circle="true">
+                  <DotsHorizontalIcon class="w-4 h-4" />
+                </Button>
+              </MenuButton>
+            </Dropdown>
+          </Td>
+        </Tr>
+        </TBody>
+      </Table>
+    </div>
+
     <div v-if="tabs.docs.current">
+      <div class="mb-5">
+        <Button color="blue">
+          <DocumentTextIcon class="w-5 h-5 mr-1"/>
+          Добавить документ
+        </Button>
+      </div>
+
       <Table>
         <THead>
         <Tr>
@@ -321,11 +438,19 @@ const comments = [
     </div>
 
     <div v-if="tabs.storage.current">
+      <div class="mb-5">
+        <Button color="blue">
+          <CogIcon class="w-5 h-5 mr-1"/>
+          Добавить запчасть
+        </Button>
+      </div>
       <Table>
         <THead>
         <Tr>
           <Th>Наименование</Th>
           <Th>Дата добавления</Th>
+          <Th>Базовая цена</Th>
+          <Th>Текущая цена</Th>
           <Th>Комментарий</Th>
           <Th>Статус</Th>
         </Tr>
@@ -337,6 +462,12 @@ const comments = [
           </Td>
           <Td>
             11.11.2022
+          </Td>
+          <Td>
+            5 000 ₽
+          </Td>
+          <Td>
+            7 000 ₽
           </Td>
           <Td>
             Какой-то комментарий
@@ -355,6 +486,12 @@ const comments = [
             03.12.2021
           </Td>
           <Td>
+            2 000 ₽
+          </Td>
+          <Td>
+            5 000 ₽
+          </Td>
+          <Td>
             Какой-то комментарий
           </Td>
           <Td>
@@ -365,6 +502,35 @@ const comments = [
         </Tr>
         </TBody>
       </Table>
+    </div>
+
+    <div v-if="tabs.diagnostic.current">
+      <DescriptionList>
+        <template #header>
+          <div class="px-4 py-5 sm:px-6 justify-between flex">
+            <Avatar
+              title="Василий Пупкин"
+              subtitle="Турбинный цех"
+              image="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            />
+
+            <div class="text-right text-sm">
+              <div class="text-gray-500">Дата заполнения</div>
+              <div>
+                11.07.2021 11:20
+              </div>
+            </div>
+          </div>
+        </template>
+        <DescriptionListItems>
+          <DescriptionListItem
+            v-for="i in [1,2,3,4,5,6]"
+            :label="'Вопрос ' + i"
+            :value="'Ответ ' + i"
+            text="Рекомендация: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus aliquam animi, consequuntur culpa deleniti dolore nulla possimus vel! At atque dolore eaque eligendi magnam mollitia nam numquam obcaecati quae, recusandae. Adipisci aliquam dignissimos dolorem et exercitationem expedita fuga, in ipsa iste laboriosam, magnam modi porro praesentium provident quasi quisquam velit?"
+          />
+        </DescriptionListItems>
+      </DescriptionList>
     </div>
   </OfficeLayout>
 </template>

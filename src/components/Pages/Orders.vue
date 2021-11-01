@@ -22,7 +22,7 @@ const columns = ref([
     orders: [
       {
         id: 1,
-        title: 'Название заказ-наряда',
+        title: 'Заказ наряд #00001',
         date: '14.09.2021',
         type: 'Тип заказ-наряда',
         color: 'red',
@@ -35,7 +35,7 @@ const columns = ref([
       },
       {
         id: 1,
-        title: 'Заказ-наряда 3',
+        title: 'Заказ наряд #00002',
         date: '14.09.2021',
         type: 'Тип заказ-наряда',
         color: 'blue',
@@ -48,7 +48,7 @@ const columns = ref([
       },
       {
         id: 1,
-        title: 'Заказ-наряд 3',
+        title: 'Заказ наряд #00003',
         date: '14.09.2021',
         type: 'Тип заказ-наряда',
         color: 'purple',

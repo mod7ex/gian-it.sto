@@ -9,7 +9,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <router-link :to="props.href" class="inline-block font-medium text-indigo-600 hover:text-indigo-500">
+  <router-link :to="props.href" class="inline-block font-medium text-blue-600 hover:text-blue-500">
     <slot></slot>
   </router-link>
 </template>

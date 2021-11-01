@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHashHistory }  from 'vue-router';
 import Toast from 'vue-toastification';
+import Maska from 'maska';
 import App from './App.vue'
 import routes from './routes.js';
 
@@ -12,6 +13,7 @@ const router = createRouter({
 
 createApp(App)
   .use(router)
+  .use(Maska)
   .use(Toast, {
     position: 'bottom-left'
   })

@@ -63,7 +63,7 @@ const processes = [
             </Link>
           </Td>
           <Td>
-            <Badge :point="true" color="indigo">
+            <Badge :point="true" color="blue">
               {{ process.count_tasks }} задач
             </Badge>
           </Td>

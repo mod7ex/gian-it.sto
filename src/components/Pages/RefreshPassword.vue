@@ -19,7 +19,7 @@ import { ArrowNarrowLeftIcon } from '@heroicons/vue/outline';
             <Input label="Повторите пароль" type="password" />
           </div>
 
-          <Button color="indigo" class="w-full justify-center">
+          <Button color="blue" class="w-full justify-center">
             Сохранить
           </Button>
 

@@ -14,6 +14,7 @@ import Avatar from '@/UI/Avatar.vue';
 import Checkbox from '@/UI/Checkbox.vue';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
+import Comments from '@/Partials/Comments.vue';
 import Input from '@/UI/Input.vue';
 import TextArea from '@/UI/TextArea.vue';
 import UploadImage from '@/UI/UploadImage.vue';
@@ -121,6 +122,8 @@ const tasks = ref([
         <span class="mt-4 text-sm text-gray-400">Выполнено: {{ tasks.filter(e => e.checked).length }} из {{ tasks.length }}</span>
       </div>
     </Card>
+
+    <Comments class="mt-2" />
   </OfficeLayout>
 </template>
 

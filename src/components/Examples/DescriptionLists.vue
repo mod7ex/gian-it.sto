@@ -21,7 +21,7 @@ import {DescriptionList, DescriptionListItems, DescriptionListItem} from './../U
                   </span>
               </div>
               <div class="ml-4 flex-shrink-0">
-                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
                   Скачать
                 </a>
               </div>
@@ -33,7 +33,7 @@ import {DescriptionList, DescriptionListItems, DescriptionListItem} from './../U
                   </span>
               </div>
               <div class="ml-4 flex-shrink-0">
-                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
                   Скачать
                 </a>
               </div>
@@ -61,7 +61,7 @@ import {DescriptionList, DescriptionListItems, DescriptionListItem} from './../U
                   </span>
               </div>
               <div class="ml-4 flex-shrink-0">
-                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
                   Скачать
                 </a>
               </div>
@@ -73,7 +73,7 @@ import {DescriptionList, DescriptionListItems, DescriptionListItem} from './../U
                   </span>
               </div>
               <div class="ml-4 flex-shrink-0">
-                <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
                   Скачать
                 </a>
               </div>

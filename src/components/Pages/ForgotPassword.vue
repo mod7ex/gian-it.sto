@@ -21,7 +21,7 @@ function refresh () {
           <form action="#" method="POST" class="space-y-6">
             <Input label="E-mail" type="email" help="Введите ваш email, на него придёт ссылка для сброса пароля" />
 
-            <Button color="indigo" class="w-full justify-center" @click="refresh">
+            <Button color="blue" class="w-full justify-center" @click="refresh">
               Отправить
             </Button>
 

@@ -25,19 +25,21 @@ if (props.type === 'columns') {
 
 <template>
   <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6">
-      <slot name="title">
-        <h3 class="text-lg leading-6 font-medium text-gray-900" v-if="props.title">
-          {{ props.title }}
-        </h3>
-      </slot>
+    <slot name="header">
+      <div class="px-4 py-5 sm:px-6" v-if="props.title || props.subtitle">
+        <slot name="title">
+          <h3 class="text-lg leading-6 font-medium text-gray-900" v-if="props.title">
+            {{ props.title }}
+          </h3>
+        </slot>
 
-      <slot name="subtitle">
-        <p class="mt-1 max-w-2xl text-sm text-gray-500" v-if="props.subtitle">
-          {{ props.subtitle }}
-        </p>
-      </slot>
-    </div>
+        <slot name="subtitle">
+          <p class="mt-1 max-w-2xl text-sm text-gray-500" v-if="props.subtitle">
+            {{ props.subtitle }}
+          </p>
+        </slot>
+      </div>
+    </slot>
     <div :class="style">
       <slot></slot>
     </div>

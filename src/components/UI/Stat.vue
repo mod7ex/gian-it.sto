@@ -1,5 +1,6 @@
 <script setup>
 import { ArrowSmDownIcon, ArrowSmUpIcon } from '@heroicons/vue/solid';
+import Link from '@/UI/Link.vue';
 
 const props = defineProps({
   title: {
@@ -33,7 +34,7 @@ const props = defineProps({
   <div class="relative bg-white pt-5 sm:pt-6 shadow rounded-lg overflow-hidden">
     <div class="px-4 sm:px-6">
       <dt>
-        <div class="absolute bg-indigo-500 rounded-md p-3" v-if="props.icon">
+        <div class="absolute bg-blue-600 rounded-md p-3" v-if="props.icon">
           <component :is="props.icon" class="h-6 w-6 text-white" aria-hidden="true" />
         </div>
 
@@ -57,9 +58,9 @@ const props = defineProps({
 
     <div class="inset-x-0 bg-gray-50 px-4 py-4 sm:px-6" v-if="props.link">
       <div class="text-sm">
-        <a :href="props.link.href" class="font-medium text-indigo-600 hover:text-indigo-500">
+        <Link :href="props.link.href">
           {{ props.link.label }}
-        </a>
+        </Link>
       </div>
     </div>
   </div>

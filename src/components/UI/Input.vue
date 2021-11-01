@@ -7,6 +7,10 @@ const props = defineProps({
     required: false,
     default: '',
   },
+  mask: {
+    type: String,
+    required: false,
+  },
   placeholder: {
     type: String,
     required: false,
@@ -46,12 +50,20 @@ const props = defineProps({
     type: Function,
     required: false,
   },
+  disabled: {
+    type: Boolean,
+    required: false,
+  },
   modelValue: {
     type: String,
   },
 });
 
 const styles = props.classMap.concat(['shadow-sm block w-full sm:text-sm rounded-md']);
+
+if (props.disabled) {
+  styles.push('bg-gray-200');
+}
 
 if (props.error.length > 0) {
   styles.push('pr-10 border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500')
@@ -88,6 +100,8 @@ if (props.icon) {
              :placeholder="props.placeholder"
              :value="props.modelValue"
              @input="event => $emit('update:modelValue', event.target.value)"
+             :disabled="props.disabled"
+             v-maska="props.mask"
       />
 
       <slot name="after">

@@ -86,7 +86,7 @@ const departments = [
         <div class="h-0 flex-1 flex flex-col overflow-y-auto">
           <Dropdown :items="userMenu" direction="justify" class="px-3 mt-4">
             <MenuButton
-              class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-purple-500">
+              class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
               <span class="flex w-full justify-between items-center">
                 <Avatar
                   image="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
@@ -115,7 +115,7 @@ const departments = [
       <!-- Mobile -->
       <div class="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
         <button type="button"
-                class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden"
+                class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
                 @click="sidebarOpen = true">
           <span class="sr-only">Открыть меню</span>
           <MenuAlt1Icon class="h-6 w-6" aria-hidden="true"/>
@@ -137,7 +137,7 @@ const departments = [
           <div class="flex items-center">
             <Dropdown :items="userMenu" direction="right" class="ml-3 relative">
               <MenuButton
-                class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 <img class="h-8 w-8 rounded-full"
                      src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                      alt=""/>
@@ -160,7 +160,7 @@ const departments = [
           </div>
 
           <div class="mt-4 flex sm:mt-0 sm:ml-4">
-            <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2 items-center">
               <slot name="actions"></slot>
             </div>
           </div>
@@ -168,7 +168,7 @@ const departments = [
 
         <slot name="before"></slot>
 
-        <div class="mt-6 px-3 sm:px-4 lg:px-5">
+        <div class="mt-6 px-3 mb-2 sm:px-4 lg:px-5">
           <slot></slot>
         </div>
       </main>

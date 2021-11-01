@@ -52,7 +52,7 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
             </div>
 
             <div class="col-span-12 sm:col-span-6">
-              <Input label="Телефон" />
+              <Input label="Телефон" mask="+7 ### ###-##-##" />
             </div>
 
             <div class="col-span-12 sm:col-span-6">

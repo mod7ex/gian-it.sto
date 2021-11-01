@@ -57,7 +57,7 @@ const tasks = ref([
       </div>
 
       <div class="col-span-12 sm:col-span-3">
-        <Input label="Крайний срок" type="datetime-local" />
+        <Input label="Времени на выполнение (в часах)" type="number" />
       </div>
 
       <div class="col-span-12 sm:col-span-3">

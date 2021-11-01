@@ -8,6 +8,10 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  text: {
+    type: String,
+    required: false,
+  },
   type: {
     type: String,
     required: false,
@@ -40,6 +44,12 @@ if (props.type === 'columns') {
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2" v-if="props.value">
         {{ props.value }}
       </dd>
+    </slot>
+
+    <slot name="text">
+      <span class="mt-1 text-sm text-gray-500 sm:mt-0 sm:col-span-3" v-if="props.text">
+        {{ props.text }}
+      </span>
     </slot>
   </div>
 </template>

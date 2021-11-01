@@ -34,7 +34,7 @@ function login () {
             </div>
           </div>
 
-          <Button color="indigo" class="w-full justify-center" @click="login">
+          <Button color="blue" class="w-full justify-center" @click="login">
             Войти
           </Button>
         </form>

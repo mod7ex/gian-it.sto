@@ -13,11 +13,21 @@ import Process from '@/Pages/Process.vue';
 import ProcessForm from '@/Pages/ProcessForm.vue';
 import Storage from '@/Pages/Storage.vue';
 import Clients from '@/Pages/Clients.vue';
+import ClientForm from '@/Pages/ClientForm.vue';
 import Employers from '@/Pages/Employers.vue';
+import EmployerForm from '@/Pages/EmployerForm.vue';
 import Settings from '@/Pages/Settings.vue';
 import Finances from '@/Pages/Finances.vue';
 import Profile from '@/Pages/Profile.vue';
 import ElementsPage from '@/Pages/Elements.vue';
+import Departments from '@/Pages/Departments.vue';
+import DepartmentForm from '@/Pages/DepartmentForm.vue';
+import Cars from '@/Pages/Cars.vue';
+import CarForm from '@/Pages/CarForm.vue';
+import CarMarks from '@/Pages/CarMarks.vue';
+import CarMarksForm from '@/Pages/CarMarksForm.vue';
+import CarModels from '@/Pages/CarModels.vue';
+import CarModelsForm from '@/Pages/CarModelsForm.vue';
 
 export default [
     { path: '/', component: LoginPage },
@@ -40,10 +50,28 @@ export default [
     { path: '/processes/1/create', component: ProcessForm },
 
     { path: '/storage', component: Storage },
+
     { path: '/clients', component: Clients },
+    { path: '/clients/create', component: ClientForm },
+
     { path: '/employers', component: Employers },
+    { path: '/employers/create', component: EmployerForm },
+
+    { path: '/departments', component: Departments },
+    { path: '/departments/create', component: DepartmentForm },
+
+    { path: '/cars', component: Cars },
+    { path: '/cars/create', component: CarForm },
+    { path: '/car-marks', component: CarMarks },
+    { path: '/car-marks/create', component: CarMarksForm },
+    { path: '/car-models', component: CarModels },
+    { path: '/car-models/create', component: CarModelsForm },
+
     { path: '/finances', component: Finances },
+
     { path: '/settings', component: Settings },
+
     { path: '/profile', component: Profile },
+
     { path: '/elements', component: ElementsPage },
 ];

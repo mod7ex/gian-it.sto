@@ -22,7 +22,7 @@ const props = defineProps({
             </div>
 
             <div class="flex-1 min-w-0">
-              <a :href="item.link || '#'" class="focus:outline-none">
+              <button @click="$emit('select', item)" class="focus:outline-none text-left">
                 <span class="absolute inset-0" aria-hidden="true" />
                 <p class="text-sm font-medium text-gray-900" v-if="item.title">
                   {{ item.title }}
@@ -31,7 +31,7 @@ const props = defineProps({
                 <p class="text-sm text-gray-500 truncate" v-if="item.subtitle">
                   {{ item.subtitle }}
                 </p>
-              </a>
+              </button>
             </div>
           </div>
         </li>

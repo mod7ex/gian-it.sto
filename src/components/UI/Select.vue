@@ -43,6 +43,17 @@ if (props.error.length > 0) {
 } else {
   styles.push('border-gray-300 focus:ring-indigo-500 focus:border-indigo-500')
 }
+
+const options = props.options.map((e) => {
+  if (e instanceof Object) {
+    return e;
+  }
+
+  return {
+    label: e,
+    value: e,
+  }
+})
 </script>
 
 <template>
@@ -52,7 +63,7 @@ if (props.error.length > 0) {
     </label>
 
     <select :class="styles" :multiple="props.multiple">
-      <option v-for="item in props.options" :value="item.value" :key="item.value">
+      <option v-for="item in options" :value="item.value" :key="item.value">
         {{ item.label }}
       </option>
     </select>

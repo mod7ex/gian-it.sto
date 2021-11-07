@@ -31,6 +31,11 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  mainClasses: {
+    type: String,
+    required: false,
+    default: 'flex-1 relative z-0 overflow-y-auto focus:outline-none'
+  },
 });
 
 setTitle(props.title);
@@ -147,10 +152,9 @@ const departments = [
         </div>
       </div>
 
-      <main class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
+      <main :class="props.mainClasses">
         <!-- Page title & actions -->
-        <div
-          class="border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between px-3 sm:px-4 lg:px-5">
+        <div class="border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between px-3 sm:px-4 lg:px-5">
           <div class="flex-1 min-w-0">
             <slot name="title">
               <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">
@@ -168,9 +172,11 @@ const departments = [
 
         <slot name="before"></slot>
 
-        <div class="mt-6 px-3 mb-2 sm:px-4 lg:px-5">
-          <slot></slot>
-        </div>
+        <slot name="content">
+          <div class="mt-6 px-3 mb-2 sm:px-4 lg:px-5">
+            <slot></slot>
+          </div>
+        </slot>
       </main>
     </div>
   </div>

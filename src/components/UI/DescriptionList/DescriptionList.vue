@@ -13,9 +13,19 @@ const props = defineProps({
     required: false,
     default: 'rows', // rows, columns
   },
+  bordered: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
 });
 
-const style = ['border-t border-gray-200 px-4 py-5'];
+const style = ['px-4'];
+
+if (props.bordered) {
+  style.push('border-t border-gray-200 py-5');
+}
+
 if (props.type === 'columns') {
   style.push('sm:px-6');
 } else {
@@ -24,7 +34,7 @@ if (props.type === 'columns') {
 </script>
 
 <template>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+  <div :class="['bg-white overflow-hidden sm:rounded-lg', {'shadow': props.bordered},]">
     <slot name="header">
       <div class="px-4 py-5 sm:px-6" v-if="props.title || props.subtitle">
         <slot name="title">

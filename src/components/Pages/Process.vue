@@ -51,7 +51,7 @@ const tasks = [
     <template #actions>
         <Button type="secondary" link="/processes">
             <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-            Вернуться
+            К списку процессов
         </Button>
 
         <Button color="blue" link="/processes/1/create">

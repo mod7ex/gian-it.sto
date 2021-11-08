@@ -37,7 +37,7 @@ const tasks = ref([
     <template #actions>
       <Button type="secondary" link="/processes/1">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-        К процессу
+        К задачам процесса
       </Button>
 
       <Button color="green">

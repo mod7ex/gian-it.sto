@@ -12,6 +12,9 @@ import ProcessesForm from '@/Pages/ProcessesForm.vue';
 import Process from '@/Pages/Process.vue';
 import ProcessForm from '@/Pages/ProcessForm.vue';
 import Storage from '@/Pages/Storage.vue';
+import Storages from '@/Pages/Storages.vue';
+import StoragesForm from '@/Pages/StoragesForm.vue';
+import StorageForm from '@/Pages/StorageForm.vue';
 import Clients from '@/Pages/Clients.vue';
 import ClientForm from '@/Pages/ClientForm.vue';
 import Employers from '@/Pages/Employers.vue';
@@ -28,6 +31,8 @@ import CarMarks from '@/Pages/CarMarks.vue';
 import CarMarksForm from '@/Pages/CarMarksForm.vue';
 import CarModels from '@/Pages/CarModels.vue';
 import CarModelsForm from '@/Pages/CarModelsForm.vue';
+import Why from '@/Pages/Why.vue';
+import WhyForm from '@/Pages/WhyForm.vue';
 
 export default [
     { path: '/', component: LoginPage },
@@ -49,7 +54,10 @@ export default [
     { path: '/processes/1', component: Process },
     { path: '/processes/1/create', component: ProcessForm },
 
-    { path: '/storage', component: Storage },
+    { path: '/storages', component: Storages },
+    { path: '/storages/create', component: StoragesForm },
+    { path: '/storages/1', component: Storage },
+    { path: '/storages/1/create', component: StorageForm },
 
     { path: '/clients', component: Clients },
     { path: '/clients/create', component: ClientForm },
@@ -66,6 +74,9 @@ export default [
     { path: '/car-marks/create', component: CarMarksForm },
     { path: '/car-models', component: CarModels },
     { path: '/car-models/create', component: CarModelsForm },
+
+    { path: '/why', component: Why },
+    { path: '/why/create', component: WhyForm },
 
     { path: '/finances', component: Finances },
 

@@ -50,7 +50,7 @@ const menu = [
   {label: 'Заказ-наряды', href: '/orders', icon: ChipIcon, current: false},
   {label: 'Задачи', href: '/tasks', icon: TableIcon, current: false},
   {label: 'Рабочие процессы', href: '/processes', icon: PuzzleIcon, current: false},
-  {label: 'Склад', href: '/storage', icon: CollectionIcon, current: false},
+  {label: 'Склад', href: '/storages', icon: CollectionIcon, current: false},
   {label: 'Клиенты', href: '/clients', icon: UserGroupIcon, current: false},
   {label: 'Сотрудники', href: '/employers', icon: UserGroupIcon, current: false},
   {label: 'Финансы', href: '/finances', icon: CurrencyDollarIcon, current: false},

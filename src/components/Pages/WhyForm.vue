@@ -33,11 +33,11 @@ const tasks = ref([
 </script>
 
 <template>
-  <OfficeLayout title="Создание нового процесса">
+  <OfficeLayout title="Создание новой причины обращения">
     <template #actions>
-      <Button type="secondary" link="/processes">
+      <Button type="secondary" link="/why">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-        К процессам
+        К причинам
       </Button>
 
       <Button color="green">
@@ -53,11 +53,7 @@ const tasks = ref([
 
     <div class="grid grid-cols-12 gap-6">
       <div class="col-span-12 sm:col-span-4">
-        <Input label="Название процесса" />
-      </div>
-
-      <div class="col-span-12 sm:col-span-4">
-        <Select label="Причина обращения" :options="['Не выбрано']" />
+        <Input label="Название" />
       </div>
     </div>
   </OfficeLayout>

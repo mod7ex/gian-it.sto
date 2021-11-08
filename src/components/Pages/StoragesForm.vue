@@ -22,22 +22,14 @@ import UploadImage from '@/UI/UploadImage.vue';
 import Toggle from '@/UI/Toggle.vue';
 import List from '@/UI/List.vue';
 import Select from '@/UI/Select.vue';
-
-const editor = 'Текст задачи';
-
-const tasks = ref([
-  {
-    text: ''
-  }
-]);
 </script>
 
 <template>
-  <OfficeLayout title="Создание нового процесса">
+  <OfficeLayout title="Создание нового склада">
     <template #actions>
-      <Button type="secondary" link="/processes">
+      <Button type="secondary" link="/storages">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-        К процессам
+        К складам
       </Button>
 
       <Button color="green">
@@ -57,7 +49,7 @@ const tasks = ref([
       </div>
 
       <div class="col-span-12 sm:col-span-4">
-        <Select label="Причина обращения" :options="['Не выбрано']" />
+        <Select label="Город" :options="['Не выбрано']" />
       </div>
     </div>
   </OfficeLayout>

@@ -90,14 +90,14 @@ const tabs = ref({
 </script>
 
 <template>
-    <OfficeLayout title="Название склада">
+    <OfficeLayout title="Название склада" main-classes="flex-1 flex flex-col overflow-hidden">
       <template #actions>
         <Button type="secondary" link="/storages">
           <ArrowLeftIcon class="w-5 h-5 mr-1"/>
           Выбрать другой склад
         </Button>
 
-        <Button color="blue" link="/storages/1/create">
+        <Button color="blue">
           <SaveAsIcon class="w-5 h-5 mr-1"/>
           Приход
         </Button>

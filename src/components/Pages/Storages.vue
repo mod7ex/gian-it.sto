@@ -5,6 +5,7 @@ import {
   PencilIcon,
   XIcon,
   QuestionMarkCircleIcon,
+  CogIcon,
 } from '@heroicons/vue/outline';
 import {MenuButton} from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -41,7 +42,7 @@ const storages = [
     <OfficeLayout title="Все склады">
       <template #actions>
         <Button type="secondary" link="/developers">
-          <ArrowLeftIcon class="w-5 h-5 mr-1"/>
+          <CogIcon class="w-5 h-5 mr-1"/>
           Производители
         </Button>
 

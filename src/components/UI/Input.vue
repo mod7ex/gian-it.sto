@@ -61,6 +61,10 @@ const props = defineProps({
 
 const styles = props.classMap.concat(['shadow-sm block w-full sm:text-sm rounded-md']);
 
+if (props.type === 'color') {
+  styles.push('h-9 p-1');
+}
+
 if (props.disabled) {
   styles.push('bg-gray-200');
 }

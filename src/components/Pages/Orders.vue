@@ -1,6 +1,7 @@
 <script setup>
 import {
   PlusCircleIcon,
+  ViewBoardsIcon,
 } from '@heroicons/vue/outline';
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
@@ -101,6 +102,11 @@ const log = (evt) => {
 <template>
   <OfficeLayout title="Заказ-наряды">
     <template #actions>
+      <Button type="secondary" link="/pipelines">
+        <ViewBoardsIcon class="w-5 h-5 mr-1"/>
+        Воронка
+      </Button>
+
       <Button color="blue" link="/orders/create">
         <PlusCircleIcon class="w-5 h-5 mr-1"/>
         Создать

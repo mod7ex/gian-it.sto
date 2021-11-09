@@ -54,7 +54,7 @@ const menu = [
   {label: 'Клиенты', href: '/clients', icon: UserGroupIcon, current: false},
   {label: 'Сотрудники', href: '/employers', icon: UserGroupIcon, current: false},
   {label: 'Финансы', href: '/finances', icon: CurrencyDollarIcon, current: false},
-  {label: 'Настройки', href: '/settings', icon: CogIcon, current: false},
+  //{label: 'Настройки', href: '/settings', icon: CogIcon, current: false},
 ];
 
 const departments = [

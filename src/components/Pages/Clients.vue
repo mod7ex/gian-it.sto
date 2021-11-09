@@ -289,7 +289,7 @@ const search = ref('');
                   <DescriptionListItem label="Заказов на" value="146 000 ₽" type="columns" />
                   <DescriptionListItem label="Дата рождения" value="11.06.1989" type="columns" />
                   <DescriptionListItem label="О клиенте" type="columns" columns="2" value="Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu." />
-                  <DescriptionListItem label="Проекты" type="columns" columns="2">
+                  <DescriptionListItem label="Заказ-наряды" type="columns" columns="2">
                     <template #value>
                       <div class="grid grid-cols-12 mt-1 gap-2">
                         <div class="sm:col-span-6 col-span-12 shadow border px-4 py-2 rounded">

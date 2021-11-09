@@ -21,6 +21,7 @@ import Employers from '@/Pages/Employers.vue';
 import EmployerForm from '@/Pages/EmployerForm.vue';
 import Settings from '@/Pages/Settings.vue';
 import Finances from '@/Pages/Finances.vue';
+import FinanceForm from '@/Pages/FinanceForm.vue';
 import Profile from '@/Pages/Profile.vue';
 import ElementsPage from '@/Pages/Elements.vue';
 import Departments from '@/Pages/Departments.vue';
@@ -33,6 +34,10 @@ import CarModels from '@/Pages/CarModels.vue';
 import CarModelsForm from '@/Pages/CarModelsForm.vue';
 import Why from '@/Pages/Why.vue';
 import WhyForm from '@/Pages/WhyForm.vue';
+import Developers from '@/Pages/Developers.vue';
+import DeveloperForm from '@/Pages/DeveloperForm.vue';
+import Pipelines from '@/Pages/Pipelines.vue';
+import PipelineForm from '@/Pages/PipelineForm.vue';
 
 export default [
     { path: '/', component: LoginPage },
@@ -68,6 +73,9 @@ export default [
     { path: '/departments', component: Departments },
     { path: '/departments/create', component: DepartmentForm },
 
+    { path: '/developers', component: Developers },
+    { path: '/developers/create', component: DeveloperForm },
+
     { path: '/cars', component: Cars },
     { path: '/cars/create', component: CarForm },
     { path: '/car-marks', component: CarMarks },
@@ -79,8 +87,12 @@ export default [
     { path: '/why/create', component: WhyForm },
 
     { path: '/finances', component: Finances },
+    { path: '/finances/create', component: FinanceForm },
 
     { path: '/settings', component: Settings },
+
+    { path: '/pipelines', component: Pipelines },
+    { path: '/pipelines/create', component: PipelineForm },
 
     { path: '/profile', component: Profile },
 

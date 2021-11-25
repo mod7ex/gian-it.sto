@@ -5,6 +5,7 @@ import {
   PencilIcon,
   XIcon,
   ArrowLeftIcon,
+  CollectionIcon,
 } from '@heroicons/vue/outline';
 import {MenuButton} from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -53,6 +54,11 @@ const items = [
 <template>
     <OfficeLayout title="Финансы">
       <template #actions>
+        <Button type="secondary" link="/finances-groups">
+          <CollectionIcon class="w-5 h-5 mr-1"/>
+          Группы
+        </Button>
+
         <Button color="blue" link="/finances/create">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>
           Добавить операцию

@@ -1,4 +1,5 @@
 <script setup>
+import {ref, watchEffect} from 'vue';
 const props = defineProps({
   color: {
     type: String,
@@ -35,10 +36,12 @@ const props = defineProps({
     required: false,
   }
 });
+
 let ring = props.color;
 let bg = props.color;
 let border = 'border-transparent';
 let text = 'text-white';
+
 if (props.type === 'secondary') {
   ring = 'indigo';
   border = 'border-gray';

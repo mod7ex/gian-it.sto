@@ -5,6 +5,7 @@ import {
   PencilIcon,
   XIcon,
   QuestionMarkCircleIcon,
+  MapIcon,
 } from '@heroicons/vue/outline';
 import {MenuButton} from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -40,6 +41,11 @@ const processes = [
 <template>
     <OfficeLayout title="Рабочие процессы">
       <template #actions>
+        <Button type="secondary" link="/diagnostic-card">
+          <MapIcon class="w-5 h-5 mr-1"/>
+          Диагностическая карта
+        </Button>
+
         <Button type="secondary" link="/why">
           <QuestionMarkCircleIcon class="w-5 h-5 mr-1"/>
           Причины обращения

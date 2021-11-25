@@ -223,6 +223,11 @@ const search = ref('');
 <template>
     <OfficeLayout title="Сотрудники" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
       <template #actions>
+        <Button type="secondary" link="/roles">
+          <UserGroupIcon class="w-5 h-5 mr-1"/>
+          Роли
+        </Button>
+
         <Button color="blue" link="/employers/create">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>
           Создать

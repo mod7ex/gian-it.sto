@@ -6,6 +6,8 @@ import {
   PencilIcon,
   XIcon,
   ArrowLeftIcon,
+  ViewListIcon,
+  ViewGridIcon,
 } from '@heroicons/vue/outline';
 import {
   PlusIcon,
@@ -14,8 +16,12 @@ import {
 import {ref} from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Tabs from '@/UI/Tabs.vue';
+import {MenuButton} from '@headlessui/vue';
 import Button from '@/UI/Button.vue';
+import ButtonGroup from '@/UI/ButtonGroup.vue';
 import Avatar from '@/UI/Avatar.vue';
+import Dropdown from '@/UI/Dropdown.vue';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
 
 const files = [
   {
@@ -77,16 +83,8 @@ const files = [
 ];
 
 const show = ref(false);
-const tabs = ref({
-  inStock: {
-    label: 'В наличии',
-    current: true,
-  },
-  isNotInStock: {
-    label: 'Нет в наличии',
-    current: false,
-  },
-});
+const inStock = ref(true);
+const grid = ref(true);
 </script>
 
 <template>
@@ -111,10 +109,53 @@ const tabs = ref({
       <template #content>
         <div class="flex-1 flex items-stretch overflow-hidden">
           <div class="flex-1 overflow-y-auto">
-            <Tabs v-model="tabs" class=" px-3 lg:px-5" />
+            <div class="justify-between flex px-3 lg:px-5 mt-4">
+              <div class="flex">
+                <ButtonGroup>
+                  <Button
+                    :type="inStock ? 'primary' : 'secondary'"
+                    :key="inStock ? 'primary' : 'secondary'"
+                    group="left"
+                    @click="inStock = true"
+                  >
+                    В наличии
+                  </Button>
+
+                  <Button
+                    :type="inStock ? 'secondary' : 'primary'"
+                    :key="inStock ? 'secondary' : 'primary'"
+                    group="right"
+                    @click="inStock = false"
+                  >
+                    Нет в наличии
+                  </Button>
+                </ButtonGroup>
+              </div>
+              <div class="flex">
+                <ButtonGroup>
+                  <Button
+                    :type="grid ? 'primary' : 'secondary'"
+                    :key="grid ? 'primary' : 'secondary'"
+                    group="left"
+                    @click="grid = true"
+                  >
+                    <ViewGridIcon class="w-5 h-5 mr-1"/>
+                  </Button>
+
+                  <Button
+                    :type="grid ? 'secondary' : 'primary'"
+                    :key="grid ? 'secondary' : 'primary'"
+                    group="right"
+                    @click="grid = false"
+                  >
+                    <ViewListIcon class="w-5 h-5 mr-1"/>
+                  </Button>
+                </ButtonGroup>
+              </div>
+            </div>
 
             <div class="pt-5 px-3 lg:px-5">
-              <div class="flex">
+              <div class="flex" v-if="grid">
                 <ul role="list" class="w-full grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                   <li v-for="file in files" :key="file.image" class="relative">
                     <div class="group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500 overflow-hidden">
@@ -132,6 +173,43 @@ const tabs = ref({
                   </li>
                 </ul>
               </div>
+
+              <Table v-if="!grid">
+                <THead>
+                <Tr>
+                  <Th>Название</Th>
+                  <Th>Количество</Th>
+                  <Th>Место</Th>
+                  <Th class="text-center">Действия</Th>
+                </Tr>
+                </THead>
+                <TBody>
+                <Tr v-for="(item, index) in files" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+                  <Td @click="show = true">
+                    {{ item.title }}
+                  </Td>
+                  <Td>
+                    {{ item.count }}
+                  </Td>
+                  <Td>
+                    {{ item.place }}
+                  </Td>
+                  <Td class="text-center py-5">
+                    <Dropdown
+                      :items="[[{label: 'Изменить', click: '', icon: PencilIcon}, {label: 'Удалить', click: '', icon: XIcon}]]"
+                      direction="right"
+                      position="center"
+                    >
+                      <MenuButton>
+                        <Button type="secondary" :circle="true">
+                          <DotsHorizontalIcon class="w-4 h-4" />
+                        </Button>
+                      </MenuButton>
+                    </Dropdown>
+                  </Td>
+                </Tr>
+                </TBody>
+              </Table>
             </div>
           </div>
 

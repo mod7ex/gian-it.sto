@@ -22,6 +22,8 @@ import EmployerForm from '@/Pages/EmployerForm.vue';
 import Settings from '@/Pages/Settings.vue';
 import Finances from '@/Pages/Finances.vue';
 import FinanceForm from '@/Pages/FinanceForm.vue';
+import FinanceGroup from '@/Pages/FinanceGroup.vue';
+import FinanceGroupForm from '@/Pages/FinanceGroupForm.vue';
 import Profile from '@/Pages/Profile.vue';
 import ElementsPage from '@/Pages/Elements.vue';
 import Departments from '@/Pages/Departments.vue';
@@ -38,6 +40,10 @@ import Developers from '@/Pages/Developers.vue';
 import DeveloperForm from '@/Pages/DeveloperForm.vue';
 import Pipelines from '@/Pages/Pipelines.vue';
 import PipelineForm from '@/Pages/PipelineForm.vue';
+import DiagnosticCard from '@/Pages/DiagnosticCard.vue';
+import DiagnosticCardForm from '@/Pages/DiagnosticCardForm.vue';
+import Roles from '@/Pages/Roles.vue';
+import RoleForm from '@/Pages/RoleForm.vue';
 
 export default [
     { path: '/', component: LoginPage },
@@ -69,6 +75,8 @@ export default [
 
     { path: '/employers', component: Employers },
     { path: '/employers/create', component: EmployerForm },
+    { path: '/roles', component: Roles },
+    { path: '/roles/create', component: RoleForm },
 
     { path: '/departments', component: Departments },
     { path: '/departments/create', component: DepartmentForm },
@@ -88,11 +96,16 @@ export default [
 
     { path: '/finances', component: Finances },
     { path: '/finances/create', component: FinanceForm },
+    { path: '/finances-groups', component: FinanceGroup },
+    { path: '/finances-groups/create', component: FinanceGroupForm },
 
     { path: '/settings', component: Settings },
 
     { path: '/pipelines', component: Pipelines },
     { path: '/pipelines/create', component: PipelineForm },
+
+    { path: '/diagnostic-card', component: DiagnosticCard },
+    { path: '/diagnostic-card/create', component: DiagnosticCardForm },
 
     { path: '/profile', component: Profile },
 

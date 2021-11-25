@@ -46,22 +46,17 @@ const cars = [
   <Table>
     <THead>
     <Tr>
+      <Th>Автомобиль</Th>
+      <Th>Владелец</Th>
       <Th>Вин номер</Th>
       <Th>Гос. номер</Th>
-      <Th>Владелец</Th>
-      <Th>Автомобиль</Th>
       <Th class="text-center">Действия</Th>
     </Tr>
     </THead>
     <TBody>
     <Tr v-for="(car, index) in cars" :key="car.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
       <Td>
-        <Link href="/cars/create">
-          {{ car.vin }}
-        </Link>
-      </Td>
-      <Td>
-        {{ car.number }}
+        {{ car.auto }}
       </Td>
       <Td>
         <Link href="/cars/create">
@@ -69,7 +64,12 @@ const cars = [
         </Link>
       </Td>
       <Td>
-        {{ car.auto }}
+        <Link href="/cars/create">
+          {{ car.vin }}
+        </Link>
+      </Td>
+      <Td>
+        {{ car.number }}
       </Td>
       <Td class="text-center py-5">
         <Dropdown

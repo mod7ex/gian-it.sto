@@ -52,19 +52,19 @@ const tasks = ref([
     </template>
 
     <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-12 sm:col-span-4">
+      <div class="col-span-12 sm:col-span-3">
         <Input label="Название" />
       </div>
 
-      <div class="col-span-12 sm:col-span-4">
+      <div class="col-span-12 sm:col-span-3">
         <Select label="Тип операции" :options="['Приход', 'Расход']" />
       </div>
 
-      <div class="col-span-12 sm:col-span-4">
+      <div class="col-span-12 sm:col-span-3">
         <Select label="Группа операции" :options="['Реклама', 'Оборудование']" />
       </div>
 
-      <div class="col-span-12 sm:col-span-4">
+      <div class="col-span-12 sm:col-span-3">
         <Input label="Сумма операции" type="number" />
       </div>
     </div>

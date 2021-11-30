@@ -5,7 +5,7 @@ import {
   PencilIcon,
   XIcon,
   QuestionMarkCircleIcon,
-  CogIcon,
+  MapIcon,
 } from '@heroicons/vue/outline';
 import {MenuButton} from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -14,39 +14,44 @@ import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import Link from '@/UI/Link.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
-const storages = [
+const processes = [
   {
     id: 1,
-    name: 'Название склада',
-    city: 'Краснодар',
+    name: 'Название процесса',
+    count_tasks: 15,
     created_at: '15.10.2020',
   },
   {
     id: 1,
-    name: 'Название склада 2',
-    city: 'Краснодар',
+    name: 'Название процесса 2',
+    count_tasks: 8,
     created_at: '15.10.2020',
   },
   {
     id: 1,
-    name: 'Название склада 3',
-    city: 'Краснодар',
+    name: 'Название процесса 3',
+    count_tasks: 10,
     created_at: '15.10.2020',
   },
 ];
 </script>
 
 <template>
-    <OfficeLayout title="Все склады">
+    <OfficeLayout title="Рабочие процессы">
       <template #actions>
-        <Button type="secondary" link="/developers">
-          <CogIcon class="w-5 h-5 mr-1"/>
-          Производители
+        <Button type="secondary" link="/diagnostic-card">
+          <MapIcon class="w-5 h-5 mr-1"/>
+          Диагностическая карта
         </Button>
 
-        <Button color="blue" link="/storages/create">
+        <Button type="secondary" link="/why">
+          <QuestionMarkCircleIcon class="w-5 h-5 mr-1"/>
+          Причины обращения
+        </Button>
+
+        <Button color="blue" link="/processes/create">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>
           Создать
         </Button>
@@ -57,23 +62,25 @@ const storages = [
         <THead>
         <Tr>
           <Th>Название</Th>
-          <Th>Город</Th>
+          <Th>Количество задач</Th>
           <Th>Дата создания</Th>
           <Th class="text-center">Действия</Th>
         </Tr>
         </THead>
         <TBody>
-        <Tr v-for="(storage, index) in storages" :key="storage.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+        <Tr v-for="(process, index) in processes" :key="process.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
           <Td>
-            <Link href="/storages/1">
-              {{ storage.name }}
+            <Link href="/processes/1">
+              {{ process.name }}
             </Link>
           </Td>
           <Td>
-            {{ storage.city }}
+            <Badge :point="true" color="blue">
+              {{ process.count_tasks }} задач
+            </Badge>
           </Td>
           <Td>
-            {{ storage.created_at }}
+            {{ process.created_at }}
           </Td>
           <Td class="text-center py-5">
             <Dropdown

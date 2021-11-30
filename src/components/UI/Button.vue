@@ -44,7 +44,7 @@ let text = 'text-white';
 
 if (props.type === 'secondary') {
   ring = 'indigo';
-  border = 'border-gray';
+  border = 'border-gray hover:bg-gray-100';
   bg = 'white';
   text = '';
 }
@@ -55,6 +55,7 @@ const colors = [
   'bg-indigo-600',
   'hover:bg-indigo-700',
   'focus:border-indigo-500',
+  'hover:bg-gray-100',
 
   'focus:ring-yellow-500',
   'bg-yellow-600',

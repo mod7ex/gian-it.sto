@@ -4,7 +4,6 @@ import {
   DotsHorizontalIcon,
   PencilIcon,
   XIcon,
-  QuestionMarkCircleIcon,
   ArrowLeftIcon,
 } from '@heroicons/vue/outline';
 import {MenuButton} from '@headlessui/vue';
@@ -14,36 +13,36 @@ import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import Link from '@/UI/Link.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
-const why = [
+const devs = [
   {
     id: 1,
-    name: 'Название причины',
+    name: 'Название производителя',
     created_at: '15.10.2020',
   },
   {
     id: 1,
-    name: 'Название причины 2',
+    name: 'Название производителя 2',
     created_at: '15.10.2020',
   },
   {
     id: 1,
-    name: 'Название причины 3',
+    name: 'Название производителя 3',
     created_at: '15.10.2020',
   },
 ];
 </script>
 
 <template>
-  <OfficeLayout title="Причины обращения">
+  <OfficeLayout title="Производители">
     <template #actions>
-      <Button type="secondary" link="/processes">
+      <Button type="secondary" link="/storages">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-        Рабочие процессы
+        К складам
       </Button>
 
-      <Button color="blue" link="/why/create">
+      <Button color="blue" link="/developers/create">
         <PlusCircleIcon class="w-5 h-5 mr-1"/>
         Создать
       </Button>
@@ -59,14 +58,14 @@ const why = [
       </Tr>
       </THead>
       <TBody>
-      <Tr v-for="(item, index) in why" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+      <Tr v-for="(dev, index) in devs" :key="dev.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
         <Td>
-          <Link href="/why/create">
-            {{ item.name }}
+          <Link href="/developers/create">
+            {{ dev.name }}
           </Link>
         </Td>
         <Td>
-          {{ item.created_at }}
+          {{ dev.created_at }}
         </Td>
         <Td class="text-center py-5">
           <Dropdown

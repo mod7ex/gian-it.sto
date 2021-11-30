@@ -6,7 +6,7 @@ import Header from '@/UI/Header.vue';
 import Avatar from '@/UI/Avatar.vue';
 import AvatarGroup from '@/UI/AvatarGroup.vue';
 import OfficeLayout from '@/Layout/Office.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
 const stats = [
   { id: 1, name: 'Новых заказ-нарядов', stat: '200', icon: SaveAsIcon, change: '20', changeType: 'increase', link: {label: 'Просмотреть', href: '#'} },

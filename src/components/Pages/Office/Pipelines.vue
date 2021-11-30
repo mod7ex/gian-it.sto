@@ -13,36 +13,45 @@ import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import Link from '@/UI/Link.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
-const devs = [
+const items = [
   {
     id: 1,
-    name: 'Название производителя',
+    name: 'Новый этап',
+    color: 'red',
     created_at: '15.10.2020',
   },
   {
     id: 1,
-    name: 'Название производителя 2',
+    name: 'В работе',
+    color: '#cccccc',
     created_at: '15.10.2020',
   },
   {
     id: 1,
-    name: 'Название производителя 3',
+    name: 'На согласовании',
+    color: '#cccccc',
+    created_at: '15.10.2020',
+  },
+  {
+    id: 1,
+    name: 'Успешно завершён',
+    color: 'green',
     created_at: '15.10.2020',
   },
 ];
 </script>
 
 <template>
-  <OfficeLayout title="Производители">
+  <OfficeLayout title="Воронка">
     <template #actions>
-      <Button type="secondary" link="/storages">
+      <Button type="secondary" link="/orders">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-        К складам
+        К заказ нарядам
       </Button>
 
-      <Button color="blue" link="/developers/create">
+      <Button color="blue" link="/pipelines/create">
         <PlusCircleIcon class="w-5 h-5 mr-1"/>
         Создать
       </Button>
@@ -53,19 +62,23 @@ const devs = [
       <THead>
       <Tr>
         <Th>Название</Th>
+        <Th>Цвет</Th>
         <Th>Дата создания</Th>
         <Th class="text-center">Действия</Th>
       </Tr>
       </THead>
       <TBody>
-      <Tr v-for="(dev, index) in devs" :key="dev.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+      <Tr v-for="(item, index) in items" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
         <Td>
-          <Link href="/developers/create">
-            {{ dev.name }}
+          <Link href="/pipelines/create">
+            {{ item.name }}
           </Link>
         </Td>
         <Td>
-          {{ dev.created_at }}
+          <div class="w-5 h-5" :style="{background: item.color}"></div>
+        </Td>
+        <Td>
+          {{ item.created_at }}
         </Td>
         <Td class="text-center py-5">
           <Dropdown

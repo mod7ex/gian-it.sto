@@ -1,20 +1,28 @@
 <script setup>
-
+const props = defineProps({
+  mainClasses: {
+    type: String,
+    required: false,
+    default: 'px-4 py-5'
+  },
+});
 </script>
 
 <template>
   <div class="bg-white overflow-hidden sm:rounded-lg shadow">
-    <div class="px-4 py-5 border-b border-gray-200">
-      <slot name="header"></slot>
-    </div>
+    <slot name="inner">
+      <div class="px-4 py-5 border-b border-gray-200">
+        <slot name="header"></slot>
+      </div>
 
-    <div class="px-4 py-5">
-      <slot></slot>
-    </div>
+      <div :class="props.mainClasses">
+        <slot></slot>
+      </div>
 
-    <div class="px-4 py-5 border-t border-gray-200">
-      <slot name="footer"></slot>
-    </div>
+      <div class="px-4 py-5 border-t border-gray-200">
+        <slot name="footer"></slot>
+      </div>
+    </slot>
   </div>
 </template>
 

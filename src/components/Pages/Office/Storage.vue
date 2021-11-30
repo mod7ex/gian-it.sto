@@ -21,7 +21,7 @@ import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Dropdown from '@/UI/Dropdown.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
 const files = [
   {

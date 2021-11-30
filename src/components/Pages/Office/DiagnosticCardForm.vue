@@ -11,7 +11,6 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
 import Upload from '@/UI/Upload.vue';
-import Card from '@/UI/Card.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Checkbox from '@/UI/Checkbox.vue';
 import Badge from '@/UI/Badge.vue';

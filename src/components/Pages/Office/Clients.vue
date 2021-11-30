@@ -9,8 +9,8 @@ import Badge from '@/UI/Badge.vue';
 import Avatar from '@/UI/Avatar.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import {SearchIcon, FilterIcon, PhoneIcon, UserGroupIcon,} from '@heroicons/vue/solid';
-import {PlusCircleIcon} from '@heroicons/vue/outline';
-import {DescriptionList, DescriptionListItems, DescriptionListItem} from './../UI/DescriptionList/index.js';
+import {PlusCircleIcon, CogIcon} from '@heroicons/vue/outline';
+import {DescriptionList, DescriptionListItems, DescriptionListItem} from '../../UI/DescriptionList';
 
 const selected = ref(false);
 const directory = ref({
@@ -221,14 +221,14 @@ const search = ref('');
 </script>
 
 <template>
-    <OfficeLayout title="Сотрудники" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
+    <OfficeLayout title="Клиенты" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
       <template #actions>
-        <Button type="secondary" link="/roles">
-          <UserGroupIcon class="w-5 h-5 mr-1"/>
-          Роли
+        <Button type="secondary" link="/cars">
+          <CogIcon class="w-5 h-5 mr-1" />
+          Автомобили
         </Button>
 
-        <Button color="blue" link="/employers/create">
+        <Button color="blue" link="/clients/create">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>
           Создать
         </Button>
@@ -241,7 +241,7 @@ const search = ref('');
               <h2 class="text-lg font-medium text-gray-900">Картотека</h2>
 
               <p class="mt-1 text-sm text-gray-600">
-                Искать среди 100 сотрудников
+                Искать среди 1008 клиентов
               </p>
 
               <div class="mt-6 flex space-x-4">
@@ -260,7 +260,7 @@ const search = ref('');
             <UserGroupIcon class="h-12 w-12 mx-auto text-gray-600" />
 
             <span class="mt-2 block text-sm font-medium text-gray-900">
-              Выберите сотрудника
+              Выберите клиента
             </span>
           </div>
 
@@ -268,14 +268,10 @@ const search = ref('');
           <div class="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last" v-if="selected">
             <article>
               <!-- Profile header -->
-              <div class="border-b border-gray-200 flex justify-between px-4 sm:px-6 py-3 lg:items-end items-baseline lg:flex-row flex-col gap-2">
-                <div class="flex items-end">
-                  <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-32 rounded-full">
-
-                  <h1 class="text-2xl font-bold text-gray-900 truncate ml-2">
-                    Абдулович Василий
-                  </h1>
-                </div>
+              <div class="border-b border-gray-200 flex justify-between px-4 sm:px-6 py-3 lg:items-center items-baseline lg:flex-row flex-col gap-2">
+                <h1 class="text-2xl font-bold text-gray-900 truncate">
+                  Абдулович Василий
+                </h1>
 
                 <Button type="secondary" size="sm">
                   <PhoneIcon class="mr-2 h-5 w-5 text-gray-400" />
@@ -288,11 +284,53 @@ const search = ref('');
                 <DescriptionListItems type="columns">
                   <DescriptionListItem label="Телефон" value="+7 900 999-99-99" type="columns" />
                   <DescriptionListItem label="Почта" value="email@example.com" type="columns" />
-                  <DescriptionListItem label="Город / Отдел" value="Ростов-на-Дону / Отдел 1" type="columns" />
-                  <DescriptionListItem label="Должность" value="Слесарь" type="columns" />
-                  <DescriptionListItem label="Задач в работе" value="5" type="columns" />
+                  <DescriptionListItem label="Город" value="Ростов-на-Дону" type="columns" />
+                  <DescriptionListItem label="Паспорт" value="1234 123456" type="columns" />
+                  <DescriptionListItem label="Заказов на" value="146 000 ₽" type="columns" />
                   <DescriptionListItem label="Дата рождения" value="11.06.1989" type="columns" />
-                  <DescriptionListItem label="О сотруднике" type="columns" columns="2" value="Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu." />
+                  <DescriptionListItem label="О клиенте" type="columns" columns="2" value="Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu." />
+                  <DescriptionListItem label="Заказ-наряды" type="columns" columns="2">
+                    <div class="grid grid-cols-12 mt-1 gap-2">
+                      <div class="sm:col-span-6 col-span-12 shadow border px-4 py-2 rounded">
+                        <div class="flex justify-between items-center">
+                          <div class="text-sm mb-2 font-bold">
+                            <Link>
+                              Заказ наряд #0001
+                            </Link>
+                          </div>
+
+                          <Badge color="green">
+                            Завершён
+                          </Badge>
+                        </div>
+                        <Avatar
+                          class="mb-1"
+                          image="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          title="Тим Кук"
+                          subtitle="Ответственный"
+                        />
+                      </div>
+                      <div class="sm:col-span-6 col-span-12 shadow border px-4 py-2 rounded">
+                        <div class="flex justify-between items-center">
+                          <div class="text-sm mb-2 font-bold">
+                            <Link>
+                              Заказ наряд #0002
+                            </Link>
+                          </div>
+
+                          <Badge color="yellow">
+                            В работе
+                          </Badge>
+                        </div>
+                        <Avatar
+                          class="mb-1"
+                          image="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          title="Тим Кук"
+                          subtitle="Ответственный"
+                        />
+                      </div>
+                    </div>
+                  </DescriptionListItem>
                 </DescriptionListItems>
               </DescriptionList>
             </article>

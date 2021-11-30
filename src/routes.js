@@ -1,49 +1,54 @@
-import LoginPage from '@/Pages/Login.vue';
-import ForgotPassword from '@/Pages/ForgotPassword.vue';
-import RefreshPassword from '@/Pages/RefreshPassword.vue';
-import Dashboard from '@/Pages/Dashboard.vue';
-import Orders from '@/Pages/Orders.vue';
-import OrderForm from '@/Pages/OrderForm.vue';
-import Tasks from '@/Pages/Tasks.vue';
-import Task from '@/Pages/Task.vue';
-import TaskForm from '@/Pages/TaskForm.vue';
-import Processes from '@/Pages/Processes.vue';
-import ProcessesForm from '@/Pages/ProcessesForm.vue';
-import Process from '@/Pages/Process.vue';
-import ProcessForm from '@/Pages/ProcessForm.vue';
-import Storage from '@/Pages/Storage.vue';
-import Storages from '@/Pages/Storages.vue';
-import StoragesForm from '@/Pages/StoragesForm.vue';
-import StorageForm from '@/Pages/StorageForm.vue';
-import Clients from '@/Pages/Clients.vue';
-import ClientForm from '@/Pages/ClientForm.vue';
-import Employers from '@/Pages/Employers.vue';
-import EmployerForm from '@/Pages/EmployerForm.vue';
-import Settings from '@/Pages/Settings.vue';
-import Finances from '@/Pages/Finances.vue';
-import FinanceForm from '@/Pages/FinanceForm.vue';
-import FinanceGroup from '@/Pages/FinanceGroup.vue';
-import FinanceGroupForm from '@/Pages/FinanceGroupForm.vue';
-import Profile from '@/Pages/Profile.vue';
-import ElementsPage from '@/Pages/Elements.vue';
-import Departments from '@/Pages/Departments.vue';
-import DepartmentForm from '@/Pages/DepartmentForm.vue';
-import Cars from '@/Pages/Cars.vue';
-import CarForm from '@/Pages/CarForm.vue';
-import CarMarks from '@/Pages/CarMarks.vue';
-import CarMarksForm from '@/Pages/CarMarksForm.vue';
-import CarModels from '@/Pages/CarModels.vue';
-import CarModelsForm from '@/Pages/CarModelsForm.vue';
-import Why from '@/Pages/Why.vue';
-import WhyForm from '@/Pages/WhyForm.vue';
-import Developers from '@/Pages/Developers.vue';
-import DeveloperForm from '@/Pages/DeveloperForm.vue';
-import Pipelines from '@/Pages/Pipelines.vue';
-import PipelineForm from '@/Pages/PipelineForm.vue';
-import DiagnosticCard from '@/Pages/DiagnosticCard.vue';
-import DiagnosticCardForm from '@/Pages/DiagnosticCardForm.vue';
-import Roles from '@/Pages/Roles.vue';
-import RoleForm from '@/Pages/RoleForm.vue';
+import LoginPage from '@/Pages/Login/Login.vue';
+import ForgotPassword from '@/Pages/Login/ForgotPassword.vue';
+import RefreshPassword from '@/Pages/Login/RefreshPassword.vue';
+import Dashboard from '@/Pages/Office/Dashboard.vue';
+import Orders from '@/Pages/Office/Orders.vue';
+import OrderForm from '@/Pages/Office/OrderForm.vue';
+import Tasks from '@/Pages/Office/Tasks.vue';
+import Task from '@/Pages/Office/Task.vue';
+import TaskForm from '@/Pages/Office/TaskForm.vue';
+import Processes from '@/Pages/Office/Processes.vue';
+import ProcessesForm from '@/Pages/Office/ProcessesForm.vue';
+import Process from '@/Pages/Office/Process.vue';
+import ProcessForm from '@/Pages/Office/ProcessForm.vue';
+import Storage from '@/Pages/Office/Storage.vue';
+import Storages from '@/Pages/Office/Storages.vue';
+import StoragesForm from '@/Pages/Office/StoragesForm.vue';
+import StorageForm from '@/Pages/Office/StorageForm.vue';
+import Clients from '@/Pages/Office/Clients.vue';
+import ClientForm from '@/Pages/Office/ClientForm.vue';
+import Employers from '@/Pages/Office/Employers.vue';
+import EmployerForm from '@/Pages/Office/EmployerForm.vue';
+import Settings from '@/Pages/Office/Settings.vue';
+import Finances from '@/Pages/Office/Finances.vue';
+import FinanceForm from '@/Pages/Office/FinanceForm.vue';
+import FinanceGroup from '@/Pages/Office/FinanceGroup.vue';
+import FinanceGroupForm from '@/Pages/Office/FinanceGroupForm.vue';
+import Profile from '@/Pages/Office/Profile.vue';
+import ElementsPage from '@/Pages/Office/Elements.vue';
+import Departments from '@/Pages/Office/Departments.vue';
+import DepartmentForm from '@/Pages/Office/DepartmentForm.vue';
+import Cars from '@/Pages/Office/Cars.vue';
+import CarForm from '@/Pages/Office/CarForm.vue';
+import CarMarks from '@/Pages/Office/CarMarks.vue';
+import CarMarksForm from '@/Pages/Office/CarMarksForm.vue';
+import CarModels from '@/Pages/Office/CarModels.vue';
+import CarModelsForm from '@/Pages/Office/CarModelsForm.vue';
+import Why from '@/Pages/Office/Why.vue';
+import WhyForm from '@/Pages/Office/WhyForm.vue';
+import Developers from '@/Pages/Office/Developers.vue';
+import DeveloperForm from '@/Pages/Office/DeveloperForm.vue';
+import Pipelines from '@/Pages/Office/Pipelines.vue';
+import PipelineForm from '@/Pages/Office/PipelineForm.vue';
+import DiagnosticCard from '@/Pages/Office/DiagnosticCard.vue';
+import DiagnosticCardForm from '@/Pages/Office/DiagnosticCardForm.vue';
+import Roles from '@/Pages/Office/Roles.vue';
+import RoleForm from '@/Pages/Office/RoleForm.vue';
+import WorkerTasks from '@/Pages/Work/Tasks.vue';
+import WorkerTask from '@/Pages/Work/Task.vue';
+import WorkerProfile from '@/Pages/Work/Profile.vue';
+import WorkerTimes from '@/Pages/Work/Times.vue';
+import ChangeWorker from '@/Pages/Work/ChangeWorker.vue';
 
 export default [
     { path: '/', component: LoginPage },
@@ -110,4 +115,10 @@ export default [
     { path: '/profile', component: Profile },
 
     { path: '/elements', component: ElementsPage },
+
+    { path: '/w/tasks', component: WorkerTasks },
+    { path: '/w/tasks/1', component: WorkerTask },
+    { path: '/w/profile', component: WorkerProfile },
+    { path: '/w/times', component: WorkerTimes },
+    { path: '/w/change', component: ChangeWorker },
 ];

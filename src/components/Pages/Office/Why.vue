@@ -4,6 +4,8 @@ import {
   DotsHorizontalIcon,
   PencilIcon,
   XIcon,
+  QuestionMarkCircleIcon,
+  ArrowLeftIcon,
 } from '@heroicons/vue/outline';
 import {MenuButton} from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -12,34 +14,36 @@ import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import Link from '@/UI/Link.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
-const departments = [
+const why = [
   {
     id: 1,
-    name: 'Название отдела',
-    city: 'Краснодар',
+    name: 'Название причины',
     created_at: '15.10.2020',
   },
   {
     id: 1,
-    name: 'Название отдела 2',
-    city: 'Краснодар',
+    name: 'Название причины 2',
     created_at: '15.10.2020',
   },
   {
     id: 1,
-    name: 'Название отдела 3',
-    city: 'Краснодар',
+    name: 'Название причины 3',
     created_at: '15.10.2020',
   },
 ];
 </script>
 
 <template>
-  <OfficeLayout title="Отделы">
+  <OfficeLayout title="Причины обращения">
     <template #actions>
-      <Button color="blue" link="/departments/create">
+      <Button type="secondary" link="/processes">
+        <ArrowLeftIcon class="w-5 h-5 mr-1"/>
+        Рабочие процессы
+      </Button>
+
+      <Button color="blue" link="/why/create">
         <PlusCircleIcon class="w-5 h-5 mr-1"/>
         Создать
       </Button>
@@ -50,25 +54,19 @@ const departments = [
       <THead>
       <Tr>
         <Th>Название</Th>
-        <Th>Город</Th>
         <Th>Дата создания</Th>
         <Th class="text-center">Действия</Th>
       </Tr>
       </THead>
       <TBody>
-      <Tr v-for="(department, index) in departments" :key="department.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+      <Tr v-for="(item, index) in why" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
         <Td>
-          <Link href="/departments/create">
-            {{ department.name }}
+          <Link href="/why/create">
+            {{ item.name }}
           </Link>
         </Td>
         <Td>
-          <Badge :point="true" color="blue">
-            {{ department.city }}
-          </Badge>
-        </Td>
-        <Td>
-          {{ department.created_at }}
+          {{ item.created_at }}
         </Td>
         <Td class="text-center py-5">
           <Dropdown

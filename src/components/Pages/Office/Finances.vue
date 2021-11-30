@@ -17,7 +17,7 @@ import Link from '@/UI/Link.vue';
 import Select from '@/UI/Select.vue';
 import Input from '@/UI/Input.vue';
 import Label from '@/UI/Label.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
 const items = [
   {

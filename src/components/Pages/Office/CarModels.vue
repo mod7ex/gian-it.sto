@@ -13,72 +13,46 @@ import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import Link from '@/UI/Link.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
-const items = [
-  {
-    id: 1,
-    name: 'Новый этап',
-    color: 'red',
-    created_at: '15.10.2020',
-  },
-  {
-    id: 1,
-    name: 'В работе',
-    color: '#cccccc',
-    created_at: '15.10.2020',
-  },
-  {
-    id: 1,
-    name: 'На согласовании',
-    color: '#cccccc',
-    created_at: '15.10.2020',
-  },
-  {
-    id: 1,
-    name: 'Успешно завершён',
-    color: 'green',
-    created_at: '15.10.2020',
-  },
+const cars = [
+  {name: 'AAA', mark: 'Audi'},
+  {name: 'Polo', mark: 'Volkswagen'},
+  {name: 'Rapid', mark: 'Skoda'},
 ];
 </script>
 
 <template>
-  <OfficeLayout title="Воронка">
+  <OfficeLayout title="Модели автомобилей">
     <template #actions>
-      <Button type="secondary" link="/orders">
+      <Button type="secondary" link="/cars">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-        К заказ нарядам
+        К автомобилям
       </Button>
 
-      <Button color="blue" link="/pipelines/create">
+      <Button color="blue" link="/car-models/create">
         <PlusCircleIcon class="w-5 h-5 mr-1"/>
         Создать
       </Button>
     </template>
 
-    <!-- Table -->
-    <Table class="mt-5">
+    <Table>
       <THead>
       <Tr>
         <Th>Название</Th>
-        <Th>Цвет</Th>
-        <Th>Дата создания</Th>
+        <Th>Марка</Th>
         <Th class="text-center">Действия</Th>
       </Tr>
       </THead>
       <TBody>
-      <Tr v-for="(item, index) in items" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+      <Tr v-for="(car, index) in cars" :key="car.name" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
         <Td>
-          <Link href="/pipelines/create">
-            {{ item.name }}
+          <Link href="/car-models/create">
+            {{ car.name }}
           </Link>
         </Td>
         <Td>
-          <div class="w-5 h-5" :style="{background: item.color}"></div>
-        </Td>
-        <Td>
-          {{ item.created_at }}
+          {{ car.mark }}
         </Td>
         <Td class="text-center py-5">
           <Dropdown

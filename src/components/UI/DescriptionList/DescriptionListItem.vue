@@ -40,7 +40,7 @@ if (props.type === 'columns') {
       </dt>
     </slot>
 
-    <slot name="value">
+    <slot>
       <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2" v-if="props.value">
         {{ props.value }}
       </dd>

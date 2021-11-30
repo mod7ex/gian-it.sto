@@ -1,4 +1,5 @@
 <script setup>
+import Layout from '@/Layout/Work.vue';
 import {
   PlusCircleIcon,
   DotsHorizontalIcon,
@@ -17,7 +18,7 @@ import Select from '@/UI/Select.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Badge from '@/UI/Badge.vue';
 import Dropdown from '@/UI/Dropdown.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
 const tasks = [
   {
@@ -84,20 +85,28 @@ const tasks = [
 </script>
 
 <template>
-  <OfficeLayout title="Задачи">
-    <template #actions>
-      <Button color="blue" link="/tasks/create">
-        <PlusCircleIcon class="w-5 h-5 mr-1"/>
-        Создать
-      </Button>
-    </template>
+  <Layout title="Список задач">
+    <div class="md:flex md:items-center md:justify-between">
+      <div class="flex items-center space-x-5">
+        <div class="flex-shrink-0">
+          <div class="relative">
+            <img class="h-16 w-16 rounded-full" src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80" alt="">
+            <span class="absolute inset-0 shadow-inner rounded-full" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Василий Пупкин</h1>
+          <p class="text-sm font-medium text-gray-500">Работник <span class="text-gray-900">Слесарного цеха</span> начал смену в <time datetime="2020-08-25">9:00</time></p>
+        </div>
+      </div>
+    </div>
 
     <Header>
-      Фильтр
+      Задачи
     </Header>
 
     <!-- Filter -->
-    <div class="flex flex-wrap gap-2 items-end">
+    <div class="flex flex-wrap gap-2 items-end mt-4">
       <Input label="Название"/>
 
       <div>
@@ -114,21 +123,7 @@ const tasks = [
       </div>
 
       <div>
-        <Select label="Исполнитель"
-                :options="[{label: 'Не выбрано', value: null}]"
-                class="w-44"
-        />
-      </div>
-
-      <div>
         <Select label="Заказ-наряд"
-                :options="[{label: 'Не выбрано', value: null}]"
-                class="w-44"
-        />
-      </div>
-
-      <div>
-        <Select label="Воронка"
                 :options="[{label: 'Не выбрано', value: null}]"
                 class="w-44"
         />
@@ -142,58 +137,43 @@ const tasks = [
       </div>
     </div>
 
-    <!-- Table -->
-    <Table class="mt-5">
+    <Table class="mt-6">
       <THead>
       <Tr>
+        <Th>Заказ-наряд</Th>
         <Th>Название</Th>
         <Th>Ответственный</Th>
         <Th>Статус</Th>
         <Th>Дата создания</Th>
         <Th>Крайний срок</Th>
-        <Th>Заказ-наряд</Th>
-        <Th>Действия</Th>
       </Tr>
       </THead>
       <TBody>
-        <Tr v-for="(task, index) in tasks" :key="task.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
-          <Td>
-            <Link to="/tasks/1">
-              {{ task.name }}
-            </Link>
-          </Td>
-          <Td>
-            <Avatar
-              :title="task.user.name"
-              :subtitle="task.user.role"
-              :image="task.user.image"
-            />
-          </Td>
-          <Td>
-            <Badge :point="true" :color="task.color">
-              {{ task.status }}
-            </Badge>
-          </Td>
-          <Td>{{ task.created_at }}</Td>
-          <Td>{{ task.deadline }}</Td>
-          <Td>{{ task.order }}</Td>
-          <Td class="text-center">
-            <Dropdown
-              :items="[[{label: 'Изменить', click: '', icon: PencilIcon}, {label: 'Удалить', click: '', icon: XIcon}]]"
-              direction="right"
-              position="center"
-            >
-              <MenuButton>
-                <Button type="secondary" :circle="true">
-                  <DotsHorizontalIcon class="w-4 h-4" />
-                </Button>
-              </MenuButton>
-            </Dropdown>
-          </Td>
-        </Tr>
+      <Tr v-for="(task, index) in tasks" :key="task.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+        <Td>#0001</Td>
+        <Td>
+          <Link to="/w/tasks/1">
+            {{ task.name }}
+          </Link>
+        </Td>
+        <Td>
+          <Avatar
+            :title="task.user.name"
+            :subtitle="task.user.role"
+            :image="task.user.image"
+          />
+        </Td>
+        <Td>
+          <Badge :point="true" :color="task.color">
+            {{ task.status }}
+          </Badge>
+        </Td>
+        <Td>{{ task.created_at }}</Td>
+        <Td>{{ task.deadline }}</Td>
+      </Tr>
       </TBody>
     </Table>
-  </OfficeLayout>
+  </Layout>
 </template>
 
 <style scoped>

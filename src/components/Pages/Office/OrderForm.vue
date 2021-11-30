@@ -34,8 +34,8 @@ import Comments from '@/Partials/Comments.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import DescriptionLists from '@/Examples/DescriptionLists.vue';
 import {MenuButton} from '@headlessui/vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
-import {DescriptionList, DescriptionListItems, DescriptionListItem} from '@/UI/DescriptionList/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
+import {DescriptionList, DescriptionListItems, DescriptionListItem} from '@/UI/DescriptionList';
 
 const editor = 'Текст задачи';
 

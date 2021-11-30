@@ -1,0 +1,119 @@
+<script setup>
+import {ref} from 'vue';
+import {setTitle} from '~/meta.js';
+import Logo from '@/Partials/Logo.vue';
+import Button from '@/UI/Button.vue';
+import {
+  ChipIcon,
+  CollectionIcon, CurrencyDollarIcon,
+  PresentationChartLineIcon,
+  PuzzleIcon,
+  TableIcon,
+  UserGroupIcon,
+  MenuIcon,
+  XIcon,
+} from '@heroicons/vue/outline';
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: false,
+  },
+});
+
+setTitle(props.title);
+
+const menu = [
+  {label: 'Профиль', href: '/w/profile', current: false},
+  {label: 'Задачи', href: '/w/tasks', current: false},
+  {label: 'Рабочее время', href: '/w/times', current: false},
+];
+
+const isShowMenu = ref(false);
+</script>
+
+<template>
+  <div class="relative min-h-screen bg-gray-100">
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex px-2 lg:px-0">
+            <div class="flex-shrink-0 flex items-center">
+              <Logo class="h-8 w-auto" />
+            </div>
+
+            <nav aria-label="Global" class="hidden lg:ml-6 lg:flex lg:items-center lg:space-x-4">
+              <router-link v-for="item in menu"
+                 :to="item.href"
+                 :class="['px-3 py-2 text-gray-900 text-sm', {'font-medium': item.current}]"
+              >
+                {{ item.label }}
+              </router-link>
+            </nav>
+          </div>
+
+          <div class="flex items-center lg:hidden">
+            <!-- Mobile menu button -->
+            <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" aria-expanded="false" @click="isShowMenu = true">
+              <MenuIcon class="block h-6 w-6" />
+            </button>
+          </div>
+
+          <!-- Mobile menu, show/hide based on mobile menu state. -->
+          <div class="lg:hidden" v-if="isShowMenu">
+            <div class="z-20 fixed inset-0 bg-black bg-opacity-25" aria-hidden="true"></div>
+
+            <div class="z-30 absolute top-0 right-0 max-w-none w-full p-2 transition transform origin-top">
+              <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white divide-y divide-gray-200">
+                <div class="pt-3 pb-2">
+                  <div class="flex items-center justify-between px-4">
+                    <div>
+                      <Logo class="h-8 w-auto" />
+                    </div>
+                    <div class="-mr-2">
+                      <button type="button" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" @click="isShowMenu = false">
+                        <XIcon class="w-6 h-6" />
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mt-3 px-2 space-y-1">
+                    <router-link v-for="item in menu"
+                       :to="item.href"
+                       class="block rounded-md px-3 py-2 text-base text-gray-900 font-medium hover:bg-gray-100 hover:text-gray-800"
+                    >
+                      {{ item.label }}
+                    </router-link>
+
+                    <Button color="blue" link="/w/change">
+                      Завершить смену
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hidden lg:ml-4 lg:flex lg:items-center">
+            <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
+              <slot name="actions"></slot>
+
+              <Button type="secondary" link="/w/change">
+                Завершить смену
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="py-10">
+      <div class="max-w-3xl lg:max-w-7xl mx-auto sm:px-6 px-2">
+        <slot></slot>
+      </div>
+    </main>
+  </div>
+</template>
+
+<style scoped>
+
+</style>

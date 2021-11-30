@@ -12,34 +12,32 @@ import {DescriptionList, DescriptionListItems, DescriptionListItem} from './../U
       <DescriptionListItem label="Должность" value="Программист" />
       <DescriptionListItem label="Описание" value="Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu." />
       <DescriptionListItem label="Вложения">
-        <template v-slot:value>
-          <ul role="list" class="border border-gray-200 rounded-md divide-y divide-gray-200">
-            <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-              <div class="w-0 flex-1 flex items-center">
+        <ul role="list" class="border border-gray-200 rounded-md divide-y divide-gray-200">
+          <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+            <div class="w-0 flex-1 flex items-center">
                 <span class="ml-2 flex-1 w-0 truncate">
                     resume_back_end_developer.pdf
                   </span>
-              </div>
-              <div class="ml-4 flex-shrink-0">
-                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                  Скачать
-                </a>
-              </div>
-            </li>
-            <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-              <div class="w-0 flex-1 flex items-center">
+            </div>
+            <div class="ml-4 flex-shrink-0">
+              <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                Скачать
+              </a>
+            </div>
+          </li>
+          <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+            <div class="w-0 flex-1 flex items-center">
                 <span class="ml-2 flex-1 w-0 truncate">
                     coverletter_back_end_developer.pdf
                   </span>
-              </div>
-              <div class="ml-4 flex-shrink-0">
-                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                  Скачать
-                </a>
-              </div>
-            </li>
-          </ul>
-        </template>
+            </div>
+            <div class="ml-4 flex-shrink-0">
+              <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                Скачать
+              </a>
+            </div>
+          </li>
+        </ul>
       </DescriptionListItem>
     </DescriptionListItems>
   </DescriptionList>
@@ -52,34 +50,32 @@ import {DescriptionList, DescriptionListItems, DescriptionListItem} from './../U
       <DescriptionListItem label="Должность" value="Программист" type="columns" />
       <DescriptionListItem label="Описание" type="columns" columns="2" value="Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu." />
       <DescriptionListItem label="Вложения" type="columns" columns="2">
-        <template v-slot:value>
-          <ul role="list" class="border border-gray-200 rounded-md divide-y divide-gray-200">
-            <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-              <div class="w-0 flex-1 flex items-center">
+        <ul role="list" class="border border-gray-200 rounded-md divide-y divide-gray-200">
+          <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+            <div class="w-0 flex-1 flex items-center">
                 <span class="ml-2 flex-1 w-0 truncate">
                     resume_back_end_developer.pdf
                   </span>
-              </div>
-              <div class="ml-4 flex-shrink-0">
-                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                  Скачать
-                </a>
-              </div>
-            </li>
-            <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-              <div class="w-0 flex-1 flex items-center">
+            </div>
+            <div class="ml-4 flex-shrink-0">
+              <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                Скачать
+              </a>
+            </div>
+          </li>
+          <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+            <div class="w-0 flex-1 flex items-center">
                 <span class="ml-2 flex-1 w-0 truncate">
                     coverletter_back_end_developer.pdf
                   </span>
-              </div>
-              <div class="ml-4 flex-shrink-0">
-                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                  Скачать
-                </a>
-              </div>
-            </li>
-          </ul>
-        </template>
+            </div>
+            <div class="ml-4 flex-shrink-0">
+              <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                Скачать
+              </a>
+            </div>
+          </li>
+        </ul>
       </DescriptionListItem>
     </DescriptionListItems>
   </DescriptionList>

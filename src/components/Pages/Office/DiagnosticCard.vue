@@ -4,7 +4,9 @@ import {
   DotsHorizontalIcon,
   PencilIcon,
   XIcon,
-  ArrowLeftIcon,
+  QuestionMarkCircleIcon,
+  CogIcon,
+  PuzzleIcon,
 } from '@heroicons/vue/outline';
 import {MenuButton} from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -13,36 +15,36 @@ import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import Link from '@/UI/Link.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table/index.js';
+import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
 
-const items = [
+const questions = [
   {
     id: 1,
-    name: 'Администратор',
+    name: 'Название вопроса',
     created_at: '15.10.2020',
   },
   {
-    id: 2,
-    name: 'Бухгалтер',
+    id: 1,
+    name: 'Название вопроса 2',
     created_at: '15.10.2020',
   },
   {
-    id: 3,
-    name: 'Менеджер',
+    id: 1,
+    name: 'Название вопроса 3',
     created_at: '15.10.2020',
   },
 ];
 </script>
 
 <template>
-  <OfficeLayout title="Роли">
+  <OfficeLayout title="Диагностическая карта - вопросы">
     <template #actions>
-      <Button type="secondary" link="/employers">
-        <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-        К сотрудникам
+      <Button type="secondary" link="/processes">
+        <PuzzleIcon class="w-5 h-5 mr-1"/>
+        К процессам
       </Button>
 
-      <Button color="blue" link="/roles/create">
+      <Button color="blue" link="/diagnostic-card/create">
         <PlusCircleIcon class="w-5 h-5 mr-1"/>
         Создать
       </Button>
@@ -53,19 +55,19 @@ const items = [
       <THead>
       <Tr>
         <Th>Название</Th>
-        <Th>Дата создания</Th>
-        <Th class="text-center">Действия</Th>
+        <Th>Создано</Th>
+        <Th>Действия</Th>
       </Tr>
       </THead>
       <TBody>
-      <Tr v-for="(item, index) in items" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
+      <Tr v-for="(question, index) in questions" :key="question.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
         <Td>
-          <Link href="/roles/create">
-            {{ item.name }}
+          <Link href="/diagnostic-card/create">
+            {{ question.name }}
           </Link>
         </Td>
         <Td>
-          {{ item.created_at }}
+          {{ question.created_at }}
         </Td>
         <Td class="text-center py-5">
           <Dropdown

@@ -61,6 +61,10 @@ const tasks = ref([
       </div>
 
       <div class="col-span-12 sm:col-span-4">
+        <Select label="Группа операции" :options="['Реклама', 'Оборудование']" />
+      </div>
+
+      <div class="col-span-12 sm:col-span-4">
         <Input label="Сумма операции" type="number" />
       </div>
     </div>

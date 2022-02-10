@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue';
+import {computed, ref} from 'vue';
 import {MenuButton} from '@headlessui/vue';
 import {
   ClockIcon,
@@ -25,6 +25,12 @@ import Input from '@/UI/Input.vue';
 import Sidebar from '@/UI/Sidebar.vue';
 import Logo from '@/Partials/Logo.vue';
 import {setTitle} from '~/meta.js';
+import { useRouter } from "vue-router";
+import useApi from "../../composables/useApi"
+import useAuth from "../../composables/useAuth";
+const { axiosInstance } = useApi();
+const { user, resetUser } = useAuth();
+const router = useRouter();
 
 const props = defineProps({
   title: {
@@ -43,7 +49,17 @@ setTitle(props.title);
 const sidebarOpen = ref(false);
 const userMenu = [
   [{label: 'Профиль', href: '/profile'}],
-  [{label: 'Выход', href: '/'}],
+  [{label: 'Выход', href: '/', click: () => {
+
+  axiosInstance.post('auth/logout').catch(function(error){
+    // Just out to console, because system need to be stable
+    // and not stop when logout method returns something wrong
+    console.error(error);
+  })
+
+    resetUser()
+    router.push("/");
+  }}],
 ];
 const menu = [
   {label: 'Главная', href: '/dashboard', icon: PresentationChartLineIcon, current: false},
@@ -62,6 +78,16 @@ const departments = [
   {label: 'Ростов-на-Дону / Западный', href: '#', color: 'green'},
   {label: 'Краснодар / Центр', href: '#', color: 'indigo'},
 ];
+
+
+const userFullName = computed(() => {
+  const userData = user.value;
+
+  if(userData.id) {
+    return `${userData.name} ${userData.surname}`
+  }
+  return 'Гость';
+});
 </script>
 
 <template>
@@ -95,7 +121,7 @@ const departments = [
               <span class="flex w-full justify-between items-center">
                 <Avatar
                   image="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
-                  title="Дядя Фёдор"
+                  :title="userFullName"
                   subtitle="Администратор"
                 />
 

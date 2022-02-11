@@ -107,7 +107,7 @@ export default {
     <div class="mt-8">
       <div class="mt-6">
 
-        <form class="space-y-6">
+        <form class="space-y-6" @submit.prevent="login">
           <Input label="E-mail" type="email" v-model="email" />
 
           <div class="space-y-1">
@@ -122,19 +122,20 @@ export default {
             </div>
           </div>
 
-          <Button color="blue" class="w-full justify-center" @click.prevent="login">
-            Войти
-          </Button>
-        </form>
-         <div class="flex items-center justify-center">
-          <div
+          <!-- We need this button to make form generally submittable -->
+          <button style="display: none;" type="submit">accessible submit button</button>
+
+          <Button :disabled="loading" :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading  }" color="blue" class="w-full justify-center" @click.prevent="login" >
+            <span v-if="!loading">Войти</span>
+            <div
             v-if="loading"
-            class="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full"
+            class="spinner-border animate-spin inline-block w-8 h-8 border-b-2 rounded-full"
             role="status"
           ></div>
-        </div>
-        <p v-if="error" class="text-red-500 text-xs italic text-center">
-          {{ errorMessage }}
+          </Button>
+        </form>
+         <p v-if="error" class="text-red-500 text-xs italic text-center">
+              {{ errorMessage }}
         </p>
       </div>
     </div>

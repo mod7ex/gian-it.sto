@@ -28,6 +28,7 @@ import {setTitle} from '~/meta.js';
 import { useRouter } from "vue-router";
 import useApi from "../../composables/useApi"
 import useAuth from "../../composables/useAuth";
+import { isPathAccessableForCurrentUser } from "../../lib/permissions";
 const { axiosInstance } = useApi();
 const { user, resetUser } = useAuth();
 const router = useRouter();
@@ -61,7 +62,7 @@ const userMenu = [
     router.push("/");
   }}],
 ];
-const menu = [
+let menu = [
   {label: 'Главная', href: '/dashboard', icon: PresentationChartLineIcon, current: false},
   {label: 'Заказ-наряды', href: '/orders', icon: ChipIcon, current: false},
   {label: 'Задачи', href: '/tasks', icon: TableIcon, current: false},
@@ -72,6 +73,10 @@ const menu = [
   {label: 'Финансы', href: '/finances', icon: CurrencyDollarIcon, current: false},
   //{label: 'Настройки', href: '/settings', icon: CogIcon, current: false},
 ];
+
+menu = menu.filter((menuItem) => {
+  return isPathAccessableForCurrentUser(menuItem.href);
+});
 
 const departments = [
   {label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow'},

@@ -1,12 +1,8 @@
-import axios from "axios";
-import {
-  watch
-} from "vue";
-import useAuth from "./useAuth";
+import axios from 'axios';
+import { watch } from 'vue';
+import useAuth from '~/composables/useAuth.js';
 
-const {
-  token
-} = useAuth();
+const { token } = useAuth();
 
 const instance = axios.create({
   baseURL: 'http://api.sto-test.ru/api/',
@@ -14,12 +10,11 @@ const instance = axios.create({
 });
 
 watch(token, (changedToken) => {
-  instance.defaults.headers.common['Authorization'] = (changedToken) ? `Bearer ${changedToken}` : null;
-})
+  instance.defaults.headers.common.Authorization = (changedToken) ? `Bearer ${changedToken}` : null;
+});
 
 export default function useApi() {
-
   return {
-    axiosInstance: instance
+    axiosInstance: instance,
   };
 }

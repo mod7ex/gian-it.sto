@@ -1,6 +1,6 @@
 <script setup>
-import {computed, ref} from 'vue';
-import {MenuButton} from '@headlessui/vue';
+import { computed, ref } from 'vue';
+import { MenuButton } from '@headlessui/vue';
 import {
   ClockIcon,
   HomeIcon,
@@ -16,7 +16,8 @@ import {
   CurrencyDollarIcon,
   CollectionIcon,
 } from '@heroicons/vue/outline';
-import {SearchIcon, SelectorIcon} from '@heroicons/vue/solid';
+import { SearchIcon, SelectorIcon } from '@heroicons/vue/solid';
+import { useRouter } from 'vue-router';
 import Avatar from '@/UI/Avatar.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import NavBar from '@/UI/NavBar.vue';
@@ -24,11 +25,11 @@ import SecondNavbar from '@/UI/SecondNavbar.vue';
 import Input from '@/UI/Input.vue';
 import Sidebar from '@/UI/Sidebar.vue';
 import Logo from '@/Partials/Logo.vue';
-import {setTitle} from '~/meta.js';
-import { useRouter } from "vue-router";
-import useApi from "../../composables/useApi"
-import useAuth from "../../composables/useAuth";
-import { isPathAccessableForCurrentUser } from "../../lib/permissions";
+import { setTitle } from '~/lib/meta.js';
+import useApi from '~/composables/useApi.js';
+import useAuth from '~/composables/useAuth.js';
+import { isPathAccessableForCurrentUser } from '~/lib/permissions.js';
+
 const { axiosInstance } = useApi();
 const { user, resetUser } = useAuth();
 const router = useRouter();
@@ -41,7 +42,7 @@ const props = defineProps({
   mainClasses: {
     type: String,
     required: false,
-    default: 'flex-1 relative z-0 overflow-y-auto focus:outline-none'
+    default: 'flex-1 relative z-0 overflow-y-auto focus:outline-none',
   },
 });
 
@@ -49,47 +50,47 @@ setTitle(props.title);
 
 const sidebarOpen = ref(false);
 const userMenu = [
-  [{label: 'Профиль', href: '/profile'}],
-  [{label: 'Выход', href: '/', click: () => {
+  [{ label: 'Профиль', href: '/profile' }],
+  [{
+    label: 'Выход',
+    href: '/',
+    click: () => {
+      axiosInstance.post('auth/logout').catch((error) => {
+        // Just out to console, because system need to be stable
+        // and not stop when logout method returns something wrong
+        console.error(error);
+      });
 
-  axiosInstance.post('auth/logout').catch(function(error){
-    // Just out to console, because system need to be stable
-    // and not stop when logout method returns something wrong
-    console.error(error);
-  })
-
-    resetUser()
-    router.push("/");
-  }}],
+      resetUser();
+      router.push('/');
+    },
+  }],
 ];
 let menu = [
-  {label: 'Главная', href: '/dashboard', icon: PresentationChartLineIcon, current: false},
-  {label: 'Заказ-наряды', href: '/orders', icon: ChipIcon, current: false},
-  {label: 'Задачи', href: '/tasks', icon: TableIcon, current: false},
-  {label: 'Рабочие процессы', href: '/processes', icon: PuzzleIcon, current: false},
-  {label: 'Склад', href: '/storages', icon: CollectionIcon, current: false},
-  {label: 'Клиенты', href: '/clients', icon: UserGroupIcon, current: false},
-  {label: 'Сотрудники', href: '/employers', icon: UserGroupIcon, current: false},
-  {label: 'Финансы', href: '/finances', icon: CurrencyDollarIcon, current: false},
-  //{label: 'Настройки', href: '/settings', icon: CogIcon, current: false},
+  { label: 'Главная', href: '/dashboard', icon: PresentationChartLineIcon, current: false },
+  { label: 'Заказ-наряды', href: '/orders', icon: ChipIcon, current: false },
+  { label: 'Задачи', href: '/tasks', icon: TableIcon, current: false },
+  { label: 'Рабочие процессы', href: '/processes', icon: PuzzleIcon, current: false },
+  { label: 'Склад', href: '/storages', icon: CollectionIcon, current: false },
+  { label: 'Клиенты', href: '/clients', icon: UserGroupIcon, current: false },
+  { label: 'Сотрудники', href: '/employers', icon: UserGroupIcon, current: false },
+  { label: 'Финансы', href: '/finances', icon: CurrencyDollarIcon, current: false },
+  // {label: 'Настройки', href: '/settings', icon: CogIcon, current: false},
 ];
 
-menu = menu.filter((menuItem) => {
-  return isPathAccessableForCurrentUser(menuItem.href);
-});
+menu = menu.filter((menuItem) => isPathAccessableForCurrentUser(menuItem.href));
 
 const departments = [
-  {label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow'},
-  {label: 'Ростов-на-Дону / Западный', href: '#', color: 'green'},
-  {label: 'Краснодар / Центр', href: '#', color: 'indigo'},
+  { label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow' },
+  { label: 'Ростов-на-Дону / Западный', href: '#', color: 'green' },
+  { label: 'Краснодар / Центр', href: '#', color: 'indigo' },
 ];
-
 
 const userFullName = computed(() => {
   const userData = user.value;
 
-  if(userData.id) {
-    return `${userData.name} ${userData.surname}`
+  if (userData.id) {
+    return `${userData.name} ${userData.surname}`;
   }
   return 'Гость';
 });

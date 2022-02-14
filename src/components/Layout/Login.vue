@@ -1,5 +1,5 @@
 <script setup>
-import {setTitle} from '~/meta.js';
+import { setTitle } from '~/lib/meta.js';
 
 const props = defineProps({
   title: {

@@ -1,8 +1,5 @@
 <script setup>
-import {ref} from 'vue';
-import {setTitle} from '~/meta.js';
-import Logo from '@/Partials/Logo.vue';
-import Button from '@/UI/Button.vue';
+import { ref } from 'vue';
 import {
   ChipIcon,
   CollectionIcon, CurrencyDollarIcon,
@@ -13,6 +10,9 @@ import {
   MenuIcon,
   XIcon,
 } from '@heroicons/vue/outline';
+import { setTitle } from '~/lib/meta.js';
+import Logo from '@/Partials/Logo.vue';
+import Button from '@/UI/Button.vue';
 
 const props = defineProps({
   title: {
@@ -24,9 +24,9 @@ const props = defineProps({
 setTitle(props.title);
 
 const menu = [
-  {label: 'Профиль', href: '/w/profile', current: false},
-  {label: 'Задачи', href: '/w/tasks', current: false},
-  {label: 'Рабочее время', href: '/w/times', current: false},
+  { label: 'Профиль', href: '/w/profile', current: false },
+  { label: 'Задачи', href: '/w/tasks', current: false },
+  { label: 'Рабочее время', href: '/w/times', current: false },
 ];
 
 const isShowMenu = ref(false);

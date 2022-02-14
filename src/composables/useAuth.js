@@ -1,27 +1,21 @@
-import {
-  ref,
-  readonly,
-  computed
-} from "vue";
+import { ref, readonly, computed } from 'vue';
 
 const defaultUserFields = {
   id: 0,
   permissions: [],
-}
+};
 
-const token = ref("");
+const token = ref('');
 
 const user = ref({});
 
 user.value = defaultUserFields;
 
-
 export default function useAuth() {
-
   const setToken = ((inputToken) => {
-    localStorage.setItem('token', inputToken)
-    token.value = inputToken
-  })
+    localStorage.setItem('token', inputToken);
+    token.value = inputToken;
+  });
 
   const setUser = (userData) => {
     user.value = userData;
@@ -31,11 +25,9 @@ export default function useAuth() {
     localStorage.removeItem('token');
     setToken('');
     setUser(defaultUserFields);
-  }
+  };
 
-  const isUserLogged = computed(() => {
-    return user.value.id !== 0
-  })
+  const isUserLogged = computed(() => user.value.id !== 0);
 
   return {
     user: readonly(user),

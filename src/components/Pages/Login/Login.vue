@@ -11,14 +11,15 @@ import useApi from '~/composables/useApi.js';
 const router = useRouter();
 const { setUser, setToken } = useAuth();
 const { axiosInstance } = useApi();
-const email = ref('admin@admin.ru');
-const password = ref('password');
+const email = ref('');
+const password = ref('');
 const error = ref(false);
 const errorMessage = ref('');
 const loading = ref(false);
 
 const login = async () => {
   error.value = false;
+  errorMessage.value = '';
   loading.value = true;
   try {
     const res = await axiosInstance.post('auth/login', {
@@ -95,7 +96,7 @@ onMounted(() => {
             ></div>
           </Button>
         </form>
-        <p v-if="error" class="text-red-500 text-xs italic text-center">
+        <p v-if="error" class="text-red-500 text-xs font-bold text-center">
           {{ errorMessage }}
         </p>
       </div>

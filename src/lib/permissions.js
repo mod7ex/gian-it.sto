@@ -15,16 +15,18 @@ function isUserHasPermission(permissionName) {
 
 function processGuestRoutes(to, next) {
   const { isUserLogged } = useAuth();
-  const guestsRoutes = ['/', '/forgot-password', '/refresh-password'];
 
-  function isRouteForGuests(routePath) {
-    return guestsRoutes.includes(routePath);
+  function isRouteForGuests() {
+    if (to.meta.guest) {
+      return true;
+    }
+    return false;
   }
 
-  if (isRouteForGuests(to.path) && isUserLogged.value) {
+  if (isRouteForGuests() && isUserLogged.value) {
     next('/dashboard');
   }
-  if (!isRouteForGuests(to.path) && !isUserLogged.value) {
+  if (!isRouteForGuests() && !isUserLogged.value) {
     next('/');
   }
 }

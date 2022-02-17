@@ -74,7 +74,7 @@ const login = async () => {
     router.push('/dashboard');
   } catch (e) {
     error.value = true;
-    errorMessage.value = e.response.data.message;
+    errorMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
   } finally {
     loading.value = false;
   }

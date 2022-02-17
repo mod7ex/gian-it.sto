@@ -69,6 +69,7 @@ const savePassword = async () => {
   }
 
   cleanErrors();
+  loading.value = true;
 
   try {
     const res = await axiosInstance.post('auth/password/reset', {
@@ -82,7 +83,7 @@ const savePassword = async () => {
     refreshPageTitle.value = res.data.message;
   } catch (e) {
     error.value = true;
-    errorMessage.value = e.response.data.message;
+    errorMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
   } finally {
     loading.value = false;
   }
@@ -94,9 +95,8 @@ const savePassword = async () => {
   <LoginLayout :title="refreshPageTitle">
     <div class="mt-8">
       <div class="mt-6">
-        <p v-if="success" class="text-green-700 font-bold mb-6">
-        {{ successMessage }}
-        </p>
+        <p v-if="success" class="text-green-700 mb-6"> {{ successMessage }} </p>
+         <p v-if="error" class="text-red-500 text-sm text-center"> {{ errorMessage }} </p>
         <form action="#" method="POST" class="space-y-6">
 
           <Input v-if="!success" label="Новый пароль" type="password" v-model="password" :error="validationErrors.password" />
@@ -113,9 +113,6 @@ const savePassword = async () => {
               role="status"
             ></div>
           </Button>
-          <p v-if="error" class="text-red-500 text-xs text-center font-bold">
-          {{ errorMessage }}
-          </p>
 
           <Link href="/" class="flex text-sm">
             <ArrowNarrowLeftIcon class="h-5 w-5 mr-1" aria-hidden="true" />

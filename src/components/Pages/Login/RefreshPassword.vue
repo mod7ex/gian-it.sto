@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import Validator from 'Validator';
 import { ArrowNarrowLeftIcon } from '@heroicons/vue/outline';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
@@ -15,6 +16,10 @@ const { token } = router.currentRoute.value.params;
 const { email } = router.currentRoute.value.query;
 const password = ref('');
 const repeatPassword = ref('');
+const validationErrors = ref({
+  password: '',
+  password_confirm: '',
+});
 const error = ref(false);
 const errorMessage = ref('');
 const success = ref(false);
@@ -23,9 +28,48 @@ const refreshPageTitle = ref('Придумайте новый пароль');
 const successMessage = ref('');
 const loading = ref(false);
 
-const savePassword = async () => {
+function cleanErrors() {
+  validationErrors.value.password = '';
+  validationErrors.value.password_confirm = '';
   error.value = false;
   errorMessage.value = '';
+}
+
+function makeValidator() {
+  const validateData = {
+    password: password.value,
+    password_confirm: repeatPassword.value,
+  };
+
+  const validateRules = {
+    password: 'required|min:8',
+    password_confirm: 'required|same:password',
+  };
+
+  const validateMessages = {
+    'password_confirm.required': 'Укажите пароль ещё раз',
+    'password_confirm.same': 'Пароли должны совпадать',
+    'password.required': 'Укажите новый пароль',
+    'password.min': 'Пароль должен содержать не менее 8 символов',
+  };
+
+  return Validator.make(validateData, validateRules, validateMessages);
+}
+
+const savePassword = async () => {
+  const validator = makeValidator();
+
+  if (validator.fails()) {
+    const errors = validator.getErrors();
+    validationErrors.value = {
+      password: (errors.password) ? errors.password[0] : '',
+      password_confirm: (errors.password_confirm) ? errors.password_confirm[0] : '',
+    };
+    return;
+  }
+
+  cleanErrors();
+
   try {
     const res = await axiosInstance.post('auth/password/reset', {
       token,
@@ -55,10 +99,10 @@ const savePassword = async () => {
         </p>
         <form action="#" method="POST" class="space-y-6">
 
-          <Input v-if="!success" label="Новый пароль" type="password" v-model="password" />
+          <Input v-if="!success" label="Новый пароль" type="password" v-model="password" :error="validationErrors.password" />
 
           <div class="space-y-1" v-if="!success">
-            <Input label="Повторите пароль" type="password" v-model="repeatPassword" />
+            <Input label="Повторите пароль" type="password" v-model="repeatPassword" :error="validationErrors.password_confirm" />
           </div>
 
           <Button v-if="!success" :disabled="loading" :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }" color="blue" class="w-full justify-center" @click.prevent="savePassword">

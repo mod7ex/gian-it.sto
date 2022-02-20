@@ -1,7 +1,8 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref, onMounted } from 'vue';
-import Validator from 'Validator';
+import { ref, reactive, computed, onMounted } from 'vue';
+import useVuelidate from '@vuelidate/core';
+import { required, email, helpers } from '@vuelidate/validators';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import Link from '@/UI/Link.vue';
@@ -12,62 +13,39 @@ import useApi from '~/composables/useApi.js';
 const router = useRouter();
 const { setUser, setToken } = useAuth();
 const { axiosInstance } = useApi();
-const email = ref('');
-const password = ref('');
 const error = ref(false);
 const errorMessage = ref('');
 const loading = ref(false);
-const validationErrors = ref({
+const form = reactive({
   email: '',
   password: '',
 });
 
-function cleanErrors() {
-  validationErrors.value.email = '';
-  validationErrors.value.password = '';
-  error.value = false;
-  errorMessage.value = '';
-}
+const rules = computed(() => ({
+  email: {
+    required: helpers.withMessage('Укажите email', required),
+    email: helpers.withMessage('Укажите верный email', email),
+  },
+  password: { required: helpers.withMessage('Укажите пароль', required) },
+}));
 
-function makeValidator() {
-  const validateData = {
-    email: email.value,
-    password: password.value,
-  };
-
-  const validateRules = {
-    email: 'required|email',
-    password: 'required',
-  };
-
-  const validateMessages = {
-    'email.email': 'Укажите верный email',
-    'email.required': 'Укажите email',
-    'password.required': 'Укажите пароль',
-  };
-
-  return Validator.make(validateData, validateRules, validateMessages);
-}
+const v$ = useVuelidate(rules, form);
 
 const login = async () => {
-  const validator = makeValidator();
+  v$.value.$touch();
 
-  if (validator.fails()) {
-    const errors = validator.getErrors();
-    validationErrors.value = {
-      email: (errors.email) ? errors.email[0] : '',
-      password: (errors.password) ? errors.password[0] : '',
-    };
+  if (v$.value.$invalid) {
     return;
   }
 
-  cleanErrors();
+  error.value = false;
+  errorMessage.value = '';
 
   loading.value = true;
   try {
     const res = await axiosInstance.post('auth/login', {
-      email: email.value,
-      password: password.value,
+      email: form.email,
+      password: form.password,
     });
     setToken(res.data.api_token);
     setUser(res.data.user);
@@ -107,10 +85,11 @@ onMounted(() => {
     <div class="mt-8">
       <div class="mt-6">
         <form class="space-y-6" @submit.prevent="login">
-          <Input label="E-mail" type="email" v-model="email" :error="validationErrors.email" />
+          <Input label="E-mail" type="email" v-model="v$.email.$model" :error="(v$.email.$error) ? v$.email.$silentErrors[0].$message : ''" />
 
           <div class="space-y-1">
-            <Input label="Пароль" type="password" v-model="password" :error="validationErrors.password" />
+            <Input label="Пароль" type="password" v-model="v$.password.$model" :error="(v$.password.$error) ? v$.password.$errors[0].$message : ''" />
+
           </div>
 
           <div class="flex items-center justify-between">

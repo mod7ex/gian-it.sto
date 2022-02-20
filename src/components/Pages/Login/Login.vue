@@ -1,84 +1,16 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import { ref, reactive, computed, onMounted } from 'vue';
-import useVuelidate from '@vuelidate/core';
-import { required, email, helpers } from '@vuelidate/validators';
+import { onMounted } from 'vue';
 import Spinner from '@/UI/Spinner.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import Link from '@/UI/Link.vue';
 import LoginLayout from '@/Layout/Login.vue';
-import useAuth from '~/composables/useAuth.js';
-import useApi from '~/composables/useApi.js';
+import useLogin from '~/services/login.js';
 
 const router = useRouter();
-const { setUser, setToken } = useAuth();
-const { axiosInstance } = useApi();
-const errorResponse = ref(false);
-const errorResponseMessage = ref('');
-const loading = ref(false);
-const form = reactive({
-  email: '',
-  password: '',
-});
+const { login, loading, checkLogin, v$ } = useLogin(router);
 
-const rules = computed(() => ({
-  email: {
-    required: helpers.withMessage('Укажите email', required),
-    email: helpers.withMessage('Укажите верный email', email),
-  },
-  password: { required: helpers.withMessage('Укажите пароль', required) },
-}));
-
-const v$ = useVuelidate(rules, form);
-
-function cleanErrors() {
-  errorResponse.value = false;
-  errorResponseMessage.value = '';
-}
-
-const login = async () => {
-  v$.value.$touch();
-
-  if (v$.value.$invalid) {
-    return;
-  }
-
-  cleanErrors();
-  loading.value = true;
-  try {
-    const res = await axiosInstance.post('auth/login', {
-      email: form.email,
-      password: form.password,
-    });
-    setToken(res.data.api_token);
-    setUser(res.data.user);
-    router.push('/dashboard');
-  } catch (e) {
-    errorResponse.value = true;
-    errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
-  } finally {
-    loading.value = false;
-  }
-};
-
-const checkLogin = async () => {
-  const savedToken = localStorage.getItem('token');
-  if (savedToken) {
-    try {
-      const res = await axiosInstance.get('auth/user', {
-        headers: {
-          Authorization: `Bearer ${savedToken}`,
-        },
-      });
-      setToken(savedToken);
-      setUser(res.data.user);
-      router.push('/dashboard');
-    } catch (e) {
-      console.error('Error request', e.response.data);
-    }
-  }
-};
 onMounted(() => {
   checkLogin();
 });

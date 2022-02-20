@@ -25,11 +25,6 @@ const refreshPageTitle = ref('Придумайте новый пароль');
 const loading = ref(false);
 const fieldLength = ref(8);
 
-function cleanErrors() {
-  errorResponse.value = false;
-  errorResponseMessage.value = '';
-}
-
 const form = reactive({
   password: '',
   confirmPassword: '',
@@ -45,11 +40,19 @@ const rules = computed(() => ({
   },
 }));
 const v$ = useVuelidate(rules, form);
+
+function cleanErrors() {
+  errorResponse.value = false;
+  errorResponseMessage.value = '';
+  v$.value.$reset();
+}
+
 const savePassword = async () => {
   v$.value.$touch();
   if (v$.value.$invalid) {
     return;
   }
+  v$.value.$reset();
   cleanErrors();
   loading.value = true;
 

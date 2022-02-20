@@ -32,6 +32,7 @@ const v$ = useVuelidate(rules, form);
 function cleanErrors() {
   errorResponse.value = false;
   errorResponseMessage.value = '';
+  v$.value.$reset();
 }
 
 const refresh = async () => {

@@ -1,7 +1,9 @@
 <script setup>
-import { ref } from 'vue';
-import Validator from 'Validator';
+import { ref, reactive, computed } from 'vue';
+import useVuelidate from '@vuelidate/core';
+import { required, email, helpers } from '@vuelidate/validators';
 import { ArrowNarrowLeftIcon } from '@heroicons/vue/outline';
+import Spinner from '@/UI/Spinner.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import Link from '@/UI/Link.vue';
@@ -10,63 +12,45 @@ import useApi from '~/composables/useApi.js';
 
 const { axiosInstance } = useApi();
 const refreshPageTitle = ref('Забыли пароль?');
-const email = ref('');
-const success = ref(false);
-const successMessage = ref('');
-const error = ref(false);
-const errorMessage = ref('');
+const successResponse = ref(false);
+const successResponseMessage = ref('');
+const errorResponse = ref(false);
+const errorResponseMessage = ref('');
 const loading = ref(false);
-const validationErrors = ref({
+const form = reactive({
   email: '',
 });
+const rules = computed(() => ({
+  email: {
+    required: helpers.withMessage('Укажите email', required),
+    email: helpers.withMessage('Укажите верный email', email),
+  },
+}));
+
+const v$ = useVuelidate(rules, form);
 
 function cleanErrors() {
-  validationErrors.value.email = '';
-  error.value = false;
-  errorMessage.value = '';
-}
-
-function makeValidator() {
-  const validateData = {
-    email: email.value,
-  };
-
-  const validateRules = {
-    email: 'required|email',
-  };
-
-  const validateMessages = {
-    'email.email': 'Укажите верный email',
-    'email.required': 'Укажите email',
-  };
-
-  return Validator.make(validateData, validateRules, validateMessages);
+  errorResponse.value = false;
+  errorResponseMessage.value = '';
 }
 
 const refresh = async () => {
-  const validator = makeValidator();
-
-  if (validator.fails()) {
-    const errors = validator.getErrors();
-    validationErrors.value = {
-      email: (errors.email) ? errors.email[0] : '',
-    };
+  v$.value.$touch();
+  if (v$.value.$invalid) {
     return;
   }
-
   cleanErrors();
-
   loading.value = true;
   try {
     const res = await axiosInstance.post('auth/password/email', {
-      email: email.value,
+      email: form.email,
     });
-    success.value = true;
-    successMessage.value = email.value;
+    successResponse.value = true;
+    successResponseMessage.value = form.email.value;
     refreshPageTitle.value = res.data.message;
   } catch (e) {
-    error.value = true;
-    errorMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
+    errorResponse.value = true;
+    errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
   } finally {
     loading.value = false;
   }
@@ -77,20 +61,16 @@ const refresh = async () => {
     <LoginLayout :title="refreshPageTitle">
       <div class="mt-8">
         <div class="mt-6">
-          <p v-if="success" class="text-green-700 mb-6">{{ email }}</p>
-          <p v-if="error" class="text-red-500 text-sm mb-6">{{ errorMessage }}</p>
+          <p v-if="successResponse" class="text-green-700 mb-6">{{ form.email }}</p>
+          <p v-if="errorResponse" class="text-red-500 text-sm mb-6">{{ errorResponseMessage }}</p>
           <form action="#" method="POST" class="space-y-6">
             <Input label="E-mail" type="email" help="Введите ваш email, на него придёт ссылка для сброса пароля"
-            v-model="email" v-if="!success" :error="validationErrors.email" />
+            v-model="v$.email.$model" v-if="!successResponse" :error="(v$.email.$error) ? v$.email.$silentErrors[0].$message : ''" />
 
             <Button color="blue" class="w-full justify-center" @click="refresh" :disabled="loading"
-            :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }" v-if="!success">
+            :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }" v-if="!successResponse">
               <span v-if="!loading">Отправить</span>
-              <div
-              v-if="loading"
-              class="spinner-border animate-spin inline-block w-8 h-8 border-b-2 rounded-full"
-              role="status"
-            ></div>
+              <Spinner  v-if="loading" />
             </Button>
 
             <Link href="/" class="flex text-sm">

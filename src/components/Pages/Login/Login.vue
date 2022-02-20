@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router';
 import { ref, reactive, computed, onMounted } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { required, email, helpers } from '@vuelidate/validators';
+import Spinner from '@/UI/Spinner.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import Link from '@/UI/Link.vue';
@@ -13,8 +14,8 @@ import useApi from '~/composables/useApi.js';
 const router = useRouter();
 const { setUser, setToken } = useAuth();
 const { axiosInstance } = useApi();
-const error = ref(false);
-const errorMessage = ref('');
+const errorResponse = ref(false);
+const errorResponseMessage = ref('');
 const loading = ref(false);
 const form = reactive({
   email: '',
@@ -31,6 +32,11 @@ const rules = computed(() => ({
 
 const v$ = useVuelidate(rules, form);
 
+function cleanErrors() {
+  errorResponse.value = false;
+  errorResponseMessage.value = '';
+}
+
 const login = async () => {
   v$.value.$touch();
 
@@ -38,9 +44,7 @@ const login = async () => {
     return;
   }
 
-  error.value = false;
-  errorMessage.value = '';
-
+  cleanErrors();
   loading.value = true;
   try {
     const res = await axiosInstance.post('auth/login', {
@@ -51,8 +55,8 @@ const login = async () => {
     setUser(res.data.user);
     router.push('/dashboard');
   } catch (e) {
-    error.value = true;
-    errorMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
+    errorResponse.value = true;
+    errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
   } finally {
     loading.value = false;
   }
@@ -111,15 +115,11 @@ onMounted(() => {
             @click.prevent="login"
           >
             <span v-if="!loading">Войти</span>
-            <div
-              v-if="loading"
-              class="spinner-border animate-spin inline-block w-8 h-8 border-b-2 rounded-full"
-              role="status"
-            ></div>
+            <Spinner  v-if="loading" />
           </Button>
         </form>
-        <p v-if="error" class="text-red-500 text-sm text-center mt-6">
-          {{ errorMessage }}
+        <p v-if="errorResponse" class="text-red-500 text-sm text-center mt-6">
+          {{ errorResponseMessage }}
         </p>
       </div>
     </div>

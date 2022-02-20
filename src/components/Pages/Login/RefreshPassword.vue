@@ -82,7 +82,7 @@ const savePassword = async () => {
       <div class="mt-6">
         <p v-if="successResponse" class="text-green-700 text-sm mb-6"> {{ successResponseMessage }} </p>
          <p v-if="errorResponse" class="text-red-500 text-sm mb-6"> {{ errorResponseMessage }} </p>
-        <form class="space-y-6">
+        <form class="space-y-6" @submit.prevent="savePassword">
 
           <Input v-if="!successResponse" label="Новый пароль" type="password" v-model="v$.password.$model" :error="(v$.password.$error) ? v$.password.$silentErrors[0].$message : ''" />
 

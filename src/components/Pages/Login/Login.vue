@@ -102,11 +102,6 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- We need this button to make form generally submittable -->
-          <button style="display: none;" type="submit">
-            accessible submit button
-          </button>
-
           <Button
             :disabled="loading"
             :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }"
@@ -117,6 +112,8 @@ onMounted(() => {
             <span v-if="!loading">Войти</span>
             <Spinner  v-if="loading" />
           </Button>
+          <!-- We need this button to make form generally submittable -->
+            <button class="hidden" type="submit">accessible submit button</button>
         </form>
         <p v-if="errorResponse" class="text-red-500 text-sm text-center mt-6">
           {{ errorResponseMessage }}

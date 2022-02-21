@@ -8,12 +8,12 @@ let routerInstance;
 const { setUser, setToken } = useAuth();
 const { axiosInstance } = useApi();
 const { rules } = useLoginValidationsRules();
-const errorResponse = ref(false);
+const isErrorResponse = ref(false);
 const errorResponseMessage = ref('');
-const loading = ref(false);
+const isLoading = ref(false);
 
 function cleanErrors() {
-  errorResponse.value = false;
+  isErrorResponse.value = false;
   errorResponseMessage.value = '';
 }
 
@@ -24,7 +24,7 @@ const form = reactive({
 
 const v$ = useVuelidate(rules, form, { $lazy: true });
 
-const login = async () => {
+const loginUser = async () => {
   v$.value.$touch();
 
   if (v$.value.$invalid) {
@@ -33,7 +33,7 @@ const login = async () => {
   v$.value.$reset();
 
   cleanErrors();
-  loading.value = true;
+  isLoading.value = true;
 
   let res;
   try {
@@ -42,10 +42,10 @@ const login = async () => {
       password: form.password,
     });
   } catch (e) {
-    errorResponse.value = true;
+    isErrorResponse.value = true;
     errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
   } finally {
-    loading.value = false;
+    isLoading.value = false;
   }
 
   if (res?.data?.api_token) {
@@ -57,32 +57,34 @@ const login = async () => {
   }
 };
 
-const checkLogin = async () => {
+const authByTokenFromLocalstorage = async () => {
   const savedToken = localStorage.getItem('token');
   if (savedToken) {
+    let res;
     try {
-      const res = await axiosInstance.get('auth/user', {
+      res = await axiosInstance.get('auth/user', {
         headers: {
           Authorization: `Bearer ${savedToken}`,
         },
       });
+    } catch (e) {
+      console.error('Error request', e?.response?.data);
+    }
+    if (res?.data?.user) {
       setToken(savedToken);
       setUser(res.data.user);
       routerInstance.push('/dashboard');
-    } catch (e) {
-      console.error('Error request', e?.response?.data);
     }
   }
 };
 export default function useLogin(router) {
   routerInstance = router;
   return {
-    login,
-    checkLogin,
-    cleanErrors,
+    loginUser,
+    authByTokenFromLocalstorage,
     v$,
-    loading,
-    errorResponse,
+    isLoading,
+    isErrorResponse,
     errorResponseMessage,
   };
 }

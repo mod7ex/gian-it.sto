@@ -1,12 +1,13 @@
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import { required, email, helpers } from '@vuelidate/validators';
 import useAuth from '~/composables/useAuth.js';
 import useApi from '~/composables/useApi.js';
+import useLoginValidationsRules from '~/validationsRules/login.js';
 
 let routerInstance;
 const { setUser, setToken } = useAuth();
 const { axiosInstance } = useApi();
+const { rules } = useLoginValidationsRules();
 const errorResponse = ref(false);
 const errorResponseMessage = ref('');
 const loading = ref(false);
@@ -20,14 +21,6 @@ const form = reactive({
   email: '',
   password: '',
 });
-
-const rules = computed(() => ({
-  email: {
-    required: helpers.withMessage('Укажите email', required),
-    email: helpers.withMessage('Укажите верный email', email),
-  },
-  password: { required: helpers.withMessage('Укажите пароль', required) },
-}));
 
 const v$ = useVuelidate(rules, form, { $lazy: true });
 
@@ -89,5 +82,7 @@ export default function useLogin(router) {
     cleanErrors,
     v$,
     loading,
+    errorResponse,
+    errorResponseMessage,
   };
 }

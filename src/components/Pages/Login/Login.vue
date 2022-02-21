@@ -9,7 +9,7 @@ import LoginLayout from '@/Layout/Login.vue';
 import useLogin from '~/services/login.js';
 
 const router = useRouter();
-const { login, loading, checkLogin, v$ } = useLogin(router);
+const { login, checkLogin, v$, loading, errorResponse, errorResponseMessage } = useLogin(router);
 
 onMounted(() => {
   checkLogin();

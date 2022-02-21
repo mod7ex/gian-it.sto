@@ -7,7 +7,7 @@ import Link from '@/UI/Link.vue';
 import LoginLayout from '@/Layout/Login.vue';
 import useForgotPassword from '~/services/forgotPassword.js';
 
-const { refreshPassword, v$, refreshPageTitle, isLoading, isSuccessResponse, isErrorResponse, errorResponseMessage } = useForgotPassword();
+const { refreshPassword, v$, form, refreshPageTitle, isLoading, isSuccessResponse, isErrorResponse, errorResponseMessage } = useForgotPassword();
 </script>
 
 <template>

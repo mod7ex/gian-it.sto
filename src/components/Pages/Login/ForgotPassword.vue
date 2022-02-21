@@ -1,61 +1,13 @@
 <script setup>
-import { ref, reactive, computed } from 'vue';
-import useVuelidate from '@vuelidate/core';
-import { required, email, helpers } from '@vuelidate/validators';
 import { ArrowNarrowLeftIcon } from '@heroicons/vue/outline';
 import Spinner from '@/UI/Spinner.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import Link from '@/UI/Link.vue';
 import LoginLayout from '@/Layout/Login.vue';
-import useApi from '~/composables/useApi.js';
+import useForgotPassword from '~/services/forgotPassword.js';
 
-const { axiosInstance } = useApi();
-const refreshPageTitle = ref('Забыли пароль?');
-const successResponse = ref(false);
-const successResponseMessage = ref('');
-const errorResponse = ref(false);
-const errorResponseMessage = ref('');
-const loading = ref(false);
-const form = reactive({
-  email: '',
-});
-const rules = computed(() => ({
-  email: {
-    required: helpers.withMessage('Укажите email', required),
-    email: helpers.withMessage('Укажите верный email', email),
-  },
-}));
-
-const v$ = useVuelidate(rules, form);
-
-function cleanErrors() {
-  errorResponse.value = false;
-  errorResponseMessage.value = '';
-  v$.value.$reset();
-}
-
-const refresh = async () => {
-  v$.value.$touch();
-  if (v$.value.$invalid) {
-    return;
-  }
-  cleanErrors();
-  loading.value = true;
-  try {
-    const res = await axiosInstance.post('auth/password/email', {
-      email: form.email,
-    });
-    successResponse.value = true;
-    successResponseMessage.value = form.email.value;
-    refreshPageTitle.value = res.data.message;
-  } catch (e) {
-    errorResponse.value = true;
-    errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
-  } finally {
-    loading.value = false;
-  }
-};
+const { refresh, v$, refreshPageTitle, loading, successResponse, errorResponse, errorResponseMessage } = useForgotPassword();
 </script>
 
 <template>

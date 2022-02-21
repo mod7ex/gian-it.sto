@@ -52,6 +52,7 @@ export default function useForgotPassword() {
   return {
     refreshPassword,
     v$,
+    form,
     refreshPageTitle,
     isLoading,
     isSuccessResponse,

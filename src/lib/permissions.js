@@ -1,5 +1,5 @@
 import useAuth from '~/composables/useAuth.js';
-import routesPermissionsMap from './permissionsMap';
+import routesPermissionsMap from './permissionsMap.js';
 
 function isUserHasPermission(permissionName) {
   const { user } = useAuth();

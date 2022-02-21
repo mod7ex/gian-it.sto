@@ -37,8 +37,12 @@ function isPathAccessableForCurrentUser(routePath) {
 
     if (Array.isArray(permissionName)) {
       const hasAtLeastOneNeeded = !!permissionName.find((perm) => isUserHasPermission(perm));
-      if (!hasAtLeastOneNeeded) return false;
-    } else if (!isUserHasPermission(permissionName)) return false;
+      if (!hasAtLeastOneNeeded) {
+        return false;
+      }
+    } else if (!isUserHasPermission(permissionName)) {
+      return false;
+    }
 
     return true;
   }

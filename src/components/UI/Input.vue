@@ -70,9 +70,9 @@ if (props.disabled) {
 }
 
 if (props.error.length > 0) {
-  styles.push('pr-10 border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500')
+  styles.push('pr-10 border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500');
 } else {
-  styles.push('focus:ring-indigo-500 focus:border-indigo-500 border-gray-300')
+  styles.push('focus:ring-blue-500 focus:border-blue-500 border-gray-300');
 }
 
 if (props.icon) {

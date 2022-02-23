@@ -2,7 +2,7 @@
 import {
   CheckIcon,
 } from '@heroicons/vue/outline';
-import {ref} from 'vue';
+import { ref } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
@@ -10,11 +10,16 @@ import TextArea from '@/UI/TextArea.vue';
 import UploadImage from '@/UI/UploadImage.vue';
 import Toggle from '@/UI/Toggle.vue';
 import List from '@/UI/List.vue';
+import ProfileChangePasswordModal from '@/Partials/ProfileChangePasswordModal.vue';
 
 const toggles = ref([
   false,
-  false
+  false,
 ]);
+const open = ref(false);
+function openModalChangePassword() {
+  open.value = true;
+}
 
 const avatar = ref('https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixqx=SjPZjUxoVh&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=320&h=320&q=80');
 
@@ -56,12 +61,11 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
             </div>
 
             <div class="col-span-12 sm:col-span-6">
-              <Input label="Новый пароль" type="password" />
+             <Button color="blue" @click.prevent="openModalChangePassword">
+               Сменить пароль
+            </Button>
             </div>
 
-            <div class="col-span-12 sm:col-span-6">
-              <Input label="Подтвердите новый пароль" type="password" />
-            </div>
           </div>
         </div>
       </div>
@@ -92,6 +96,7 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
           </List>
         </div>
       </div>
+      <ProfileChangePasswordModal :show="open" @close-modal="open = false"></ProfileChangePasswordModal>
     </OfficeLayout>
 </template>
 

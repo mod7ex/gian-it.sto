@@ -6,48 +6,37 @@ function isUserHasPermission(permissionName) {
 
   const permissionFound = user.value.permissions.find((perm) => (perm.name === permissionName));
 
-  if (permissionFound) {
-    return true;
-  }
-
-  return false;
+  return permissionFound !== undefined;
 }
 
 function processGuestRoutes(to, next) {
   const { isUserLogged } = useAuth();
 
   function isRouteForGuests() {
-    if (to.meta.guest) {
-      return true;
-    }
-    return false;
+    return !!to.meta.guest;
   }
 
   if (isRouteForGuests() && isUserLogged.value) {
     next('/dashboard');
   }
+
   if (!isRouteForGuests() && !isUserLogged.value) {
     next('/');
   }
 }
 
 function isPathAccessableForCurrentUser(routePath) {
-  if (routesPermissionsMap[routePath]) {
-    const permissionName = routesPermissionsMap[routePath];
-
-    if (Array.isArray(permissionName)) {
-      const hasAtLeastOneNeeded = !!permissionName.find((perm) => isUserHasPermission(perm));
-      if (!hasAtLeastOneNeeded) {
-        return false;
-      }
-    } else if (!isUserHasPermission(permissionName)) {
-      return false;
-    }
-
+  if (!routesPermissionsMap[routePath]) {
     return true;
   }
 
-  return true;
+  const permissionName = routesPermissionsMap[routePath];
+
+  if (Array.isArray(permissionName)) {
+    return permissionName.find((perm) => isUserHasPermission(perm)) !== undefined;
+  }
+
+  return isUserHasPermission(permissionName);
 }
 
 function processProtectedRoutes(to, next) {

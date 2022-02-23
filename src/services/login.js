@@ -2,12 +2,12 @@ import { ref, reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useAuth from '~/composables/useAuth.js';
 import useApi from '~/composables/useApi.js';
-import useLoginValidationsRules from '~/validationsRules/login.js';
+import loginValidationsRules from '~/validationsRules/login.js';
 
 let routerInstance;
 const { setUser, setToken } = useAuth();
 const { axiosInstance } = useApi();
-const { rules } = useLoginValidationsRules();
+const { rules } = loginValidationsRules();
 const isErrorResponse = ref(false);
 const errorResponseMessage = ref('');
 const isLoading = ref(false);

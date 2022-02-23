@@ -1,10 +1,10 @@
 import { ref, reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useApi from '~/composables/useApi.js';
-import useForgotPasswordValidationsRules from '~/validationsRules/forgotPassword.js';
+import forgotPasswordValidationsRules from '~/validationsRules/forgotPassword.js';
 
 const { axiosInstance } = useApi();
-const { rules } = useForgotPasswordValidationsRules();
+const { rules } = forgotPasswordValidationsRules();
 const refreshPageTitle = ref('Забыли пароль?');
 const isLoading = ref(false);
 const isSuccessResponse = ref(false);

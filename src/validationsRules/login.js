@@ -9,7 +9,7 @@ const rules = computed(() => ({
   password: { required: helpers.withMessage('Укажите пароль', required) },
 }));
 
-export default function useLoginValidationsRules() {
+export default function loginValidationsRules() {
   return {
     rules,
   };

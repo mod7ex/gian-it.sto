@@ -8,7 +8,7 @@ const rules = computed(() => ({
   },
 }));
 
-export default function useLoginValidationsRules() {
+export default function forgotPasswordValidationsRules() {
   return {
     rules,
   };

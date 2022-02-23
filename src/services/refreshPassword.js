@@ -1,6 +1,6 @@
 import { ref, reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import useRefreshPasswordValidationsRules from '~/validationsRules/refreshPassword.js';
+import refreshPasswordValidationsRules from '~/validationsRules/refreshPassword.js';
 import useApi from '~/composables/useApi.js';
 
 const { axiosInstance } = useApi();
@@ -11,7 +11,7 @@ const form = reactive({
   password: '',
   confirmPassword: '',
 });
-const { rules } = useRefreshPasswordValidationsRules(form);
+const { rules } = refreshPasswordValidationsRules(form);
 
 const refreshPageTitle = ref('Придумайте новый пароль');
 const isLoading = ref(false);

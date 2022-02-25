@@ -16,9 +16,9 @@ const toggles = ref([
   false,
   false,
 ]);
-const open = ref(false);
-function openModalChangePassword() {
-  open.value = true;
+const isOpenModal = ref(false);
+function setIsOpenModalChangePassword(value) {
+  isOpenModal.value = value;
 }
 
 const avatar = ref('https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixqx=SjPZjUxoVh&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=320&h=320&q=80');
@@ -28,10 +28,14 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
 
 <template>
     <OfficeLayout title="Личные данные">
+      <ProfileChangePasswordModal :show="isOpenModal" @close-modal="setIsOpenModalChangePassword(false)"></ProfileChangePasswordModal>
       <template #actions>
         <Button color="green">
           <CheckIcon class="w-5 h-5 mr-1"/>
           Сохранить
+        </Button>
+        <Button color="blue" @click.prevent="setIsOpenModalChangePassword(true)">
+          Сменить пароль
         </Button>
       </template>
 
@@ -60,12 +64,6 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
               <Input label="Телефон" mask="+7 ### ###-##-##" />
             </div>
 
-            <div class="col-span-12 sm:col-span-6">
-             <Button color="blue" @click.prevent="openModalChangePassword">
-               Сменить пароль
-            </Button>
-            </div>
-
           </div>
         </div>
       </div>
@@ -83,7 +81,6 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
           <TextArea label="О себе"  rows="3" />
         </div>
       </div>
-
       <div class="pt-6 divide-y divide-gray-200">
         <div>
           <List class="mt-2" :items="[
@@ -96,7 +93,6 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
           </List>
         </div>
       </div>
-      <ProfileChangePasswordModal :show="open" @close-modal="open = false"></ProfileChangePasswordModal>
     </OfficeLayout>
 </template>
 

@@ -1,5 +1,6 @@
 <script setup>
-import {ref, watchEffect} from 'vue';
+import { ref, watchEffect } from 'vue';
+
 const props = defineProps({
   color: {
     type: String,
@@ -9,7 +10,7 @@ const props = defineProps({
   size: {
     type: String,
     required: false,
-    default: 'md',  // xs, sm, md, lg, xl
+    default: 'md', // xs, sm, md, lg, xl
   },
   circle: {
     type: Boolean,
@@ -34,7 +35,7 @@ const props = defineProps({
   link: {
     type: String,
     required: false,
-  }
+  },
 });
 
 let ring = props.color;

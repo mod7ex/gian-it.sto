@@ -126,7 +126,7 @@ const userFullName = computed(() => {
               class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
               <span class="flex w-full justify-between items-center">
                 <Avatar
-                  image="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+                  :image="user.avatar"
                   :title="userFullName"
                   subtitle="Администратор"
                 />
@@ -175,8 +175,8 @@ const userFullName = computed(() => {
             <Dropdown :items="userMenu" direction="right" class="ml-3 relative">
               <MenuButton
                 class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                <img class="h-8 w-8 rounded-full"
-                     src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                <img class="h-8 w-8 rounded-full object-cover"
+                     :src="user.avatar"
                      alt=""/>
               </MenuButton>
             </Dropdown>

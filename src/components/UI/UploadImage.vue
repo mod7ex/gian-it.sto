@@ -35,10 +35,10 @@ const id = uniqueId('uploadImage');
 
     <div class="mt-1 lg:hidden">
       <div class="flex items-center">
-        <div :class="['flex-shrink-0 inline-block overflow-hidde', {'rounded-full': props.rounded}, props.full ? 'w-full' : 'w-12']" aria-hidden="true">
-          <img :class="['h-full w-full', {'rounded-full': props.rounded}]" :src="image" alt="">
+        <div :class="['flex-shrink-0 inline-block overflow-hidde', {'rounded-full': props.rounded}, props.full ? 'h-full' : 'h-12', props.full ? 'w-full' : 'w-12']" aria-hidden="true">
+          <img :class="['object-cover h-full w-full', {'rounded-full': props.rounded}]" :src="image" alt="">
 
-          <span>Загрузить</span>
+          <span class="hidden lg:block">Загрузить</span>
         </div>
 
         <div class="ml-5 rounded-md shadow-sm">
@@ -58,7 +58,7 @@ const id = uniqueId('uploadImage');
     </div>
 
     <div :class="['hidden relative overflow-hidden lg:block', {'rounded-full': props.rounded}]">
-      <img :class="['relative', {'rounded-full': props.rounded}, props.full ? 'w-full' : 'w-40']" :src="image" alt="">
+      <img :class="['relative object-cover', {'rounded-full': props.rounded}, props.full ? 'h-full' : 'h-40', props.full ? 'w-full' : 'w-40']" :src="image" alt="">
 
       <label :for="id" class="absolute inset-0 w-full h-full bg-black bg-opacity-75 flex items-center justify-center text-sm font-medium text-white opacity-0 hover:opacity-100 focus-within:opacity-100">
         <span>Загрузить</span>

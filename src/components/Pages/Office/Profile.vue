@@ -1,5 +1,5 @@
 <script setup>
-import { CheckIcon } from '@heroicons/vue/outline';
+import { CheckIcon, XCircleIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
@@ -9,28 +9,36 @@ import Toggle from '@/UI/Toggle.vue';
 import List from '@/UI/List.vue';
 import ProfileChangePasswordModal from '@/Partials/ProfileChangePasswordModal.vue';
 import officeProfile from '~/services/officeProfile.js';
-import Spinner from '@/UI/Spinner.vue';
+import Toast from '@/UI/Toast.vue';
 
-const { isLoading, isOpenModal, avatar, setIsOpenModalChangePassword, updateProfile, uploadNewAvatar, user, toggles, v$ } = officeProfile();
+const { isOpenModalChangePassword, avatar, setIsOpenModalChangePassword, updateProfile, checkAvatarSize, isAvatarLoading, user, toggles, v$, isOpenToast,
+  isLoading, isSuccessResponse, successResponseMessage, errorResponseMessage } = officeProfile();
 
 </script>
 
 <template>
     <OfficeLayout title="Личные данные">
-      <ProfileChangePasswordModal :show="isOpenModal" @close-modal="setIsOpenModalChangePassword(false)"></ProfileChangePasswordModal>
+      <Toast
+      v-if="isOpenToast"
+      :title="(isSuccessResponse === true) ? 'Сообщение об успешной операции' : 'Сообщение о ошибке'"
+      :text="(isSuccessResponse === true) ? successResponseMessage : errorResponseMessage"
+      :icon="(isSuccessResponse) ? CheckIcon : XCircleIcon" :color="(isSuccessResponse === true) ? 'green' : 'red'">
+      </Toast>
+      <ProfileChangePasswordModal :show="isOpenModalChangePassword" @close-modal="setIsOpenModalChangePassword(false)"></ProfileChangePasswordModal>
       <template #actions>
         <Button color="green" @click.prevent="updateProfile" :disabled="isLoading" :class="{ 'cursor-not-allowed': isLoading, 'opacity-60': isLoading }">
           <CheckIcon  v-if="!isLoading" class="w-5 h-5 mr-1"/>
-          <Spinner v-if="isLoading" class="w-5 h-5 mr-1" />
+          <div v-if="isLoading" class="border-2 mr-1 border-blue-400  borderTopColorTransparent border-solid rounded-full animate-spin w-5 h-5 "></div>
           Сохранить
         </Button>
+
         <Button color="blue" @click.prevent="setIsOpenModalChangePassword(true)">
           Сменить пароль
         </Button>
       </template>
 
       <div class="flex flex-col lg:flex-row">
-        <UploadImage @selected="uploadNewAvatar" :image="avatar" label="Фото" class="mb-3"></UploadImage>
+        <UploadImage @selected="checkAvatarSize" :image="avatar" label="Фото" class="mb-3" :loader="isAvatarLoading"></UploadImage>
 
         <div class="flex-grow space-y-6">
           <div class="grid grid-cols-12 gap-6">
@@ -87,5 +95,7 @@ const { isLoading, isOpenModal, avatar, setIsOpenModalChangePassword, updateProf
 </template>
 
 <style scoped>
-
+.borderTopColorTransparent {
+  border-top-color: transparent;
+}
 </style>

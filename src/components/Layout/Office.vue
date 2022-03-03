@@ -150,7 +150,7 @@ const userFullName = computed(() => {
     <!-- Main column -->
     <div class="flex flex-col w-0 flex-1 overflow-hidden">
       <!-- Mobile -->
-      <div class="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
+      <div class="relative z-9 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
         <button type="button"
                 class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
                 @click="sidebarOpen = true">

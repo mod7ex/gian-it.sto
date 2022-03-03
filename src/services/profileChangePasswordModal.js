@@ -56,7 +56,7 @@ const changeProfilePassword = async () => {
   }
 };
 
-export default function useRefreshPassword() {
+export default function useProfileChangePasswordModal() {
   return {
     changeProfilePassword,
     closeModalChangePassword,

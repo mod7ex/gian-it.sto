@@ -22,6 +22,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  loader: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
 });
 
 const id = uniqueId('uploadImage');
@@ -62,13 +67,15 @@ const id = uniqueId('uploadImage');
 
       <label :for="id" class="absolute inset-0 w-full h-full bg-black bg-opacity-75 flex items-center justify-center text-sm font-medium text-white opacity-0 hover:opacity-100 focus-within:opacity-100">
         <span>Загрузить</span>
+         <div v-if="props.loader"  class="absolute border-2 mr-1 border-blue-400  borderTopColorTransparent border-solid rounded-full animate-spin w-8 h-8 "></div>
+
         <input @change="event => $emit('selected', event)"
                :id="id"
                type="file"
                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer border-gray-300 rounded-md"
         >
       </label>
-    </div>
+      </div>
 
     <label :for="id" class="mt-3 block flex justify-center text-sm text-center cursor-pointer hidden lg:block">
       Загрузить
@@ -77,5 +84,7 @@ const id = uniqueId('uploadImage');
 </template>
 
 <style scoped>
-
+.borderTopColorTransparent {
+  border-top-color: transparent;
+}
 </style>

@@ -4,11 +4,11 @@ import { required, email, helpers } from '@vuelidate/validators';
 export default function officeProfileValidationsRules() {
   const rules = computed(() => ({
     email: {
-      required: helpers.withMessage('Укажите email', required),
+      required: helpers.withMessage('Заполните поле', required),
       email: helpers.withMessage('Укажите верный email', email),
     },
     name: {
-      required: helpers.withMessage('Укажите имя', required),
+      required: helpers.withMessage('Заполните поле', required),
     },
   }));
 

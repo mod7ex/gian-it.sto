@@ -7,10 +7,15 @@ import officeProfileValidationsRules from '~/validationsRules/officeProfile.js';
 export default function officeProfile() {
   const { axiosInstance } = useApi();
   const { rules } = officeProfileValidationsRules();
-  const isLoading = ref(false);
   const { user, setUser } = useAuth();
   const avatar = ref('');
-  const isOpenModal = ref(false);
+  const isOpenModalChangePassword = ref(false);
+  const isOpenToast = ref(false);
+  const isLoading = ref(false);
+  const isAvatarLoading = ref(false);
+  const isSuccessResponse = ref('');
+  const successResponseMessage = ref('');
+  const errorResponseMessage = ref('');
 
   const fieldProfileForValidation = reactive({
     name: user.value.name,
@@ -22,13 +27,18 @@ export default function officeProfile() {
     user.value.is_born_at_visible,
   ]);
   const v$ = useVuelidate(rules, fieldProfileForValidation, { $lazy: true });
+
   function setIsOpenModalChangePassword(value) {
-    isOpenModal.value = value;
+    isOpenModalChangePassword.value = value;
   }
 
-  const uploadNewAvatar = async (event) => {
+  function setIsShowToast(value) {
+    isOpenToast.value = value;
+  }
+
+  const uploadNewAvatar = async (image) => {
     const formData = new FormData();
-    formData.append('avatar', event.target.files[0]);
+    formData.append('avatar', image);
     let response;
     try {
       response = await axiosInstance.post('profile/avatar', formData, {
@@ -37,21 +47,39 @@ export default function officeProfile() {
         },
       });
     } catch (e) {
-      console.log(e.response.data);
+      isSuccessResponse.value = false;
+      errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
+      setIsShowToast(true);
+      setTimeout(setIsShowToast, 5000, false);
+    } finally {
+      isAvatarLoading.value = false;
     }
     if (response.data.success) {
       const responseAvatarObj = JSON.parse(response.data.avatar);
       avatar.value = responseAvatarObj.original_url;
-      console.log(JSON.parse(response.data.avatar));
+      isSuccessResponse.value = true;
+      successResponseMessage.value = 'Фото успешно обновлено';
+      setIsShowToast(true);
+      setTimeout(setIsShowToast, 5000, false);
     }
   };
-  const options = {};
-  options.year = 'numeric';
-  options.month = '2-digit';
-  options.day = '2-digit';
+
+  function checkAvatarSize(event) {
+    isAvatarLoading.value = true;
+    const maxFileSize = 1000000; // 10000000;
+    const image = event.target.files[0];
+    if (image.size > maxFileSize) {
+      isAvatarLoading.value = false;
+      isSuccessResponse.value = false;
+      errorResponseMessage.value = 'Размер фото не должен превышать 10000 Кб';
+      setIsShowToast(true);
+      setTimeout(setIsShowToast, 5000, false);
+      return;
+    }
+    uploadNewAvatar(image);
+  }
 
   const updateProfile = async () => {
-    console.log(user.value.born_at);
     v$.value.$touch();
 
     if (v$.value.$invalid) {
@@ -70,40 +98,48 @@ export default function officeProfile() {
         middle_name: user.value.middle_name, // optional
         phone: user.value.phone, // optional
         about: user.value.about, // optional
-        born_at: '2000-01-02', // optional format Y-m-d user.value.born_at
+        born_at: '2000-01-02', // optional format Y-m-d user.value.born_at '2000-01-02'
         office_position: user.value.office_position, // optional
         is_about_visible: toggles.value[0],
         is_born_at_visible: toggles.value[1],
 
       });
     } catch (e) {
-      // isErrorResponse.value = true;
-      // errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
+      isSuccessResponse.value = false;
+      errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
+      setIsShowToast(true);
+      setTimeout(setIsShowToast, 5000, false);
     } finally {
       isLoading.value = false;
     }
-    console.log(res.data.user);
     if (res.data.success) {
+      isSuccessResponse.value = true;
+      successResponseMessage.value = 'Данные успешно обновлены';
+      setIsShowToast(true);
+      setTimeout(setIsShowToast, 5000, false);
       setUser(res.data.user);
     }
   };
 
   onMounted(() => {
     avatar.value = user.value.avatar;
-
-    console.log(user.value.is_about_visible, user.value.is_born_at_visible);
   });
 
   return {
-    isOpenModal,
+    isOpenModalChangePassword,
     avatar,
     setIsOpenModalChangePassword,
     updateProfile,
-    uploadNewAvatar,
+    checkAvatarSize,
     user,
     toggles,
-    isLoading,
     v$,
+    isOpenToast,
+    isLoading,
+    isSuccessResponse,
+    successResponseMessage,
+    errorResponseMessage,
+    isAvatarLoading,
 
   };
 }

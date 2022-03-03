@@ -11,6 +11,8 @@ const form = reactive({
 });
 const { rules } = refreshPasswordValidationsRules(form);
 
+const isOpenModalChangePassword = ref(false);
+
 const isLoading = ref(false);
 const isSuccessResponse = ref(false);
 const successResponseMessage = ref('');
@@ -18,6 +20,10 @@ const isErrorResponse = ref(false);
 const errorResponseMessage = ref('');
 
 const v$ = useVuelidate(rules, form);
+
+function setIsOpenModalChangePassword(value) {
+  isOpenModalChangePassword.value = value;
+}
 
 function closeModalChangePassword() {
   isLoading.value = false;
@@ -66,5 +72,7 @@ export default function useProfileChangePasswordModal() {
     successResponseMessage,
     isErrorResponse,
     errorResponseMessage,
+    isOpenModalChangePassword,
+    setIsOpenModalChangePassword,
   };
 }

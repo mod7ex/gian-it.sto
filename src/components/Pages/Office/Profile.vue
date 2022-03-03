@@ -7,12 +7,19 @@ import TextArea from '@/UI/TextArea.vue';
 import UploadImage from '@/UI/UploadImage.vue';
 import Toggle from '@/UI/Toggle.vue';
 import List from '@/UI/List.vue';
-import ProfileChangePasswordModal from '@/Partials/ProfileChangePasswordModal.vue';
-import officeProfile from '~/services/officeProfile.js';
 import Toast from '@/UI/Toast.vue';
 
-const { isOpenModalChangePassword, avatar, setIsOpenModalChangePassword, updateProfile, checkAvatarSize, isAvatarLoading, user, toggles, v$, isOpenToast,
-  isLoading, isSuccessResponse, successResponseMessage, errorResponseMessage } = officeProfile();
+import ProfileChangePasswordModal from '@/Partials/ProfileChangePasswordModal.vue';
+import useProfileChangePasswordModal from '~/services/profileChangePasswordModal.js';
+
+import officeProfile from '~/services/officeProfile.js';
+
+const { isOpenModalChangePassword, setIsOpenModalChangePassword } = useProfileChangePasswordModal();
+
+const { fieldsProfile, v$, updateProfile, toggles,
+  avatar, checkAvatarSize, isAvatarLoading,
+  isOpenToast, isUpdatingDataProfile, isSuccessResponse,
+  successResponseMessage, errorResponseMessage } = officeProfile();
 
 </script>
 
@@ -26,9 +33,9 @@ const { isOpenModalChangePassword, avatar, setIsOpenModalChangePassword, updateP
       </Toast>
       <ProfileChangePasswordModal :show="isOpenModalChangePassword" @close-modal="setIsOpenModalChangePassword(false)"></ProfileChangePasswordModal>
       <template #actions>
-        <Button color="green" @click.prevent="updateProfile" :disabled="isLoading" :class="{ 'cursor-not-allowed': isLoading, 'opacity-60': isLoading }">
-          <CheckIcon  v-if="!isLoading" class="w-5 h-5 mr-1"/>
-          <div v-if="isLoading" class="border-2 mr-1 border-blue-400  borderTopColorTransparent border-solid rounded-full animate-spin w-5 h-5 "></div>
+        <Button color="green" @click.prevent="updateProfile" :disabled="isUpdatingDataProfile" :class="{ 'cursor-not-allowed': isUpdatingDataProfile, 'opacity-60': isUpdatingDataProfile }">
+          <CheckIcon  v-if="!isUpdatingDataProfile" class="w-5 h-5 mr-1"/>
+          <div v-if="isUpdatingDataProfile" class="border-2 mr-1 border-blue-400  borderTopColorTransparent border-solid rounded-full animate-spin w-5 h-5 "></div>
           Сохранить
         </Button>
 
@@ -43,7 +50,7 @@ const { isOpenModalChangePassword, avatar, setIsOpenModalChangePassword, updateP
         <div class="flex-grow space-y-6">
           <div class="grid grid-cols-12 gap-6">
             <div class="col-span-12 sm:col-span-4">
-              <Input label="Фамилия" v-model="user.surname" />
+              <Input label="Фамилия" v-model="fieldsProfile.surname" />
             </div>
 
             <div class="col-span-12 sm:col-span-4">
@@ -51,7 +58,7 @@ const { isOpenModalChangePassword, avatar, setIsOpenModalChangePassword, updateP
             </div>
 
             <div class="col-span-12 sm:col-span-4">
-              <Input label="Отчество" v-model="user.middle_name"/>
+              <Input label="Отчество" v-model="fieldsProfile.middleName"/>
             </div>
 
             <div class="col-span-12 sm:col-span-6">
@@ -59,7 +66,7 @@ const { isOpenModalChangePassword, avatar, setIsOpenModalChangePassword, updateP
             </div>
 
             <div class="col-span-12 sm:col-span-6">
-              <Input label="Телефон" mask="+7 ### ###-##-##" v-model="user.phone" />
+              <Input label="Телефон" mask="+7 ### ###-##-##" v-model="fieldsProfile.phone" />
             </div>
 
           </div>
@@ -68,15 +75,14 @@ const { isOpenModalChangePassword, avatar, setIsOpenModalChangePassword, updateP
 
       <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="col-span-12 sm:col-span-6">
-          <Input label="Дата рождения" type="date" value="2022-02-27" v-model="user.born_at" />
+          <Input label="Дата рождения" type="date" v-model="fieldsProfile.bornAt" />
         </div>
-
         <div class="col-span-12 sm:col-span-6">
-          <Input label="Должность" v-model="user.office_position" />
+          <Input label="Должность" v-model="fieldsProfile.officePosition" />
         </div>
 
         <div class="col-span-12">
-          <TextArea label="О себе" v-model="user.about"  rows="3" />
+          <TextArea label="О себе" v-model="fieldsProfile.about"  rows="3" />
         </div>
       </div>
       <div class="pt-6 divide-y divide-gray-200">

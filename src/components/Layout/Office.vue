@@ -94,6 +94,15 @@ const userFullName = computed(() => {
   }
   return 'Гость';
 });
+
+const userRoleTitle = computed(() => {
+  const userData = user.value;
+
+  if (userData.roles[0]) {
+    return `${userData.roles[0].title}`;
+  }
+  return 'Гость';
+});
 </script>
 
 <template>
@@ -128,7 +137,7 @@ const userFullName = computed(() => {
                 <Avatar
                   :image="user.avatar"
                   :title="userFullName"
-                  subtitle="Администратор"
+                  :subtitle="userRoleTitle"
                 />
 
                 <SelectorIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true"/>

@@ -8,11 +8,12 @@ export default function officeProfile() {
   const { axiosInstance } = useApi();
   const { rules } = officeProfileValidationsRules();
   const { user, setUser } = useAuth();
+
   const avatar = ref('');
-  const isOpenModalChangePassword = ref(false);
-  const isOpenToast = ref(false);
-  const isLoading = ref(false);
   const isAvatarLoading = ref(false);
+
+  const isOpenToast = ref(false);
+  const isUpdatingDataProfile = ref(false);
   const isSuccessResponse = ref('');
   const successResponseMessage = ref('');
   const errorResponseMessage = ref('');
@@ -22,21 +23,31 @@ export default function officeProfile() {
     email: user.value.email,
   });
 
+  const fieldsProfile = reactive({
+    surname: user.value.surname,
+    middleName: user.value.middle_name,
+    phone: user.value.phone,
+    about: user.value.about,
+    bornAt: user.value.born_at,
+    officePosition: user.value.office_position,
+  });
+
   const toggles = ref([
     user.value.is_about_visible,
     user.value.is_born_at_visible,
   ]);
   const v$ = useVuelidate(rules, fieldProfileForValidation, { $lazy: true });
 
-  function setIsOpenModalChangePassword(value) {
-    isOpenModalChangePassword.value = value;
-  }
-
   function setIsShowToast(value) {
     isOpenToast.value = value;
   }
+  function showToast() {
+    setIsShowToast(true);
+    setTimeout(setIsShowToast, 5000, false);
+  }
 
   const uploadNewAvatar = async (image) => {
+    isAvatarLoading.value = true;
     const formData = new FormData();
     formData.append('avatar', image);
     let response;
@@ -49,8 +60,7 @@ export default function officeProfile() {
     } catch (e) {
       isSuccessResponse.value = false;
       errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
-      setIsShowToast(true);
-      setTimeout(setIsShowToast, 5000, false);
+      showToast();
     } finally {
       isAvatarLoading.value = false;
     }
@@ -59,21 +69,17 @@ export default function officeProfile() {
       avatar.value = responseAvatarObj.original_url;
       isSuccessResponse.value = true;
       successResponseMessage.value = 'Фото успешно обновлено';
-      setIsShowToast(true);
-      setTimeout(setIsShowToast, 5000, false);
+      showToast();
     }
   };
 
   function checkAvatarSize(event) {
-    isAvatarLoading.value = true;
-    const maxFileSize = 1000000; // 10000000;
+    const maxFileSize = 10000000;
     const image = event.target.files[0];
     if (image.size > maxFileSize) {
-      isAvatarLoading.value = false;
       isSuccessResponse.value = false;
       errorResponseMessage.value = 'Размер фото не должен превышать 10000 Кб';
-      setIsShowToast(true);
-      setTimeout(setIsShowToast, 5000, false);
+      showToast();
       return;
     }
     uploadNewAvatar(image);
@@ -87,19 +93,19 @@ export default function officeProfile() {
     }
     v$.value.$reset();
 
-    isLoading.value = true;
+    isUpdatingDataProfile.value = true;
 
     let res;
     try {
       res = await axiosInstance.put('profile', {
         name: fieldProfileForValidation.name,
         email: fieldProfileForValidation.email,
-        surname: user.value.surname, // optional
-        middle_name: user.value.middle_name, // optional
-        phone: user.value.phone, // optional
-        about: user.value.about, // optional
-        born_at: '2000-01-02', // optional format Y-m-d user.value.born_at '2000-01-02'
-        office_position: user.value.office_position, // optional
+        surname: fieldsProfile.surname,
+        middle_name: fieldsProfile.middleName,
+        phone: fieldsProfile.phone,
+        about: fieldsProfile.about,
+        born_at: fieldsProfile.bornAt,
+        office_position: fieldsProfile.officePosition,
         is_about_visible: toggles.value[0],
         is_born_at_visible: toggles.value[1],
 
@@ -107,16 +113,14 @@ export default function officeProfile() {
     } catch (e) {
       isSuccessResponse.value = false;
       errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
-      setIsShowToast(true);
-      setTimeout(setIsShowToast, 5000, false);
+      showToast();
     } finally {
-      isLoading.value = false;
+      isUpdatingDataProfile.value = false;
     }
     if (res.data.success) {
       isSuccessResponse.value = true;
       successResponseMessage.value = 'Данные успешно обновлены';
-      setIsShowToast(true);
-      setTimeout(setIsShowToast, 5000, false);
+      showToast();
       setUser(res.data.user);
     }
   };
@@ -126,20 +130,18 @@ export default function officeProfile() {
   });
 
   return {
-    isOpenModalChangePassword,
-    avatar,
-    setIsOpenModalChangePassword,
-    updateProfile,
-    checkAvatarSize,
-    user,
-    toggles,
     v$,
+    fieldsProfile,
+    avatar,
+    checkAvatarSize,
+    isAvatarLoading,
+    updateProfile,
+    toggles,
     isOpenToast,
-    isLoading,
+    isUpdatingDataProfile,
     isSuccessResponse,
     successResponseMessage,
     errorResponseMessage,
-    isAvatarLoading,
 
   };
 }

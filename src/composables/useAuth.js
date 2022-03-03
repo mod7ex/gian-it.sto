@@ -19,6 +19,9 @@ export default function useAuth() {
 
   const setUser = (userData) => {
     user.value = userData;
+    if (userData.avatar === '') {
+      user.value.avatar = 'src/assets/noAvatar.svg';
+    }
   };
 
   const resetUser = async () => {

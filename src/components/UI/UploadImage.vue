@@ -44,17 +44,19 @@ const id = uniqueId('uploadImage');
           <img :class="['object-cover h-full w-full', {'rounded-full': props.rounded}]" :src="image" alt="">
 
           <span class="hidden lg:block">Загрузить</span>
-        </div>
+          </div>
 
         <div class="ml-5 rounded-md shadow-sm">
           <div class="group relative border border-gray-300 rounded-md py-2 px-3 flex items-center justify-center hover:bg-gray-50 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-light-blue-500">
-            <label :for="id" class="relative text-sm leading-4 font-medium text-gray-700 pointer-events-none">
+            <label :for="id" class="relative text-sm leading-4 font-medium text-gray-700  pointer-events-none">
               <span>Загрузить</span>
             </label>
+            <span v-if="props.loader" class="absolute border-2 mr-1 border-blue-400  borderTopColorTransparent border-solid rounded-full animate-spin w-5 h-5"></span>
 
             <input @change="event => $emit('selected', event)"
                    :id="id"
                    type="file"
+                   :disabled="props.loader"
                    class="absolute w-full h-full opacity-0 cursor-pointer border-gray-300 rounded-md"
             >
           </div>
@@ -72,6 +74,7 @@ const id = uniqueId('uploadImage');
         <input @change="event => $emit('selected', event)"
                :id="id"
                type="file"
+               :disabled="props.loader"
                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer border-gray-300 rounded-md"
         >
       </label>

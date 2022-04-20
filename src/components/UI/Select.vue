@@ -71,6 +71,7 @@ const options = computed(() =>
       :class="styles"
       :multiple="props.multiple"
       @input="$emit('update:modelValue', $event.target.value)"
+      @blur="$emit('blured')"
     >
       <option selected disabled>-- выберите --</option>
 

@@ -1,6 +1,7 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import useApi from "~/composables/useApi.js";
+import useEmployers from "~/composables/useEmployers.js";
 import _ from "lodash";
 import OfficeLayout from "@/Layout/Office.vue";
 import Input from "@/UI/Input.vue";
@@ -8,6 +9,9 @@ import Link from "@/UI/Link.vue";
 import Button from "@/UI/Button.vue";
 import Badge from "@/UI/Badge.vue";
 import Avatar from "@/UI/Avatar.vue";
+import DialogModal from "@/UI/DialogModal.vue";
+import Dialog from "@/UI/Dialog.vue";
+import Spinner from "@/UI/Spinner.vue";
 import StackedListWithHeadings from "@/UI/StackedListWithHeadings.vue";
 import {
   SearchIcon,
@@ -16,6 +20,8 @@ import {
   UserGroupIcon,
   ArrowUpIcon,
   ArrowDownIcon,
+  PencilIcon,
+  TrashIcon,
 } from "@heroicons/vue/solid";
 import { PlusCircleIcon } from "@heroicons/vue/outline";
 import {
@@ -26,319 +32,67 @@ import {
 
 const { axiosInstance } = useApi();
 
-const selected = ref(false);
-// const directory = ref({
-//   A: [
-//     {
-//       id: 1,
-//       title: "Leslie Abbott",
-//       subtitle: "Co-Founder / CEO",
-//       image:
-//         "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 2,
-//       title: "Hector Adams",
-//       subtitle: "VP, Marketing",
-//       image:
-//         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 3,
-//       title: "Blake Alexander",
-//       subtitle: "Account Coordinator",
-//       image:
-//         "https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 4,
-//       title: "Fabricio Andrews",
-//       subtitle: "Senior Art Director",
-//       image:
-//         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   B: [
-//     {
-//       id: 5,
-//       title: "Angela Beaver",
-//       subtitle: "Chief Strategy Officer",
-//       image:
-//         "https://images.unsplash.com/photo-1501031170107-cfd33f0cbdcc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 6,
-//       title: "Yvette Blanchard",
-//       subtitle: "Studio Artist",
-//       image:
-//         "https://images.unsplash.com/photo-1506980595904-70325b7fdd90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 7,
-//       title: "Lawrence Brooks",
-//       subtitle: "Content Specialist",
-//       image:
-//         "https://images.unsplash.com/photo-1513910367299-bce8d8a0ebf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   C: [
-//     {
-//       id: 8,
-//       title: "Jeffrey Clark",
-//       subtitle: "Senior Art Director",
-//       image:
-//         "https://images.unsplash.com/photo-1517070208541-6ddc4d3efbcb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 9,
-//       title: "Kathryn Cooper",
-//       subtitle: "Associate Creative Director",
-//       image:
-//         "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   E: [
-//     {
-//       id: 10,
-//       title: "Alicia Edwards",
-//       subtitle: "Junior Copywriter",
-//       image:
-//         "https://images.unsplash.com/photo-1509783236416-c9ad59bae472?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 11,
-//       title: "Benjamin Emerson",
-//       subtitle: "Director, Print Operations",
-//       image:
-//         "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 12,
-//       title: "Jillian Erics",
-//       subtitle: "Designer",
-//       image:
-//         "https://images.unsplash.com/photo-1504703395950-b89145a5425b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 13,
-//       title: "Chelsea Evans",
-//       subtitle: "Human Resources Manager",
-//       image:
-//         "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   G: [
-//     {
-//       id: 14,
-//       title: "Michael Gillard",
-//       subtitle: "Co-Founder / CTO",
-//       image:
-//         "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 15,
-//       title: "Dries Giuessepe",
-//       subtitle: "Manager, Business Relations",
-//       image:
-//         "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   M: [
-//     {
-//       id: 16,
-//       title: "Jenny Harrison",
-//       subtitle: "Studio Artist",
-//       image:
-//         "https://images.unsplash.com/photo-1507101105822-7472b28e22ac?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 17,
-//       title: "Lindsay Hatley",
-//       subtitle: "Front-end Developer",
-//       image:
-//         "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 18,
-//       title: "Anna Hill",
-//       subtitle: "Partner, Creative",
-//       image:
-//         "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   S: [
-//     {
-//       id: 19,
-//       title: "Courtney Samuels",
-//       subtitle: "Designer",
-//       image:
-//         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 20,
-//       title: "Tom Simpson",
-//       subtitle: "Director, Product Development",
-//       image:
-//         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   T: [
-//     {
-//       id: 21,
-//       title: "Floyd Thompson",
-//       subtitle: "Principal Designer",
-//       image:
-//         "https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 22,
-//       title: "Leonard Timmons",
-//       subtitle: "Senior Designer",
-//       image:
-//         "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 23,
-//       title: "Whitney Trudeau",
-//       subtitle: "Copywriter",
-//       image:
-//         "https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   W: [
-//     {
-//       id: 24,
-//       title: "Kristin Watson",
-//       subtitle: "VP, Human Resources",
-//       image:
-//         "https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//     {
-//       id: 25,
-//       title: "Emily Wilson",
-//       subtitle: "VP, User Experience",
-//       image:
-//         "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-//   Y: [
-//     {
-//       id: 26,
-//       title: "Emma Young",
-//       subtitle: "Senior Front-end Developer",
-//       image:
-//         "https://images.unsplash.com/photo-1505840717430-882ce147ef2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-//     },
-//   ],
-// });
-
-/* ************ Users ************ */
-const users = ref([]);
-
-let usersNumber = computed(() => users.value.length);
-
-let directory = computed(() => {
-  if (!users.value.length) return [];
-
-  let usersList = { _: [] };
-
-  users.value.forEach((user) => {
-    let user_item = {
-      id: user.id,
-      title: `${user.name} ${user.surname ? user.surname : ""}`,
-      subtitle: `${user.office_position ? user.office_position : ""}`,
-      image: `${user.avatar ? user.avatar : ""}`,
-    };
-
-    // group users who don't have surname
-    if (!user.surname) {
-      usersList._.push(user_item);
-      return;
-    }
-
-    // check if the letter (user.surname[0]) doesn't exists in usersList & then add it
-    if (!usersList[user.surname[0]]) {
-      usersList[user.surname[0]] = [];
-    }
-
-    // put the item in his letter group (group by letter)
-    usersList[user.surname[0]].push(user_item);
-  });
-
-  return Object.keys(usersList)
-    .sort()
-    .reduce((obj, key) => {
-      obj[key] = usersList[key];
-      return obj;
-    }, {});
-});
+const {
+  users,
+  deleteUser,
+  directory,
+  reOrder,
+  orderkey,
+  filter,
+  order,
+  usersNumber,
+  selected,
+  selectedUser,
+} = useEmployers();
 
 /* ************ Selected User ************ */
-let selectedUser = ref({});
 
-let showSelectedUser = ({ id }) => {
-  selected.value = true;
-  selectedUser.value = users.value.find((item) => item.id === id) || {};
+// User deletion
+let showDeleteUserModal = ref(false);
+let isWaitingForUserDeletion = ref(false);
+let isUserDeleted = ref(false);
+let deletionMessage = ref(null);
+
+let closeUserDeletionModal = () => {
+  showDeleteUserModal.value = false;
+
+  if (isUserDeleted.value) {
+    selected.value = false;
+    selectedUser.value = {};
+  }
+
+  setTimeout(() => {
+    isWaitingForUserDeletion.value = false;
+    isUserDeleted.value = false;
+    deletionMessage.value = null;
+  }, 100);
 };
 
-/* ************ Order ************ */
-const filter = [
-  { criteria: "id", label: "По умолчанию" },
-  { criteria: "surname", label: "По фамилии" },
-  { criteria: "department", label: "По отделам" },
-];
+let dropUser = async (id) => {
+  isWaitingForUserDeletion.value = true;
 
-let order = ref({
-  show: false,
-  criteria: "id", // id, surname, department
-  mod: -1, //  asc:1 or  desc:-1 the default always is desc:-1
-});
+  try {
+    let { data } = await axiosInstance.delete(`users/${id}`);
 
-let orderkey = computed(
-  () => `${order.value.criteria}-${order.value.mod === 1 ? "asc" : "desc"}`
-);
+    if (!data.success) throw Error();
 
-const reOrder = (ctr) => {
-  order.value.mod = order.value.criteria === ctr ? -order.value.mod : -1;
+    isUserDeleted.value = true;
+    deletionMessage.value = "Пользователь успешно удален";
 
-  order.value.criteria = ctr;
+    deleteUser(id);
+  } catch (e) {
+    console.error("Error request", e);
 
-  switch (ctr) {
-    case "id":
-      users.value = users.value.sort((a, b) => (a.id - b.id) * order.value.mod);
-      break;
-
-    case "surname":
-      users.value = users.value.sort((a, b) => {
-        if (a.surname > b.surname) return order.value.mod;
-        if (a.surname < b.surname) return -order.value.mod;
-        return 0;
-      });
-      break;
-
-    case "department":
-      users.value = users.value.sort(
-        (a, b) => (a.department?.id - b.department?.id) * order.value.mod
-      );
-      break;
-
-    default:
-      break;
+    isUserDeleted.value = false;
+    deletionMessage.value = "Не удалось удалить пользователя";
+  } finally {
+    isWaitingForUserDeletion.value = false;
   }
+};
 
-  /* for test
-
-  console.log(orderkey.value);
-
-  for (let i = 0; i < 5; i++) {
-    console.log(
-      `id => ${users.value[i].id}`,
-      `department id => ${users.value[i].department.id}`,
-      `surname => ${users.value[i].surname}`
-    );
-  }
-
-*/
+let showSelectedUser = ({ id }) => {
+  selectedUser.value = users.value.find((item) => item.id === id) || {};
+  selected.value = true;
 };
 
 /* ************ Search ************ */
@@ -348,13 +102,12 @@ watch(
   // watching search
   () => search.value,
   _.debounce(async (v) => {
-    let res;
     try {
       let url = `/users?order=${order.value.criteria}`;
       if (v) url += `&name=${v}`;
-      res = await axiosInstance.get(url);
-      users.value = res.data?.users;
-      order.value.mod = -1; // return to desc order mod
+      let { data } = await axiosInstance.get(url);
+      users.value = data.users;
+      order.value.mod = -1; // return to desc(default) order mod
     } catch (e) {
       console.error("Error request", e);
     }
@@ -487,7 +240,11 @@ watch(
             </div>
 
             <!-- Description list -->
-            <DescriptionList :bordered="false" class="mt-5" type="columns">
+            <DescriptionList
+              :bordered="false"
+              class="mt-5 mb-10"
+              type="columns"
+            >
               <DescriptionListItems type="columns">
                 <DescriptionListItem
                   label="Телефон"
@@ -527,6 +284,62 @@ watch(
                 />
               </DescriptionListItems>
             </DescriptionList>
+
+            <!-- Actions -->
+            <div class="px-6 flex justify-between">
+              <router-link
+                :to="{ name: 'EditEmployer', params: { id: selectedUser.id } }"
+              >
+                <Button type="secondary" size="xs">
+                  <PencilIcon class="mr-2 h-5 w-5 text-gray-400" />
+                  Изменить
+                </Button>
+              </router-link>
+
+              <Button size="xs" color="red" @click="showDeleteUserModal = true">
+                <TrashIcon class="mr-2 h-5 w-5 text-white" />
+                Удалить
+              </Button>
+
+              <Dialog
+                :open="showDeleteUserModal"
+                @close="closeUserDeletionModal"
+                :type="isUserDeleted ? 'success' : 'danger'"
+              >
+                <template #title>
+                  {{ deletionMessage ? deletionMessage : "Удалить?" }}
+                </template>
+
+                <template #text v-if="!deletionMessage">
+                  Вы уверены что хотите удалить пользователь?
+                  <div
+                    class="my-5 flex justify-center"
+                    v-if="isWaitingForUserDeletion"
+                  >
+                    <Spinner />
+                  </div>
+                </template>
+
+                <template v-slot:actions v-if="!deletionMessage">
+                  <div class="mt-5 sm:mt-6 flex justify-center items-end">
+                    <Button
+                      @click="closeUserDeletionModal"
+                      class="mx-3 justify-center"
+                    >
+                      Закрыть
+                    </Button>
+
+                    <Button
+                      color="red"
+                      @click="dropUser(selectedUser.id)"
+                      class="mx-3 justify-center"
+                    >
+                      Удалить
+                    </Button>
+                  </div>
+                </template>
+              </Dialog>
+            </div>
           </article>
         </div>
       </div>

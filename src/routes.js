@@ -80,6 +80,7 @@ export default [
 
   { path: '/employers', component: Employers },
   { path: '/employers/create', component: EmployerForm },
+  { path: '/employers/update/:id', component: EmployerForm, name: 'EditEmployer' },
   { path: '/roles', component: Roles },
   { path: '/roles/create', component: RoleForm },
 

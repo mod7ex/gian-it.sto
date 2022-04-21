@@ -18,6 +18,7 @@ let order = ref({
 const users = ref({});
 
 const selected = ref(false);
+const isFetchingEmployers = ref(false);
 
 let selectedUser = ref({});
 
@@ -126,5 +127,6 @@ export default function useEmployers() {
     usersNumber,
     selected,
     selectedUser,
+    isFetchingEmployers,
   };
 }

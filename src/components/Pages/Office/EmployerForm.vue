@@ -1,5 +1,9 @@
 <script setup>
-import { CheckIcon, ArrowLeftIcon } from "@heroicons/vue/outline";
+import {
+  CheckIcon,
+  ArrowLeftIcon,
+  ExclamationIcon,
+} from "@heroicons/vue/outline";
 import { onMounted, ref, computed, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import OfficeLayout from "@/Layout/Office.vue";
@@ -49,37 +53,39 @@ let departmentOptions = computed(() =>
 onMounted(async () => {
   try {
     let department_res = await axiosInstance.get("/departments");
-    departments.value = department_res.data?.department || [];
+    departments.value = department_res.data.departments || [];
   } catch (e) {
     console.error("Error request", e);
   }
 
   try {
     let roles_res = await axiosInstance.get("/roles");
-    roles.value = roles_res.data?.roles || [];
+    roles.value = roles_res.data.roles || [];
   } catch (e) {
     console.error("Error request", e);
   }
 });
 
 /* ************ Handling the toast ************ */
+import useToast from "~/composables/useToast.js";
+const { isOpenToast, showToast } = useToast();
 
-const isUpdatingDataProfile = ref(false);
+// const isOpenToast = ref(false);
+
 const isProfileUpdated = ref(true);
 const responseMessage = ref("");
 
-function setIsShowToast(value) {
-  isOpenToast.value = value;
-}
+// function setIsShowToast(value) {
+//   isOpenToast.value = value;
+// }
 
-function showToast() {
-  setIsShowToast(true);
-  setTimeout(setIsShowToast, 5000, false);
-}
+// function showToast() {
+//   setIsShowToast(true);
+//   setTimeout(setIsShowToast, 5000, false);
+// }
 
 /* ************ User form ************ */
 let avatarFile = ref(null);
-const isOpenToast = ref(false);
 
 let isValideAvatarFileSize = computed(() => {
   if (!avatarFile.value) return true;
@@ -107,20 +113,19 @@ let v$ = useVuelidate(rules, userFields, { $lazy: true });
 let saveUser = async () => {
   let isValideForm = await v$.value.$validate();
 
-  isValideForm = isValideAvatarFileSize.value;
+  isValideForm = isValideAvatarFileSize.value && isValideForm;
 
   if (!isValideForm) return;
-
-  isUpdatingDataProfile.value = true;
 
   v$.value.$reset();
 
   let form = new FormData();
 
-  Object.keys(userFields).forEach((key) => {
-    // password is here included
+  for (let key in userFields) {
+    // don't count password in case we're editing the user, password is updated siparatly (down)
+    if (isEditEmployerPage.value && key.substr(0, 8) === "password") continue;
     form.append(key, userFields[key] + "");
-  });
+  }
 
   form.append("is_about_visible", toggles.value[0]);
   form.append("is_born_at_visible", toggles.value[1]);
@@ -136,9 +141,7 @@ let saveUser = async () => {
       form
     );
 
-    if (!data.success) throw new Error("профиль успешно обновлен");
-
-    // update profile if user uploaded a photo
+    // update avatar if user uploaded a photo
     if (avatarFile.value) {
       let avatarForm = new FormData();
       avatarForm.append("avatar", avatarFile.value);
@@ -150,12 +153,9 @@ let saveUser = async () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
-      if (!avatarRes.data.success)
-        throw new Error("Не удалось обновить аватар");
     }
 
-    // update password if entered
+    // update password if entered (in case of update page)
     if (isEditEmployerPage.value && userFields.password) {
       let passwordForm = new FormData();
 
@@ -165,23 +165,29 @@ let saveUser = async () => {
         `/users/${data.user.id}/password`,
         passwordForm
       );
-
-      if (!passwordRes.data.success)
-        throw new Error("Не удалось обновить пароль");
     }
 
     // everything was updated with success
+    isProfileUpdated.value = true;
     responseMessage.value = "профиль успешно обновлен";
   } catch (e) {
-    console.error("Error request", e);
+    if (e.response) {
+      console.error("Error responce", e, e.response.data);
 
-    responseMessage.value = e.response
-      ? e.response.data.message
-      : "Не удалось обновить профиль";
+      responseMessage.value = e.response.data.message; // during dev
+    } else if (e.request) {
+      console.log("Error request", e.request);
+
+      responseMessage.value = "Не удалось обновить профиль"; // 'Undefined (network?) error'
+    } else {
+      console.log("Error local", e.message);
+
+      responseMessage.value = e.message;
+    }
 
     isProfileUpdated.value = false;
   } finally {
-    isUpdatingDataProfile.value = false;
+    showToast();
   }
 };
 
@@ -189,7 +195,7 @@ const avatar = ref(
   "https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
 );
 
-/* ************ Case: updating user ************ */
+/* ************ Bind user data in case of role edit page ************ */
 onMounted(async () => {
   if (!isEditEmployerPage.value) return;
   if (!route.params.id) return router.back();
@@ -198,9 +204,21 @@ onMounted(async () => {
     let { data } = await axiosInstance.get(`/users/${route.params.id}`);
     if (!data.success) throw Error();
 
-    Object.keys(userFields).forEach((key) => {
+    for (let key in userFields) {
+      if (key === "department_id") {
+        userFields.department_id = data.user["department"].id;
+        console.log("=============>; ", userFields.department_id);
+        continue;
+      }
+
+      if (key === "role_id") {
+        console.log(data.user["roles"]);
+        // ===========> should be fixed later
+        continue;
+      }
+
       userFields[key] = data.user[key];
-    });
+    }
 
     if (userFields.born_at) {
       let [d, m, y] = userFields.born_at.split(".");
@@ -380,9 +398,17 @@ const log = (event) => {
       </div>
     </div>
 
-    <Toast :open="isOpenToast">
-      <template #title> title </template>
-      <template #text> Lorem ipsum dolor sit amet consectetur. </template>
+    <!--
+        we could move the toast to the root and tweak
+        the showToast function so we can control the toeast globally
+    -->
+    <Toast
+      :open="isOpenToast"
+      :color="isProfileUpdated ? 'green' : 'red'"
+      :icon="isProfileUpdated ? CheckIcon : ExclamationIcon"
+    >
+      <template #text>{{ responseMessage }}</template>
+      <!-- <template #title>title</template> -->
     </Toast>
   </OfficeLayout>
 </template>

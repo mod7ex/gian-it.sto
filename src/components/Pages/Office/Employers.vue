@@ -43,6 +43,7 @@ const {
   usersNumber,
   selected,
   selectedUser,
+  isFetchingEmployers,
 } = useEmployers();
 
 /* ************ Selected User ************ */
@@ -65,7 +66,7 @@ let closeUserDeletionModal = () => {
     isWaitingForUserDeletion.value = false;
     isUserDeleted.value = false;
     deletionMessage.value = null;
-  }, 100);
+  }, 300);
 };
 
 let dropUser = async (id) => {
@@ -102,6 +103,7 @@ watch(
   // watching search
   () => search.value,
   _.debounce(async (v) => {
+    isFetchingEmployers.value = true;
     try {
       let url = `/users?order=${order.value.criteria}`;
       if (v) url += `&name=${v}`;
@@ -110,6 +112,8 @@ watch(
       order.value.mod = -1; // return to desc(default) order mod
     } catch (e) {
       console.error("Error request", e);
+    } finally {
+      isFetchingEmployers.value = false;
     }
   }, 1500),
   {
@@ -145,10 +149,17 @@ watch(
           <div class="px-6 pt-6 pb-4">
             <h2 class="text-lg font-medium text-gray-900">Картотека</h2>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <div v-if="isFetchingEmployers" class="mt-1">
+              <Spinner h="4" w="4">
+                <span class="text-sm text-gray-600">fetching user...</span>
+              </Spinner>
+            </div>
+
+            <p class="my-1 text-sm text-gray-600" v-else>
               <span v-if="usersNumber > 1">
                 Искать среди {{ usersNumber }} сотрудников
               </span>
+              <span v-else-if="usersNumber === 1">один пользователь!</span>
               <span v-else>нет пользователей!</span>
             </p>
 

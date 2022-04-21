@@ -6,7 +6,7 @@ const { token } = useAuth();
 
 const instance = axios.create({
   baseURL: "http://api.sto-test.ru/api/",
-  timeout: 30000,
+  timeout: 10000,
 });
 
 watch(token, (changedToken) => {

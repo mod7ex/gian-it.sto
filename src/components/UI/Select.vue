@@ -75,7 +75,12 @@ const options = computed(() =>
     >
       <option selected disabled>-- выберите --</option>
 
-      <option v-for="item in options" :value="item.value" :key="item.value">
+      <option
+        v-for="item in options"
+        :value="item.value"
+        :key="item.value"
+        :selected="modelValue == item.value"
+      >
         {{ item.label }}
       </option>
     </select>

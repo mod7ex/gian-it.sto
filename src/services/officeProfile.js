@@ -2,19 +2,19 @@ import { ref, reactive, onMounted } from "vue";
 import useVuelidate from "@vuelidate/core";
 import useApi from "~/composables/useApi.js";
 import useAuth from "~/composables/useAuth.js";
-import useToast from "~/composables/useToast.js";
+// import useToast from "~/composables/useToast.js";
 import officeProfileValidationsRules from "~/validationsRules/officeProfile.js";
 
 export default function officeProfile() {
   const { axiosInstance } = useApi();
-  const { isOpenToast, showToast } = useToast();
+  // const { isOpenToast, showToast } = useToast();
   const { rules } = officeProfileValidationsRules();
   const { user, setUser } = useAuth();
 
   const avatar = ref("");
   const isAvatarLoading = ref(false);
 
-  // const isOpenToast = ref(false);
+  const isOpenToast = ref(false);
   const isUpdatingDataProfile = ref(false);
   const isSuccessResponse = ref("");
   const successResponseMessage = ref("");
@@ -40,13 +40,13 @@ export default function officeProfile() {
   ]);
   const v$ = useVuelidate(rules, fieldProfileForValidation, { $lazy: true });
 
-  // function setIsShowToast(value) {
-  //   isOpenToast.value = value;
-  // }
-  // function showToast() {
-  //   setIsShowToast(true);
-  //   setTimeout(setIsShowToast, 5000, false);
-  // }
+  function setIsShowToast(value) {
+    isOpenToast.value = value;
+  }
+  function showToast() {
+    setIsShowToast(true);
+    setTimeout(setIsShowToast, 5000, false);
+  }
 
   const uploadNewAvatar = async (image) => {
     isAvatarLoading.value = true;

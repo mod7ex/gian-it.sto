@@ -1,4 +1,10 @@
 import { ref, readonly, computed } from "vue";
+import useConfirmDialog from "~/composables/useConfirmDialog.js";
+import useApi from "~/composables/useApi.js";
+
+const { showResultConfirmDialog } = useConfirmDialog();
+
+const { axiosInstance } = useApi();
 
 const filter = [
   { criteria: "id", label: "По умолчанию" },
@@ -18,7 +24,6 @@ let order = ref({
 const users = ref({});
 
 const selected = ref(false);
-const isFetchingEmployers = ref(false);
 
 let selectedUser = ref({});
 
@@ -28,13 +33,6 @@ export default function useEmployers() {
   let orderkey = computed(
     () => `${order.value.criteria}-${order.value.mod === 1 ? "asc" : "desc"}`
   );
-
-  let deleteUser = (id) => {
-    users.value.splice(
-      users.value.findIndex((user) => user.id === id),
-      1
-    );
-  };
 
   let directory = computed(() => {
     if (!users.value.length) return [];
@@ -116,6 +114,48 @@ export default function useEmployers() {
     */
   };
 
+  let setSelectedUser = (user) => {
+    selectedUser.value = user
+      ? users.value.find((item) => item.id === user.id) || {}
+      : {};
+    selected.value = user ? true : false;
+  };
+
+  /* ************ Delete role ************ */
+
+  let deleteUser = (id) => {
+    users.value.splice(
+      users.value.findIndex((user) => user.id === id),
+      1
+    );
+  };
+
+  let dropUser = async (id) => {
+    // User deletion
+    let isUserDeleted = false;
+    let deletionMessage = null;
+
+    try {
+      let { data } = await axiosInstance.delete(`users/${id}`);
+
+      if (!data.success) throw Error();
+
+      isUserDeleted = true;
+      deletionMessage = "Пользователь успешно удален";
+
+      deleteUser(id);
+
+      setSelectedUser();
+    } catch (e) {
+      console.error("Error request", e);
+
+      isUserDeleted = false;
+      deletionMessage = "Не удалось удалить пользователя";
+    } finally {
+      showResultConfirmDialog(deletionMessage, isUserDeleted);
+    }
+  };
+
   return {
     users,
     deleteUser,
@@ -127,6 +167,7 @@ export default function useEmployers() {
     usersNumber,
     selected,
     selectedUser,
-    isFetchingEmployers,
+    dropUser,
+    setSelectedUser,
   };
 }

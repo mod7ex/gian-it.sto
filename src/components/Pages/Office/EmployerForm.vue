@@ -13,11 +13,13 @@ import TextArea from "@/UI/TextArea.vue";
 import UploadImage from "@/UI/UploadImage.vue";
 import Toggle from "@/UI/Toggle.vue";
 import Select from "@/UI/Select.vue";
-import Toast from "@/UI/Toast.vue";
 import List from "@/UI/List.vue";
 import useApi from "~/composables/useApi.js";
 import employerFormValidationsRules from "~/validationsRules/employerForm.js";
 import useVuelidate from "@vuelidate/core";
+
+import useToast from "~/composables/useToast.js";
+const { showToast } = useToast();
 
 const toggles = ref([false, false, false]);
 
@@ -56,6 +58,7 @@ onMounted(async () => {
     departments.value = department_res.data.departments || [];
   } catch (e) {
     console.error("Error request", e);
+    showToast("Не удалось получить роли", "red", ExclamationIcon);
   }
 
   try {
@@ -63,28 +66,11 @@ onMounted(async () => {
     roles.value = roles_res.data.roles || [];
   } catch (e) {
     console.error("Error request", e);
+    showToast("Не удалось получить отделы", "red", ExclamationIcon);
   }
 });
 
-/* ************ Handling the toast ************ */
-import useToast from "~/composables/useToast.js";
-const { isOpenToast, showToast } = useToast();
-
-// const isOpenToast = ref(false);
-
-const isProfileUpdated = ref(true);
-const responseMessage = ref("");
-
-// function setIsShowToast(value) {
-//   isOpenToast.value = value;
-// }
-
-// function showToast() {
-//   setIsShowToast(true);
-//   setTimeout(setIsShowToast, 5000, false);
-// }
-
-/* ************ User form ************ */
+/* ************ Avatar ************ */
 let avatarFile = ref(null);
 
 let isValideAvatarFileSize = computed(() => {
@@ -92,6 +78,16 @@ let isValideAvatarFileSize = computed(() => {
   return avatarFile.value.size < 10000000;
 });
 
+const avatar = ref(
+  "https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
+);
+
+const log = (event) => {
+  avatarFile.value = event.target.files[0];
+  avatar.value = window.URL.createObjectURL(avatarFile.value);
+};
+
+/* ************ User form ************ */
 let userFields = reactive({
   // password fields will be automatically set if we're creating a user
   name: null,
@@ -119,10 +115,13 @@ let saveUser = async () => {
 
   v$.value.$reset();
 
+  let wasProfileUpdated = true;
+  let responseMessage = null;
+
   let form = new FormData();
 
   for (let key in userFields) {
-    // don't count password in case we're editing the user, password is updated siparatly (down)
+    // won't count password in case we're editing the user, password is updated siparatly (down)
     if (isEditEmployerPage.value && key.substr(0, 8) === "password") continue;
     form.append(key, userFields[key] + "");
   }
@@ -155,7 +154,7 @@ let saveUser = async () => {
       );
     }
 
-    // update password if entered (in case of update page)
+    // update password if filled (in case of update page)
     if (isEditEmployerPage.value && userFields.password) {
       let passwordForm = new FormData();
 
@@ -168,32 +167,30 @@ let saveUser = async () => {
     }
 
     // everything was updated with success
-    isProfileUpdated.value = true;
-    responseMessage.value = "профиль успешно обновлен";
+    wasProfileUpdated = true;
+    responseMessage = "профиль успешно обновлен";
   } catch (e) {
     if (e.response) {
       console.error("Error responce", e, e.response.data);
 
-      responseMessage.value = e.response.data.message; // during dev
+      responseMessage = e.response.data.message; // during dev
     } else if (e.request) {
       console.log("Error request", e.request);
 
-      responseMessage.value = "Не удалось обновить профиль"; // 'Undefined (network?) error'
+      responseMessage = "Не удалось обновить профиль"; // 'Undefined (network?) error'
     } else {
       console.log("Error local", e.message);
 
-      responseMessage.value = e.message;
+      responseMessage = e.message;
     }
 
-    isProfileUpdated.value = false;
+    wasProfileUpdated = false;
   } finally {
-    showToast();
+    let color = wasProfileUpdated ? "green" : "red";
+    let icon = wasProfileUpdated ? CheckIcon : ExclamationIcon;
+    showToast(responseMessage, color, icon);
   }
 };
-
-const avatar = ref(
-  "https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png"
-);
 
 /* ************ Bind user data in case of role edit page ************ */
 onMounted(async () => {
@@ -232,15 +229,9 @@ onMounted(async () => {
     if (data.user.avatar) avatar.value = data.user.avatar;
   } catch (e) {
     console.error("Error request", e);
-    router.back();
+    showToast("Не удалось получить пользователя", "red", ExclamationIcon);
   }
 });
-
-/* ************ ********* ************ */
-const log = (event) => {
-  avatarFile.value = event.target.files[0];
-  avatar.value = window.URL.createObjectURL(avatarFile.value);
-};
 </script>
 
 <template>
@@ -397,19 +388,6 @@ const log = (event) => {
         </List>
       </div>
     </div>
-
-    <!--
-        we could move the toast to the root and tweak
-        the showToast function so we can control the toeast globally
-    -->
-    <Toast
-      :open="isOpenToast"
-      :color="isProfileUpdated ? 'green' : 'red'"
-      :icon="isProfileUpdated ? CheckIcon : ExclamationIcon"
-    >
-      <template #text>{{ responseMessage }}</template>
-      <!-- <template #title>title</template> -->
-    </Toast>
   </OfficeLayout>
 </template>
 

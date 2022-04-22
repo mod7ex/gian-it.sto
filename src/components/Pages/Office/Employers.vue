@@ -29,6 +29,9 @@ import {
   DescriptionListItems,
   DescriptionListItem,
 } from "../../UI/DescriptionList";
+import useConfirmDialog from "~/composables/useConfirmDialog.js";
+
+const { openConfirmDialog } = useConfirmDialog();
 
 const { axiosInstance } = useApi();
 
@@ -43,61 +46,14 @@ const {
   usersNumber,
   selected,
   selectedUser,
-  isFetchingEmployers,
+  dropUser,
+  setSelectedUser,
 } = useEmployers();
-
-/* ************ Selected User ************ */
-
-// User deletion
-let showDeleteUserModal = ref(false);
-let isWaitingForUserDeletion = ref(false);
-let isUserDeleted = ref(false);
-let deletionMessage = ref(null);
-
-let closeUserDeletionModal = () => {
-  showDeleteUserModal.value = false;
-
-  if (isUserDeleted.value) {
-    selected.value = false;
-    selectedUser.value = {};
-  }
-
-  setTimeout(() => {
-    isWaitingForUserDeletion.value = false;
-    isUserDeleted.value = false;
-    deletionMessage.value = null;
-  }, 300);
-};
-
-let dropUser = async (id) => {
-  isWaitingForUserDeletion.value = true;
-
-  try {
-    let { data } = await axiosInstance.delete(`users/${id}`);
-
-    if (!data.success) throw Error();
-
-    isUserDeleted.value = true;
-    deletionMessage.value = "Пользователь успешно удален";
-
-    deleteUser(id);
-  } catch (e) {
-    console.error("Error request", e);
-
-    isUserDeleted.value = false;
-    deletionMessage.value = "Не удалось удалить пользователя";
-  } finally {
-    isWaitingForUserDeletion.value = false;
-  }
-};
-
-let showSelectedUser = ({ id }) => {
-  selectedUser.value = users.value.find((item) => item.id === id) || {};
-  selected.value = true;
-};
 
 /* ************ Search ************ */
 const search = ref("");
+
+const isFetchingEmployers = ref(false);
 
 watch(
   // watching search
@@ -198,7 +154,7 @@ watch(
           <StackedListWithHeadings
             class="flex-1 min-h-0 overflow-y-auto"
             :items="directory"
-            @select="showSelectedUser"
+            @select="setSelectedUser"
             :key="orderkey"
           />
         </div>
@@ -307,49 +263,21 @@ watch(
                 </Button>
               </router-link>
 
-              <Button size="xs" color="red" @click="showDeleteUserModal = true">
+              <Button
+                size="xs"
+                color="red"
+                @click="
+                  () =>
+                    openConfirmDialog(
+                      () => dropUser(selectedUser.id),
+                      'are you sure you want to delete',
+                      'delete ?'
+                    )
+                "
+              >
                 <TrashIcon class="mr-2 h-5 w-5 text-white" />
                 Удалить
               </Button>
-
-              <Dialog
-                :open="showDeleteUserModal"
-                @close="closeUserDeletionModal"
-                :type="isUserDeleted ? 'success' : 'danger'"
-              >
-                <template #title>
-                  {{ deletionMessage ? deletionMessage : "Удалить?" }}
-                </template>
-
-                <template #text v-if="!deletionMessage">
-                  Вы уверены что хотите удалить пользователь?
-                  <div
-                    class="my-5 flex justify-center"
-                    v-if="isWaitingForUserDeletion"
-                  >
-                    <Spinner />
-                  </div>
-                </template>
-
-                <template v-slot:actions v-if="!deletionMessage">
-                  <div class="mt-5 sm:mt-6 flex justify-center items-end">
-                    <Button
-                      @click="closeUserDeletionModal"
-                      class="mx-3 justify-center"
-                    >
-                      Закрыть
-                    </Button>
-
-                    <Button
-                      color="red"
-                      @click="dropUser(selectedUser.id)"
-                      class="mx-3 justify-center"
-                    >
-                      Удалить
-                    </Button>
-                  </div>
-                </template>
-              </Dialog>
             </div>
           </article>
         </div>

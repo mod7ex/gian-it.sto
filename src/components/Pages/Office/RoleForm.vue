@@ -23,18 +23,24 @@ import UploadImage from "@/UI/UploadImage.vue";
 import Toggle from "@/UI/Toggle.vue";
 import List from "@/UI/List.vue";
 import Select from "@/UI/Select.vue";
-import Toast from "@/UI/Toast.vue";
 import Spinner from "@/UI/Spinner.vue";
 import useApi from "~/composables/useApi.js";
-
+import useToast from "~/composables/useToast.js";
 import { useRouter, useRoute } from "vue-router";
-
 import useVuelidate from "@vuelidate/core";
 import { minLength, required, helpers } from "@vuelidate/validators";
+import useRoles from "~/composables/useRoles.js";
+import useConfirmDialog from "~/composables/useConfirmDialog.js";
+
+const { openConfirmDialog } = useConfirmDialog();
+
+let { dropRole } = useRoles();
+
+const { showToast } = useToast();
 
 const { axiosInstance } = useApi();
 
-const editor = "Текст задачи";
+// const editor = "Текст задачи";
 
 let route = useRoute();
 let router = useRouter();
@@ -45,7 +51,7 @@ let isEditRolePage = computed(() => route.name === "EditRole");
 /* ************ Raw permissions ************ */
 
 let rawPermissions = ref([]);
-let isFetchingPermissions = ref(true);
+let isFetchingPermissions = ref(false);
 
 onMounted(async () => {
   isFetchingPermissions.value = true;
@@ -66,29 +72,25 @@ onMounted(async () => {
     } else {
       console.log("Error local", e.message);
     }
+    showToast("Не удалось получить разрешения", "red", ExclamationIcon);
   } finally {
     isFetchingPermissions.value = false;
   }
 });
 
-/* ************ Toast ************ */
-import useToast from "~/composables/useToast.js";
-const { isOpenToast, showToast, render } = useToast();
-let wasRoleCreated = ref(false);
-let responseMessage = ref("");
-
 /* ************ Role[Title + Permissions] (create & update) ************ */
+
 let roleTitle = ref("");
 const permissions = ref({});
 
-let rules = computed(() => ({
+let roleTitleRules = computed(() => ({
   roleTitle: {
     required: helpers.withMessage("Укажите Название", required),
     minLength: helpers.withMessage("не менее 5 символов", minLength(5)),
   },
 }));
 
-let v$ = useVuelidate(rules, { roleTitle }, { $lazy: true });
+let v$ = useVuelidate(roleTitleRules, { roleTitle }, { $lazy: true });
 
 let saveRole = async () => {
   let isValideRoleName = await v$.value.$validate();
@@ -97,10 +99,13 @@ let saveRole = async () => {
 
   v$.value.$reset();
 
+  let wasRoleCreated = false;
+  let responseMessage = null;
+
   // send data to server
   try {
     let { data } = await axiosInstance[isEditRolePage.value ? "put" : "post"](
-      `/roles/${route.params.id}`,
+      `/roles/${isEditRolePage.value ? route.params.id : ""}`,
       {
         title: roleTitle.value,
         permissions: Object.keys(permissions.value).filter(
@@ -111,23 +116,25 @@ let saveRole = async () => {
 
     if (!data.success) throw new Error();
 
-    responseMessage.value = "Роль успешно создана";
-    wasRoleCreated.value = true;
+    responseMessage = "Роль успешно создана";
+    wasRoleCreated = true;
   } catch (e) {
     if (e.response) {
       console.error("Error responce", e, e.response.data);
-      responseMessage.value = e.response.data.message;
+      responseMessage = e.response.data.message;
     } else if (e.request) {
       console.log("Error request", e.request);
-      responseMessage.value = "Не удалось создать роль!";
+      responseMessage = "Не удалось создать роль!";
     } else {
       console.log("Error local", e.message);
-      responseMessage.value = e.message;
+      responseMessage = e.message;
     }
 
-    wasRoleCreated.value = false;
+    wasRoleCreated = false;
   } finally {
-    showToast();
+    let color = wasRoleCreated ? "green" : "red";
+    let icon = wasRoleCreated ? CheckIcon : ExclamationIcon;
+    showToast(responseMessage, color, icon);
   }
 };
 
@@ -147,7 +154,7 @@ onMounted(async () => {
     });
   } catch (e) {
     console.error("Error request", e);
-    router.back();
+    showToast("Не удалось получить роль", "red", ExclamationIcon);
   }
 });
 </script>
@@ -165,7 +172,21 @@ onMounted(async () => {
         Сохранить
       </Button>
 
-      <Button color="red">
+      <Button
+        color="red"
+        @click="
+          () =>
+            openConfirmDialog(
+              () => {
+                dropRole(route.params.id);
+                router.back();
+              },
+              'are you sure you want to delete',
+              'delete ?'
+            )
+        "
+        v-if="isEditRolePage"
+      >
         <XIcon class="w-5 h-5 mr-1" />
         Удалить
       </Button>
@@ -205,19 +226,6 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-
-    <!--
-        we could move the toast to the root and tweak
-        the showToast function so we can control the toeast globally
-    -->
-    <Toast
-      :open="isOpenToast"
-      :color="wasRoleCreated ? 'green' : 'red'"
-      :icon="wasRoleCreated ? CheckIcon : ExclamationIcon"
-    >
-      <template #text>{{ responseMessage }}</template>
-      <!-- <template #title>title</template> -->
-    </Toast>
   </OfficeLayout>
 </template>
 

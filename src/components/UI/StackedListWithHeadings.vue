@@ -36,10 +36,9 @@ const props = defineProps({
           </div>
         </li>
       </ul>
+
     </div>
   </nav>
 </template>
 
-<style scoped>
 
-</style>

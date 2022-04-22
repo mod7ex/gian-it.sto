@@ -1,18 +1,18 @@
 <script setup>
 const props = defineProps({
   icon: {
-    type: Object,
+    type: [Object, null],
     required: false,
   },
   title: {
     type: String,
     required: false,
-    default: "",
+    default: "title",
   },
   text: {
     type: String,
     required: false,
-    default: "",
+    default: "lorem ipsum",
   },
   color: {
     type: String,
@@ -103,7 +103,7 @@ const colors = [
   <!-- Global notification live region, render this permanently at the end of the document -->
   <div
     aria-live="assertive"
-    class="fixed inset-0 flex items-start px-4 py-6 pointer-events-none sm:p-6"
+    class="fixed inset-0 flex items-start px-4 py-6 pointer-events-none sm:p-6 z-50"
   >
     <div class="w-full flex flex-col items-center space-y-4">
       <!-- Notification panel, dynamically insert this into the live region when it needs to be displayed -->
@@ -116,7 +116,7 @@ const colors = [
         leave-to-class="opacity-0"
       >
         <div
-          v-show="props.open"
+          v-if="props.open"
           class="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden"
         >
           <div :class="['rounded-md p-4', `bg-${props.color}-50`]">

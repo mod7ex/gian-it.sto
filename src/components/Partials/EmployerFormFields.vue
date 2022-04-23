@@ -4,7 +4,7 @@ import {
   ArrowLeftIcon,
   ExclamationIcon,
 } from "@heroicons/vue/outline";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import OfficeLayout from "@/Layout/Office.vue";
 import Button from "@/UI/Button.vue";
 import Input from "@/UI/Input.vue";
@@ -27,7 +27,15 @@ let {
   atMountedEmployerForm,
 } = employerForm();
 
+const defaultEmployerAvatar =
+  "https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png";
+
 await atMountedEmployerForm();
+
+onMounted(() => {
+  if (avatar.value) return;
+  avatar.value = defaultEmployerAvatar;
+});
 </script>
 
 <template>

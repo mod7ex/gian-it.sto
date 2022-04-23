@@ -6,8 +6,6 @@ import employerFormValidationsRules from '~/validationsRules/employerForm.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 
-const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
-
 const defaultUserFields = {
   // password fields will be automatically set if we're creating a user
   name: '',
@@ -28,7 +26,7 @@ const roles = ref([]);
 const departments = ref([]);
 
 let userFields = reactive(defaultUserFields);
-const avatar = ref(defaultEmployerAvatar);
+const avatar = ref(null);
 const toggles = ref(defaultTogglesState);
 const avatarFile = ref(null);
 
@@ -48,7 +46,7 @@ export default function employerForm() {
   });
 
   const log = (event) => {
-    avatarFile.value = event.target.files[0];
+    [avatarFile.value] = event.target.files;
     avatar.value = window.URL.createObjectURL(avatarFile.value);
   };
 
@@ -65,8 +63,8 @@ export default function employerForm() {
 
   const fetchDepartments = async () => {
     try {
-      const department_res = await axiosInstance.get('/departments');
-      departments.value = department_res.data.departments || [];
+      const departmentRes = await axiosInstance.get('/departments');
+      departments.value = departmentRes.data.departments || [];
     } catch (e) {
       console.error('Error request', e);
       showToast('Не удалось получить роли', 'red', ExclamationIcon);
@@ -75,8 +73,8 @@ export default function employerForm() {
 
   const fetchRoles = async () => {
     try {
-      const roles_res = await axiosInstance.get('/roles');
-      roles.value = roles_res.data.roles || [];
+      const rolesRes = await axiosInstance.get('/roles');
+      roles.value = rolesRes.data.roles || [];
     } catch (e) {
       console.error('Error request', e);
       showToast('Не удалось получить отделы', 'red', ExclamationIcon);
@@ -106,12 +104,11 @@ export default function employerForm() {
 
     const form = new FormData();
 
-    Object.keys(userFields).forEach((key)=>{
+    Object.keys(userFields).forEach((key) => {
       // won't count password in case we're editing the user, password is updated siparatly (down)
-      if (isEditEmployerPage.value && key.substr(0, 8) === 'password') continue;
+      if (isEditEmployerPage.value && key.substr(0, 8) === 'password') return;
       form.append(key, `${userFields}`);
-    })
-
+    });
 
     form.append('is_about_visible', toggles.value[0]);
     form.append('is_born_at_visible', toggles.value[1]);
@@ -176,21 +173,21 @@ export default function employerForm() {
   };
 
   const setEmployerForm = async (payload = {}) => {
-    if (payload != {}) {
-      for (const key in userFields) {
+    if (payload !== {}) {
+      Object.keys(userFields).forEach((key) => {
         if (key === 'department_id') {
           userFields.department_id = payload.department?.id;
-          continue;
+          return;
         }
 
         if (key === 'role_id') {
-          console.log(payload.roles);
+          // console.log(payload.roles);
           // ===========> should be fixed later
-          continue;
+          return;
         }
 
         userFields[key] = payload[key];
-      }
+      });
 
       if (userFields.born_at) {
         const [d, m, y] = userFields.born_at.split('.');
@@ -207,7 +204,6 @@ export default function employerForm() {
     }
 
     userFields = defaultUserFields;
-    avatar.value = defaultEmployerAvatar;
     toggles.value = defaultTogglesState;
     avatarFile.value = null;
   };

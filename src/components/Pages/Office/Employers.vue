@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch } from "vue";
 import useApi from "~/composables/useApi.js";
-import employers from "~/services/employers.js";
 import _ from "lodash";
 import OfficeLayout from "@/Layout/Office.vue";
 import Input from "@/UI/Input.vue";
@@ -29,7 +28,10 @@ import {
   DescriptionListItems,
   DescriptionListItem,
 } from "@/UI/DescriptionList";
+import { useRouter } from "vue-router";
+
 import useConfirmDialog from "~/composables/useConfirmDialog.js";
+import employers from "~/services/employers.js";
 
 const { openConfirmDialog } = useConfirmDialog();
 
@@ -37,7 +39,6 @@ const { axiosInstance } = useApi();
 
 const {
   users,
-  deleteUser,
   directory,
   reOrder,
   orderkey,

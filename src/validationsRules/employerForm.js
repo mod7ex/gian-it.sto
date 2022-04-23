@@ -31,7 +31,7 @@ export default function employerFormValidationsRules(user, isEditForm = false) {
     },
 
     department_id: {
-      // required: helpers.withMessage("Укажите отделение", required),
+      required: helpers.withMessage("Укажите отделение", required),
     },
   }));
 

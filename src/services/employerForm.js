@@ -183,24 +183,21 @@ export default function employerForm() {
     }
   };
 
-  let fetchSubjectUser = async () => {
-    try {
-      let { data } = await axiosInstance.get(`/users/${route.params.id}`);
-      if (!data.success) throw Error();
-
+  let setEmployerForm = async (payload = {}) => {
+    if (payload != {}) {
       for (let key in userFields) {
         if (key === "department_id") {
-          userFields.department_id = data.user["department"].id;
+          userFields.department_id = payload["department"]?.id;
           continue;
         }
 
         if (key === "role_id") {
-          console.log(data.user["roles"]);
+          console.log(payload["roles"]);
           // ===========> should be fixed later
           continue;
         }
 
-        userFields[key] = data.user[key];
+        userFields[key] = payload[key];
       }
 
       if (userFields.born_at) {
@@ -208,40 +205,51 @@ export default function employerForm() {
         userFields.born_at = `${y}-${m}-${d}`;
       }
 
-      toggles.value[0] = data.user.is_about_visible || false;
-      toggles.value[1] = data.user.is_born_at_visible || false;
-      toggles.value[2] = data.user.is_active || false;
+      toggles.value[0] = payload.is_about_visible || false;
+      toggles.value[1] = payload.is_born_at_visible || false;
+      toggles.value[2] = payload.is_active || false;
 
-      if (data.user.avatar) avatar.value = data.user.avatar;
-    } catch (e) {
-      console.error("Error request", e);
-      showToast("Не удалось получить пользователя", "red", ExclamationIcon);
+      avatar.value = payload.avatar;
+
+      return;
     }
-  };
 
-  let resetEmployerForm = () => {
     userFields = defaultUserFields;
     avatar.value = defaultEmployerAvatar;
     toggles.value = defaultTogglesState;
     avatarFile.value = null;
   };
 
-  let atMounted = async () => {
-    /* ************ Reset ************ */
-    //   userFields = defaultUserFields;
-    //   avatar.value = defaultEmployerAvatar;
-    //   toggles.value = defaultTogglesState;
-    //   avatarFile.value = null;
+  let fetchSubjectUser = async (id) => {
+    let theFetchedUser = {};
+
+    try {
+      let { data } = await axiosInstance.get(`/users/${id}`);
+      if (!data.success) throw Error();
+
+      theFetchedUser = data.user;
+    } catch (e) {
+      console.error("Error request", e);
+      showToast("Не удалось получить пользователя", "red", ExclamationIcon);
+    }
+
+    return theFetchedUser;
+  };
+
+  let atMountedEmployerForm = async () => {
+    let payload = {};
+
+    if (isEditEmployerPage.value) {
+      if (!route.params.id) return router.back();
+      payload = await fetchSubjectUser(route.params.id);
+    }
 
     /* ************ Fetch Departments & Roles ************ */
     await fetchDepartments();
     await fetchRoles();
 
     /* ************ Bind user data in case of role edit page ************ */
-    if (!isEditEmployerPage.value) return;
-    if (!route.params.id) return router.back();
-
-    await fetchSubjectUser();
+    await setEmployerForm(payload);
   };
 
   return {
@@ -261,7 +269,6 @@ export default function employerForm() {
     v$,
     saveUser,
     toggles,
-    atMounted,
-    resetEmployerForm,
+    atMountedEmployerForm,
   };
 }

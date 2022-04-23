@@ -16,26 +16,18 @@ import List from "@/UI/List.vue";
 import employerForm from "~/services/employerForm.js";
 
 let {
-  roles,
-  departments,
   departmentOptions,
   roleOptions,
-  fetchDepartments,
-  fetchRoles,
   isValideAvatarFileSize,
   log,
-  avatarFile,
   avatar,
   userFields,
-  isEditEmployerPage,
   v$,
-  saveUser,
   toggles,
-  fetchSubjectUser,
-  atMounted,
+  atMountedEmployerForm,
 } = employerForm();
 
-await atMounted();
+await atMountedEmployerForm();
 </script>
 
 <template>

@@ -1,0 +1,6 @@
+{
+  "vetur.validation.templateProps": true,
+  "vetur.format.options.tabSize": 4,
+  "vetur.format.options.useTabs": true,
+  "html.format.wrapLineLength": 0
+}

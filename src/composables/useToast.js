@@ -1,12 +1,11 @@
-import { ref, h, watch } from "vue";
-import Toast from "@/UI/Toast.vue";
+import { ref } from 'vue';
 
 const defaultToast = {
   open: false,
-  color: "blue",
+  color: 'blue',
   icon: null,
-  title: "",
-  text: "lorem ipsum",
+  title: '',
+  text: 'lorem ipsum',
 };
 
 const isOpenToast = ref(defaultToast.open);
@@ -16,7 +15,7 @@ const toastTitle = ref(defaultToast.title);
 const toastText = ref(defaultToast.text);
 
 export default function useToast() {
-  let resetToast = () => {
+  const resetToast = () => {
     isOpenToast.value = defaultToast.open;
     toastColor.value = defaultToast.color;
     toastIcon.value = defaultToast.icon;
@@ -28,7 +27,7 @@ export default function useToast() {
     text = defaultToast.text,
     color = defaultToast.color,
     icon = defaultToast.icon,
-    title = defaultToast.title
+    title = defaultToast.title,
   ) {
     isOpenToast.value = true;
     toastColor.value = color;
@@ -37,21 +36,6 @@ export default function useToast() {
     toastText.value = text;
     setTimeout(resetToast, 5000);
   }
-
-  // let render = () => {
-  //   return h(
-  //     Toast,
-  //     {
-  //       open: (() => isOpenToast.value)(),
-  //       color: toastColor.value,
-  //       icon: toastIcon.value,
-  //     },
-  //     {
-  //       title: () => toastTitle.value,
-  //       text: () => toastText.value,
-  //     }
-  //   );
-  // };
 
   return {
     showToast,

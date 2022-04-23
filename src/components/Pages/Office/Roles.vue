@@ -1,10 +1,10 @@
 <script setup>
-import OfficeLayout from "@/Layout/Office.vue";
-import Button from "@/UI/Button.vue";
-import Spinner from "@/UI/Spinner.vue";
-import { PlusCircleIcon, ArrowLeftIcon } from "@heroicons/vue/outline";
+import { PlusCircleIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
+import OfficeLayout from '@/Layout/Office.vue';
+import Button from '@/UI/Button.vue';
+import Spinner from '@/UI/Spinner.vue';
 
-import RolesTable from "~/components/Partials/RolesTable.vue";
+import RolesTable from '~/components/Partials/RolesTable.vue';
 </script>
 
 <template>

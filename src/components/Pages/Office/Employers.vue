@@ -1,17 +1,6 @@
 <script setup>
-import { ref, watch } from "vue";
-import useApi from "~/composables/useApi.js";
-import _ from "lodash";
-import OfficeLayout from "@/Layout/Office.vue";
-import Input from "@/UI/Input.vue";
-import Link from "@/UI/Link.vue";
-import Button from "@/UI/Button.vue";
-import Badge from "@/UI/Badge.vue";
-import Avatar from "@/UI/Avatar.vue";
-import DialogModal from "@/UI/DialogModal.vue";
-import Dialog from "@/UI/Dialog.vue";
-import Spinner from "@/UI/Spinner.vue";
-import StackedListWithHeadings from "@/UI/StackedListWithHeadings.vue";
+import { ref, watch } from 'vue';
+import _ from 'lodash';
 import {
   SearchIcon,
   FilterIcon,
@@ -21,17 +10,28 @@ import {
   ArrowDownIcon,
   PencilIcon,
   TrashIcon,
-} from "@heroicons/vue/solid";
-import { PlusCircleIcon } from "@heroicons/vue/outline";
+} from '@heroicons/vue/solid';
+import { PlusCircleIcon } from '@heroicons/vue/outline';
+import { useRouter } from 'vue-router';
+import useApi from '~/composables/useApi.js';
+import OfficeLayout from '@/Layout/Office.vue';
+import Input from '@/UI/Input.vue';
+import Link from '@/UI/Link.vue';
+import Button from '@/UI/Button.vue';
+import Badge from '@/UI/Badge.vue';
+import Avatar from '@/UI/Avatar.vue';
+import DialogModal from '@/UI/DialogModal.vue';
+import Dialog from '@/UI/Dialog.vue';
+import Spinner from '@/UI/Spinner.vue';
+import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import {
   DescriptionList,
   DescriptionListItems,
   DescriptionListItem,
-} from "@/UI/DescriptionList";
-import { useRouter } from "vue-router";
+} from '@/UI/DescriptionList';
 
-import useConfirmDialog from "~/composables/useConfirmDialog.js";
-import employers from "~/services/employers.js";
+import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import employers from '~/services/employers.js';
 
 const { openConfirmDialog } = useConfirmDialog();
 
@@ -52,7 +52,7 @@ const {
 } = employers();
 
 /* ************ Search ************ */
-const search = ref("");
+const search = ref('');
 
 const isFetchingEmployers = ref(false);
 
@@ -64,18 +64,18 @@ watch(
     try {
       let url = `/users?order=${order.value.criteria}`;
       if (v) url += `&name=${v}`;
-      let { data } = await axiosInstance.get(url);
+      const { data } = await axiosInstance.get(url);
       users.value = data.users;
       order.value.mod = -1; // return to desc(default) order mod
     } catch (e) {
-      console.error("Error request", e);
+      console.error('Error request', e);
     } finally {
       isFetchingEmployers.value = false;
     }
   }, 1500),
   {
     immediate: true,
-  }
+  },
 );
 </script>
 

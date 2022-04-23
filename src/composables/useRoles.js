@@ -1,8 +1,9 @@
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import useConfirmDialog from "~/composables/useConfirmDialog.js";
-import useApi from "~/composables/useApi.js";
-import useToast from "~/composables/useToast.js";
+import { ExclamationIcon } from '@heroicons/vue/outline';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import useApi from '~/composables/useApi.js';
+import useToast from '~/composables/useToast.js';
 
 const { showToast } = useToast();
 
@@ -10,68 +11,66 @@ const { showResultConfirmDialog } = useConfirmDialog();
 
 const { axiosInstance } = useApi();
 
-let rawRoles = ref([]);
+const rawRoles = ref([]);
 
-let rawRolePermissions = ref([]);
+const rawRolePermissions = ref([]);
 
 const permissions = ref({});
 
 export default function useEmployers() {
-  let router = useRouter();
+  const router = useRouter();
 
-  let roles = computed(() =>
-    rawRoles.value.map((role) => ({
-      id: role.id,
-      name: role.title,
-      created_at: role.created_at,
-    }))
-  );
+  const roles = computed(() => rawRoles.value.map((role) => ({
+    id: role.id,
+    name: role.title,
+    created_at: role.created_at,
+  })));
 
-  let fetchRoles = async () => {
+  const fetchRoles = async () => {
     try {
-      let { data } = await axiosInstance.get(`/roles`);
+      const { data } = await axiosInstance.get('/roles');
 
       if (!data.success) throw Error();
 
       rawRoles.value = data.roles || [];
     } catch (e) {
-      console.error("Error request", e);
+      console.error('Error request', e);
     }
   };
 
   /* ************ Delete role ************ */
 
-  let deleteRole = (id) => {
+  const deleteRole = (id) => {
     rawRoles.value.splice(
       rawRoles.value.findIndex((user) => user.id === id),
-      1
+      1,
     );
   };
 
-  let dropRole = async (id) => {
+  const dropRole = async (id) => {
     let wasRoleDeleted = false;
     let deletionMessage = null;
 
     try {
-      let { data } = await axiosInstance.delete(`roles/${id}`);
+      const { data } = await axiosInstance.delete(`roles/${id}`);
 
       if (!data.success) throw Error();
 
       deleteRole(id);
 
-      deletionMessage = "Роль успешно удалена";
+      deletionMessage = 'Роль успешно удалена';
       wasRoleDeleted = true;
     } catch (e) {
-      console.error("Error request", e);
+      console.error('Error request', e);
 
       if (e.response) {
-        console.error("Error responce", e, e.response.data);
+        console.error('Error responce', e, e.response.data);
         deletionMessage = e.response.data.message;
       } else if (e.request) {
-        console.log("Error request", e.request);
-        deletionMessage = "Не удалось удалить роль";
+        console.log('Error request', e.request);
+        deletionMessage = 'Не удалось удалить роль';
       } else {
-        console.log("Error local", e.message);
+        console.log('Error local', e.message);
         deletionMessage = e.message;
       }
 
@@ -82,32 +81,32 @@ export default function useEmployers() {
   };
 
   /* ************ Update role ************ */
-  let movetoEditRolePage = async (id) => {
+  const movetoEditRolePage = async (id) => {
     if (!id) return;
-    await router.push({ name: "EditRole", params: { id } });
+    await router.push({ name: 'EditRole', params: { id } });
   };
 
   /* ************ Role Permissions ************ */
 
-  let fetchRawRolePermissions = async () => {
+  const fetchRawRolePermissions = async () => {
     try {
-      let { data } = await axiosInstance.get("/permissions");
+      const { data } = await axiosInstance.get('/permissions');
 
       if (!data.success) throw new Error();
 
       rawRolePermissions.value = data.permissions;
       rawRolePermissions.value.sort(
-        (a, b) => b.permissions?.length - a.permissions?.length
+        (a, b) => b.permissions?.length - a.permissions?.length,
       );
     } catch (e) {
       if (e.response) {
-        console.error("Error responce", e, e.response.data);
+        console.error('Error responce', e, e.response.data);
       } else if (e.request) {
-        console.log("Error request", e.request);
+        console.log('Error request', e.request);
       } else {
-        console.log("Error local", e.message);
+        console.log('Error local', e.message);
       }
-      showToast("Не удалось получить разрешения", "red", ExclamationIcon);
+      showToast('Не удалось получить разрешения', 'red', ExclamationIcon);
     }
   };
 

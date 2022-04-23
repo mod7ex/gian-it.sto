@@ -1,12 +1,12 @@
 <script setup>
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import Toast from "@/UI/Toast.vue";
-import Dialog from "@/UI/Dialog.vue";
-import Spinner from "@/UI/Spinner.vue";
-import Button from "@/UI/Button.vue";
-import useToast from "~/composables/useToast.js";
-import useConfirmDialog from "~/composables/useConfirmDialog.js";
+import Toast from '@/UI/Toast.vue';
+import Dialog from '@/UI/Dialog.vue';
+import Spinner from '@/UI/Spinner.vue';
+import Button from '@/UI/Button.vue';
+import useToast from '~/composables/useToast.js';
+import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 const {
   isOpenDialog,
@@ -20,8 +20,7 @@ const {
   proceedConfirmDialog,
 } = useConfirmDialog();
 
-const { isOpenToast, toastColor, toastIcon, toastTitle, toastText } =
-  useToast();
+const { isOpenToast, toastColor, toastIcon, toastTitle, toastText } = useToast();
 </script>
 
 <template>

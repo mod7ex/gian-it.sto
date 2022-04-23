@@ -1,19 +1,19 @@
-import { ref, h, watch } from "vue";
+import { ref } from 'vue';
 
-let isOpenDialog = ref(false);
+const isOpenDialog = ref(false);
 
-let isDialogWaiting = ref(false);
+const isDialogWaiting = ref(false);
 
-let dialogTitle = ref("Подтверждать!");
-let dialogText = ref("Вы уверены что хотите продолжить ?");
+const dialogTitle = ref('Подтверждать!');
+const dialogText = ref('Вы уверены что хотите продолжить ?');
 
-let dialogResultMessage = ref(null);
-let isSuccessDialogResult = ref(false);
+const dialogResultMessage = ref(null);
+const isSuccessDialogResult = ref(false);
 
-let dialogProceedFunction = ref(async () => {});
+const dialogProceedFunction = ref(async () => {});
 
 export default function useConfirmDialog() {
-  let openConfirmDialog = (onYesFunction, text, title, type = false) => {
+  const openConfirmDialog = (onYesFunction, text, title, type = false) => {
     dialogProceedFunction.value = onYesFunction;
     dialogText.value = text;
     dialogTitle.value = title;
@@ -21,27 +21,27 @@ export default function useConfirmDialog() {
     isSuccessDialogResult.value = type;
   };
 
-  let showResultConfirmDialog = (resultMessage, success = true) => {
+  const showResultConfirmDialog = (resultMessage, success = true) => {
     isDialogWaiting.value = false;
     isSuccessDialogResult.value = success;
     dialogResultMessage.value = resultMessage;
   };
 
-  let closeConfirmDialog = () => {
+  const closeConfirmDialog = () => {
     isOpenDialog.value = false;
     isDialogWaiting.value = false;
 
     setTimeout(() => {
       dialogResultMessage.value = null;
-      dialogTitle.value = "Подтверждать!";
-      dialogText.value = "Вы уверены что хотите продолжить ?";
+      dialogTitle.value = 'Подтверждать!';
+      dialogText.value = 'Вы уверены что хотите продолжить ?';
       dialogProceedFunction.value = async () => {};
     }, 300);
   };
 
-  let proceedConfirmDialog = async (...args) => {
+  const proceedConfirmDialog = async (...args) => {
     isDialogWaiting.value = true;
-    let foo = dialogProceedFunction.value;
+    const foo = dialogProceedFunction.value;
     await foo(...args);
   };
 

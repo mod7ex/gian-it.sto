@@ -1,22 +1,22 @@
-import { ref, readonly, computed } from "vue";
-import useConfirmDialog from "~/composables/useConfirmDialog.js";
-import useApi from "~/composables/useApi.js";
+import { ref, computed } from 'vue';
+import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import useApi from '~/composables/useApi.js';
 
 const { showResultConfirmDialog } = useConfirmDialog();
 
 const { axiosInstance } = useApi();
 
 const filter = [
-  { criteria: "id", label: "По умолчанию" },
-  { criteria: "surname", label: "По фамилии" },
-  { criteria: "department", label: "По отделам" },
+  { criteria: 'id', label: 'По умолчанию' },
+  { criteria: 'surname', label: 'По фамилии' },
+  { criteria: 'department', label: 'По отделам' },
 ];
 
-let order = ref({
+const order = ref({
   // show filter area
   show: false,
   // id, surname or department
-  criteria: "id",
+  criteria: 'id',
   //  asc:1 or  desc:-1 the default always is desc:-1
   mod: -1,
 });
@@ -25,31 +25,31 @@ const users = ref({});
 
 const selected = ref(false);
 
-let selectedUser = ref({});
+const selectedUser = ref({});
 
 export default function employers() {
-  let usersNumber = computed(() => users.value.length);
+  const usersNumber = computed(() => users.value.length);
 
-  let orderkey = computed(
-    () => `${order.value.criteria}-${order.value.mod === 1 ? "asc" : "desc"}`
+  const orderkey = computed(
+    () => `${order.value.criteria}-${order.value.mod === 1 ? 'asc' : 'desc'}`,
   );
 
-  let directory = computed(() => {
+  const directory = computed(() => {
     if (!users.value.length) return [];
 
-    let usersList = { _: [] };
+    const usersList = { _: [] };
 
     users.value.forEach((user) => {
-      let user_item = {
+      const userItem = {
         id: user.id,
-        title: `${user.name} ${user.surname ? user.surname : ""}`,
-        subtitle: `${user.office_position ? user.office_position : ""}`,
-        image: `${user.avatar ? user.avatar : ""}`,
+        title: `${user.name} ${user.surname ? user.surname : ''}`,
+        subtitle: `${user.office_position ? user.office_position : ''}`,
+        image: `${user.avatar ? user.avatar : ''}`,
       };
 
       // group users who don't have surname
       if (!user.surname) {
-        usersList._.push(user_item);
+        usersList._.push(userItem);
         return;
       }
 
@@ -59,31 +59,32 @@ export default function employers() {
       }
 
       // put the item in his letter group (group by letter)
-      usersList[user.surname[0]].push(user_item);
+      usersList[user.surname[0]].push(userItem);
     });
 
     return Object.keys(usersList)
       .sort()
       .reduce((obj, key) => {
+        // eslint-disable-next-line no-param-reassign
         obj[key] = usersList[key];
         return obj;
       }, {});
   });
 
-  let reOrder = (ctr = "id") => {
+  const reOrder = (ctr = 'id') => {
     order.value.mod = order.value.criteria === ctr ? -order.value.mod : -1;
 
     order.value.criteria = ctr;
 
     // sort by criteria
     switch (ctr) {
-      case "id":
+      case 'id':
         users.value = users.value.sort(
-          (a, b) => (a.id - b.id) * order.value.mod
+          (a, b) => (a.id - b.id) * order.value.mod,
         );
         break;
 
-      case "surname":
+      case 'surname':
         users.value = users.value.sort((a, b) => {
           if (a.surname > b.surname) return order.value.mod;
           if (a.surname < b.surname) return -order.value.mod;
@@ -91,9 +92,9 @@ export default function employers() {
         });
         break;
 
-      case "department":
+      case 'department':
         users.value = users.value.sort(
-          (a, b) => (a.department?.id - b.department?.id) * order.value.mod
+          (a, b) => (a.department?.id - b.department?.id) * order.value.mod,
         );
         break;
 
@@ -103,7 +104,7 @@ export default function employers() {
 
     /* // for test (visualize data)
       console.log(orderkey.value);
-    
+
       for (let i = 0; i < 5; i++) {
         console.log(
           `id => ${users.value[i].id}`,
@@ -114,43 +115,43 @@ export default function employers() {
     */
   };
 
-  let setSelectedUser = (user) => {
+  const setSelectedUser = (user) => {
     selectedUser.value = user
       ? users.value.find((item) => item.id === user.id) || {}
       : {};
-    selected.value = user ? true : false;
+    selected.value = !!user;
   };
 
   /* ************ Delete role ************ */
 
-  let deleteUser = (id) => {
+  const deleteUser = (id) => {
     users.value.splice(
       users.value.findIndex((user) => user.id === id),
-      1
+      1,
     );
   };
 
-  let dropUser = async (id) => {
+  const dropUser = async (id) => {
     // User deletion
     let isUserDeleted = false;
     let deletionMessage = null;
 
     try {
-      let { data } = await axiosInstance.delete(`users/${id}`);
+      const { data } = await axiosInstance.delete(`users/${id}`);
 
       if (!data.success) throw Error();
 
       isUserDeleted = true;
-      deletionMessage = "Пользователь успешно удален";
+      deletionMessage = 'Пользователь успешно удален';
 
       deleteUser(id);
 
       setSelectedUser();
     } catch (e) {
-      console.error("Error request", e);
+      console.error('Error request', e);
 
       isUserDeleted = false;
-      deletionMessage = "Не удалось удалить пользователя";
+      deletionMessage = 'Не удалось удалить пользователя';
     } finally {
       showResultConfirmDialog(deletionMessage, isUserDeleted);
     }

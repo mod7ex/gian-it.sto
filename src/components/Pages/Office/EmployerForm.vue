@@ -1,13 +1,13 @@
 <script setup>
-import { CheckIcon, ArrowLeftIcon } from "@heroicons/vue/outline";
-import { onMounted } from "vue";
-import OfficeLayout from "@/Layout/Office.vue";
-import Button from "@/UI/Button.vue";
-import Spinner from "@/UI/Spinner.vue";
-import employerForm from "~/services/employerForm.js";
-import EmployerFormFields from "~/components/Partials/EmployerFormFields.vue";
+import { CheckIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
+import { onMounted } from 'vue';
+import OfficeLayout from '@/Layout/Office.vue';
+import Button from '@/UI/Button.vue';
+import Spinner from '@/UI/Spinner.vue';
+import employerForm from '~/services/employerForm.js';
+import EmployerFormFields from '~/components/Partials/EmployerFormFields.vue';
 
-let { saveUser } = employerForm();
+const { saveUser } = employerForm();
 </script>
 
 <template>

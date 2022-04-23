@@ -1,49 +1,48 @@
-import { ref, computed, reactive } from "vue";
-import employerFormValidationsRules from "~/validationsRules/employerForm.js";
-import useVuelidate from "@vuelidate/core";
-import useApi from "~/composables/useApi.js";
-import { useRoute, useRouter } from "vue-router";
-import useToast from "~/composables/useToast.js";
-import { CheckIcon, ExclamationIcon } from "@heroicons/vue/outline";
+import { ref, computed, reactive } from 'vue';
+import useVuelidate from '@vuelidate/core';
+import { useRoute, useRouter } from 'vue-router';
+import { CheckIcon, ExclamationIcon } from '@heroicons/vue/outline';
+import employerFormValidationsRules from '~/validationsRules/employerForm.js';
+import useApi from '~/composables/useApi.js';
+import useToast from '~/composables/useToast.js';
 
-const defaultEmployerAvatar =
-  "https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png";
+const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
 
 const defaultUserFields = {
   // password fields will be automatically set if we're creating a user
-  name: "",
-  surname: "",
-  middle_name: "",
-  email: "",
-  phone: "",
-  about: "",
-  born_at: "",
-  office_position: "",
-  role_id: "",
-  department_id: "",
+  name: '',
+  surname: '',
+  middle_name: '',
+  email: '',
+  phone: '',
+  about: '',
+  born_at: '',
+  office_position: '',
+  role_id: '',
+  department_id: '',
 };
 
 const defaultTogglesState = [false, false, false];
 
-let roles = ref([]);
-let departments = ref([]);
+const roles = ref([]);
+const departments = ref([]);
 
 let userFields = reactive(defaultUserFields);
-let avatar = ref(defaultEmployerAvatar);
-let toggles = ref(defaultTogglesState);
-let avatarFile = ref(null);
+const avatar = ref(defaultEmployerAvatar);
+const toggles = ref(defaultTogglesState);
+const avatarFile = ref(null);
 
 export default function employerForm() {
-  let { showToast } = useToast();
-  let { axiosInstance } = useApi();
-  let route = useRoute();
-  let router = useRouter();
+  const { showToast } = useToast();
+  const { axiosInstance } = useApi();
+  const route = useRoute();
+  const router = useRouter();
 
   // page is used for edit and create users
-  let isEditEmployerPage = computed(() => route.name === "EditEmployer");
+  const isEditEmployerPage = computed(() => route.name === 'EditEmployer');
 
   /* ************ Avatar ************ */
-  let isValideAvatarFileSize = computed(() => {
+  const isValideAvatarFileSize = computed(() => {
     if (!avatarFile.value) return true;
     return avatarFile.value.size < 10000000;
   });
@@ -54,50 +53,46 @@ export default function employerForm() {
   };
 
   /* ************ Fetch Departments & Roles ************ */
-  let departmentOptions = computed(() =>
-    departments.value.map((department) => ({
-      value: department.id,
-      label: department.name,
-    }))
-  );
+  const departmentOptions = computed(() => departments.value.map((department) => ({
+    value: department.id,
+    label: department.name,
+  })));
 
-  let roleOptions = computed(() =>
-    roles.value.map((role) => ({
-      value: role.id,
-      label: role.title,
-    }))
-  );
+  const roleOptions = computed(() => roles.value.map((role) => ({
+    value: role.id,
+    label: role.title,
+  })));
 
-  let fetchDepartments = async () => {
+  const fetchDepartments = async () => {
     try {
-      let department_res = await axiosInstance.get("/departments");
+      const department_res = await axiosInstance.get('/departments');
       departments.value = department_res.data.departments || [];
     } catch (e) {
-      console.error("Error request", e);
-      showToast("Не удалось получить роли", "red", ExclamationIcon);
+      console.error('Error request', e);
+      showToast('Не удалось получить роли', 'red', ExclamationIcon);
     }
   };
 
-  let fetchRoles = async () => {
+  const fetchRoles = async () => {
     try {
-      let roles_res = await axiosInstance.get("/roles");
+      const roles_res = await axiosInstance.get('/roles');
       roles.value = roles_res.data.roles || [];
     } catch (e) {
-      console.error("Error request", e);
-      showToast("Не удалось получить отделы", "red", ExclamationIcon);
+      console.error('Error request', e);
+      showToast('Не удалось получить отделы', 'red', ExclamationIcon);
     }
   };
 
   /* ************ User form ************ */
 
-  let { rules } = employerFormValidationsRules(
+  const { rules } = employerFormValidationsRules(
     userFields,
-    isEditEmployerPage.value
+    isEditEmployerPage.value,
   );
 
-  let v$ = useVuelidate(rules, userFields, { $lazy: true });
+  const v$ = useVuelidate(rules, userFields, { $lazy: true });
 
-  let saveUser = async () => {
+  const saveUser = async () => {
     let isValideForm = await v$.value.$validate();
 
     isValideForm = isValideAvatarFileSize.value && isValideForm;
@@ -109,90 +104,87 @@ export default function employerForm() {
     let wasProfileUpdated = true;
     let responseMessage = null;
 
-    let form = new FormData();
+    const form = new FormData();
 
-    for (let key in userFields) {
+    Object.keys(userFields).forEach((key)=>{
       // won't count password in case we're editing the user, password is updated siparatly (down)
-      if (isEditEmployerPage.value && key.substr(0, 8) === "password") continue;
-      form.append(key, userFields + "");
-    }
+      if (isEditEmployerPage.value && key.substr(0, 8) === 'password') continue;
+      form.append(key, `${userFields}`);
+    })
 
-    form.append("is_about_visible", toggles.value[0]);
-    form.append("is_born_at_visible", toggles.value[1]);
-    form.append("is_active", toggles.value[2]);
+
+    form.append('is_about_visible', toggles.value[0]);
+    form.append('is_born_at_visible', toggles.value[1]);
+    form.append('is_active', toggles.value[2]);
 
     // send data to server
     try {
-      let { data } = await axiosInstance[
-        isEditEmployerPage.value ? "put" : "post"
+      const { data } = await axiosInstance[
+        isEditEmployerPage.value ? 'put' : 'post'
       ](
-        `/users/${isEditEmployerPage.value ? route.params.id : ""}`,
+        `/users/${isEditEmployerPage.value ? route.params.id : ''}`,
         // userFields
-        form
+        form,
       );
 
       // update avatar if user uploaded a photo
       if (avatarFile.value) {
-        let avatarForm = new FormData();
-        avatarForm.append("avatar", avatarFile.value);
+        const avatarForm = new FormData();
+        avatarForm.append('avatar', avatarFile.value);
 
-        let avatarRes = await axiosInstance.post(
-          `/users/${data.user.id}/avatar`,
-          avatarForm,
-          {
-            headers: { "Content-Type": "multipart/form-data" },
-          }
-        );
+        await axiosInstance.post(`/users/${data.user.id}/avatar`, avatarForm, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
       }
 
       // update password if filled (in case of update page)
       if (isEditEmployerPage.value && userFields.password) {
-        let passwordForm = new FormData();
+        const passwordForm = new FormData();
 
-        passwordForm.append("password", userFields.password);
+        passwordForm.append('password', userFields.password);
 
-        let passwordRes = await axiosInstance.put(
+        await axiosInstance.put(
           `/users/${data.user.id}/password`,
-          passwordForm
+          passwordForm,
         );
       }
 
       // everything was updated with success
       wasProfileUpdated = true;
-      responseMessage = "профиль успешно обновлен";
+      responseMessage = 'профиль успешно обновлен';
     } catch (e) {
       if (e.response) {
-        console.error("Error responce", e, e.response.data);
+        console.error('Error responce', e, e.response.data);
 
         responseMessage = e.response.data.message; // during dev
       } else if (e.request) {
-        console.log("Error request", e.request);
+        console.log('Error request', e.request);
 
-        responseMessage = "Не удалось обновить профиль"; // 'Undefined (network?) error'
+        responseMessage = 'Не удалось обновить профиль'; // 'Undefined (network?) error'
       } else {
-        console.log("Error local", e.message);
+        console.log('Error local', e.message);
 
         responseMessage = e.message;
       }
 
       wasProfileUpdated = false;
     } finally {
-      let color = wasProfileUpdated ? "green" : "red";
-      let icon = wasProfileUpdated ? CheckIcon : ExclamationIcon;
+      const color = wasProfileUpdated ? 'green' : 'red';
+      const icon = wasProfileUpdated ? CheckIcon : ExclamationIcon;
       showToast(responseMessage, color, icon);
     }
   };
 
-  let setEmployerForm = async (payload = {}) => {
+  const setEmployerForm = async (payload = {}) => {
     if (payload != {}) {
-      for (let key in userFields) {
-        if (key === "department_id") {
-          userFields.department_id = payload["department"]?.id;
+      for (const key in userFields) {
+        if (key === 'department_id') {
+          userFields.department_id = payload.department?.id;
           continue;
         }
 
-        if (key === "role_id") {
-          console.log(payload["roles"]);
+        if (key === 'role_id') {
+          console.log(payload.roles);
           // ===========> should be fixed later
           continue;
         }
@@ -201,7 +193,7 @@ export default function employerForm() {
       }
 
       if (userFields.born_at) {
-        let [d, m, y] = userFields.born_at.split(".");
+        const [d, m, y] = userFields.born_at.split('.');
         userFields.born_at = `${y}-${m}-${d}`;
       }
 
@@ -220,23 +212,23 @@ export default function employerForm() {
     avatarFile.value = null;
   };
 
-  let fetchSubjectUser = async (id) => {
+  const fetchSubjectUser = async (id) => {
     let theFetchedUser = {};
 
     try {
-      let { data } = await axiosInstance.get(`/users/${id}`);
+      const { data } = await axiosInstance.get(`/users/${id}`);
       if (!data.success) throw Error();
 
       theFetchedUser = data.user;
     } catch (e) {
-      console.error("Error request", e);
-      showToast("Не удалось получить пользователя", "red", ExclamationIcon);
+      console.error('Error request', e);
+      showToast('Не удалось получить пользователя', 'red', ExclamationIcon);
     }
 
     return theFetchedUser;
   };
 
-  let atMountedEmployerForm = async () => {
+  const atMountedEmployerForm = async () => {
     let payload = {};
 
     if (isEditEmployerPage.value) {

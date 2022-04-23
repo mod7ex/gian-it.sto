@@ -2,12 +2,19 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import useConfirmDialog from "~/composables/useConfirmDialog.js";
 import useApi from "~/composables/useApi.js";
+import useToast from "~/composables/useToast.js";
+
+const { showToast } = useToast();
 
 const { showResultConfirmDialog } = useConfirmDialog();
 
 const { axiosInstance } = useApi();
 
 let rawRoles = ref([]);
+
+let rawRolePermissions = ref([]);
+
+const permissions = ref({});
 
 export default function useEmployers() {
   let router = useRouter();
@@ -80,6 +87,30 @@ export default function useEmployers() {
     await router.push({ name: "EditRole", params: { id } });
   };
 
+  /* ************ Role Permissions ************ */
+
+  let fetchRawRolePermissions = async () => {
+    try {
+      let { data } = await axiosInstance.get("/permissions");
+
+      if (!data.success) throw new Error();
+
+      rawRolePermissions.value = data.permissions;
+      rawRolePermissions.value.sort(
+        (a, b) => b.permissions?.length - a.permissions?.length
+      );
+    } catch (e) {
+      if (e.response) {
+        console.error("Error responce", e, e.response.data);
+      } else if (e.request) {
+        console.log("Error request", e.request);
+      } else {
+        console.log("Error local", e.message);
+      }
+      showToast("Не удалось получить разрешения", "red", ExclamationIcon);
+    }
+  };
+
   return {
     rawRoles,
     roles,
@@ -87,5 +118,8 @@ export default function useEmployers() {
     deleteRole,
     movetoEditRolePage,
     dropRole,
+    fetchRawRolePermissions,
+    rawRolePermissions,
+    permissions,
   };
 }

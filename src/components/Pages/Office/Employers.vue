@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import useApi from "~/composables/useApi.js";
-import useEmployers from "~/composables/useEmployers.js";
+import employers from "~/services/employers.js";
 import _ from "lodash";
 import OfficeLayout from "@/Layout/Office.vue";
 import Input from "@/UI/Input.vue";
@@ -28,7 +28,7 @@ import {
   DescriptionList,
   DescriptionListItems,
   DescriptionListItem,
-} from "../../UI/DescriptionList";
+} from "@/UI/DescriptionList";
 import useConfirmDialog from "~/composables/useConfirmDialog.js";
 
 const { openConfirmDialog } = useConfirmDialog();
@@ -48,7 +48,7 @@ const {
   selectedUser,
   dropUser,
   setSelectedUser,
-} = useEmployers();
+} = employers();
 
 /* ************ Search ************ */
 const search = ref("");

@@ -8,7 +8,7 @@ import Toast from '~/components/Partials/Toast.vue';
 <template>
   <ConfirmDialog />
   <Toast />
-  <router-view></router-view>
+  <router-view />
 </template>
 
 <style>

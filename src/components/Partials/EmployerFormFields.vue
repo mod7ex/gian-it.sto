@@ -14,11 +14,9 @@ import Select from "@/UI/Select.vue";
 import List from "@/UI/List.vue";
 import { onMounted } from "@vue/runtime-core";
 import employerForm from "~/services/employerForm.js";
+import useAppRouter from '~/composables/useAppRouter.js';
 
-import { useRoute, useRouter } from "vue-router";
-
-const route = useRoute();
-const router = useRouter();
+const { router, route } = useAppRouter();
 
 let {
   departmentOptions,
@@ -50,9 +48,7 @@ onMounted(async () => {
 
   /* ************ Bind user data in case of role edit page (or even create page {}) ************ */
   await setEmployerForm(payload);
-  
 });
-
 </script>
 
 <template>

@@ -1,9 +1,9 @@
 import { ExclamationIcon } from '@heroicons/vue/outline';
 import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
+import useAppRouter from '~/composables/useAppRouter.js';
 
 const { showToast } = useToast();
 
@@ -14,7 +14,7 @@ const { axiosInstance } = useApi();
 const rawRoles = ref([]);
 
 export default function rolesService() {
-  const router = useRouter();
+  const { moveTo } = useAppRouter();
 
   const roles = computed(() => rawRoles.value.map((role) => ({
     id: role.id,
@@ -77,10 +77,9 @@ export default function rolesService() {
     }
   };
 
-  /* ************ Update role ************ */
+  /* ************ To Update role page ************ */
   const movetoEditRolePage = async (id) => {
-    if (!id) return;
-    await router.push({ name: 'EditRole', params: { id } });
+    await moveTo({ name: 'EditRole', params: { id } });
   };
 
   return {

@@ -1,10 +1,10 @@
 import { ref, computed, reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import { useRoute, useRouter } from 'vue-router';
 import { CheckIcon, ExclamationIcon } from '@heroicons/vue/outline';
 import employerFormValidationsRules from '~/validationsRules/employerForm.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
+import useAppRouter from '~/composables/useAppRouter.js';
 
 const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
 
@@ -35,11 +35,8 @@ const avatarFile = ref(null);
 export default function employerForm() {
   const { showToast } = useToast();
   const { axiosInstance } = useApi();
-  const route = useRoute();
-  const router = useRouter();
 
-  // page is used for edit and create users
-  const isEditEmployerPage = computed(() => route.name === 'EditEmployer');
+  const { route, isThePage } = useAppRouter('EditEmployer');
 
   /* ************ Avatar ************ */
   const isValideAvatarFileSize = computed(() => {
@@ -85,10 +82,7 @@ export default function employerForm() {
 
   /* ************ User form ************ */
 
-  const { rules } = employerFormValidationsRules(
-    userFields,
-    isEditEmployerPage.value,
-  );
+  const { rules } = employerFormValidationsRules(userFields, isThePage.value);
 
   const v$ = useVuelidate(rules, userFields, { $lazy: true });
 
@@ -108,7 +102,7 @@ export default function employerForm() {
 
     Object.keys(userFields).forEach((key) => {
       // won't count password in case we're editing the user, password is updated siparatly (down)
-      if (isEditEmployerPage.value && key.substr(0, 8) === 'password') return;
+      if (isThePage.value && key.substr(0, 8) === 'password') return;
       form.append(key, `${userFields[key]}`);
     });
 
@@ -118,10 +112,8 @@ export default function employerForm() {
 
     // send data to server
     try {
-      const { data } = await axiosInstance[
-        isEditEmployerPage.value ? 'put' : 'post'
-      ](
-        `/users/${isEditEmployerPage.value ? route.params.id : ''}`,
+      const { data } = await axiosInstance[isThePage.value ? 'put' : 'post'](
+        `/users/${isThePage.value ? route.params.id : ''}`,
         // userFields
         form,
       );
@@ -137,7 +129,7 @@ export default function employerForm() {
       }
 
       // update password if filled (in case of update page)
-      if (isEditEmployerPage.value && userFields.password) {
+      if (isThePage.value && userFields.password) {
         const passwordForm = new FormData();
 
         passwordForm.append('password', userFields.password);
@@ -183,8 +175,9 @@ export default function employerForm() {
         }
 
         if (key === 'role_id') {
-          // console.log(payload.roles);
-          // ===========> should be fixed later
+          // console.log(payload.roles); // array
+          // userFields.role_id = payload.role?.id; // ===========> should be fixed later
+          userFields.role_id = 1;
           return;
         }
 
@@ -241,7 +234,7 @@ export default function employerForm() {
     avatarFile,
     avatar,
     userFields,
-    isEditEmployerPage,
+    isEditEmployerPage: isThePage,
     v$,
     saveUser,
     toggles,

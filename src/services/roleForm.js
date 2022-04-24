@@ -1,11 +1,10 @@
 import { CheckIcon, ExclamationIcon } from '@heroicons/vue/outline';
-
 import { computed, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
 import useVuelidate from '@vuelidate/core';
 import { minLength, required, helpers } from '@vuelidate/validators';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
+import useAppRouter from '~/composables/useAppRouter.js';
 
 const roleTitle = ref('');
 
@@ -17,11 +16,7 @@ export default function roleForm() {
   const { axiosInstance } = useApi();
   const { showToast } = useToast();
 
-  const route = useRoute();
-  const router = useRouter();
-
-  // page is used for edit and create users
-  const isEditRolePage = computed(() => route.name === 'EditRole');
+  const { route, isThePage } = useAppRouter('EditRole');
 
   /* ************ Role[Title + Permissions] (create & update) ************ */
 
@@ -46,14 +41,15 @@ export default function roleForm() {
 
     // send data to server
     try {
-      const { data } = await axiosInstance[
-        isEditRolePage.value ? 'put' : 'post'
-      ](`/roles/${isEditRolePage.value ? route.params.id : ''}`, {
-        title: roleTitle.value,
-        permissions: Object.keys(permissions.value).filter(
-          (key) => permissions.value[key],
-        ),
-      });
+      const { data } = await axiosInstance[isThePage.value ? 'put' : 'post'](
+        `/roles/${isThePage.value ? route.params.id : ''}`,
+        {
+          title: roleTitle.value,
+          permissions: Object.keys(permissions.value).filter(
+            (key) => permissions.value[key],
+          ),
+        },
+      );
 
       if (!data.success) throw new Error();
 
@@ -118,7 +114,7 @@ export default function roleForm() {
     return theFetchedRole;
   };
 
-  const setRoleForm = (payload) => {
+  const setRoleForm = async (payload) => {
     roleTitle.value = payload.title;
 
     if (!payload.permissions) {
@@ -131,26 +127,12 @@ export default function roleForm() {
     });
   };
 
-  const atMountedRoleForm = async () => {
-    let payload = {};
-
-    if (isEditRolePage.value) {
-      if (!route.params.id) return router.back();
-      payload = await fetchSubjectRole(route.params.id);
-    }
-
-    await fetchRawRolePermissions();
-
-    setRoleForm(payload);
-  };
-
   return {
+    isEditRolePage: isThePage,
     v$,
-    isEditRolePage,
     saveRole,
     fetchSubjectRole,
     setRoleForm,
-    atMountedRoleForm,
     permissions,
     rawRolePermissions,
     fetchRawRolePermissions,

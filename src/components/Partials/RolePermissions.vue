@@ -1,10 +1,32 @@
 <script setup>
 import Toggle from "@/UI/Toggle.vue";
+import { onMounted } from "@vue/runtime-core";
 import roleForm from "~/services/roleForm.js";
+import useAppRouter from "~/composables/useAppRouter.js";
 
-let { atMountedRoleForm, rawRolePermissions, permissions } = roleForm();
+const { router, route } = useAppRouter();
 
-await atMountedRoleForm();
+let {
+  fetchRawRolePermissions,
+  rawRolePermissions,
+  permissions,
+  fetchSubjectRole,
+  setRoleForm,
+  isEditRolePage,
+} = roleForm();
+
+await fetchRawRolePermissions();
+
+onMounted(async () => {
+  let payload = {};
+
+  if (isEditRolePage.value) {
+    if (!route.params.id) return router.back();
+    payload = await fetchSubjectRole(route.params.id);
+  }
+
+  await setRoleForm(payload);
+});
 </script>
 
 <template>

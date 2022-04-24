@@ -1,122 +1,25 @@
 <script setup>
-import {
-  CheckIcon,
-  ClockIcon,
-  PencilIcon,
-  ArrowLeftIcon,
-  ExclamationIcon,
-  XIcon,
-} from '@heroicons/vue/outline';
-import { computed, onMounted, ref } from 'vue';
+import { CheckIcon, ArrowLeftIcon, XIcon } from '@heroicons/vue/outline';
 import { useRouter, useRoute } from 'vue-router';
-import useVuelidate from '@vuelidate/core';
-import { minLength, required, helpers } from '@vuelidate/validators';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
-import Link from '@/UI/Link.vue';
 import Input from '@/UI/Input.vue';
 import Spinner from '@/UI/Spinner.vue';
-import useApi from '~/composables/useApi.js';
-import useToast from '~/composables/useToast.js';
+import rolesService from '~/services/roles.js';
+import roleForm from '~/services/roleForm.js';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-import useRoles from '~/composables/useRoles.js';
 import RolePermissions from '~/components/Partials/RolePermissions.vue';
 
 const { openConfirmDialog } = useConfirmDialog();
 
-const { dropRole, permissions } = useRoles();
+const { dropRole } = rolesService();
 
-const { showToast } = useToast();
-
-const { axiosInstance } = useApi();
-
-// const editor = "Текст задачи";
+const { v$, isEditRolePage, saveRole, roleTitle } = roleForm();
 
 const route = useRoute();
 const router = useRouter();
 
-// page is used for edit and create users
-const isEditRolePage = computed(() => route.name === 'EditRole');
-
-/* ************ Role[Title + Permissions] (create & update) ************ */
-
-const roleTitle = ref('');
-
-const roleTitleRules = computed(() => ({
-  roleTitle: {
-    required: helpers.withMessage('Укажите Название', required),
-    minLength: helpers.withMessage('не менее 5 символов', minLength(5)),
-  },
-}));
-
-const v$ = useVuelidate(roleTitleRules, { roleTitle }, { $lazy: true });
-
-const saveRole = async () => {
-  const isValideRoleName = await v$.value.$validate();
-
-  if (!isValideRoleName) return;
-
-  v$.value.$reset();
-
-  let wasRoleCreated = false;
-  let responseMessage = null;
-
-  // send data to server
-  try {
-    const { data } = await axiosInstance[isEditRolePage.value ? 'put' : 'post'](
-      `/roles/${isEditRolePage.value ? route.params.id : ''}`,
-      {
-        title: roleTitle.value,
-        permissions: Object.keys(permissions.value).filter(
-          (key) => permissions.value[key],
-        ),
-      },
-    );
-
-    if (!data.success) throw new Error();
-
-    responseMessage = 'Роль успешно создана';
-    wasRoleCreated = true;
-  } catch (e) {
-    if (e.response) {
-      console.error('Error responce', e, e.response.data);
-      responseMessage = e.response.data.message;
-    } else if (e.request) {
-      console.log('Error request', e.request);
-      responseMessage = 'Не удалось создать роль!';
-    } else {
-      console.log('Error local', e.message);
-      responseMessage = e.message;
-    }
-
-    wasRoleCreated = false;
-  } finally {
-    const color = wasRoleCreated ? 'green' : 'red';
-    const icon = wasRoleCreated ? CheckIcon : ExclamationIcon;
-    showToast(responseMessage, color, icon);
-  }
-};
-
-/* ************ Bind role data in case of role edit page ************ */
-onMounted(async () => {
-  permissions.value = {};
-  if (!isEditRolePage.value) return;
-  if (!route.params.id) return router.back();
-
-  try {
-    const { data } = await axiosInstance.get(`/roles/${route.params.id}`);
-    if (!data.success) throw Error();
-
-    roleTitle.value = data.role.title;
-
-    data.role.permissions.forEach((perm) => {
-      permissions.value[perm.name] = true;
-    });
-  } catch (e) {
-    console.error('Error request', e);
-    showToast('Не удалось получить роль', 'red', ExclamationIcon);
-  }
-});
+// const editor = "Текст задачи";
 </script>
 
 <template>

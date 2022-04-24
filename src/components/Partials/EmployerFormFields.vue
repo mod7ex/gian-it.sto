@@ -4,7 +4,6 @@ import {
   ArrowLeftIcon,
   ExclamationIcon,
 } from "@heroicons/vue/outline";
-import { computed, onMounted } from "vue";
 import OfficeLayout from "@/Layout/Office.vue";
 import Button from "@/UI/Button.vue";
 import Input from "@/UI/Input.vue";
@@ -13,7 +12,13 @@ import UploadImage from "@/UI/UploadImage.vue";
 import Toggle from "@/UI/Toggle.vue";
 import Select from "@/UI/Select.vue";
 import List from "@/UI/List.vue";
+import { onMounted } from "@vue/runtime-core";
 import employerForm from "~/services/employerForm.js";
+
+import { useRoute, useRouter } from "vue-router";
+
+const route = useRoute();
+const router = useRouter();
 
 let {
   departmentOptions,
@@ -24,18 +29,30 @@ let {
   userFields,
   v$,
   toggles,
-  atMountedEmployerForm,
+  fetchDepartments,
+  fetchRoles,
+  setEmployerForm,
+  isEditEmployerPage,
+  fetchSubjectUser,
 } = employerForm();
 
-const defaultEmployerAvatar =
-  "https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png";
+/* ************ Fetch Departments & Roles ************ */
+await fetchDepartments();
+await fetchRoles();
 
-await atMountedEmployerForm();
+onMounted(async () => {
+  let payload = {};
 
-onMounted(() => {
-  if (avatar.value) return;
-  avatar.value = defaultEmployerAvatar;
+  if (isEditEmployerPage.value) {
+    if (!route.params.id) return router.back();
+    payload = await fetchSubjectUser(route.params.id);
+  }
+
+  /* ************ Bind user data in case of role edit page (or even create page {}) ************ */
+  await setEmployerForm(payload);
+  
 });
+
 </script>
 
 <template>
@@ -129,7 +146,7 @@ onMounted(() => {
       <Select
         label="Роль"
         :options="roleOptions"
-        v-model.number="userFields.role_id"
+        v-model="userFields.role_id"
         :required="true"
         :error="v$.role_id.$errors[0]?.$message"
         @blured="v$.role_id.$touch"
@@ -140,7 +157,7 @@ onMounted(() => {
       <Select
         label="Отделение"
         :options="departmentOptions"
-        v-model.number="userFields.department_id"
+        v-model="userFields.department_id"
         :required="true"
         :error="v$.department_id.$errors[0]?.$message"
         @blured="v$.department_id.$touch"

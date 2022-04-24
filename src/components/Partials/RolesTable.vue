@@ -9,9 +9,9 @@ import Dropdown from "@/UI/Dropdown.vue";
 import Link from "@/UI/Link.vue";
 import { Table, THead, TBody, Tr, Td, Th } from "@/UI/Table";
 import useConfirmDialog from "~/composables/useConfirmDialog.js";
-import useRoles from "~/composables/useRoles.js";
+import rolesService from "~/services/roles.js";
 
-let { roles, fetchRoles, movetoEditRolePage, dropRole } = useRoles();
+let { roles, fetchRoles, movetoEditRolePage, dropRole } = rolesService();
 
 const { openConfirmDialog } = useConfirmDialog();
 

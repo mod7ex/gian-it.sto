@@ -1,11 +1,11 @@
 <script setup>
-import { computed } from "@vue/runtime-core";
+import { computed } from '@vue/runtime-core';
 
 const props = defineProps({
   label: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   options: {
     type: Array,
@@ -15,12 +15,12 @@ const props = defineProps({
   help: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   error: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   multiple: {
     type: Boolean,
@@ -29,36 +29,35 @@ const props = defineProps({
   },
   modelValue: {
     type: [String, Number],
+    required: true,
   },
 });
 
 const styles = [
-  "mt-1 block w-full py-2 text-base focus:outline-none sm:text-sm rounded-md shadow-sm",
+  'mt-1 block w-full py-2 text-base focus:outline-none sm:text-sm rounded-md shadow-sm',
 ];
 
 if (props.multiple) {
-  styles.push("px-2");
+  styles.push('px-2');
 } else {
-  styles.push("pl-3 pr-10");
+  styles.push('pl-3 pr-10');
 }
 
 if (props.error.length > 0) {
-  styles.push("border-red-300 focus:ring-red-500 focus:border-red-500");
+  styles.push('border-red-300 focus:ring-red-500 focus:border-red-500');
 } else {
-  styles.push("border-gray-300 focus:ring-indigo-500 focus:border-indigo-500");
+  styles.push('border-gray-300 focus:ring-indigo-500 focus:border-indigo-500');
 }
-const options = computed(() =>
-  props.options.map((e) => {
-    if (e instanceof Object) {
-      return e;
-    }
+const options = computed(() => props.options.map((e) => {
+  if (e instanceof Object) {
+    return e;
+  }
 
-    return {
-      label: e,
-      value: e,
-    };
-  })
-);
+  return {
+    label: e,
+    value: e,
+  };
+}));
 </script>
 
 <template>

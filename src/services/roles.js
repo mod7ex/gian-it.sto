@@ -13,11 +13,7 @@ const { axiosInstance } = useApi();
 
 const rawRoles = ref([]);
 
-const rawRolePermissions = ref([]);
-
-const permissions = ref({});
-
-export default function useEmployers() {
+export default function rolesService() {
   const router = useRouter();
 
   const roles = computed(() => rawRoles.value.map((role) => ({
@@ -35,6 +31,7 @@ export default function useEmployers() {
       rawRoles.value = data.roles || [];
     } catch (e) {
       console.error('Error request', e);
+      showToast("Couldn't fetch roles", 'red', ExclamationIcon);
     }
   };
 
@@ -86,30 +83,6 @@ export default function useEmployers() {
     await router.push({ name: 'EditRole', params: { id } });
   };
 
-  /* ************ Role Permissions ************ */
-
-  const fetchRawRolePermissions = async () => {
-    try {
-      const { data } = await axiosInstance.get('/permissions');
-
-      if (!data.success) throw new Error();
-
-      rawRolePermissions.value = data.permissions;
-      rawRolePermissions.value.sort(
-        (a, b) => b.permissions?.length - a.permissions?.length,
-      );
-    } catch (e) {
-      if (e.response) {
-        console.error('Error responce', e, e.response.data);
-      } else if (e.request) {
-        console.log('Error request', e.request);
-      } else {
-        console.log('Error local', e.message);
-      }
-      showToast('Не удалось получить разрешения', 'red', ExclamationIcon);
-    }
-  };
-
   return {
     rawRoles,
     roles,
@@ -117,8 +90,5 @@ export default function useEmployers() {
     deleteRole,
     movetoEditRolePage,
     dropRole,
-    fetchRawRolePermissions,
-    rawRolePermissions,
-    permissions,
   };
 }

@@ -1,10 +1,10 @@
 <script setup>
 import Toggle from "@/UI/Toggle.vue";
-import useRoles from "~/composables/useRoles.js";
+import roleForm from "~/services/roleForm.js";
 
-let { fetchRawRolePermissions, rawRolePermissions, permissions } = useRoles();
+let { atMountedRoleForm, rawRolePermissions, permissions } = roleForm();
 
-await fetchRawRolePermissions();
+await atMountedRoleForm();
 </script>
 
 <template>

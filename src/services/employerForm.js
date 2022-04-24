@@ -6,6 +6,8 @@ import employerFormValidationsRules from '~/validationsRules/employerForm.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 
+const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
+
 const defaultUserFields = {
   // password fields will be automatically set if we're creating a user
   name: '',
@@ -107,7 +109,7 @@ export default function employerForm() {
     Object.keys(userFields).forEach((key) => {
       // won't count password in case we're editing the user, password is updated siparatly (down)
       if (isEditEmployerPage.value && key.substr(0, 8) === 'password') return;
-      form.append(key, `${userFields}`);
+      form.append(key, `${userFields[key]}`);
     });
 
     form.append('is_about_visible', toggles.value[0]);
@@ -194,11 +196,13 @@ export default function employerForm() {
         userFields.born_at = `${y}-${m}-${d}`;
       }
 
-      toggles.value[0] = payload.is_about_visible || false;
-      toggles.value[1] = payload.is_born_at_visible || false;
-      toggles.value[2] = payload.is_active || false;
+      toggles.value = [
+        payload.is_about_visible || false,
+        payload.is_born_at_visible || false,
+        payload.is_active || false,
+      ];
 
-      avatar.value = payload.avatar;
+      avatar.value = payload.avatar || defaultEmployerAvatar;
 
       return;
     }
@@ -224,22 +228,6 @@ export default function employerForm() {
     return theFetchedUser;
   };
 
-  const atMountedEmployerForm = async () => {
-    let payload = {};
-
-    if (isEditEmployerPage.value) {
-      if (!route.params.id) return router.back();
-      payload = await fetchSubjectUser(route.params.id);
-    }
-
-    /* ************ Fetch Departments & Roles ************ */
-    await fetchDepartments();
-    await fetchRoles();
-
-    /* ************ Bind user data in case of role edit page ************ */
-    await setEmployerForm(payload);
-  };
-
   return {
     roles,
     fetchSubjectUser,
@@ -257,6 +245,6 @@ export default function employerForm() {
     v$,
     saveUser,
     toggles,
-    atMountedEmployerForm,
+    setEmployerForm,
   };
 }

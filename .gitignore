@@ -4,4 +4,4 @@ dist
 dist-ssr
 *.local
 .idea
-/.vscode
+.vscode

@@ -26,9 +26,7 @@ function cleanErrors() {
 
 const refreshPassword = async () => {
   v$.value.$touch();
-  if (v$.value.$invalid) {
-    return;
-  }
+  if (v$.value.$invalid) return;
   cleanErrors();
   isLoading.value = true;
   let response;

@@ -7,9 +7,7 @@ const defaultUserFields = {
 
 const token = ref('');
 
-const user = ref({});
-
-user.value = defaultUserFields;
+const user = ref(defaultUserFields);
 
 export default function useAuth() {
   const setToken = ((inputToken) => {

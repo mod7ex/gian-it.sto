@@ -2,9 +2,7 @@ import { computed } from 'vue';
 import { required, email, minLength, helpers, sameAs } from '@vuelidate/validators';
 
 export default function employerFormValidationsRules(user, isEditForm = false) {
-  // user is reactive
-
-  const rules = computed(() => ({
+  const employerFormRules = computed(() => ({
     name: { required: helpers.withMessage('Укажите имя', required) },
 
     email: {
@@ -30,10 +28,10 @@ export default function employerFormValidationsRules(user, isEditForm = false) {
   }));
 
   if (!isEditForm) {
-    rules.value.password.required = helpers.withMessage('Укажите пароль', required);
+    employerFormRules.value.password.required = helpers.withMessage('Укажите пароль', required);
   }
 
   return {
-    rules,
+    rules: employerFormRules,
   };
 }

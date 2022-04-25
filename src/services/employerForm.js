@@ -177,7 +177,7 @@ export default function employerForm() {
         if (key === 'role_id') {
           // console.log(payload.roles); // array
           // userFields.role_id = payload.role?.id; // ===========> should be fixed later
-          userFields.role_id = 1;
+          userFields.role_id = 2;
           return;
         }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import _ from 'lodash';
 import {
   SearchIcon,
@@ -12,16 +12,9 @@ import {
   TrashIcon,
 } from '@heroicons/vue/solid';
 import { PlusCircleIcon } from '@heroicons/vue/outline';
-import { useRouter } from 'vue-router';
-import useApi from '~/composables/useApi.js';
 import OfficeLayout from '@/Layout/Office.vue';
 import Input from '@/UI/Input.vue';
-import Link from '@/UI/Link.vue';
 import Button from '@/UI/Button.vue';
-import Badge from '@/UI/Badge.vue';
-import Avatar from '@/UI/Avatar.vue';
-import DialogModal from '@/UI/DialogModal.vue';
-import Dialog from '@/UI/Dialog.vue';
 import Spinner from '@/UI/Spinner.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import {
@@ -35,10 +28,7 @@ import employers from '~/services/employers.js';
 
 const { openConfirmDialog } = useConfirmDialog();
 
-const { axiosInstance } = useApi();
-
 const {
-  users,
   directory,
   reOrder,
   orderkey,
@@ -49,6 +39,7 @@ const {
   selectedUser,
   dropUser,
   setSelectedUser,
+  fetchEmployers,
 } = employers();
 
 /* ************ Search ************ */
@@ -56,22 +47,21 @@ const search = ref('');
 
 const isFetchingEmployers = ref(false);
 
+const headingMessage = computed(() => {
+  if (usersNumber.value > 1) {
+    return `Искать среди ${usersNumber.value} сотрудников`;
+  }
+  if (usersNumber.value === 1) return 'Oдин пользователь!';
+  return 'нет пользователей!';
+});
+
 watch(
   // watching search
   () => search.value,
   _.debounce(async (v) => {
     isFetchingEmployers.value = true;
-    try {
-      let url = `/users?order=${order.value.criteria}`;
-      if (v) url += `&name=${v}`;
-      const { data } = await axiosInstance.get(url);
-      users.value = data.users;
-      order.value.mod = -1; // return to desc(default) order mod
-    } catch (e) {
-      console.error('Error request', e);
-    } finally {
-      isFetchingEmployers.value = false;
-    }
+    await fetchEmployers(v);
+    isFetchingEmployers.value = false;
   }, 1500),
   {
     immediate: true,
@@ -113,11 +103,7 @@ watch(
             </div>
 
             <p class="my-1 text-sm text-gray-600" v-else>
-              <span v-if="usersNumber > 1">
-                Искать среди {{ usersNumber }} сотрудников
-              </span>
-              <span v-else-if="usersNumber === 1">один пользователь!</span>
-              <span v-else>нет пользователей!</span>
+              <span> {{ headingMessage }} </span>
             </p>
 
             <div class="mt-6 flex space-x-4 mb-3">
@@ -161,38 +147,22 @@ watch(
         </div>
 
         <div
-          class="flex flex-col items-center justify-center w-full"
-          v-if="!selected"
-        >
-          <UserGroupIcon class="h-12 w-12 mx-auto text-gray-600" />
-
-          <span class="mt-2 block text-sm font-medium text-gray-900">
-            Выберите сотрудника
-          </span>
-        </div>
-
-        <div
           class="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last"
           v-if="selected"
         >
+          <!-- Profile header -->
           <article>
-            <!-- Profile header -->
             <div
               class="border-b border-gray-200 flex justify-between px-4 sm:px-6 py-3 lg:items-end items-baseline lg:flex-row flex-col gap-2"
             >
               <div class="flex items-end">
                 <img
                   :src="selectedUser.avatar ? selectedUser.avatar : ''"
-                  alt=""
                   class="w-32 rounded-full"
                 />
 
                 <h1 class="text-2xl font-bold text-gray-900 truncate ml-2">
-                  {{
-                    selectedUser.name +
-                    " " +
-                    `${selectedUser.surname ? selectedUser.surname : ""}`
-                  }}
+                  {{ `${selectedUser.name} ${selectedUser.surname ? selectedUser.surname : ""}` }}
                 </h1>
               </div>
 
@@ -231,7 +201,7 @@ watch(
                 />
                 <DescriptionListItem
                   label="Должность"
-                  :value="selectedUser.position"
+                  :value="selectedUser.office_position"
                   type="columns"
                 />
                 <DescriptionListItem
@@ -281,6 +251,14 @@ watch(
               </Button>
             </div>
           </article>
+        </div>
+
+        <div class="flex flex-col items-center justify-center w-full" v-else>
+          <UserGroupIcon class="h-12 w-12 mx-auto text-gray-600" />
+
+          <span class="mt-2 block text-sm font-medium text-gray-900">
+            Выберите сотрудника
+          </span>
         </div>
       </div>
     </template>

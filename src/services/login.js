@@ -27,9 +27,8 @@ const v$ = useVuelidate(rules, form, { $lazy: true });
 const loginUser = async () => {
   v$.value.$touch();
 
-  if (v$.value.$invalid) {
-    return;
-  }
+  if (v$.value.$invalid) return;
+
   v$.value.$reset();
 
   cleanErrors();

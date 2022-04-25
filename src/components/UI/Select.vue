@@ -29,7 +29,8 @@ const props = defineProps({
   },
   modelValue: {
     type: [String, Number],
-    required: true,
+    required: false,
+    default: '',
   },
 });
 
@@ -58,6 +59,7 @@ const options = computed(() => props.options.map((e) => {
     value: e,
   };
 }));
+
 </script>
 
 <template>

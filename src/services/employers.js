@@ -1,6 +1,8 @@
 import { ref, computed } from 'vue';
+import { ExclamationIcon } from '@heroicons/vue/outline';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useApi from '~/composables/useApi.js';
+import useToast from '~/composables/useToast.js';
 
 const { showResultConfirmDialog } = useConfirmDialog();
 
@@ -29,6 +31,8 @@ const selectedUser = ref({});
 
 export default function employers() {
   const usersNumber = computed(() => users.value.length);
+
+  const { showToast } = useToast();
 
   const orderkey = computed(
     () => `${order.value.criteria}-${order.value.mod === 1 ? 'asc' : 'desc'}`,
@@ -157,6 +161,20 @@ export default function employers() {
     }
   };
 
+  const fetchEmployers = async (searchPayload = '') => {
+    try {
+      let url = `/users?order=${order.value.criteria}`;
+      url += searchPayload ? `&name=${searchPayload}` : '';
+      // if (searchPayload) url += `&name=${searchPayload}`;
+      const { data } = await axiosInstance.get(url);
+      users.value = data.users;
+      order.value.mod = -1; // return to desc(default) order mod
+    } catch (e) {
+      console.error('Error request', e);
+      showToast("Couldn't fetch employers", 'red', ExclamationIcon);
+    }
+  };
+
   return {
     users,
     deleteUser,
@@ -170,5 +188,6 @@ export default function employers() {
     selectedUser,
     dropUser,
     setSelectedUser,
+    fetchEmployers,
   };
 }

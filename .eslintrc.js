@@ -18,6 +18,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'max-len': 'off',
+    // 'no-console': 'off',
   },
   globals: {
     defineProps: 'readonly',

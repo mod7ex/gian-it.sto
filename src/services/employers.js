@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref, computed, readonly } from 'vue';
 import { ExclamationIcon } from '@heroicons/vue/outline';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useApi from '~/composables/useApi.js';
@@ -8,11 +8,11 @@ const { showResultConfirmDialog } = useConfirmDialog();
 
 const { axiosInstance } = useApi();
 
-const filter = [
+const filter = readonly([
   { criteria: 'id', label: 'По умолчанию' },
   { criteria: 'surname', label: 'По фамилии' },
   { criteria: 'department', label: 'По отделам' },
-];
+]);
 
 const order = ref({
   // show filter area
@@ -23,7 +23,7 @@ const order = ref({
   mod: -1,
 });
 
-const users = ref({});
+const users = ref([]);
 
 const selected = ref(false);
 
@@ -38,42 +38,21 @@ export default function employers() {
     () => `${order.value.criteria}-${order.value.mod === 1 ? 'asc' : 'desc'}`,
   );
 
-  const directory = computed(() => {
-    if (!users.value.length) return [];
-
-    const usersList = { _: [] };
-
-    users.value.forEach((user) => {
-      const userItem = {
-        id: user.id,
-        title: `${user.name} ${user.surname ? user.surname : ''}`,
-        subtitle: `${user.office_position ? user.office_position : ''}`,
-        image: `${user.avatar ? user.avatar : ''}`,
-      };
-
-      // group users who don't have surname
-      if (!user.surname) {
-        usersList._.push(userItem);
-        return;
-      }
-
-      // check if the letter (user.surname[0]) doesn't exists in usersList & then add it
-      if (!usersList[user.surname[0]]) {
-        usersList[user.surname[0]] = [];
-      }
-
-      // put the item in his letter group (group by letter)
-      usersList[user.surname[0]].push(userItem);
-    });
-
-    return Object.keys(usersList)
+  const directory = computed(
+    () => [...new Set(users.value.map((item) => (item.surname ? item.surname[0] : '_')))]
       .sort()
-      .reduce((obj, key) => {
+      .reduce((userGroups, key) => {
         // eslint-disable-next-line no-param-reassign
-        obj[key] = usersList[key];
-        return obj;
-      }, {});
-  });
+        userGroups[key] = users.value.filter((user) => (user.surname ? user.surname[0] : '_') === key)
+          .map((user) => ({
+            id: user.id,
+            title: `${user.name} ${user.surname ? user.surname : ''}`,
+            subtitle: `${user.office_position ? user.office_position : ''}`,
+            image: `${user.avatar ? user.avatar : ''}`,
+          }));
+        return userGroups;
+      }, {}),
+  );
 
   const reOrder = (ctr = 'id') => {
     order.value.mod = order.value.criteria === ctr ? -order.value.mod : -1;
@@ -105,18 +84,6 @@ export default function employers() {
       default:
         break;
     }
-
-    /* // for test (visualize data)
-      console.log(orderkey.value);
-
-      for (let i = 0; i < 5; i++) {
-        console.log(
-          `id => ${users.value[i].id}`,
-          `department id => ${users.value[i].department.id}`,
-          `surname => ${users.value[i].surname}`
-        );
-      }
-    */
   };
 
   const setSelectedUser = (user) => {

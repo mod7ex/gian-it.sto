@@ -4,10 +4,6 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 
-const { showResultConfirmDialog } = useConfirmDialog();
-
-const { apiRequest } = useApi();
-
 const filter = readonly([
   { criteria: 'id', label: 'По умолчанию' },
   { criteria: 'surname', label: 'По фамилии' },
@@ -30,9 +26,11 @@ const selected = ref(false);
 const selectedUser = ref({});
 
 export default function employers() {
-  const usersNumber = computed(() => users.value.length);
+  const usersCount = computed(() => users.value.length);
 
   const { showToast } = useToast();
+  const { showResultConfirmDialog } = useConfirmDialog();
+  const { apiRequest } = useApi();
 
   const orderkey = computed(
     () => `${order.value.criteria}-${order.value.mod === 1 ? 'asc' : 'desc'}`,
@@ -93,8 +91,7 @@ export default function employers() {
     selected.value = !!user;
   };
 
-  /* ************ Delete role ************ */
-
+  /* ************ Delete user ************ */
   const deleteUser = (id) => !!users.value.splice(
     users.value.findIndex((user) => user.id === id),
     1,
@@ -114,6 +111,7 @@ export default function employers() {
     showResultConfirmDialog(deletionMsg, wasEmployerDeleted);
   };
 
+  /* ************ Fetch employer ************ */
   const fetchEmployers = async (searchPayload = '') => {
     const request = apiRequest('/users', {
       params: {
@@ -124,8 +122,10 @@ export default function employers() {
 
     await request.fetch();
 
-    users.value = request.data.value?.users || [];
-    request.error.value && showToast(request.errorMsg.value, 'red', ExclamationIcon);
+    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? "Couldn't fetch employers !", 'red', ExclamationIcon);
+
+    users.value = request.data.value.users || [];
+
     order.value.mod = -1; // return to desc(default) order mod
   };
 
@@ -137,7 +137,7 @@ export default function employers() {
     orderkey,
     filter,
     order,
-    usersNumber,
+    usersCount,
     selected,
     selectedUser,
     dropUser,

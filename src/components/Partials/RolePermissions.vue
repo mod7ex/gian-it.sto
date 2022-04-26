@@ -6,27 +6,11 @@ import useAppRouter from "~/composables/useAppRouter.js";
 
 const { router, route } = useAppRouter();
 
-let {
-  fetchRawRolePermissions,
-  rawRolePermissions,
-  permissions,
-  fetchSubjectRole,
-  setRoleForm,
-  isEditRolePage,
-} = roleForm();
+let { rawRolePermissions, permissions, atMountedRoleForm } = roleForm();
 
-await fetchRawRolePermissions();
+await atMountedRoleForm();
 
-onMounted(async () => {
-  let payload = {};
 
-  if (isEditRolePage.value) {
-    if (!route.params.id) return router.back();
-    payload = await fetchSubjectRole(route.params.id);
-  }
-
-  await setRoleForm(payload);
-});
 </script>
 
 <template>

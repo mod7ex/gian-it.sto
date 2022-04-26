@@ -27,31 +27,10 @@ let {
   userFields,
   v$,
   toggles,
-  fetchDepartments,
-  fetchRoles,
-  setEmployerForm,
-  isEditEmployerPage,
-  fetchSubjectUser,
+  atMountedEmployerForm
 } = employerForm();
 
-/* ************ Fetch Departments & Roles ************ */
-await fetchDepartments();
-await fetchRoles();
-
-onMounted(async () => {
-  let payload = {};
-
-  if (isEditEmployerPage.value) {
-    if (!route.params.id) return router.back();
-    payload = await fetchSubjectUser(route.params.id);
-  }
-
-  /* ************ Bind user data in case of role edit page (or even create page {}) ************ */
-
-  setTimeout(async () => {
-    await setEmployerForm(payload);
-  }, 500);
-});
+await atMountedEmployerForm()
 
 </script>
 

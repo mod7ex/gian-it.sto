@@ -6,14 +6,13 @@ import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 
-const roleTitle = ref('');
-
-const permissions = ref({});
-
 const rawRolePermissions = ref([]);
 
+const roleTitle = ref('');
+const permissions = ref({});
+
 export default function roleForm() {
-  const { axiosInstance } = useApi();
+  const { apiRequest } = useApi();
   const { showToast } = useToast();
 
   const { route, isThePage } = useAppRouter('EditRole');
@@ -36,95 +35,66 @@ export default function roleForm() {
 
     v$.value.$reset();
 
-    let wasRoleCreated = false;
-    let responseMessage = null;
+    const request = apiRequest(`/roles/${isThePage.value ? route.params.id : ''}`, {
+      method: isThePage.value ? 'put' : 'post',
+      data: {
+        title: roleTitle.value,
+        permissions: Object.keys(permissions.value).filter(
+          (key) => permissions.value[key],
+        ),
+      },
+    });
 
-    // send data to server
-    try {
-      const { data } = await axiosInstance[isThePage.value ? 'put' : 'post'](
-        `/roles/${isThePage.value ? route.params.id : ''}`,
-        {
-          title: roleTitle.value,
-          permissions: Object.keys(permissions.value).filter(
-            (key) => permissions.value[key],
-          ),
-        },
-      );
+    await request.fetch();
 
-      if (!data.success) throw new Error();
+    const successResponce = !request.error.value && request.data.value.success;
 
-      responseMessage = 'Роль успешно создана';
-      wasRoleCreated = true;
-    } catch (e) {
-      if (e.response) {
-        console.error('Error responce', e, e.response.data);
-        responseMessage = e.response.data.message;
-      } else if (e.request) {
-        console.log('Error request', e.request);
-        responseMessage = 'Не удалось создать роль!';
-      } else {
-        console.log('Error local', e.message);
-        responseMessage = e.message;
-      }
+    !successResponce && showToast(request.errorMsg.value ?? 'Something went wrong!', 'red', ExclamationIcon);
+    successResponce && showToast('Role saved.', 'green', CheckIcon);
 
-      wasRoleCreated = false;
-    } finally {
-      const [color, icon] = wasRoleCreated
-        ? ['green', CheckIcon]
-        : ['red', ExclamationIcon];
-      showToast(responseMessage, color, icon);
-    }
+    return successResponce;
   };
 
   /* ************ Role Raw Permissions ************ */
 
   const fetchRawRolePermissions = async () => {
-    try {
-      const { data } = await axiosInstance.get('/permissions');
+    const request = apiRequest('/permissions');
 
-      if (!data.success) throw new Error();
+    await request.fetch();
 
-      rawRolePermissions.value = data.permissions;
-      rawRolePermissions.value.sort(
-        (a, b) => b.permissions?.length - a.permissions?.length,
-      );
-    } catch (e) {
-      if (e.response) {
-        console.error('Error responce', e, e.response.data);
-      } else if (e.request) {
-        console.log('Error request', e.request);
-      } else {
-        console.log('Error local', e.message);
-      }
-      showToast('Не удалось получить разрешения', 'red', ExclamationIcon);
-    }
+    rawRolePermissions.value = request.data.value?.permissions || [];
+    rawRolePermissions.value.sort(
+      (a, b) => b.permissions?.length - a.permissions?.length,
+    );
+
+    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить разрешения', 'red', ExclamationIcon);
   };
 
   const fetchSubjectRole = async (id) => {
-    let theFetchedRole = {};
-    try {
-      const { data } = await axiosInstance.get(`/roles/${id}`);
-      if (!data.success) throw Error();
+    const request = apiRequest(`/roles/${id}`);
 
-      theFetchedRole = data.role;
-    } catch (e) {
-      console.error('Error request', e);
-      showToast('Не удалось получить роль', 'red', ExclamationIcon);
-    }
-    return theFetchedRole;
+    await request.fetch();
+
+    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить роль', 'red', ExclamationIcon);
+
+    return request.data.value.role || {};
   };
 
   const setRoleForm = async (payload) => {
-    roleTitle.value = payload.title;
+    roleTitle.value = payload?.title;
+    permissions.value = {};
 
-    if (!payload.permissions) {
-      permissions.value = {};
-      return;
-    }
-
-    payload.permissions.forEach((perm) => {
+    (payload?.permissions ?? []).forEach((perm) => {
       permissions.value[perm.name] = true;
     });
+  };
+
+  const atMountedRoleForm = async () => {
+    const role = (isThePage.value && route.params.id) && await fetchSubjectRole(route.params.id);
+
+    await setRoleForm(role || null);
+
+    await fetchRawRolePermissions();
   };
 
   return {
@@ -137,5 +107,6 @@ export default function roleForm() {
     rawRolePermissions,
     fetchRawRolePermissions,
     roleTitle,
+    atMountedRoleForm,
   };
 }

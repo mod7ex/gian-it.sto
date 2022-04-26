@@ -5,15 +5,12 @@ import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 
-const { showToast } = useToast();
-
-const { showResultConfirmDialog } = useConfirmDialog();
-
-const { axiosInstance } = useApi();
-
 const rawRoles = ref([]);
 
 export default function rolesService() {
+  const { showToast } = useToast();
+  const { showResultConfirmDialog } = useConfirmDialog();
+  const { apiRequest } = useApi();
   const { moveTo } = useAppRouter();
 
   const roles = computed(() => rawRoles.value.map((role) => ({
@@ -23,20 +20,16 @@ export default function rolesService() {
   })));
 
   const fetchRoles = async () => {
-    try {
-      const { data } = await axiosInstance.get('/roles');
+    const request = apiRequest('/roles');
 
-      if (!data.success) throw Error();
+    await request.fetch();
 
-      rawRoles.value = data.roles || [];
-    } catch (e) {
-      console.error('Error request', e);
-      showToast("Couldn't fetch roles", 'red', ExclamationIcon);
-    }
+    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? "Couldn't fetch roles !", 'red', ExclamationIcon);
+
+    rawRoles.value = request.data.value.roles || [];
   };
 
   /* ************ Delete role ************ */
-
   const deleteRole = (id) => {
     rawRoles.value.splice(
       rawRoles.value.findIndex((user) => user.id === id),
@@ -45,36 +38,17 @@ export default function rolesService() {
   };
 
   const dropRole = async (id) => {
-    let wasRoleDeleted = false;
-    let deletionMessage = null;
+    const request = apiRequest(`roles/${id}`, { method: 'delete' });
 
-    try {
-      const { data } = await axiosInstance.delete(`roles/${id}`);
+    await request.fetch();
 
-      if (!data.success) throw Error();
+    const wasRoleDeleted = !request.error.value && request.data.value.success;
 
-      deleteRole(id);
+    wasRoleDeleted && deleteRole(id);
 
-      deletionMessage = 'Роль успешно удалена';
-      wasRoleDeleted = true;
-    } catch (e) {
-      console.error('Error request', e);
+    const deletionMsg = wasRoleDeleted ? 'Role was deleted successfully.' : (request.errorMsg.value ?? 'Не удалось удалить Роль');
 
-      if (e.response) {
-        console.error('Error responce', e, e.response.data);
-        deletionMessage = e.response.data.message;
-      } else if (e.request) {
-        console.log('Error request', e.request);
-        deletionMessage = 'Не удалось удалить роль';
-      } else {
-        console.log('Error local', e.message);
-        deletionMessage = e.message;
-      }
-
-      wasRoleDeleted = false;
-    } finally {
-      showResultConfirmDialog(deletionMessage, wasRoleDeleted);
-    }
+    showResultConfirmDialog(deletionMsg, wasRoleDeleted);
   };
 
   /* ************ To Update role page ************ */

@@ -18,6 +18,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
     'max-len': 'off',
+    'consistent-return': 'off',
     'no-unused-expressions': 'off',
     // 'no-console': 'off',
   },

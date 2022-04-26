@@ -24,7 +24,7 @@ const {
   orderkey,
   filter,
   order,
-  usersNumber,
+  usersCount,
   selected,
   setSelectedUser,
   fetchEmployers,
@@ -36,10 +36,8 @@ const search = ref('');
 const isFetchingEmployers = ref(false);
 
 const headingMessage = computed(() => {
-  if (usersNumber.value > 1) {
-    return `Искать среди ${usersNumber.value} сотрудников`;
-  }
-  if (usersNumber.value === 1) return 'Oдин пользователь!';
+  if (usersCount.value > 1) return `Искать среди ${usersCount.value} сотрудников`;
+  if (usersCount.value === 1) return 'Oдин пользователь!';
   return 'нет пользователей!';
 });
 
@@ -108,7 +106,7 @@ watch(
             </div>
 
             <Transition name="filter">
-              <div class="text-gray-600" v-if="order.show && usersNumber > 1">
+              <div class="text-gray-600" v-if="order.show && usersCount > 1">
                 <div
                   class="py-2 px-4 border cursor-pointer hover:bg-gray-50 flex justify-between items-center"
                   v-for="(item, i) in filter"

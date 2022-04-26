@@ -1,4 +1,4 @@
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, readonly } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { CheckIcon, ExclamationIcon } from '@heroicons/vue/outline';
 import employerFormValidationsRules from '~/validationsRules/employerForm.js';
@@ -6,8 +6,8 @@ import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 
-const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
-
+const defaultEmployerAvatar = readonly('https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png');
+const defaultTogglesState = readonly([false, false, false]);
 const defaultUserFields = {
   // password fields will be automatically set if we're creating a user
   name: '',
@@ -22,20 +22,17 @@ const defaultUserFields = {
   department_id: '',
 };
 
-const defaultTogglesState = [false, false, false];
-
 const roles = ref([]);
 const departments = ref([]);
 
-let userFields = reactive(defaultUserFields);
-const avatar = ref(null);
-const toggles = ref(defaultTogglesState);
-const avatarFile = ref(null);
-
 export default function employerForm() {
-  const { showToast } = useToast();
-  const { axiosInstance } = useApi();
+  const userFields = reactive(defaultUserFields);
+  const avatar = ref(defaultEmployerAvatar);
+  const toggles = ref(defaultTogglesState);
+  const avatarFile = ref(null);
 
+  const { showToast } = useToast();
+  const { apiRequest } = useApi();
   const { route, isThePage } = useAppRouter('EditEmployer');
 
   /* ************ Avatar ************ */
@@ -61,26 +58,95 @@ export default function employerForm() {
   })));
 
   const fetchDepartments = async () => {
-    try {
-      const departmentRes = await axiosInstance.get('/departments');
-      departments.value = departmentRes.data.departments || [];
-    } catch (e) {
-      console.error('Error request', e);
-      showToast('Не удалось получить роли', 'red', ExclamationIcon);
-    }
+    const request = apiRequest('/departments');
+
+    await request.fetch();
+
+    departments.value = request.data.value?.departments || [];
+
+    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить отделы', 'red', ExclamationIcon);
   };
 
   const fetchRoles = async () => {
-    try {
-      const rolesRes = await axiosInstance.get('/roles');
-      roles.value = rolesRes.data.roles || [];
-    } catch (e) {
-      console.error('Error request', e);
-      showToast('Не удалось получить отделы', 'red', ExclamationIcon);
-    }
+    const request = apiRequest('/roles');
+
+    await request.fetch();
+
+    roles.value = request.data.value?.roles || [];
+
+    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить роли', 'red', ExclamationIcon);
   };
 
   /* ************ User form ************ */
+  const updateAvatar = async (id) => {
+    const form = new FormData();
+    form.append('avatar', avatarFile.value);
+
+    const request = apiRequest(`/users/${id}/avatar`, {
+      method: 'post',
+      data: form,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    await request.fetch();
+
+    const successResponce = !request.error.value && request.data.value.success;
+    const onErrResponseMessage = (request.errorMsg.value ?? "Something went wrong , avatar couldn't be set");
+
+    !successResponce && showToast(onErrResponseMessage, 'red', ExclamationIcon);
+
+    return successResponce;
+  };
+
+  const updatePassword = async (id) => {
+    const form = new FormData();
+
+    form.append('password', userFields.password);
+
+    const request = apiRequest(`/users/${id}/password`, {
+      method: 'put',
+      data: form,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    await request.fetch();
+
+    const successResponce = !request.error.value && request.data.value.success;
+    const onErrResponseMessage = (request.errorMsg.value ?? "Something went wrong , password couldn't be updated");
+
+    !successResponce && showToast(onErrResponseMessage, 'red', ExclamationIcon);
+
+    return successResponce;
+  };
+
+  const saveRawUserFields = async () => {
+    const form = new FormData();
+
+    Object.keys(userFields).forEach((key) => {
+      // won't count password in case we're editing the user, password is updated siparatly (down)
+      if (isThePage.value && key.substr(0, 8) === 'password') return;
+      form.append(key, `${userFields[key]}`);
+    });
+
+    form.append('is_about_visible', toggles.value[0]);
+    form.append('is_born_at_visible', toggles.value[1]);
+    form.append('is_active', toggles.value[2]);
+
+    const request = apiRequest(`/users/${isThePage.value ? route.params.id : ''}`, {
+      method: isThePage.value ? 'put' : 'post',
+      data: form,
+    });
+
+    await request.fetch();
+
+    const successResponce = !request.error.value && request.data.value.success;
+    const onErrResponseMessage = request.errorMsg.value ?? 'Something went wrong!';
+
+    !successResponce && showToast(onErrResponseMessage, 'red', ExclamationIcon);
+
+    // return request.data.value?.user?.id;
+    return successResponce;
+  };
 
   const { rules } = employerFormValidationsRules(userFields, isThePage.value);
 
@@ -95,130 +161,70 @@ export default function employerForm() {
 
     v$.value.$reset();
 
-    let wasProfileUpdated = true;
-    let responseMessage = null;
+    let successResponce = true;
 
-    const form = new FormData();
+    // ********* Form request
+    successResponce = await saveRawUserFields();
 
-    Object.keys(userFields).forEach((key) => {
-      // won't count password in case we're editing the user, password is updated siparatly (down)
-      if (isThePage.value && key.substr(0, 8) === 'password') return;
-      form.append(key, `${userFields[key]}`);
-    });
+    // ********* Avatar request
+    if (avatarFile.value) { successResponce = await updateAvatar(route.params.id); }
 
-    form.append('is_about_visible', toggles.value[0]);
-    form.append('is_born_at_visible', toggles.value[1]);
-    form.append('is_active', toggles.value[2]);
+    // ********* Password update request
+    if (isThePage.value && userFields.password) { successResponce = await updatePassword(route.params.id); }
 
-    // send data to server
-    try {
-      const { data } = await axiosInstance[isThePage.value ? 'put' : 'post'](
-        `/users/${isThePage.value ? route.params.id : ''}`,
-        // userFields
-        form,
-      );
-
-      // update avatar if user uploaded a photo
-      if (avatarFile.value) {
-        const avatarForm = new FormData();
-        avatarForm.append('avatar', avatarFile.value);
-
-        await axiosInstance.post(`/users/${data.user.id}/avatar`, avatarForm, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-      }
-
-      // update password if filled (in case of update page)
-      if (isThePage.value && userFields.password) {
-        const passwordForm = new FormData();
-
-        passwordForm.append('password', userFields.password);
-
-        await axiosInstance.put(
-          `/users/${data.user.id}/password`,
-          passwordForm,
-        );
-      }
-
-      // everything was updated with success
-      wasProfileUpdated = true;
-      responseMessage = 'профиль успешно обновлен';
-    } catch (e) {
-      if (e.response) {
-        console.error('Error responce', e, e.response.data);
-
-        responseMessage = e.response.data.message; // during dev
-      } else if (e.request) {
-        console.log('Error request', e.request);
-
-        responseMessage = 'Не удалось обновить профиль'; // 'Undefined (network?) error'
-      } else {
-        console.log('Error local', e.message);
-
-        responseMessage = e.message;
-      }
-
-      wasProfileUpdated = false;
-    } finally {
-      const color = wasProfileUpdated ? 'green' : 'red';
-      const icon = wasProfileUpdated ? CheckIcon : ExclamationIcon;
-      showToast(responseMessage, color, icon);
-    }
+    successResponce && showToast('Profile updated successfully', 'green', CheckIcon);
   };
 
-  const setEmployerForm = async (payload = {}) => {
-    if (payload !== {}) {
-      Object.keys(userFields).forEach((key) => {
-        if (key === 'department_id') {
-          userFields.department_id = payload.department?.id;
-          return;
-        }
+  const setEmployerForm = async (payload) => {
+    if (!payload) return;
 
-        if (key === 'role_id') {
-          // console.log(payload.roles); // array
-          // userFields.role_id = payload.role?.id; // ===========> should be fixed later
-          userFields.role_id = 2;
-          return;
-        }
-
-        userFields[key] = payload[key];
-      });
-
-      if (userFields.born_at) {
-        const [d, m, y] = userFields.born_at.split('.');
-        userFields.born_at = `${y}-${m}-${d}`;
+    Object.keys(userFields).forEach((key) => {
+      if (key === 'department_id') {
+        userFields.department_id = payload.department?.id;
+        return;
       }
 
-      toggles.value = [
-        payload.is_about_visible || false,
-        payload.is_born_at_visible || false,
-        payload.is_active || false,
-      ];
+      if (key === 'role_id') {
+        // console.log(payload.roles); // array
+        // userFields.role_id = payload.role?.id; // ===========> should be fixed later
+        userFields.role_id = 2;
+        return;
+      }
 
-      avatar.value = payload.avatar || defaultEmployerAvatar;
+      userFields[key] = payload[key];
+    });
 
-      return;
-    }
+    toggles.value = [
+      payload.is_about_visible || false,
+      payload.is_born_at_visible || false,
+      payload.is_active || false,
+    ];
 
-    userFields = defaultUserFields;
-    toggles.value = defaultTogglesState;
-    avatarFile.value = null;
+    avatar.value = payload.avatar ?? defaultEmployerAvatar;
+
+    if (!userFields.born_at) return;
+
+    const [d, m, y] = userFields.born_at.split('.');
+    userFields.born_at = `${y}-${m}-${d}`;
   };
 
   const fetchSubjectUser = async (id) => {
-    let theFetchedUser = {};
+    const request = apiRequest(`/users/${id}`);
 
-    try {
-      const { data } = await axiosInstance.get(`/users/${id}`);
-      if (!data.success) throw Error();
+    await request.fetch();
 
-      theFetchedUser = data.user;
-    } catch (e) {
-      console.error('Error request', e);
-      showToast('Не удалось получить пользователя', 'red', ExclamationIcon);
-    }
+    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить пользователя', 'red', ExclamationIcon);
 
-    return theFetchedUser;
+    return request.data.value.user;
+  };
+
+  const atMountedEmployerForm = async () => {
+    const employer = (isThePage.value && route.params.id) && await fetchSubjectUser(route.params.id);
+
+    await setEmployerForm(employer || null);
+
+    await fetchDepartments();
+    await fetchRoles();
   };
 
   return {
@@ -239,5 +245,6 @@ export default function employerForm() {
     saveUser,
     toggles,
     setEmployerForm,
+    atMountedEmployerForm,
   };
 }

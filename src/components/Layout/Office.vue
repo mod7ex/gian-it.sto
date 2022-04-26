@@ -1,34 +1,28 @@
 <script setup>
-import { computed, ref } from "vue";
-import { MenuButton } from "@headlessui/vue";
+import { computed, ref } from 'vue';
+import { MenuButton } from '@headlessui/vue';
 import {
-  ClockIcon,
-  HomeIcon,
-  ViewListIcon,
-  MenuAlt1Icon,
-  ChartBarIcon,
   UserGroupIcon,
   PuzzleIcon,
   PresentationChartLineIcon,
   ChipIcon,
   TableIcon,
-  CogIcon,
   CurrencyDollarIcon,
   CollectionIcon,
-} from "@heroicons/vue/outline";
-import { SearchIcon, SelectorIcon } from "@heroicons/vue/solid";
-import { useRouter } from "vue-router";
-import Avatar from "@/UI/Avatar.vue";
-import Dropdown from "@/UI/Dropdown.vue";
-import NavBar from "@/UI/NavBar.vue";
-import SecondNavbar from "@/UI/SecondNavbar.vue";
-import Input from "@/UI/Input.vue";
-import Sidebar from "@/UI/Sidebar.vue";
-import Logo from "@/Partials/Logo.vue";
-import { setTitle } from "~/lib/meta.js";
-import useApi from "~/composables/useApi.js";
-import useAuth from "~/composables/useAuth.js";
-import { isPathAccessableForCurrentUser } from "~/lib/permissions.js";
+} from '@heroicons/vue/outline';
+import { SearchIcon, SelectorIcon } from '@heroicons/vue/solid';
+import { useRouter } from 'vue-router';
+import Avatar from '@/UI/Avatar.vue';
+import Dropdown from '@/UI/Dropdown.vue';
+import NavBar from '@/UI/NavBar.vue';
+import SecondNavbar from '@/UI/SecondNavbar.vue';
+import Input from '@/UI/Input.vue';
+import Sidebar from '@/UI/Sidebar.vue';
+import Logo from '@/Partials/Logo.vue';
+import { setTitle } from '~/lib/meta.js';
+import useApi from '~/composables/useApi.js';
+import useAuth from '~/composables/useAuth.js';
+import { isPathAccessableForCurrentUser } from '~/lib/permissions.js';
 
 const { axiosInstance } = useApi();
 const { user, resetUser } = useAuth();
@@ -42,7 +36,7 @@ const props = defineProps({
   mainClasses: {
     type: String,
     required: false,
-    default: "flex-1 relative z-0 overflow-y-auto focus:outline-none",
+    default: 'flex-1 relative z-0 overflow-y-auto focus:outline-none',
   },
 });
 
@@ -50,50 +44,50 @@ setTitle(props.title);
 
 const sidebarOpen = ref(false);
 const userMenu = [
-  [{ label: "Профиль", href: "/profile" }],
+  [{ label: 'Профиль', href: '/profile' }],
   [
     {
-      label: "Выход",
-      href: "/",
+      label: 'Выход',
+      href: '/',
       click: () => {
-        axiosInstance.post("auth/logout").catch((error) => {
+        axiosInstance.post('auth/logout').catch((error) => {
           // Just out to console, because system need to be stable
           // and not stop when logout method returns something wrong
           console.error(error);
         });
 
         resetUser();
-        router.push("/");
+        router.push('/');
       },
     },
   ],
 ];
 let menu = [
   {
-    label: "Главная",
-    href: "/dashboard",
+    label: 'Главная',
+    href: '/dashboard',
     icon: PresentationChartLineIcon,
     current: false,
   },
-  { label: "Заказ-наряды", href: "/orders", icon: ChipIcon, current: false },
-  { label: "Задачи", href: "/tasks", icon: TableIcon, current: false },
+  { label: 'Заказ-наряды', href: '/orders', icon: ChipIcon, current: false },
+  { label: 'Задачи', href: '/tasks', icon: TableIcon, current: false },
   {
-    label: "Рабочие процессы",
-    href: "/processes",
+    label: 'Рабочие процессы',
+    href: '/processes',
     icon: PuzzleIcon,
     current: false,
   },
-  { label: "Склад", href: "/storages", icon: CollectionIcon, current: false },
-  { label: "Клиенты", href: "/clients", icon: UserGroupIcon, current: false },
+  { label: 'Склад', href: '/storages', icon: CollectionIcon, current: false },
+  { label: 'Клиенты', href: '/clients', icon: UserGroupIcon, current: false },
   {
-    label: "Сотрудники",
-    href: "/employers",
+    label: 'Сотрудники',
+    href: '/employers',
     icon: UserGroupIcon,
     current: false,
   },
   {
-    label: "Финансы",
-    href: "/finances",
+    label: 'Финансы',
+    href: '/finances',
     icon: CurrencyDollarIcon,
     current: false,
   },
@@ -103,9 +97,9 @@ let menu = [
 menu = menu.filter((menuItem) => isPathAccessableForCurrentUser(menuItem.href));
 
 const departments = [
-  { label: "Ростов-на-Дону / Центр", href: "#", color: "yellow" },
-  { label: "Ростов-на-Дону / Западный", href: "#", color: "green" },
-  { label: "Краснодар / Центр", href: "#", color: "indigo" },
+  { label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow' },
+  { label: 'Ростов-на-Дону / Западный', href: '#', color: 'green' },
+  { label: 'Краснодар / Центр', href: '#', color: 'indigo' },
 ];
 
 const userFullName = computed(() => {
@@ -114,7 +108,7 @@ const userFullName = computed(() => {
   if (userData.id) {
     return `${userData.name} ${userData.surname}`;
   }
-  return "Гость";
+  return 'Гость';
 });
 
 const userRoleTitle = computed(() => {
@@ -123,7 +117,7 @@ const userRoleTitle = computed(() => {
   if (userData.roles[0]) {
     return `${userData.roles[0].title}`;
   }
-  return "Гость";
+  return 'Гость';
 });
 </script>
 

@@ -43,6 +43,8 @@ export default function useConfirmDialog() {
     isDialogWaiting.value = true;
     const foo = dialogProceedFunction.value;
     await foo(...args);
+    // const { message, success } = await foo(...args);
+    // showResultConfirmDialog(message, success);
   };
 
   return {

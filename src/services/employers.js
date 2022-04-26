@@ -6,7 +6,7 @@ import useToast from '~/composables/useToast.js';
 
 const { showResultConfirmDialog } = useConfirmDialog();
 
-const { axiosInstance } = useApi();
+const { apiRequest } = useApi();
 
 const filter = readonly([
   { criteria: 'id', label: 'По умолчанию' },
@@ -46,7 +46,7 @@ export default function employers() {
         userGroups[key] = users.value.filter((user) => (user.surname ? user.surname[0] : '_') === key)
           .map((user) => ({
             id: user.id,
-            title: `${user.name} ${user.surname ? user.surname : ''}`,
+            title: `${user.name} ${user.surname ?? ''}`,
             subtitle: `${user.office_position ? user.office_position : ''}`,
             image: `${user.avatar ? user.avatar : ''}`,
           }));
@@ -86,60 +86,47 @@ export default function employers() {
     }
   };
 
-  const setSelectedUser = (user) => {
+  const setSelectedUser = (user = null) => {
     selectedUser.value = user
-      ? users.value.find((item) => item.id === user.id) || {}
+      ? users.value.find((item) => item.id === user.id) ?? {}
       : {};
     selected.value = !!user;
   };
 
   /* ************ Delete role ************ */
 
-  const deleteUser = (id) => {
-    users.value.splice(
-      users.value.findIndex((user) => user.id === id),
-      1,
-    );
-  };
+  const deleteUser = (id) => !!users.value.splice(
+    users.value.findIndex((user) => user.id === id),
+    1,
+  ).length;
 
   const dropUser = async (id) => {
-    // User deletion
-    let isUserDeleted = false;
-    let deletionMessage = null;
+    const request = apiRequest(`users/${id}`, { method: 'delete' });
 
-    try {
-      const { data } = await axiosInstance.delete(`users/${id}`);
+    await request.fetch();
 
-      if (!data.success) throw Error();
+    const wasEmployerDeleted = !request.error.value && request.data.value.success;
 
-      isUserDeleted = true;
-      deletionMessage = 'Пользователь успешно удален';
+    wasEmployerDeleted && deleteUser(id) && setSelectedUser();
 
-      deleteUser(id);
+    const deletionMsg = wasEmployerDeleted ? 'Employer was deleted successfully.' : (request.errorMsg.value ?? 'Не удалось удалить пользователя');
 
-      setSelectedUser();
-    } catch (e) {
-      console.error('Error request', e);
-
-      isUserDeleted = false;
-      deletionMessage = 'Не удалось удалить пользователя';
-    } finally {
-      showResultConfirmDialog(deletionMessage, isUserDeleted);
-    }
+    showResultConfirmDialog(deletionMsg, wasEmployerDeleted);
   };
 
   const fetchEmployers = async (searchPayload = '') => {
-    try {
-      let url = `/users?order=${order.value.criteria}`;
-      url += searchPayload ? `&name=${searchPayload}` : '';
-      // if (searchPayload) url += `&name=${searchPayload}`;
-      const { data } = await axiosInstance.get(url);
-      users.value = data.users;
-      order.value.mod = -1; // return to desc(default) order mod
-    } catch (e) {
-      console.error('Error request', e);
-      showToast("Couldn't fetch employers", 'red', ExclamationIcon);
-    }
+    const request = apiRequest('/users', {
+      params: {
+        order: order.value.criteria,
+        name: searchPayload,
+      },
+    });
+
+    await request.fetch();
+
+    users.value = request.data.value?.users || [];
+    request.error.value && showToast(request.errorMsg.value, 'red', ExclamationIcon);
+    order.value.mod = -1; // return to desc(default) order mod
   };
 
   return {

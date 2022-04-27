@@ -1,23 +1,19 @@
 import { createApp } from 'vue';
-import { createRouter, createWebHashHistory } from 'vue-router';
 import Toast from 'vue-toastification';
 import Maska from 'maska';
 import App from './App.vue';
-import routes from './routes.js';
-import { initPermissionsProtect } from '~/lib/permissions.js';
+import router from './router';
+import { authByTokenFromLocalstorage } from './services/login';
 
-const router = createRouter({
-  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
-  history: createWebHashHistory(),
-  routes, // short for `routes: routes`
-});
+const app = createApp(App);
 
-initPermissionsProtect(router);
+const appWrapper = async () => {
+  await authByTokenFromLocalstorage(router);
 
-createApp(App)
-  .use(router)
-  .use(Maska)
-  .use(Toast, {
-    position: 'bottom-left',
-  })
-  .mount('#app');
+  app.use(router);
+  app.use(Maska);
+  app.use(Toast, { position: 'bottom-left' });
+  app.mount('#app');
+};
+
+appWrapper();

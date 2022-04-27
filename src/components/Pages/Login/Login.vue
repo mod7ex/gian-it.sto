@@ -1,19 +1,13 @@
 <script setup>
-import { useRouter } from 'vue-router';
-import { onMounted } from 'vue';
 import Spinner from '@/UI/Spinner.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import Link from '@/UI/Link.vue';
 import LoginLayout from '@/Layout/Login.vue';
-import useLogin from '~/services/login.js';
+import loginHandler from '~/services/login.js';
 
-const router = useRouter();
-const { loginUser, authByTokenFromLocalstorage, v$, isLoading, isErrorResponse, errorResponseMessage } = useLogin(router);
+const { loginUser, v$, loading, isSuccessAuth, onErrResponceMsg } = loginHandler();
 
-onMounted(() => {
-  authByTokenFromLocalstorage();
-});
 </script>
 
 <template>
@@ -35,20 +29,21 @@ onMounted(() => {
           </div>
 
           <Button
-            :disabled="isLoading"
-            :class="{ 'cursor-not-allowed': isLoading, 'opacity-60': isLoading }"
+            :disabled="loading"
+            :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }"
             color="blue"
             class="w-full justify-center"
             @click.prevent="loginUser"
           >
-            <span v-if="!isLoading">Войти</span>
-            <Spinner  v-if="isLoading" />
+            <span v-if="!loading">Войти</span>
+            <Spinner v-else />
           </Button>
           <!-- We need this button to make form generally submittable -->
             <button class="hidden" type="submit">accessible submit button</button>
         </form>
-        <p v-if="isErrorResponse" class="text-red-500 text-sm text-center mt-6">
-          {{ errorResponseMessage }}
+
+        <p v-if="!isSuccessAuth" class="text-red-500 text-sm text-center mt-6">
+          {{ onErrResponceMsg }}
         </p>
       </div>
     </div>

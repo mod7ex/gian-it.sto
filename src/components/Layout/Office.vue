@@ -9,9 +9,9 @@ import {
   TableIcon,
   CurrencyDollarIcon,
   CollectionIcon,
+  MenuAlt1Icon,
 } from '@heroicons/vue/outline';
 import { SearchIcon, SelectorIcon } from '@heroicons/vue/solid';
-import { useRouter } from 'vue-router';
 import Avatar from '@/UI/Avatar.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import NavBar from '@/UI/NavBar.vue';
@@ -21,12 +21,13 @@ import Sidebar from '@/UI/Sidebar.vue';
 import Logo from '@/Partials/Logo.vue';
 import { setTitle } from '~/lib/meta.js';
 import useApi from '~/composables/useApi.js';
+import useAppRouter from '~/composables/useAppRouter.js';
 import useAuth from '~/composables/useAuth.js';
-import { isPathAccessableForCurrentUser } from '~/lib/permissions.js';
+import { isRouteAccessableForCurrentUser } from '~/lib/permissions.js';
 
 const { axiosInstance } = useApi();
 const { user, resetUser } = useAuth();
-const router = useRouter();
+const { router } = useAppRouter();
 
 const props = defineProps({
   title: {
@@ -62,39 +63,41 @@ const userMenu = [
     },
   ],
 ];
-let menu = [
+const menu = [
   {
     label: 'Главная',
     href: '/dashboard',
+    name: 'Dashboard',
     icon: PresentationChartLineIcon,
     current: false,
   },
-  { label: 'Заказ-наряды', href: '/orders', icon: ChipIcon, current: false },
-  { label: 'Задачи', href: '/tasks', icon: TableIcon, current: false },
+  { label: 'Заказ-наряды', href: '/orders', name: 'Orders', icon: ChipIcon, current: false },
+  { label: 'Задачи', href: '/tasks', name: 'Tasks', icon: TableIcon, current: false },
   {
     label: 'Рабочие процессы',
     href: '/processes',
+    name: 'Processes',
     icon: PuzzleIcon,
     current: false,
   },
-  { label: 'Склад', href: '/storages', icon: CollectionIcon, current: false },
-  { label: 'Клиенты', href: '/clients', icon: UserGroupIcon, current: false },
+  { label: 'Склад', href: '/storages', name: 'Storages', icon: CollectionIcon, current: false },
+  { label: 'Клиенты', href: '/clients', name: 'Clients', icon: UserGroupIcon, current: false },
   {
     label: 'Сотрудники',
     href: '/employers',
+    name: 'Employers',
     icon: UserGroupIcon,
     current: false,
   },
   {
     label: 'Финансы',
     href: '/finances',
+    name: 'Finances',
     icon: CurrencyDollarIcon,
     current: false,
   },
   // {label: 'Настройки', href: '/settings', icon: CogIcon, current: false},
-];
-
-menu = menu.filter((menuItem) => isPathAccessableForCurrentUser(menuItem.href));
+].filter((menuItem) => isRouteAccessableForCurrentUser(menuItem.name));
 
 const departments = [
   { label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow' },
@@ -105,18 +108,16 @@ const departments = [
 const userFullName = computed(() => {
   const userData = user.value;
 
-  if (userData.id) {
-    return `${userData.name} ${userData.surname}`;
-  }
+  if (userData.id) return `${userData.name} ${userData.surname}`;
+
   return 'Гость';
 });
 
 const userRoleTitle = computed(() => {
   const userData = user.value;
 
-  if (userData.roles[0]) {
-    return `${userData.roles[0].title}`;
-  }
+  if (userData.roles[0]) return `${userData.roles[0].title}`;
+
   return 'Гость';
 });
 </script>
@@ -178,6 +179,7 @@ const userRoleTitle = computed(() => {
         </div>
       </div>
     </div>
+
     <!-- Main column -->
     <div class="flex flex-col w-0 flex-1 overflow-hidden">
       <!-- Mobile -->

@@ -43,10 +43,7 @@ const isShowMenu = ref(false);
             </div>
 
             <nav aria-label="Global" class="hidden lg:ml-6 lg:flex lg:items-center lg:space-x-4">
-              <router-link v-for="item in menu"
-                 :to="item.href"
-                 :class="['px-3 py-2 text-gray-900 text-sm', {'font-medium': item.current}]"
-              >
+              <router-link v-for="(item,i) in menu" :key="i" :to="item.href" :class="['px-3 py-2 text-gray-900 text-sm', {'font-medium': item.current}]">
                 {{ item.label }}
               </router-link>
             </nav>
@@ -77,9 +74,10 @@ const isShowMenu = ref(false);
                     </div>
                   </div>
                   <div class="mt-3 px-2 space-y-1">
-                    <router-link v-for="item in menu"
-                       :to="item.href"
-                       class="block rounded-md px-3 py-2 text-base text-gray-900 font-medium hover:bg-gray-100 hover:text-gray-800"
+                    <router-link v-for="(item, i) in menu"
+                      :key="i"
+                      :to="item.href"
+                      class="block rounded-md px-3 py-2 text-base text-gray-900 font-medium hover:bg-gray-100 hover:text-gray-800"
                     >
                       {{ item.label }}
                     </router-link>

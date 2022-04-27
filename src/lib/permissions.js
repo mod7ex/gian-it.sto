@@ -1,61 +1,45 @@
 import useAuth from '~/composables/useAuth.js';
-import routesPermissionsMap from './permissionsMap.js';
 
-function isUserHasPermission(permissionName) {
-  const { user } = useAuth();
+const { isUserLogged, user } = useAuth();
 
-  const permissionFound = user.value.permissions.find((perm) => (perm.name === permissionName));
-
-  return permissionFound !== undefined;
-}
-
-function processGuestRoutes(to, next) {
-  const { isUserLogged } = useAuth();
-
-  function isRouteForGuests() {
-    return !!to.meta.guest;
-  }
-
-  if (isRouteForGuests() && isUserLogged.value) {
-    next('/dashboard');
-  }
-
-  if (!isRouteForGuests() && !isUserLogged.value) {
-    next('/');
-  }
-}
-
-function isPathAccessableForCurrentUser(routePath) {
-  if (!routesPermissionsMap[routePath]) {
-    return true;
-  }
-
-  const permissionName = routesPermissionsMap[routePath];
-
-  if (Array.isArray(permissionName)) {
-    return permissionName.find((perm) => isUserHasPermission(perm)) !== undefined;
-  }
-
-  return isUserHasPermission(permissionName);
-}
-
-function processProtectedRoutes(to, next) {
-  if (!isPathAccessableForCurrentUser(to.path)) {
-    next('/dashboard');
-  }
-}
-
-function initPermissionsProtect(router) {
-  router.beforeEach((to, from, next) => {
-    processGuestRoutes(to, next);
-
-    processProtectedRoutes(to, next);
-
-    next();
-  });
-}
-
-export {
-  initPermissionsProtect,
-  isPathAccessableForCurrentUser,
+const routesPermissionsMap = {
+  Finances: 'crud finances',
+  Storages: 'crud storages',
+  Tasks: ['read tasks', 'crud tasks'],
+  TaskCreateForm: 'create tasks',
+  Employers: ['read users', 'crud users'],
+  Clients: ['read clients', 'crud clients'],
+  Pipelines: 'crud pipelines',
 };
+
+export function userHasPermission(permissionName) {
+  return !!(user.value.permissions.find((perm) => (perm.name === permissionName)));
+}
+
+export function isRouteAccessableForCurrentUser(routeName) {
+  if (!routesPermissionsMap[routeName]) return true;
+
+  const maybePermissionName = routesPermissionsMap[routeName];
+
+  if (Array.isArray(maybePermissionName)) return !!(maybePermissionName.find((perm) => userHasPermission(perm)));
+
+  return userHasPermission(maybePermissionName);
+}
+
+const navigationGuards = (to, from, next) => {
+  const isRouteForGuests = !!to.meta.guest;
+  const accessable = isRouteAccessableForCurrentUser(to.name);
+
+  if (!isUserLogged.value) {
+    // none-auth users  ------ order matters
+    if (isRouteForGuests) return next();
+    if (!isRouteForGuests) return next('/');
+  }
+
+  // auth users  ------ order matters
+  if (isRouteForGuests) return next('/dashboard');
+  if (accessable) return next();
+  if (!accessable) return next('/dashboard');
+};
+
+export default navigationGuards;

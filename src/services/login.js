@@ -1,89 +1,68 @@
-import { ref, reactive } from 'vue';
+import { reactive, computed } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useAuth from '~/composables/useAuth.js';
 import useApi from '~/composables/useApi.js';
+import useAppRouter from '~/composables/useAppRouter.js';
 import loginValidationsRules from '~/validationsRules/login.js';
 
-let routerInstance;
-const { setUser, setToken } = useAuth();
-const { axiosInstance } = useApi();
+const { setUser, setToken, token } = useAuth();
+const { apiRequest } = useApi();
 const { rules } = loginValidationsRules();
-const isErrorResponse = ref(false);
-const errorResponseMessage = ref('');
-const isLoading = ref(false);
 
-function cleanErrors() {
-  isErrorResponse.value = false;
-  errorResponseMessage.value = '';
-}
+export default function loginHandler() {
+  const { router } = useAppRouter();
 
-const form = reactive({
-  email: '',
-  password: '',
-});
+  const form = reactive({
+    email: '',
+    password: '',
+  });
 
-const v$ = useVuelidate(rules, form, { $lazy: true });
+  const v$ = useVuelidate(rules, form, { $lazy: true });
 
-const loginUser = async () => {
-  v$.value.$touch();
+  const { fetch: call, error, loading, data, errorMsg, responce } = apiRequest('auth/login', {
+    method: 'post',
+    data: form,
+  });
 
-  if (v$.value.$invalid) return;
+  const onErrResponceMsg = computed(() => errorMsg.value ?? 'Undefined (network?) error');
+  const isSuccessAuth = computed(() => !error.value && (!responce.value || data.value?.success));
 
-  v$.value.$reset();
+  const loginUser = async () => {
+    v$.value.$touch();
 
-  cleanErrors();
-  isLoading.value = true;
+    if (v$.value.$invalid) return;
 
-  let res;
-  try {
-    res = await axiosInstance.post('auth/login', {
-      email: form.email,
-      password: form.password,
-    });
-  } catch (e) {
-    isErrorResponse.value = true;
-    errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
-  } finally {
-    isLoading.value = false;
-  }
+    v$.value.$reset();
 
-  if (res?.data?.api_token) {
-    setToken(res.data.api_token);
-    setUser(res.data.user);
-    form.email = '';
-    form.password = '';
-    routerInstance.push('/dashboard');
-  }
-};
+    await call();
 
-const authByTokenFromLocalstorage = async () => {
-  const savedToken = localStorage.getItem('token');
-  if (savedToken) {
-    let res;
-    try {
-      res = await axiosInstance.get('auth/user', {
-        headers: {
-          Authorization: `Bearer ${savedToken}`,
-        },
-      });
-    } catch (e) {
-      console.error('Error request', e?.response?.data);
-    }
-    if (res?.data?.user) {
-      setToken(savedToken);
-      setUser(res.data.user);
-      routerInstance.push('/dashboard');
-    }
-  }
-};
-export default function useLogin(router) {
-  routerInstance = router;
+    if (!isSuccessAuth.value || !data.value?.api_token) return;
+
+    setToken(data.value.api_token);
+    setUser(data.value.user);
+
+    router.push('/dashboard');
+  };
+
   return {
     loginUser,
-    authByTokenFromLocalstorage,
     v$,
-    isLoading,
-    isErrorResponse,
-    errorResponseMessage,
+    loading,
+    isSuccessAuth,
+    onErrResponceMsg,
   };
 }
+
+export const authByTokenFromLocalstorage = async (routerInstance) => {
+  if (!token.value) return;
+
+  const request = apiRequest('auth/user');
+
+  await request.fetch();
+
+  if (!request.data.value?.user || !request.data.value?.success) return;
+
+  setUser(request.data.value.user);
+
+  routerInstance.push('/dashboard');
+};

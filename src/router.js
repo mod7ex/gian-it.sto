@@ -1,4 +1,7 @@
-export default [
+import { createRouter, createWebHashHistory } from 'vue-router';
+import navigationGuards from '~/lib/permissions.js';
+
+const routes = [
   { path: '/', component: () => import(/* webpackChunkName: "login-page" */ '@/Pages/Login/Login.vue'), name: 'Login', meta: { guest: true } },
   { path: '/forgot-password', component: () => import('@/Pages/Login/ForgotPassword.vue'), name: 'ForgotPassword', meta: { guest: true } },
   { path: '/refresh-password/:token', component: () => import('@/Pages/Login/RefreshPassword.vue'), name: 'RefreshPassword', meta: { guest: true } },
@@ -73,3 +76,13 @@ export default [
   { path: '/w/times', component: () => import('@/Pages/Work/Times.vue'), name: 'WorkerTimes' },
   { path: '/w/change', component: () => import('@/Pages/Work/ChangeWorker.vue'), name: 'ChangeWorker' },
 ];
+
+const router = createRouter({
+  // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
+  history: createWebHashHistory(),
+  routes,
+});
+
+router.beforeEach(navigationGuards);
+
+export default router;

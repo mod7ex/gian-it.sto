@@ -9,11 +9,17 @@ const instance = axios.create({
   timeout: 30000,
 });
 
-watch(token, (changedToken) => {
-  instance.defaults.headers.common.Authorization = changedToken
-    ? `Bearer ${changedToken}`
-    : null;
-});
+watch(
+  () => token.value,
+  (v) => {
+    instance.defaults.headers.common.Authorization = v
+      ? `Bearer ${v}`
+      : null;
+  },
+  {
+    immediate: true,
+  },
+);
 
 const apiRequest = (url, config = {}) => {
   const data = ref();
@@ -25,9 +31,9 @@ const apiRequest = (url, config = {}) => {
     if (!error.value) return null;
 
     if (error.value.response) {
-      return error.value.response?.data?.message;
+      return error.value.response?.data?.message ?? 'Something went wrong with responce!';
     } if (error.value.request) {
-      return error.value.request?.message ?? 'Something went wrong!';
+      return error.value.request?.message ?? 'Something went wrong with request!';
     }
     return error.value.message;
   });

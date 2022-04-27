@@ -149,7 +149,6 @@ export default function employerForm() {
   };
 
   const { rules } = employerFormValidationsRules(userFields, isThePage.value);
-
   const v$ = useVuelidate(rules, userFields, { $lazy: true });
 
   const saveUser = async () => {

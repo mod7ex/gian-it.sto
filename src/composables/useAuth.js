@@ -1,41 +1,36 @@
 import { ref, readonly, computed } from 'vue';
 
 const defaultUserFields = {
-  id: 0,
   permissions: [],
+  roles: [],
 };
 
-const token = ref('');
-
+const token = computed(() => localStorage.getItem('token'));
 const user = ref(defaultUserFields);
+const isUserLogged = computed(() => !!user.value.id);
+
+const setToken = ((payload) => {
+  if (!payload) return localStorage.removeItem('token');
+  localStorage.setItem('token', payload);
+});
+
+const setUser = (userData) => {
+  user.value = userData;
+  if (!userData.avatar) user.value.avatar = 'src/assets/noAvatar.svg';
+};
+
+const resetUser = async () => {
+  setUser(defaultUserFields);
+  setToken(null);
+};
 
 export default function useAuth() {
-  const setToken = ((inputToken) => {
-    localStorage.setItem('token', inputToken);
-    token.value = inputToken;
-  });
-
-  const setUser = (userData) => {
-    user.value = userData;
-    if (userData.avatar === '') {
-      user.value.avatar = 'src/assets/noAvatar.svg';
-    }
-  };
-
-  const resetUser = async () => {
-    localStorage.removeItem('token');
-    setToken('');
-    setUser(defaultUserFields);
-  };
-
-  const isUserLogged = computed(() => user.value.id !== 0);
-
   return {
-    user: readonly(user),
-    token: readonly(token),
+    token,
     setUser,
     setToken,
     resetUser,
     isUserLogged,
+    user: readonly(user),
   };
 }

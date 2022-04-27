@@ -1,9 +1,9 @@
-import { ref, reactive, onMounted } from "vue";
-import useVuelidate from "@vuelidate/core";
-import useApi from "~/composables/useApi.js";
-import useAuth from "~/composables/useAuth.js";
+import { ref, reactive, onMounted } from 'vue';
+import useVuelidate from '@vuelidate/core';
+import useApi from '~/composables/useApi.js';
+import useAuth from '~/composables/useAuth.js';
 // import useToast from "~/composables/useToast.js";
-import officeProfileValidationsRules from "~/validationsRules/officeProfile.js";
+import officeProfileValidationsRules from '~/validationsRules/officeProfile.js';
 
 export default function officeProfile() {
   const { axiosInstance } = useApi();
@@ -11,14 +11,14 @@ export default function officeProfile() {
   const { rules } = officeProfileValidationsRules();
   const { user, setUser } = useAuth();
 
-  const avatar = ref("");
+  const avatar = ref('');
   const isAvatarLoading = ref(false);
 
   const isOpenToast = ref(false);
   const isUpdatingDataProfile = ref(false);
-  const isSuccessResponse = ref("");
-  const successResponseMessage = ref("");
-  const errorResponseMessage = ref("");
+  const isSuccessResponse = ref('');
+  const successResponseMessage = ref('');
+  const errorResponseMessage = ref('');
 
   const fieldProfileForValidation = reactive({
     name: user.value.name,
@@ -51,19 +51,19 @@ export default function officeProfile() {
   const uploadNewAvatar = async (image) => {
     isAvatarLoading.value = true;
     const formData = new FormData();
-    formData.append("avatar", image);
+    formData.append('avatar', image);
     let response;
     try {
-      response = await axiosInstance.post("profile/avatar", formData, {
+      response = await axiosInstance.post('profile/avatar', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
     } catch (e) {
       isSuccessResponse.value = false;
       errorResponseMessage.value = e.response
         ? e.response.data.message
-        : "Undefined (network?) error";
+        : 'Undefined (network?) error';
       showToast();
     } finally {
       isAvatarLoading.value = false;
@@ -72,7 +72,7 @@ export default function officeProfile() {
       const responseAvatarObj = JSON.parse(response.data.avatar);
       avatar.value = responseAvatarObj.original_url;
       isSuccessResponse.value = true;
-      successResponseMessage.value = "Фото успешно обновлено";
+      successResponseMessage.value = 'Фото успешно обновлено';
       showToast();
     }
   };
@@ -82,7 +82,7 @@ export default function officeProfile() {
     const image = event.target.files[0];
     if (image.size > maxFileSize) {
       isSuccessResponse.value = false;
-      errorResponseMessage.value = "Размер фото не должен превышать 10000 Кб";
+      errorResponseMessage.value = 'Размер фото не должен превышать 10000 Кб';
       showToast();
       return;
     }
@@ -101,7 +101,7 @@ export default function officeProfile() {
 
     let res;
     try {
-      res = await axiosInstance.put("profile", {
+      res = await axiosInstance.put('profile', {
         name: fieldProfileForValidation.name,
         email: fieldProfileForValidation.email,
         surname: fieldsProfile.surname,
@@ -117,14 +117,14 @@ export default function officeProfile() {
       isSuccessResponse.value = false;
       errorResponseMessage.value = e.response
         ? e.response.data.message
-        : "Undefined (network?) error";
+        : 'Undefined (network?) error';
       showToast();
     } finally {
       isUpdatingDataProfile.value = false;
     }
     if (res.data.success) {
       isSuccessResponse.value = true;
-      successResponseMessage.value = "Данные успешно обновлены";
+      successResponseMessage.value = 'Данные успешно обновлены';
       showToast();
       setUser(res.data.user);
     }

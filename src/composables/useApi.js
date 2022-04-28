@@ -38,7 +38,9 @@ const apiRequest = (url, config = {}) => {
     return error.value.message;
   });
 
-  const fetch = async () => {
+  const success = computed(() => !error.value && (!responce.value || !!data.value.success));
+
+  const call = async () => {
     loading.value = true;
 
     try {
@@ -58,12 +60,13 @@ const apiRequest = (url, config = {}) => {
   };
 
   return {
-    fetch,
+    call,
     data,
     responce,
     error,
     loading,
     errorMsg,
+    success,
   };
 };
 

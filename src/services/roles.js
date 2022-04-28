@@ -9,7 +9,7 @@ const rawRoles = ref([]);
 export default function rolesService() {
   const { showToast } = useToast();
   const { apiRequest } = useApi();
-  const { redirectTo, isThePage, router } = useAppRouter('EditRole');
+  const { redirectTo } = useAppRouter('EditRole');
 
   const roles = computed(() => rawRoles.value.map((role) => ({
     id: role.id,
@@ -18,13 +18,13 @@ export default function rolesService() {
   })));
 
   const fetchRoles = async () => {
-    const request = apiRequest('/roles');
+    const { call, data, errorMsg, success } = apiRequest('/roles');
 
-    await request.fetch();
+    await call();
 
-    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? "Couldn't fetch roles !", 'red', ExclamationIcon);
+    !success.value && showToast(errorMsg.value ?? "Couldn't fetch roles !", 'red', ExclamationIcon);
 
-    rawRoles.value = request.data.value.roles || [];
+    rawRoles.value = data.value.roles || [];
   };
 
   /* ************ Delete role ************ */
@@ -36,15 +36,15 @@ export default function rolesService() {
   };
 
   const dropRole = async (id) => {
-    const request = apiRequest(`roles/${id}`, { method: 'delete' });
+    const { call, errorMsg, success } = apiRequest(`roles/${id}`, { method: 'delete' });
 
-    await request.fetch();
+    await call();
 
-    const wasRoleDeleted = !request.error.value && request.data.value.success;
+    const wasRoleDeleted = success.value;
 
     wasRoleDeleted && deleteRole(id);
 
-    const deletionMsg = wasRoleDeleted ? 'Role was deleted successfully.' : (request.errorMsg.value ?? 'Не удалось удалить Роль');
+    const deletionMsg = wasRoleDeleted ? 'Role was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить Роль');
 
     await redirectTo({ name: 'Roles' });
 

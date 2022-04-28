@@ -35,7 +35,7 @@ export default function roleForm() {
 
     v$.value.$reset();
 
-    const request = apiRequest(`/roles/${isThePage.value ? route.params.id : ''}`, {
+    const { call, data, errorMsg, success } = apiRequest(`/roles/${isThePage.value ? route.params.id : ''}`, {
       method: isThePage.value ? 'put' : 'post',
       data: {
         title: roleTitle.value,
@@ -45,40 +45,37 @@ export default function roleForm() {
       },
     });
 
-    await request.fetch();
+    await call();
 
-    const successResponce = !request.error.value && request.data.value?.success;
+    if (!success.value) return showToast(errorMsg.value ?? 'Something went wrong!', 'red', ExclamationIcon);
 
-    !successResponce && showToast(request.errorMsg.value ?? 'Something went wrong!', 'red', ExclamationIcon);
-    successResponce && showToast('Role saved.', 'green', CheckIcon);
+    await redirectTo({ name: 'EditRole', params: { id: data.value?.role?.id } });
 
-    await redirectTo({ name: 'EditRole', params: { id: request.data.value?.role?.id } });
-
-    return successResponce;
+    return showToast('Role saved.', 'green', CheckIcon);
   };
 
   /* ************ Role Raw Permissions ************ */
   const fetchRawRolePermissions = async () => {
-    const request = apiRequest('/permissions');
+    const { call, data, errorMsg, success } = apiRequest('/permissions');
 
-    await request.fetch();
+    await call();
 
-    rawRolePermissions.value = request.data.value?.permissions || [];
+    if (!success.value) return showToast(errorMsg.value ?? 'Не удалось получить разрешения', 'red', ExclamationIcon);
+
+    rawRolePermissions.value = data.value?.permissions || [];
     rawRolePermissions.value.sort(
       (a, b) => b.permissions?.length - a.permissions?.length,
     );
-
-    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить разрешения', 'red', ExclamationIcon);
   };
 
   const fetchSubjectRole = async (id) => {
-    const request = apiRequest(`/roles/${id}`);
+    const { call, data, errorMsg, success } = apiRequest(`/roles/${id}`);
 
-    await request.fetch();
+    await call();
 
-    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить роль', 'red', ExclamationIcon);
+    !success.value && showToast(errorMsg.value ?? 'Не удалось получить роль', 'red', ExclamationIcon);
 
-    return request.data.value.role || {};
+    return data.value.role || {};
   };
 
   const setRoleForm = async (payload) => {

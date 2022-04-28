@@ -35,6 +35,8 @@ export default function useToast() {
     toastTitle.value = title;
     toastText.value = text;
     setTimeout(resetToast, 5000);
+
+    return true; // toast should return a boolean ...
   }
 
   return {

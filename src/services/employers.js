@@ -96,33 +96,33 @@ export default function employers() {
   ).length;
 
   const dropUser = async (id) => {
-    const request = apiRequest(`users/${id}`, { method: 'delete' });
+    const { call, errorMsg, success } = apiRequest(`users/${id}`, { method: 'delete' });
 
-    await request.fetch();
+    await call();
 
-    const wasEmployerDeleted = !request.error.value && request.data.value.success;
+    const wasEmployerDeleted = success.value;
 
     wasEmployerDeleted && deleteUser(id) && setSelectedUser();
 
-    const deletionMsg = wasEmployerDeleted ? 'Employer was deleted successfully.' : (request.errorMsg.value ?? 'Не удалось удалить пользователя');
+    const deletionMsg = wasEmployerDeleted ? 'Employer was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить пользователя');
 
     return { message: deletionMsg, success: wasEmployerDeleted };
   };
 
   /* ************ Fetch employer ************ */
   const fetchEmployers = async (searchPayload = '') => {
-    const request = apiRequest('/users', {
+    const { call, data, errorMsg, success } = apiRequest('/users', {
       params: {
         order: order.value.criteria,
         name: searchPayload,
       },
     });
 
-    await request.fetch();
+    await call();
 
-    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? "Couldn't fetch employers !", 'red', ExclamationIcon);
+    !success.value && showToast(errorMsg.value ?? "Couldn't fetch employers !", 'red', ExclamationIcon);
 
-    users.value = request.data.value.users || [];
+    users.value = data.value.users || [];
 
     order.value.mod = -1; // return to desc(default) order mod
   };

@@ -59,23 +59,23 @@ export default function employerForm() {
   })));
 
   const fetchDepartments = async () => {
-    const request = apiRequest('/departments');
+    const { call, data, errorMsg, success } = apiRequest('/departments');
 
-    await request.fetch();
+    await call();
 
-    departments.value = request.data.value?.departments || [];
+    departments.value = data.value?.departments || [];
 
-    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить отделы', 'red', ExclamationIcon);
+    !success.value && showToast(errorMsg.value ?? 'Не удалось получить отделы', 'red', ExclamationIcon);
   };
 
   const fetchRoles = async () => {
-    const request = apiRequest('/roles');
+    const { call, data, errorMsg, success } = apiRequest('/roles');
 
-    await request.fetch();
+    await call();
 
-    roles.value = request.data.value?.roles || [];
+    roles.value = data.value?.roles || [];
 
-    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить роли', 'red', ExclamationIcon);
+    !success.value && showToast(errorMsg.value ?? 'Не удалось получить роли', 'red', ExclamationIcon);
   };
 
   /* ************ User form ************ */
@@ -83,20 +83,19 @@ export default function employerForm() {
     const form = new FormData();
     form.append('avatar', avatarFile.value);
 
-    const request = apiRequest(`/users/${id}/avatar`, {
+    const { call, errorMsg, success } = apiRequest(`/users/${id}/avatar`, {
       method: 'post',
       data: form,
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    await request.fetch();
+    await call();
 
-    const successResponce = !request.error.value && request.data.value.success;
-    const onErrResponseMessage = (request.errorMsg.value ?? "Something went wrong , avatar couldn't be set");
+    const onErrorMsg = (errorMsg.value ?? "Something went wrong , avatar couldn't be set");
 
-    !successResponce && showToast(onErrResponseMessage, 'red', ExclamationIcon);
+    !success.value && showToast(onErrorMsg, 'red', ExclamationIcon);
 
-    return successResponce;
+    return success.value;
   };
 
   const updatePassword = async (id) => {
@@ -104,20 +103,19 @@ export default function employerForm() {
 
     form.append('password', userFields.password);
 
-    const request = apiRequest(`/users/${id}/password`, {
+    const { call, errorMsg, success } = apiRequest(`/users/${id}/password`, {
       method: 'put',
       data: form,
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    await request.fetch();
+    await call();
 
-    const successResponce = !request.error.value && request.data.value.success;
-    const onErrResponseMessage = (request.errorMsg.value ?? "Something went wrong , password couldn't be updated");
+    const onErrorMsg = (errorMsg.value ?? "Something went wrong , password couldn't be updated");
 
-    !successResponce && showToast(onErrResponseMessage, 'red', ExclamationIcon);
+    !success.value && showToast(onErrorMsg, 'red', ExclamationIcon);
 
-    return successResponce;
+    return success.value;
   };
 
   const saveRawUserFields = async () => {
@@ -133,19 +131,18 @@ export default function employerForm() {
     form.append('is_born_at_visible', toggles.value[1]);
     form.append('is_active', toggles.value[2]);
 
-    const request = apiRequest(`/users/${isThePage.value ? route.params.id : ''}`, {
+    const { call, data, errorMsg, success } = apiRequest(`/users/${isThePage.value ? route.params.id : ''}`, {
       method: isThePage.value ? 'put' : 'post',
       data: form,
     });
 
-    await request.fetch();
+    await call();
 
-    const successResponce = !request.error.value && request.data.value.success;
-    const onErrResponseMessage = request.errorMsg.value ?? 'Something went wrong!';
+    const onErrorMsg = errorMsg.value ?? 'Something went wrong!';
 
-    !successResponce && showToast(onErrResponseMessage, 'red', ExclamationIcon);
+    !success.value && showToast(onErrorMsg, 'red', ExclamationIcon);
 
-    return request.data.value?.user?.id;
+    return data.value?.user?.id;
   };
 
   const { rules } = employerFormValidationsRules(userFields, isThePage.value);
@@ -213,13 +210,13 @@ export default function employerForm() {
   };
 
   const fetchSubjectUser = async (id) => {
-    const request = apiRequest(`/users/${id}`);
+    const { call, data, errorMsg, success } = apiRequest(`/users/${id}`);
 
-    await request.fetch();
+    await call();
 
-    (request.error.value || !request.data.value.success) && showToast(request.errorMsg.value ?? 'Не удалось получить пользователя', 'red', ExclamationIcon);
+    !success.value && showToast(errorMsg.value ?? 'Не удалось получить пользователя', 'red', ExclamationIcon);
 
-    return request.data.value.user;
+    return data.value.user;
   };
 
   const atMountedEmployerForm = async () => {

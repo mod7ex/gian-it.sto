@@ -59,15 +59,7 @@ const apiRequest = (url, config = {}) => {
     }
   };
 
-  return {
-    call,
-    data,
-    responce,
-    error,
-    loading,
-    errorMsg,
-    success,
-  };
+  return { call, data, responce, error, loading, errorMsg, success };
 };
 
 export default function useApi() {

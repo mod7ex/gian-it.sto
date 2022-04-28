@@ -6,7 +6,7 @@ import Link from '@/UI/Link.vue';
 import LoginLayout from '@/Layout/Login.vue';
 import loginHandler from '~/services/login.js';
 
-const { loginUser, v$, loading, isSuccessAuth, onErrResponceMsg } = loginHandler();
+const { loginUser, v$, loading, success, errorMsg } = loginHandler();
 
 </script>
 
@@ -19,7 +19,6 @@ const { loginUser, v$, loading, isSuccessAuth, onErrResponceMsg } = loginHandler
 
           <div class="space-y-1">
             <Input label="Пароль" type="password" v-model="v$.password.$model" :error="(v$.password.$error) ? v$.password.$errors[0].$message : ''" />
-
           </div>
 
           <div class="flex items-center justify-between">
@@ -35,15 +34,14 @@ const { loginUser, v$, loading, isSuccessAuth, onErrResponceMsg } = loginHandler
             class="w-full justify-center"
             @click.prevent="loginUser"
           >
-            <span v-if="!loading">Войти</span>
-            <Spinner v-else />
+            <span v-if="!loading">Войти</span><Spinner v-else />
           </Button>
           <!-- We need this button to make form generally submittable -->
             <button class="hidden" type="submit">accessible submit button</button>
         </form>
 
-        <p v-if="!isSuccessAuth" class="text-red-500 text-sm text-center mt-6">
-          {{ onErrResponceMsg }}
+        <p v-if="!success" class="text-red-500 text-sm text-center mt-6">
+          {{ errorMsg ?? 'Undefined (network?) error' }}
         </p>
       </div>
     </div>

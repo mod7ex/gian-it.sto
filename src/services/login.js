@@ -19,13 +19,10 @@ export default function loginHandler() {
 
   const v$ = useVuelidate(rules, form, { $lazy: true });
 
-  const { fetch: call, error, loading, data, errorMsg, responce } = apiRequest('auth/login', {
+  const { call, data, loading, errorMsg, success } = apiRequest('auth/login', {
     method: 'post',
     data: form,
   });
-
-  const onErrResponceMsg = computed(() => errorMsg.value ?? 'Undefined (network?) error');
-  const isSuccessAuth = computed(() => !error.value && (!responce.value || data.value?.success));
 
   const loginUser = async () => {
     v$.value.$touch();
@@ -36,33 +33,33 @@ export default function loginHandler() {
 
     await call();
 
-    if (!isSuccessAuth.value || !data.value?.api_token) return;
+    if (!success.value || !data.value?.api_token) return;
 
     setToken(data.value.api_token);
     setUser(data.value.user);
 
-    router.push('/dashboard');
+    router.push({ name: 'Dashboard' });
   };
 
   return {
     loginUser,
     v$,
     loading,
-    isSuccessAuth,
-    onErrResponceMsg,
+    success,
+    errorMsg,
   };
 }
 
 export const authByTokenFromLocalstorage = async (routerInstance) => {
   if (!token.value) return;
 
-  const request = apiRequest('auth/user');
+  const { call, data, success } = apiRequest('auth/user');
 
-  await request.fetch();
+  await call();
 
-  if (!request.data.value?.user || !request.data.value?.success) return;
+  if (!data.value?.user || !success.value) return;
 
-  setUser(request.data.value.user);
+  setUser(data.value.user);
 
-  routerInstance.push('/dashboard');
+  routerInstance.push({ name: 'Dashboard' });
 };

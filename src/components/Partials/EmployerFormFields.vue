@@ -30,7 +30,7 @@ let {
   atMountedEmployerForm
 } = employerForm();
 
-await atMountedEmployerForm()
+await atMountedEmployerForm();
 
 </script>
 

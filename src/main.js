@@ -8,7 +8,7 @@ import { authByTokenFromLocalstorage } from './services/login';
 
 const app = createApp(App);
 
-const appWrapper = async () => {
+(async () => {
   await authByTokenFromLocalstorage(router);
 
   // app.use(uiImporteur);
@@ -16,6 +16,4 @@ const appWrapper = async () => {
   app.use(Maska);
   app.use(Toast, { position: 'bottom-left' });
   app.mount('#app');
-};
-
-appWrapper();
+})();

@@ -6,12 +6,12 @@ import Header from '@/UI/Header.vue';
 import Avatar from '@/UI/Avatar.vue';
 import AvatarGroup from '@/UI/AvatarGroup.vue';
 import OfficeLayout from '@/Layout/Office.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
+import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
 
 const stats = [
-  { id: 1, name: 'Новых заказ-нарядов', stat: '200', icon: SaveAsIcon, change: '20', changeType: 'increase', link: {label: 'Просмотреть', href: '#'} },
-  { id: 2, name: 'Завершённых заказ-нарядов', stat: '20', icon: BadgeCheckIcon, change: '5', changeType: 'increase', link: {label: 'Просмотреть', href: '#'} },
-  { id: 3, name: 'Закрытых задач', stat: '200', icon: CheckCircleIcon, change: '30', changeType: 'increase', link: {label: 'Просмотреть', href: '#'} },
+  { id: 1, name: 'Новых заказ-нарядов', stat: '200', icon: SaveAsIcon, change: '20', changeType: 'increase', link: { label: 'Просмотреть', href: '#' } },
+  { id: 2, name: 'Завершённых заказ-нарядов', stat: '20', icon: BadgeCheckIcon, change: '5', changeType: 'increase', link: { label: 'Просмотреть', href: '#' } },
+  { id: 3, name: 'Закрытых задач', stat: '200', icon: CheckCircleIcon, change: '30', changeType: 'increase', link: { label: 'Просмотреть', href: '#' } },
 ];
 
 const orders = [
@@ -51,7 +51,7 @@ const orders = [
         image:
             'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
       },
-    ]
+    ],
   },
   {
     department: 'Центр',
@@ -89,7 +89,7 @@ const orders = [
         image:
             'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
       },
-    ]
+    ],
   },
   {
     department: 'Центр',
@@ -127,7 +127,7 @@ const orders = [
         image:
             'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
       },
-    ]
+    ],
   },
   {
     department: 'Центр',
@@ -165,7 +165,7 @@ const orders = [
         image:
             'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
       },
-    ]
+    ],
   },
   {
     department: 'Центр',
@@ -203,7 +203,7 @@ const orders = [
         image:
             'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
       },
-    ]
+    ],
   },
   {
     department: 'Центр',
@@ -241,7 +241,7 @@ const orders = [
         image:
             'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
       },
-    ]
+    ],
   },
 ];
 </script>
@@ -249,7 +249,8 @@ const orders = [
 <template>
   <OfficeLayout title="Главная страница">
     <StatGroup title="В этом месяце">
-      <Stat v-for="stat in stats"
+      <Stat v-for="(stat,i) in stats"
+            :key="i"
             :title="stat.name"
             :stat="stat.stat"
             :change="stat.change"

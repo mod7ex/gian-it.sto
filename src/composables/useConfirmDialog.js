@@ -56,8 +56,8 @@ export default function useConfirmDialog() {
 
       const result = await action();
 
-      success.value = result?.success || true;
-      resultMsg.value = result?.message || 'Success. msg';
+      success.value = result?.success ?? true;
+      resultMsg.value = result?.message ?? 'Success. msg';
     } catch (error) {
       success.value = false;
       resultMsg.value = 'Something went wrong!';

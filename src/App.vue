@@ -1,12 +1,9 @@
 <script setup>
 import ConfirmDialog from '~/components/Partials/ConfirmDialog.vue';
-import Toast from '~/components/Partials/Toast.vue';
-
 </script>
 
 <template>
   <ConfirmDialog />
-  <Toast />
   <router-view />
 </template>
 

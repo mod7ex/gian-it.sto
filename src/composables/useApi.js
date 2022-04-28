@@ -27,6 +27,7 @@ const apiRequest = (url, config = {}) => {
   const error = ref();
   const loading = ref(false);
 
+  const success = computed(() => !error.value && (!responce.value || !!data.value.success));
   const errorMsg = computed(() => {
     if (!error.value) return null;
 
@@ -37,8 +38,6 @@ const apiRequest = (url, config = {}) => {
     }
     return error.value.message;
   });
-
-  const success = computed(() => !error.value && (!responce.value || !!data.value.success));
 
   const call = async () => {
     loading.value = true;
@@ -64,6 +63,6 @@ const apiRequest = (url, config = {}) => {
 
 export default function useApi() {
   return {
-    axiosInstance: instance, apiRequest,
+    apiRequest,
   };
 }

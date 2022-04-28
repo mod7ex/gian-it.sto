@@ -97,14 +97,10 @@ const { dropUser, selectedUser } = employers();
 
         <!-- Actions -->
         <div class="px-6 flex justify-between">
-            <router-link
-            :to="{ name: 'EditEmployer', params: { id: selectedUser.id } }"
-            >
-            <Button type="secondary" size="xs">
+            <Button type="secondary" size="xs" :link="{ name: 'EditEmployer', params: { id: selectedUser.id } }">
                 <PencilIcon class="mr-2 h-5 w-5 text-gray-400" />
                 Изменить
             </Button>
-            </router-link>
 
             <Button
                 size="xs"

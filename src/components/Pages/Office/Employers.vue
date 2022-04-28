@@ -33,13 +33,13 @@ const {
 /* ************ Search ************ */
 const search = ref('');
 
-const isFetchingEmployers = ref(false);
-
 const headingMessage = computed(() => {
   if (usersCount.value > 1) return `Искать среди ${usersCount.value} сотрудников`;
   if (usersCount.value === 1) return 'Oдин пользователь!';
   return 'нет пользователей!';
 });
+
+const isFetchingEmployers = ref(false);
 
 watch(
   // watching search

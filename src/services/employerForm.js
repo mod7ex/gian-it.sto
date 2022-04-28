@@ -1,10 +1,17 @@
 import { ref, computed, reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import { CheckIcon, ExclamationIcon } from '@heroicons/vue/outline';
 import employerFormValidationsRules from '~/validationsRules/employerForm.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
+
+let routeInstance;
+let isEditEmployerPage;
+let redirect;
+let v$;
+
+const { apiRequest } = useApi();
+const toaster = useToast();
 
 const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
 const defaultTogglesState = [false, false, false];
@@ -26,207 +33,201 @@ const roles = ref([]);
 const departments = ref([]);
 
 const avatarFile = ref(null);
+const userFields = reactive(defaultUserFields);
+const avatar = ref(defaultEmployerAvatar);
+const toggles = ref(defaultTogglesState);
 
-export default function employerForm() {
-  const userFields = reactive(defaultUserFields);
-  const avatar = ref(defaultEmployerAvatar);
-  const toggles = ref(defaultTogglesState);
+/* ************ Avatar ************ */
+const isValideAvatarFileSize = computed(() => {
+  if (!avatarFile.value) return true;
+  return avatarFile.value.size < 10000000;
+});
 
-  const { showToast } = useToast();
-  const { apiRequest } = useApi();
-  const { route, isThePage, redirectTo } = useAppRouter('EditEmployer');
+const log = (event) => {
+  [avatarFile.value] = event.target.files;
+  avatar.value = window.URL.createObjectURL(avatarFile.value);
+};
 
-  /* ************ Avatar ************ */
-  const isValideAvatarFileSize = computed(() => {
-    if (!avatarFile.value) return true;
-    return avatarFile.value.size < 10000000;
+/* ************ Fetch Departments & Roles ************ */
+const departmentOptions = computed(() => departments.value.map((department) => ({
+  value: department.id,
+  label: department.name,
+})));
+
+const roleOptions = computed(() => roles.value.map((role) => ({
+  value: role.id,
+  label: role.title,
+})));
+
+const fetchDepartments = async () => {
+  const { call, data, errorMsg, success } = apiRequest('/departments');
+
+  await call();
+
+  departments.value = data.value?.departments || [];
+
+  !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить отделы');
+};
+
+const fetchRoles = async () => {
+  const { call, data, errorMsg, success } = apiRequest('/roles');
+
+  await call();
+
+  roles.value = data.value?.roles || [];
+
+  !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить роли');
+};
+
+/* ************ User form ************ */
+const updateAvatar = async (id) => {
+  const form = new FormData();
+  form.append('avatar', avatarFile.value);
+
+  const { call, errorMsg, success } = apiRequest(`/users/${id}/avatar`, {
+    method: 'post',
+    data: form,
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
 
-  const log = (event) => {
-    [avatarFile.value] = event.target.files;
-    avatar.value = window.URL.createObjectURL(avatarFile.value);
-  };
+  await call();
 
-  /* ************ Fetch Departments & Roles ************ */
-  const departmentOptions = computed(() => departments.value.map((department) => ({
-    value: department.id,
-    label: department.name,
-  })));
+  !success.value && toaster.danger(errorMsg.value ?? "Something went wrong , avatar couldn't be set");
 
-  const roleOptions = computed(() => roles.value.map((role) => ({
-    value: role.id,
-    label: role.title,
-  })));
+  return success.value;
+};
 
-  const fetchDepartments = async () => {
-    const { call, data, errorMsg, success } = apiRequest('/departments');
+const updatePassword = async (id) => {
+  const form = new FormData();
 
-    await call();
+  form.append('password', userFields.password);
 
-    departments.value = data.value?.departments || [];
+  const { call, errorMsg, success } = apiRequest(`/users/${id}/password`, {
+    method: 'put',
+    data: form,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
 
-    !success.value && showToast(errorMsg.value ?? 'Не удалось получить отделы', 'red', ExclamationIcon);
-  };
+  await call();
 
-  const fetchRoles = async () => {
-    const { call, data, errorMsg, success } = apiRequest('/roles');
+  !success.value && toaster.danger(errorMsg.value ?? "Something went wrong , password couldn't be updated");
 
-    await call();
+  return success.value;
+};
 
-    roles.value = data.value?.roles || [];
+const saveRawUserFields = async () => {
+  const form = new FormData();
 
-    !success.value && showToast(errorMsg.value ?? 'Не удалось получить роли', 'red', ExclamationIcon);
-  };
-
-  /* ************ User form ************ */
-  const updateAvatar = async (id) => {
-    const form = new FormData();
-    form.append('avatar', avatarFile.value);
-
-    const { call, errorMsg, success } = apiRequest(`/users/${id}/avatar`, {
-      method: 'post',
-      data: form,
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-
-    await call();
-
-    const onErrorMsg = (errorMsg.value ?? "Something went wrong , avatar couldn't be set");
-
-    !success.value && showToast(onErrorMsg, 'red', ExclamationIcon);
-
-    return success.value;
-  };
-
-  const updatePassword = async (id) => {
-    const form = new FormData();
-
-    form.append('password', userFields.password);
-
-    const { call, errorMsg, success } = apiRequest(`/users/${id}/password`, {
-      method: 'put',
-      data: form,
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-
-    await call();
-
-    const onErrorMsg = (errorMsg.value ?? "Something went wrong , password couldn't be updated");
-
-    !success.value && showToast(onErrorMsg, 'red', ExclamationIcon);
-
-    return success.value;
-  };
-
-  const saveRawUserFields = async () => {
-    const form = new FormData();
-
-    Object.keys(userFields).forEach((key) => {
+  Object.keys(userFields).forEach((key) => {
     // won't count password in case we're editing the user, password is updated siparatly (down)
-      if (isThePage.value && key.substr(0, 8) === 'password') return;
-      form.append(key, `${userFields[key]}`);
-    });
+    if (isEditEmployerPage.value && key.substr(0, 8) === 'password') return;
+    form.append(key, `${userFields[key]}`);
+  });
 
-    form.append('is_about_visible', toggles.value[0]);
-    form.append('is_born_at_visible', toggles.value[1]);
-    form.append('is_active', toggles.value[2]);
+  form.append('is_about_visible', toggles.value[0]);
+  form.append('is_born_at_visible', toggles.value[1]);
+  form.append('is_active', toggles.value[2]);
 
-    const { call, data, errorMsg, success } = apiRequest(`/users/${isThePage.value ? route.params.id : ''}`, {
-      method: isThePage.value ? 'put' : 'post',
-      data: form,
-    });
+  const { call, data, errorMsg, success } = apiRequest(`/users/${isEditEmployerPage.value ? routeInstance.params.id : ''}`, {
+    method: isEditEmployerPage.value ? 'put' : 'post',
+    data: form,
+  });
 
-    await call();
+  await call();
 
-    const onErrorMsg = errorMsg.value ?? 'Something went wrong!';
+  !success.value && toaster.danger(errorMsg.value ?? 'Something went wrong!');
 
-    !success.value && showToast(onErrorMsg, 'red', ExclamationIcon);
+  return data.value?.user?.id;
+};
 
-    return data.value?.user?.id;
-  };
+const saveUser = async () => {
+  let isValideForm = await v$.value.$validate();
 
-  const { rules } = employerFormValidationsRules(userFields, isThePage.value);
-  const v$ = useVuelidate(rules, userFields, { $lazy: true });
+  isValideForm = isValideAvatarFileSize.value && isValideForm;
 
-  const saveUser = async () => {
-    let isValideForm = await v$.value.$validate();
+  if (!isValideForm) return;
 
-    isValideForm = isValideAvatarFileSize.value && isValideForm;
+  v$.value.$reset();
 
-    if (!isValideForm) return;
+  let successResponce;
 
-    v$.value.$reset();
+  // ********* Form request
+  const userId = await saveRawUserFields();
+  successResponce = !!userId;
 
-    let successResponce = true;
+  if (!successResponce) return;
 
-    // ********* Form request
-    const userId = await saveRawUserFields();
-    successResponce = !!userId;
+  // ********* Avatar request
+  if (avatarFile.value) { successResponce = await updateAvatar(userId); }
 
-    if (!successResponce) return;
+  // ********* Password update request
+  if (isEditEmployerPage.value && userFields.password) { successResponce = await updatePassword(userId); }
 
-    // ********* Avatar request
-    if (avatarFile.value) { successResponce = await updateAvatar(userId); }
+  await redirect({ name: 'EditEmployer', params: { id: userId } });
 
-    // ********* Password update request
-    if (isThePage.value && userFields.password) { successResponce = await updatePassword(userId); }
+  return successResponce && toaster.success('Profile updated successfully');
+};
 
-    await redirectTo({ name: 'EditEmployer', params: { id: userId } });
+const setEmployerForm = async (payload) => {
+  avatarFile.value = null;
 
-    successResponce && showToast('Profile updated successfully', 'green', CheckIcon);
-  };
+  Object.keys(userFields).forEach((key) => {
+    if (key === 'department_id') {
+      userFields.department_id = payload.department?.id ?? '';
+      return;
+    }
 
-  const setEmployerForm = async (payload) => {
-    avatarFile.value = null;
-
-    Object.keys(userFields).forEach((key) => {
-      if (key === 'department_id') {
-        userFields.department_id = payload.department?.id ?? '';
-        return;
-      }
-
-      if (key === 'role_id') {
+    if (key === 'role_id') {
       // console.log(payload.roles); // array
       // userFields.role_id = payload.role?.id; // ===========> should be fixed later
-        userFields.role_id = 2;
-        return;
-      }
+      userFields.role_id = 2;
+      return;
+    }
 
-      userFields[key] = payload[key] ?? '';
-    });
+    userFields[key] = payload[key] ?? '';
+  });
 
-    toggles.value = [
-      payload.is_about_visible || false,
-      payload.is_born_at_visible || false,
-      payload.is_active || false,
-    ];
+  toggles.value = [
+    payload.is_about_visible || false,
+    payload.is_born_at_visible || false,
+    payload.is_active || false,
+  ];
 
-    avatar.value = payload.avatar ?? defaultEmployerAvatar;
+  avatar.value = payload.avatar ?? defaultEmployerAvatar;
 
-    if (!userFields.born_at) return;
+  if (!userFields.born_at) return;
 
-    const [d, m, y] = userFields.born_at.split('.');
-    userFields.born_at = `${y}-${m}-${d}`;
-  };
+  const [d, m, y] = userFields.born_at.split('.');
+  userFields.born_at = `${y}-${m}-${d}`;
+};
 
-  const fetchSubjectUser = async (id) => {
-    const { call, data, errorMsg, success } = apiRequest(`/users/${id}`);
+const fetchSubjectUser = async (id) => {
+  const { call, data, errorMsg, success } = apiRequest(`/users/${id}`);
 
-    await call();
+  await call();
 
-    !success.value && showToast(errorMsg.value ?? 'Не удалось получить пользователя', 'red', ExclamationIcon);
+  !success.value && toaster.success(errorMsg.value ?? 'Не удалось получить пользователя');
 
-    return data.value.user;
-  };
+  return data.value.user;
+};
 
-  const atMountedEmployerForm = async () => {
-    const employer = (isThePage.value && route.params.id) && await fetchSubjectUser(route.params.id);
+const atMountedEmployerForm = async () => {
+  const employer = (isEditEmployerPage.value && routeInstance.params.id) && await fetchSubjectUser(routeInstance.params.id);
 
-    await setEmployerForm(employer || {});
+  await setEmployerForm(employer || {});
 
-    await fetchDepartments();
-    await fetchRoles();
-  };
+  await fetchDepartments();
+  await fetchRoles();
+};
+
+export default function employerFormService() {
+  const { route, isThePage, redirectTo } = useAppRouter('EditEmployer');
+
+  [routeInstance, isEditEmployerPage, redirect] = [route, isThePage, redirectTo];
+
+  const { rules } = employerFormValidationsRules(userFields, isEditEmployerPage.value);
+
+  v$ = useVuelidate(rules, userFields, { $lazy: true });
 
   return {
     roles,
@@ -241,7 +242,7 @@ export default function employerForm() {
     avatarFile,
     avatar,
     userFields,
-    isEditEmployerPage: isThePage,
+    isEditEmployerPage,
     v$,
     saveUser,
     toggles,

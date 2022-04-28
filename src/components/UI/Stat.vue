@@ -24,7 +24,7 @@ const props = defineProps({
     required: false,
   },
   icon: {
-    type: Object,
+    type: [Object, Function, null],
     required: false,
   },
 });

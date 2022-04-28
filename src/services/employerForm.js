@@ -1,4 +1,4 @@
-import { ref, computed, reactive, readonly } from 'vue';
+import { ref, computed, reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { CheckIcon, ExclamationIcon } from '@heroicons/vue/outline';
 import employerFormValidationsRules from '~/validationsRules/employerForm.js';
@@ -6,8 +6,8 @@ import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 
-const defaultEmployerAvatar = readonly('https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png');
-const defaultTogglesState = readonly([false, false, false]);
+const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
+const defaultTogglesState = [false, false, false];
 const defaultUserFields = {
   // password fields will be automatically set if we're creating a user
   name: '',
@@ -25,15 +25,16 @@ const defaultUserFields = {
 const roles = ref([]);
 const departments = ref([]);
 
+const avatarFile = ref(null);
+
 export default function employerForm() {
   const userFields = reactive(defaultUserFields);
   const avatar = ref(defaultEmployerAvatar);
   const toggles = ref(defaultTogglesState);
-  const avatarFile = ref(null);
 
   const { showToast } = useToast();
   const { apiRequest } = useApi();
-  const { route, isThePage } = useAppRouter('EditEmployer');
+  const { route, isThePage, redirectTo } = useAppRouter('EditEmployer');
 
   /* ************ Avatar ************ */
   const isValideAvatarFileSize = computed(() => {
@@ -123,7 +124,7 @@ export default function employerForm() {
     const form = new FormData();
 
     Object.keys(userFields).forEach((key) => {
-      // won't count password in case we're editing the user, password is updated siparatly (down)
+    // won't count password in case we're editing the user, password is updated siparatly (down)
       if (isThePage.value && key.substr(0, 8) === 'password') return;
       form.append(key, `${userFields[key]}`);
     });
@@ -144,8 +145,7 @@ export default function employerForm() {
 
     !successResponce && showToast(onErrResponseMessage, 'red', ExclamationIcon);
 
-    // return request.data.value?.user?.id;
-    return successResponce;
+    return request.data.value?.user?.id;
   };
 
   const { rules } = employerFormValidationsRules(userFields, isThePage.value);
@@ -163,34 +163,39 @@ export default function employerForm() {
     let successResponce = true;
 
     // ********* Form request
-    successResponce = await saveRawUserFields();
+    const userId = await saveRawUserFields();
+    successResponce = !!userId;
+
+    if (!successResponce) return;
 
     // ********* Avatar request
-    if (avatarFile.value) { successResponce = await updateAvatar(route.params.id); }
+    if (avatarFile.value) { successResponce = await updateAvatar(userId); }
 
     // ********* Password update request
-    if (isThePage.value && userFields.password) { successResponce = await updatePassword(route.params.id); }
+    if (isThePage.value && userFields.password) { successResponce = await updatePassword(userId); }
+
+    await redirectTo({ name: 'EditEmployer', params: { id: userId } });
 
     successResponce && showToast('Profile updated successfully', 'green', CheckIcon);
   };
 
   const setEmployerForm = async (payload) => {
-    if (!payload) return;
+    avatarFile.value = null;
 
     Object.keys(userFields).forEach((key) => {
       if (key === 'department_id') {
-        userFields.department_id = payload.department?.id;
+        userFields.department_id = payload.department?.id ?? '';
         return;
       }
 
       if (key === 'role_id') {
-        // console.log(payload.roles); // array
-        // userFields.role_id = payload.role?.id; // ===========> should be fixed later
+      // console.log(payload.roles); // array
+      // userFields.role_id = payload.role?.id; // ===========> should be fixed later
         userFields.role_id = 2;
         return;
       }
 
-      userFields[key] = payload[key];
+      userFields[key] = payload[key] ?? '';
     });
 
     toggles.value = [
@@ -220,7 +225,7 @@ export default function employerForm() {
   const atMountedEmployerForm = async () => {
     const employer = (isThePage.value && route.params.id) && await fetchSubjectUser(route.params.id);
 
-    await setEmployerForm(employer || null);
+    await setEmployerForm(employer || {});
 
     await fetchDepartments();
     await fetchRoles();

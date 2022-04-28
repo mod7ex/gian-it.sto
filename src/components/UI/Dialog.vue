@@ -1,24 +1,24 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from 'vue';
 import {
   Dialog,
   DialogOverlay,
   DialogTitle,
   TransitionChild,
   TransitionRoot,
-} from "@headlessui/vue";
-import { CheckIcon, ExclamationIcon } from "@heroicons/vue/outline";
+} from '@headlessui/vue';
+import { CheckIcon, ExclamationIcon } from '@heroicons/vue/outline';
 
 const props = defineProps({
   title: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   text: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   icon: {
     type: Object,
@@ -27,7 +27,7 @@ const props = defineProps({
   type: {
     type: String,
     required: false,
-    default: "success", // success, danger
+    default: 'success', // success, danger
   },
   open: {
     type: Boolean,
@@ -36,10 +36,8 @@ const props = defineProps({
   },
 });
 
-let icon = computed(() => {
-  if (!props.icon) {
-    return props.type === "danger" ? ExclamationIcon : CheckIcon;
-  }
+const icon = computed(() => {
+  if (!props.icon) return props.type === 'danger' ? ExclamationIcon : CheckIcon;
 
   return props.icon;
 });

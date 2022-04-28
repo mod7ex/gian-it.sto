@@ -15,7 +15,7 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 import employers from '~/services/employers.js';
 
-const { openConfirmDialog } = useConfirmDialog();
+const dialogger = useConfirmDialog();
 
 const { dropUser, selectedUser } = employers();
 </script>
@@ -107,16 +107,9 @@ const { dropUser, selectedUser } = employers();
             </router-link>
 
             <Button
-            size="xs"
-            color="red"
-            @click="
-                () =>
-                openConfirmDialog(
-                    () => dropUser(selectedUser.id),
-                    'are you sure you want to delete',
-                    'delete ?'
-                )
-            "
+                size="xs"
+                color="red"
+                @click="() => dialogger.open(() => dropUser(selectedUser.id), 'продолжить удаление!', 'Удалить ?')"
             >
             <TrashIcon class="mr-2 h-5 w-5 text-white" />Удалить</Button>
         </div>

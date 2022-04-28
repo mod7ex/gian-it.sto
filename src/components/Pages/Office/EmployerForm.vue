@@ -29,9 +29,7 @@ const { saveUser } = employerForm();
       <template #fallback>
         <div class="col-span-12 sm:col-span-12 flex justify-center">
           <Spinner h="4" w="4">
-            <span class="text-sm text-gray-600"
-              >Waiting for data to be fetched...</span
-            >
+            <span class="text-sm text-gray-600">Waiting for data to be fetched...</span>
           </Spinner>
         </div>
       </template>

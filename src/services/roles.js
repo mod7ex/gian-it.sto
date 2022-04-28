@@ -1,6 +1,5 @@
 import { ExclamationIcon } from '@heroicons/vue/outline';
 import { ref, computed } from 'vue';
-import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
@@ -9,9 +8,8 @@ const rawRoles = ref([]);
 
 export default function rolesService() {
   const { showToast } = useToast();
-  const { showResultConfirmDialog } = useConfirmDialog();
   const { apiRequest } = useApi();
-  const { moveTo } = useAppRouter();
+  const { redirectTo, isThePage, router } = useAppRouter('EditRole');
 
   const roles = computed(() => rawRoles.value.map((role) => ({
     id: role.id,
@@ -32,7 +30,7 @@ export default function rolesService() {
   /* ************ Delete role ************ */
   const deleteRole = (id) => {
     rawRoles.value.splice(
-      rawRoles.value.findIndex((user) => user.id === id),
+      rawRoles.value.findIndex((role) => role.id === id),
       1,
     );
   };
@@ -48,12 +46,14 @@ export default function rolesService() {
 
     const deletionMsg = wasRoleDeleted ? 'Role was deleted successfully.' : (request.errorMsg.value ?? 'Не удалось удалить Роль');
 
-    showResultConfirmDialog(deletionMsg, wasRoleDeleted);
+    await redirectTo({ name: 'Roles' });
+
+    return { message: deletionMsg, success: wasRoleDeleted };
   };
 
   /* ************ To Update role page ************ */
   const movetoEditRolePage = async (id) => {
-    await moveTo({ name: 'EditRole', params: { id } });
+    await redirectTo({ name: 'EditRole', params: { id } });
   };
 
   return {

@@ -1,64 +1,84 @@
 import { ref } from 'vue';
 
-const isOpenDialog = ref(false);
+const defaultDialogOptions = {
+  opened: false,
+  loading: false,
+  title: 'Подтверждать!',
+  text: 'Вы уверены что хотите продолжить ?',
+  resultMsg: null,
+  success: false,
+  proceedFunction: async () => ({ message: '', success: true }),
+};
 
-const isDialogWaiting = ref(false);
-
-const dialogTitle = ref('Подтверждать!');
-const dialogText = ref('Вы уверены что хотите продолжить ?');
-
-const dialogResultMessage = ref(null);
-const isSuccessDialogResult = ref(false);
-
-const dialogProceedFunction = ref(async () => {});
+const opened = ref(defaultDialogOptions.opened);
+const loading = ref(defaultDialogOptions.loading);
+const title = ref(defaultDialogOptions.title);
+const text = ref(defaultDialogOptions.text);
+const resultMsg = ref(defaultDialogOptions.resultMsg);
+const success = ref(defaultDialogOptions.success);
+const proceedFunction = ref(defaultDialogOptions.proceedFunction);
 
 export default function useConfirmDialog() {
-  const openConfirmDialog = (onYesFunction, text, title, type = false) => {
-    dialogProceedFunction.value = onYesFunction;
-    dialogText.value = text;
-    dialogTitle.value = title;
-    isOpenDialog.value = true;
-    isSuccessDialogResult.value = type;
-  };
+  let timer;
 
-  const showResultConfirmDialog = (resultMessage, success = true) => {
-    isDialogWaiting.value = false;
-    isSuccessDialogResult.value = success;
-    dialogResultMessage.value = resultMessage;
-  };
-
-  const closeConfirmDialog = () => {
-    isOpenDialog.value = false;
-    isDialogWaiting.value = false;
+  const close = () => {
+    opened.value = defaultDialogOptions.opened;
+    loading.value = defaultDialogOptions.loading;
 
     setTimeout(() => {
-      dialogResultMessage.value = null;
-      dialogTitle.value = 'Подтверждать!';
-      dialogText.value = 'Вы уверены что хотите продолжить ?';
-      dialogProceedFunction.value = async () => {};
+      title.value = defaultDialogOptions.title;
+      text.value = defaultDialogOptions.text;
+      resultMsg.value = defaultDialogOptions.resultMsg;
+      success.value = defaultDialogOptions.success;
+      proceedFunction.value = defaultDialogOptions.proceedFunction;
     }, 300);
+
+    clearTimeout(timer);
   };
 
-  const proceedConfirmDialog = async (...args) => {
-    isDialogWaiting.value = true;
-    const foo = dialogProceedFunction.value;
-    await foo(...args);
-    // const { message, success } = await foo(...args);
-    // showResultConfirmDialog(message, success);
+  const open = (_onYesFunction, _text, _title, _type = false) => {
+    proceedFunction.value = _onYesFunction;
+
+    text.value = _text ?? defaultDialogOptions.text;
+    title.value = _title ?? defaultDialogOptions.title;
+
+    success.value = _type;
+    opened.value = true;
+
+    timer = setTimeout(close, 15000);
+  };
+
+  const proceed = async () => {
+    loading.value = true;
+
+    try {
+      const action = proceedFunction.value;
+
+      const result = await action();
+
+      success.value = result?.success || true;
+      resultMsg.value = result?.message || 'Success. msg';
+    } catch (error) {
+      success.value = false;
+      resultMsg.value = 'Something went wrong!';
+
+      console.log(error);
+    } finally {
+      loading.value = false;
+    }
   };
 
   return {
-    isOpenDialog,
-    dialogTitle,
-    dialogText,
-    isDialogWaiting,
-    dialogProceedFunction,
-    dialogResultMessage,
-    isSuccessDialogResult,
+    proceedFunction,
+    opened,
+    loading,
+    title,
+    text,
+    resultMsg,
+    success,
 
-    closeConfirmDialog,
-    openConfirmDialog,
-    showResultConfirmDialog,
-    proceedConfirmDialog,
+    close,
+    open,
+    proceed,
   };
 }

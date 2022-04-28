@@ -1,6 +1,5 @@
 import { ref, computed, readonly } from 'vue';
 import { ExclamationIcon } from '@heroicons/vue/outline';
-import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 
@@ -29,7 +28,6 @@ export default function employers() {
   const usersCount = computed(() => users.value.length);
 
   const { showToast } = useToast();
-  const { showResultConfirmDialog } = useConfirmDialog();
   const { apiRequest } = useApi();
 
   const orderkey = computed(
@@ -108,7 +106,7 @@ export default function employers() {
 
     const deletionMsg = wasEmployerDeleted ? 'Employer was deleted successfully.' : (request.errorMsg.value ?? 'Не удалось удалить пользователя');
 
-    showResultConfirmDialog(deletionMsg, wasEmployerDeleted);
+    return { message: deletionMsg, success: wasEmployerDeleted };
   };
 
   /* ************ Fetch employer ************ */

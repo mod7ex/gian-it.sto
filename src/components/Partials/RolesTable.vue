@@ -13,7 +13,7 @@ import rolesService from "~/services/roles.js";
 
 let { roles, fetchRoles, movetoEditRolePage, dropRole } = rolesService();
 
-const { openConfirmDialog } = useConfirmDialog();
+const dialogger = useConfirmDialog();
 
 /* ************ Fetch roles ************ */
 await fetchRoles();
@@ -54,12 +54,7 @@ await fetchRoles();
                 },
                 {
                   label: 'Удалить',
-                  click: () =>
-                    openConfirmDialog(
-                      () => dropRole(item.id),
-                      'are you sure you want to delete',
-                      'delete ?'
-                    ),
+                  click: () => dialogger.open(() => dropRole(item.id), 'продолжить удаление!', 'Удалить ?'),
                   icon: XIcon,
                 },
               ],

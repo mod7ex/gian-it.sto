@@ -3,12 +3,12 @@ const props = defineProps({
   h: {
     type: String,
     required: false,
-    default: "8",
+    default: '8',
   },
   w: {
     type: String,
     required: false,
-    default: "8",
+    default: '8',
   },
 });
 </script>

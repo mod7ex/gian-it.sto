@@ -15,7 +15,7 @@ export default function roleForm() {
   const { apiRequest } = useApi();
   const { showToast } = useToast();
 
-  const { route, isThePage } = useAppRouter('EditRole');
+  const { route, isThePage, redirectTo } = useAppRouter('EditRole');
 
   /* ************ Role[Title + Permissions] (create & update) ************ */
 
@@ -47,16 +47,17 @@ export default function roleForm() {
 
     await request.fetch();
 
-    const successResponce = !request.error.value && request.data.value.success;
+    const successResponce = !request.error.value && request.data.value?.success;
 
     !successResponce && showToast(request.errorMsg.value ?? 'Something went wrong!', 'red', ExclamationIcon);
     successResponce && showToast('Role saved.', 'green', CheckIcon);
+
+    await redirectTo({ name: 'EditRole', params: { id: request.data.value?.role?.id } });
 
     return successResponce;
   };
 
   /* ************ Role Raw Permissions ************ */
-
   const fetchRawRolePermissions = async () => {
     const request = apiRequest('/permissions');
 

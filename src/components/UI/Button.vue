@@ -1,6 +1,4 @@
 <script setup>
-import { ref, watchEffect } from 'vue';
-
 const props = defineProps({
   color: {
     type: String,
@@ -33,7 +31,7 @@ const props = defineProps({
     default: 'primary', // primary, secondary
   },
   link: {
-    type: String,
+    type: [String, Object],
     required: false,
   },
 });

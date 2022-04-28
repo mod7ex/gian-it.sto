@@ -1,6 +1,5 @@
 <script setup>
 import { CheckIcon, ArrowLeftIcon, XIcon } from '@heroicons/vue/outline';
-import { useRouter, useRoute } from 'vue-router';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
@@ -8,18 +7,18 @@ import Spinner from '@/UI/Spinner.vue';
 import rolesService from '~/services/roles.js';
 import roleForm from '~/services/roleForm.js';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import useAppRouter from '~/composables/useAppRouter.js';
 import RolePermissions from '~/components/Partials/RolePermissions.vue';
 
-const { openConfirmDialog } = useConfirmDialog();
+const dialogger = useConfirmDialog();
 
 const { dropRole } = rolesService();
+const { route } = useAppRouter();
 
 const { v$, isEditRolePage, saveRole, roleTitle } = roleForm();
 
-const route = useRoute();
-const router = useRouter();
-
 // const editor = "Текст задачи";
+
 </script>
 
 <template>
@@ -37,17 +36,7 @@ const router = useRouter();
 
       <Button
         color="red"
-        @click="
-          () =>
-            openConfirmDialog(
-              () => {
-                dropRole(route.params.id);
-                router.back();
-              },
-              'are you sure you want to delete',
-              'delete ?'
-            )
-        "
+        @click="() => dialogger.open(() => dropRole(route.params.id), 'продолжить удаление!', 'Удалить ?')"
         v-if="isEditRolePage"
       >
         <XIcon class="w-5 h-5 mr-1" />

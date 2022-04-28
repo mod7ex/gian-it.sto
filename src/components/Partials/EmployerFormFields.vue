@@ -41,11 +41,7 @@ await atMountedEmployerForm()
       :image="avatar"
       label="Фото"
       class="mb-3"
-      :error="
-        !isValideAvatarFileSize
-          ? 'Размер фото не должен превышать 10000 Кб'
-          : ''
-      "
+      :error="!isValideAvatarFileSize ? 'Размер фото не должен превышать 10000 Кб' : ''"
     />
 
     <div class="flex-grow space-y-6">
@@ -169,7 +165,7 @@ await atMountedEmployerForm()
         title="Приватность"
         subtitle="Здесь вы можете настроить поведение приложения - то что хотели бы не показывать"
       >
-        <template v-slot:right="{ item, index }">
+        <template v-slot:right="{ index }">
           <Toggle v-model="toggles[index]" />
         </template>
       </List>

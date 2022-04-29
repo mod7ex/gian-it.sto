@@ -3,7 +3,7 @@ import useVuelidate from '@vuelidate/core';
 import refreshPasswordValidationsRules from '~/validationsRules/refreshPassword.js';
 import useApi from '~/composables/useApi.js';
 
-const { axiosInstance } = useApi();
+const { axiosInstance, apiRequest } = useApi();
 
 const form = reactive({
   password: '',

@@ -1,9 +1,9 @@
-import { ref, reactive } from 'vue';
+import { reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import refreshPasswordValidationsRules from '~/validationsRules/refreshPassword.js';
 import useApi from '~/composables/useApi.js';
 
-const { axiosInstance } = useApi();
+const { apiRequest } = useApi();
 
 const form = reactive({
   email: '',
@@ -11,49 +11,30 @@ const form = reactive({
   password: '',
   confirmPassword: '',
 });
-const { rules } = refreshPasswordValidationsRules(form);
 
-const refreshPageTitle = ref('Придумайте новый пароль');
-const isLoading = ref(false);
-const isSuccessResponse = ref(false);
-const successResponseMessage = ref('');
-const isErrorResponse = ref(false);
-const errorResponseMessage = ref('');
+const { rules } = refreshPasswordValidationsRules(form);
 
 const v$ = useVuelidate(rules, form);
 
-function cleanErrors() {
-  isErrorResponse.value = false;
-  errorResponseMessage.value = '';
-  v$.value.$reset();
-}
+const { call, data, loading, errorMsg, success, reset, reponce } = apiRequest('auth/password/reset', {
+  method: 'post',
+  data: {
+    token: form.token,
+    email: form.email,
+    password: form.password,
+  },
+});
 
 const saveNewPassword = async () => {
   v$.value.$touch();
-  if (v$.value.$invalid) {
-    return;
-  }
-  v$.value.$reset();
-  cleanErrors();
-  isLoading.value = true;
 
-  try {
-    const response = await axiosInstance.post('auth/password/reset', {
-      token: form.token,
-      email: form.email,
-      password: form.password,
-    });
-    if (response.data) {
-      isSuccessResponse.value = true;
-      successResponseMessage.value = 'Теперь вы можете войти с новым паролем';
-      refreshPageTitle.value = response.data.message;
-    }
-  } catch (e) {
-    isErrorResponse.value = true;
-    errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
-  } finally {
-    isLoading.value = false;
-  }
+  reset();
+
+  if (v$.value.$invalid) return;
+
+  v$.value.$reset();
+
+  await call();
 };
 
 export default function useRefreshPassword() {
@@ -61,11 +42,10 @@ export default function useRefreshPassword() {
     saveNewPassword,
     form,
     v$,
-    refreshPageTitle,
-    isLoading,
-    isSuccessResponse,
-    successResponseMessage,
-    isErrorResponse,
-    errorResponseMessage,
+    loading,
+    success,
+    errorMsg,
+    data,
+    reponce,
   };
 }

@@ -1,4 +1,4 @@
-import { reactive, computed } from 'vue';
+import { reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useAuth from '~/composables/useAuth.js';
 import useApi from '~/composables/useApi.js';
@@ -19,13 +19,15 @@ export default function loginHandler() {
 
   const v$ = useVuelidate(rules, form, { $lazy: true });
 
-  const { call, data, loading, errorMsg, success } = apiRequest('auth/login', {
+  const { call, data, loading, errorMsg, success, reset } = apiRequest('auth/login', {
     method: 'post',
     data: form,
   });
 
   const loginUser = async () => {
     v$.value.$touch();
+
+    reset();
 
     if (v$.value.$invalid) return;
 

@@ -1,16 +1,10 @@
-import { ref, reactive } from 'vue';
+import { reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useApi from '~/composables/useApi.js';
 import forgotPasswordValidationsRules from '~/validationsRules/forgotPassword.js';
 
-const { axiosInstance } = useApi();
+const { apiRequest } = useApi();
 const { rules } = forgotPasswordValidationsRules();
-const refreshPageTitle = ref('Забыли пароль?');
-const isLoading = ref(false);
-const isSuccessResponse = ref(false);
-const successResponseMessage = ref('');
-const isErrorResponse = ref(false);
-const errorResponseMessage = ref('');
 
 const form = reactive({
   email: '',
@@ -18,44 +12,31 @@ const form = reactive({
 
 const v$ = useVuelidate(rules, form);
 
-function cleanErrors() {
-  isErrorResponse.value = false;
-  errorResponseMessage.value = '';
-  v$.value.$reset();
-}
+const { call, data, loading, errorMsg, success, reset } = apiRequest('auth/password/email', {
+  method: 'post',
+  data: form,
+});
 
 const refreshPassword = async () => {
   v$.value.$touch();
+
+  reset();
+
   if (v$.value.$invalid) return;
-  cleanErrors();
-  isLoading.value = true;
-  let response;
-  try {
-    response = await axiosInstance.post('auth/password/email', {
-      email: form.email,
-    });
-    if (response.data) {
-      isSuccessResponse.value = true;
-      successResponseMessage.value = form.email.value;
-      refreshPageTitle.value = response.data.message;
-    }
-  } catch (e) {
-    isErrorResponse.value = true;
-    errorResponseMessage.value = (e.response) ? e.response.data.message : 'Undefined (network?) error';
-  } finally {
-    isLoading.value = false;
-  }
+
+  v$.value.$reset();
+
+  await call();
 };
+
 export default function useForgotPassword() {
   return {
     refreshPassword,
     v$,
+    data,
     form,
-    refreshPageTitle,
-    isLoading,
-    isSuccessResponse,
-    successResponseMessage,
-    isErrorResponse,
-    errorResponseMessage,
+    loading,
+    success,
+    errorMsg,
   };
 }

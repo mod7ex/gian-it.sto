@@ -7,7 +7,9 @@ import useProfileChangePasswordModal from '~/services/profileChangePasswordModal
 
 const { changeProfilePassword, closeModalChangePassword, v$, isLoading,
   isSuccessResponse, successResponseMessage, isErrorResponse, errorResponseMessage } = useProfileChangePasswordModal();
+
 const emit = defineEmits({});
+
 function emitEventCloseModal() {
   emit('closeModal');
   closeModalChangePassword();

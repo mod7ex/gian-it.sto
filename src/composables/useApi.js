@@ -39,6 +39,13 @@ const apiRequest = (url, config = {}) => {
     return error.value.message;
   });
 
+  const reset = () => {
+    data.value = undefined;
+    responce.value = undefined;
+    error.value = undefined;
+    loading.value = false;
+  };
+
   const call = async () => {
     loading.value = true;
 
@@ -58,11 +65,12 @@ const apiRequest = (url, config = {}) => {
     }
   };
 
-  return { call, data, responce, error, loading, errorMsg, success };
+  return { call, data, responce, error, loading, errorMsg, success, reset };
 };
 
 export default function useApi() {
   return {
     apiRequest,
+    axiosInstance: instance,
   };
 }

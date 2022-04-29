@@ -7,23 +7,27 @@ import Link from '@/UI/Link.vue';
 import LoginLayout from '@/Layout/Login.vue';
 import useForgotPassword from '~/services/forgotPassword.js';
 
-const { refreshPassword, v$, form, refreshPageTitle, isLoading, isSuccessResponse, isErrorResponse, errorResponseMessage } = useForgotPassword();
+const { refreshPassword, v$, data, form, loading, success, errorMsg } = useForgotPassword();
 </script>
 
 <template>
-    <LoginLayout :title="refreshPageTitle">
+    <LoginLayout :title="data?.message ?? 'Забыли пароль?'">
       <div class="mt-8">
         <div class="mt-6">
-          <p v-if="isSuccessResponse" class="text-green-700 mb-6">{{ form.email }}</p>
-          <p v-if="isErrorResponse" class="text-red-500 text-sm mb-6">{{ errorResponseMessage }}</p>
+
+          <p v-if="success" class="text-green-700 mb-6">{{ form.email }}</p>
+          <p v-else class="text-red-500 text-sm mb-6">{{ errorMsg ?? 'Undefined (network?) error' }}</p>
+
           <form class="space-y-6" @submit.prevent="refreshPassword">
             <Input label="E-mail" type="email" help="Введите ваш email, на него придёт ссылка для сброса пароля"
-            v-model="v$.email.$model" v-if="!isSuccessResponse" :error="(v$.email.$error) ? v$.email.$silentErrors[0].$message : ''" />
+            v-model="v$.email.$model" v-if="!success" :error="(v$.email.$error) ? v$.email.$silentErrors[0].$message : ''" />
 
-            <Button color="blue" class="w-full justify-center" @click.prevent="refreshPassword" :disabled="isLoading"
-            :class="{ 'cursor-not-allowed': isLoading, 'opacity-60': isLoading }" v-if="!isSuccessResponse">
-              <span v-if="!isLoading">Отправить</span>
-              <Spinner  v-if="isLoading" />
+            <Button color="blue" class="w-full justify-center" @click.prevent="refreshPassword" :disabled="loading"
+            :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }" v-if="!success">
+
+              <span v-if="!loading">Отправить</span>
+              <Spinner v-else />
+
             </Button>
             <!-- We need this button to make form generally submittable -->
             <button class="hidden" type="submit">accessible submit button</button>

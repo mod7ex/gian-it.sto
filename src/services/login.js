@@ -25,9 +25,9 @@ export default function loginHandler() {
   });
 
   const loginUser = async () => {
-    v$.value.$touch();
-
     reset();
+
+    v$.value.$touch();
 
     if (v$.value.$invalid) return;
 

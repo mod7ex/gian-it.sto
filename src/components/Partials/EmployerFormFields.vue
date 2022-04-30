@@ -27,7 +27,8 @@ let {
   userFields,
   v$,
   toggles,
-  atMountedEmployerForm
+  atMountedEmployerForm,
+  isUploadingAvatar
 } = employerForm();
 
 await atMountedEmployerForm();
@@ -42,6 +43,7 @@ await atMountedEmployerForm();
       label="Фото"
       class="mb-3"
       :error="!isValideAvatarFileSize ? 'Размер фото не должен превышать 10000 Кб' : ''"
+      :loader="isUploadingAvatar"
     />
 
     <div class="flex-grow space-y-6">

@@ -31,16 +31,16 @@ const orderkey = computed(
 );
 
 const directory = computed(
-  () => [...new Set(users.value.map((item) => (item.surname ? item.surname[0] : '_')))]
+  () => [...new Set(users.value.map(({ surname }) => (surname ? surname[0].toUpperCase() : '_')))]
     .sort()
     .reduce((userGroups, key) => {
       // eslint-disable-next-line no-param-reassign
-      userGroups[key] = users.value.filter((user) => (user.surname ? user.surname[0] : '_') === key)
-        .map((user) => ({
-          id: user.id,
-          title: `${user.name} ${user.surname ?? ''}`,
-          subtitle: `${user.office_position ? user.office_position : ''}`,
-          image: `${user.avatar ? user.avatar : ''}`,
+      userGroups[key] = users.value.filter(({ surname }) => (surname ? surname[0].toUpperCase() : '_') === key)
+        .map(({ id, name, surname, office_position: op, avatar }) => ({
+          id,
+          title: `${name} ${surname ?? ''}`,
+          subtitle: `${op || ''}`,
+          image: `${avatar || ''}`,
         }));
       return userGroups;
     }, {}),

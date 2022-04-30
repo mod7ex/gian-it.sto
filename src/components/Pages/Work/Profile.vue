@@ -2,7 +2,7 @@
 import {
   CheckIcon,
 } from '@heroicons/vue/outline';
-import {ref} from 'vue';
+import { ref } from 'vue';
 import Layout from '@/Layout/Work.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
@@ -14,7 +14,7 @@ import Card from '@/UI/Card.vue';
 
 const toggles = ref([
   false,
-  false
+  false,
 ]);
 
 const avatar = ref('https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixqx=SjPZjUxoVh&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=320&h=320&q=80');

@@ -27,7 +27,16 @@ const apiRequest = (url, config = {}) => {
   const error = ref();
   const loading = ref(false);
 
-  const success = computed(() => !error.value && (!responce.value || !!data.value.success));
+  const ready = computed(() => !!responce.value || !!error.value); // request was sent and we recieved responce either error or success
+
+  const success = computed(() => !ready.value || (ready.value && !!data.value?.success));
+  // const success = computed(() => ready.value && !!data.value?.success); // is also a valid approach
+
+  /*
+    we should change templates & js files based on what is success definition here
+    do we consider success status when request isn't sent yet or not
+  */
+
   const errorMsg = computed(() => {
     if (!error.value) return null;
 
@@ -65,7 +74,7 @@ const apiRequest = (url, config = {}) => {
     }
   };
 
-  return { call, data, responce, error, loading, errorMsg, success, reset };
+  return { call, data, responce, error, loading, errorMsg, success, reset, ready };
 };
 
 export default function useApi() {

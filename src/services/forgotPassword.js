@@ -12,15 +12,15 @@ const form = reactive({
 
 const v$ = useVuelidate(rules, form);
 
-const { call, data, loading, errorMsg, success, reset } = apiRequest('auth/password/email', {
+const { call, data, loading, errorMsg, success, reset, ready } = apiRequest('auth/password/email', {
   method: 'post',
   data: form,
 });
 
 const refreshPassword = async () => {
-  v$.value.$touch();
-
   reset();
+
+  v$.value.$touch();
 
   if (v$.value.$invalid) return;
 
@@ -38,5 +38,6 @@ export default function useForgotPassword() {
     loading,
     success,
     errorMsg,
+    ready,
   };
 }

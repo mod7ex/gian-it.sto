@@ -80,7 +80,12 @@ const fetchRoles = async () => {
 };
 
 /* ************ User form ************ */
+const isUploadingAvatar = ref(false);
 const updateAvatar = async (id) => {
+  if (!avatarFile.value) return true;
+
+  isUploadingAvatar.value = true;
+
   const form = new FormData();
   form.append('avatar', avatarFile.value);
 
@@ -91,6 +96,8 @@ const updateAvatar = async (id) => {
   });
 
   await call();
+
+  isUploadingAvatar.value = false;
 
   !success.value && toaster.danger(errorMsg.value ?? "Something went wrong , avatar couldn't be set");
 
@@ -124,9 +131,9 @@ const saveRawUserFields = async () => {
     form.append(key, `${userFields[key]}`);
   });
 
-  form.append('is_about_visible', toggles.value[0]);
-  form.append('is_born_at_visible', toggles.value[1]);
-  form.append('is_active', toggles.value[2]);
+  form.append('is_about_visible', toggles.value[0] ? 1 : 0);
+  form.append('is_born_at_visible', toggles.value[1] ? 1 : 0);
+  form.append('is_active', toggles.value[2] ? 1 : 0);
 
   const { call, data, errorMsg, success } = apiRequest(`/users/${isEditEmployerPage.value ? routeInstance.params.id : ''}`, {
     method: isEditEmployerPage.value ? 'put' : 'post',
@@ -141,6 +148,8 @@ const saveRawUserFields = async () => {
 };
 
 const saveUser = async () => {
+  // we can make communication with user or alerts logic similar to the officeProfile
+
   let isValideForm = await v$.value.$validate();
 
   isValideForm = isValideAvatarFileSize.value && isValideForm;
@@ -158,7 +167,7 @@ const saveUser = async () => {
   if (!successResponce) return;
 
   // ********* Avatar request
-  if (avatarFile.value) { successResponce = await updateAvatar(userId); }
+  successResponce = await updateAvatar(userId);
 
   // ********* Password update request
   if (isEditEmployerPage.value && userFields.password) { successResponce = await updatePassword(userId); }
@@ -248,5 +257,6 @@ export default function employerFormService() {
     toggles,
     setEmployerForm,
     atMountedEmployerForm,
+    isUploadingAvatar,
   };
 }

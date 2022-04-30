@@ -18,11 +18,7 @@ const v$ = useVuelidate(rules, form);
 
 const { call, data, loading, errorMsg, success, reset, reponce } = apiRequest('auth/password/reset', {
   method: 'post',
-  data: {
-    token: form.token,
-    email: form.email,
-    password: form.password,
-  },
+  data: form,
 });
 
 const saveNewPassword = async () => {

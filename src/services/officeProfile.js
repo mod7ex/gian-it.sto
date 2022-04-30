@@ -1,151 +1,155 @@
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useApi from '~/composables/useApi.js';
 import useAuth from '~/composables/useAuth.js';
-// import useToast from "~/composables/useToast.js";
-import officeProfileValidationsRules from '~/validationsRules/officeProfile.js';
+import useToast from '~/composables/useToast.js';
+import officeProfileRules from '~/validationsRules/officeProfile.js';
+
+const toaster = useToast();
+
+const { apiRequest } = useApi();
+const { rules } = officeProfileRules();
+const { user, setUser } = useAuth();
+
+const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
+
+const toggles = ref([user.value.is_about_visible ?? false, user.value.is_born_at_visible ?? false]);
+
+const avatar = ref(user.value.avatar);
+
+const avatarFile = ref(null);
+
+const isValideAvatarFileSize = computed(() => {
+  if (!avatarFile.value) return true;
+  return avatarFile.value.size < 10000000;
+});
+
+const form = reactive({
+  name: user.value.name,
+  email: user.value.email,
+
+  surname: user.value.surname,
+  middle_name: user.value.middle_name,
+  phone: user.value.phone,
+  about: user.value.about,
+  born_at: user.value.born_at,
+  office_position: user.value.office_position,
+});
+
+const v$ = useVuelidate(rules, form, { $lazy: true });
+
+const log = (event) => {
+  [avatarFile.value] = event.target.files;
+  avatar.value = window.URL.createObjectURL(avatarFile.value);
+};
+
+const isUploadingAvatar = ref(false);
+
+const updateAvatar = async () => {
+  if (!avatarFile.value) return false;
+
+  isUploadingAvatar.value = true;
+
+  const aform = new FormData();
+  aform.append('avatar', avatarFile.value);
+
+  const { call, errorMsg, success } = apiRequest('profile/avatar', {
+    method: 'post',
+    data: aform,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  await call();
+
+  isUploadingAvatar.value = false;
+
+  if (success.value) toaster.success('Фото успешно обновлено');
+  else toaster.danger(errorMsg.value ?? "Something went wrong , avatar couldn't be set");
+  // !success.value && toaster.danger(errorMsg.value ?? "Something went wrong , avatar couldn't be set");
+
+  return success.value;
+};
+
+const updateRawFields = async () => {
+  const { call, data, errorMsg, success } = apiRequest('/profile', {
+    method: 'put',
+    data: {
+      ...form,
+      is_about_visible: toggles.value[0] ? 1 : 0,
+      is_born_at_visible: toggles.value[1] ? 1 : 0,
+    },
+  });
+
+  await call();
+
+  if (success.value) toaster.success('Your data was updated successfully');
+  else toaster.danger(errorMsg.value ?? 'Undefined (network?) error');
+  // !success.value && toaster.danger(errorMsg.value ?? 'Undefined (network?) error');
+
+  return data.value?.user;
+};
+
+const reset = async () => {
+  avatarFile.value = null;
+
+  Object.keys(form).forEach((key) => {
+    form[key] = user.value[key] ?? '';
+  });
+
+  toggles.value = [
+    user.value.is_about_visible || false,
+    user.value.is_born_at_visible || false,
+    user.value.is_active || false,
+  ];
+
+  avatar.value = user.value.avatar ?? defaultEmployerAvatar;
+
+  if (!form.born_at) return;
+
+  const [d, m, y] = form.born_at.split('.');
+  form.born_at = `${y}-${m}-${d}`;
+};
+
+const isBusy = ref(false);
+
+const save = async () => {
+  let isValideForm = await v$.value.$validate();
+
+  isValideForm = isValideAvatarFileSize.value && isValideForm;
+
+  if (!isValideForm) return;
+
+  v$.value.$reset();
+
+  isBusy.value = true;
+
+  await updateAvatar();
+
+  const maybeUser = await updateRawFields();
+
+  setUser(maybeUser);
+
+  await reset();
+
+  isBusy.value = false;
+};
 
 export default function officeProfile() {
-  const { axiosInstance } = useApi();
-  // const { isOpenToast, showToast } = useToast();
-  const { rules } = officeProfileValidationsRules();
-  const { user, setUser } = useAuth();
-
-  const avatar = ref('');
-  const isAvatarLoading = ref(false);
-
-  const isOpenToast = ref(false);
-  const isUpdatingDataProfile = ref(false);
-  const isSuccessResponse = ref('');
-  const successResponseMessage = ref('');
-  const errorResponseMessage = ref('');
-
-  const fieldProfileForValidation = reactive({
-    name: user.value.name,
-    email: user.value.email,
-  });
-
-  const fieldsProfile = reactive({
-    surname: user.value.surname,
-    middleName: user.value.middle_name,
-    phone: user.value.phone,
-    about: user.value.about,
-    bornAt: user.value.born_at,
-    officePosition: user.value.office_position,
-  });
-
-  const toggles = ref([
-    user.value.is_about_visible,
-    user.value.is_born_at_visible,
-  ]);
-  const v$ = useVuelidate(rules, fieldProfileForValidation, { $lazy: true });
-
-  function setIsShowToast(value) {
-    isOpenToast.value = value;
-  }
-  function showToast() {
-    setIsShowToast(true);
-    setTimeout(setIsShowToast, 5000, false);
-  }
-
-  const uploadNewAvatar = async (image) => {
-    isAvatarLoading.value = true;
-    const formData = new FormData();
-    formData.append('avatar', image);
-    let response;
-    try {
-      response = await axiosInstance.post('profile/avatar', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-    } catch (e) {
-      isSuccessResponse.value = false;
-      errorResponseMessage.value = e.response
-        ? e.response.data.message
-        : 'Undefined (network?) error';
-      showToast();
-    } finally {
-      isAvatarLoading.value = false;
-    }
-    if (response.data.success) {
-      const responseAvatarObj = JSON.parse(response.data.avatar);
-      avatar.value = responseAvatarObj.original_url;
-      isSuccessResponse.value = true;
-      successResponseMessage.value = 'Фото успешно обновлено';
-      showToast();
-    }
-  };
-
-  function checkAvatarSize(event) {
-    const maxFileSize = 10000000;
-    const image = event.target.files[0];
-    if (image.size > maxFileSize) {
-      isSuccessResponse.value = false;
-      errorResponseMessage.value = 'Размер фото не должен превышать 10000 Кб';
-      showToast();
-      return;
-    }
-    uploadNewAvatar(image);
-  }
-
-  const updateProfile = async () => {
-    v$.value.$touch();
-
-    if (v$.value.$invalid) {
-      return;
-    }
-    v$.value.$reset();
-
-    isUpdatingDataProfile.value = true;
-
-    let res;
-    try {
-      res = await axiosInstance.put('profile', {
-        name: fieldProfileForValidation.name,
-        email: fieldProfileForValidation.email,
-        surname: fieldsProfile.surname,
-        middle_name: fieldsProfile.middleName,
-        phone: fieldsProfile.phone,
-        about: fieldsProfile.about,
-        born_at: fieldsProfile.bornAt,
-        office_position: fieldsProfile.officePosition,
-        is_about_visible: toggles.value[0],
-        is_born_at_visible: toggles.value[1],
-      });
-    } catch (e) {
-      isSuccessResponse.value = false;
-      errorResponseMessage.value = e.response
-        ? e.response.data.message
-        : 'Undefined (network?) error';
-      showToast();
-    } finally {
-      isUpdatingDataProfile.value = false;
-    }
-    if (res.data.success) {
-      isSuccessResponse.value = true;
-      successResponseMessage.value = 'Данные успешно обновлены';
-      showToast();
-      setUser(res.data.user);
-    }
-  };
-
-  onMounted(() => {
-    avatar.value = user.value.avatar;
+  onMounted(async () => {
+    await reset();
   });
 
   return {
     v$,
-    fieldsProfile,
     avatar,
-    checkAvatarSize,
-    isAvatarLoading,
-    updateProfile,
+    isUploadingAvatar,
     toggles,
-    isOpenToast,
-    isUpdatingDataProfile,
-    isSuccessResponse,
-    successResponseMessage,
-    errorResponseMessage,
+    log,
+    form,
+    save,
+    isValideAvatarFileSize,
+    isBusy,
   };
 }

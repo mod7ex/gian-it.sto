@@ -36,7 +36,7 @@ const { v$, isEditRolePage, saveRole, roleTitle } = roleForm();
 
       <Button
         color="red"
-        @click="() => dialogger.open(() => dropRole(route.params.id), 'продолжить удаление!', 'Удалить ?')"
+        @click="() => dialogger.drop(() => dropRole(route.params.id), 'продолжить удаление!', 'Удалить ?')"
         v-if="isEditRolePage"
       >
         <XIcon class="w-5 h-5 mr-1" />

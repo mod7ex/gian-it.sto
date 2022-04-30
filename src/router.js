@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import navigationGuards from '~/lib/permissions.js';
 
+import { setLoader } from '~/composables/useAppLoader.js';
+
 const routes = [
   { path: '/', component: () => import(/* webpackChunkName: "login-page" */ '@/Pages/Login/Login.vue'), name: 'Login', meta: { guest: true } },
   { path: '/forgot-password', component: () => import('@/Pages/Login/ForgotPassword.vue'), name: 'ForgotPassword', meta: { guest: true } },
@@ -83,6 +85,13 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach(() => {
+  setLoader(true);
+});
+
 router.beforeEach(navigationGuards);
 
+router.afterEach(() => {
+  setLoader();
+});
 export default router;

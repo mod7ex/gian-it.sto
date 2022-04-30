@@ -1,84 +1,115 @@
-import { ref } from 'vue';
+import { ref, defineComponent, h, createApp } from 'vue';
+import { TrashIcon } from '@heroicons/vue/outline';
+import Dialog from '@/UI/Dialog.vue';
+import Spinner from '@/UI/Spinner.vue';
+import Button from '@/UI/Button.vue';
+
+const CONFIRM_DIALOG_TTIL = 15000;
 
 const defaultDialogOptions = {
-  opened: false,
   loading: false,
   title: 'Подтверждать!',
   text: 'Вы уверены что хотите продолжить ?',
   resultMsg: null,
-  success: false,
-  proceedFunction: async () => ({ message: '', success: true }),
+  success: true,
+  icon: null,
+  proceedFunction: async () => ({ message: 'it worked!', success: true }),
 };
 
-const opened = ref(defaultDialogOptions.opened);
 const loading = ref(defaultDialogOptions.loading);
 const title = ref(defaultDialogOptions.title);
 const text = ref(defaultDialogOptions.text);
 const resultMsg = ref(defaultDialogOptions.resultMsg);
 const success = ref(defaultDialogOptions.success);
+const icon = ref(defaultDialogOptions.icon);
 const proceedFunction = ref(defaultDialogOptions.proceedFunction);
 
-export default function useConfirmDialog() {
-  let timer;
+let timer;
+let ConfirmDialogApp;
 
-  const close = () => {
-    opened.value = defaultDialogOptions.opened;
+const close = () => {
+  clearTimeout(timer);
+
+  if (!ConfirmDialogApp) return;
+  ConfirmDialogApp.unmount();
+  ConfirmDialogApp = undefined;
+
+  loading.value = defaultDialogOptions.loading;
+  title.value = defaultDialogOptions.title;
+  text.value = defaultDialogOptions.text;
+  resultMsg.value = defaultDialogOptions.resultMsg;
+  success.value = defaultDialogOptions.success;
+  proceedFunction.value = defaultDialogOptions.proceedFunction;
+};
+
+const proceed = async () => {
+  loading.value = true;
+
+  try {
+    const action = proceedFunction.value;
+
+    const result = await action();
+
+    success.value = result?.success ?? false;
+    resultMsg.value = result?.message ?? 'Something went wrong!';
+  } catch (error) {
+    success.value = false;
+    resultMsg.value = 'Something went wrong!';
+
+    console.log(error);
+  } finally {
     loading.value = defaultDialogOptions.loading;
+    icon.value = defaultDialogOptions.icon;
+  }
+};
 
-    setTimeout(() => {
-      title.value = defaultDialogOptions.title;
-      text.value = defaultDialogOptions.text;
-      resultMsg.value = defaultDialogOptions.resultMsg;
-      success.value = defaultDialogOptions.success;
-      proceedFunction.value = defaultDialogOptions.proceedFunction;
-    }, 300);
+const spinner = h('div', { class: 'my-5 flex justify-center' }, [h(Spinner)]);
+const closeBtn = h(Button, { class: 'mx-3 justify-center', innerHTML: 'Закрыть', onClick: close });
+const proceedBtn = h(Button, { class: 'mx-3 justify-center', innerHTML: 'продолжить', color: 'red', onClick: proceed });
+const actions = h('div', { class: 'mt-5 sm:mt-6 flex justify-center items-end' }, [closeBtn, proceedBtn]);
 
-    clearTimeout(timer);
-  };
+const ConfirmDialog = defineComponent({
+  render() {
+    return h(
+      Dialog,
+      { open: true, onClose: close, type: success.value ? 'success' : 'danger', icon: icon.value },
+      {
+        title: () => resultMsg.value ?? title.value,
+        text: () => (!resultMsg.value ? h(loading.value ? spinner : h('span', text.value)) : null),
+        actions: () => (!resultMsg.value ? actions : null),
+      },
+    );
+  },
+});
 
-  const open = (_onYesFunction, _text, _title, _type = false) => {
-    proceedFunction.value = _onYesFunction;
+const newConfirmDialogApp = () => createApp(ConfirmDialog);
 
-    text.value = _text ?? defaultDialogOptions.text;
-    title.value = _title ?? defaultDialogOptions.title;
+const open = (_onYesFunction, _text, _title, _type) => {
+  proceedFunction.value = _onYesFunction;
+  text.value = _text ?? defaultDialogOptions.text;
+  title.value = _title ?? defaultDialogOptions.title;
+  success.value = _type ?? false;
 
-    success.value = _type;
-    opened.value = true;
+  ConfirmDialogApp = newConfirmDialogApp();
+  ConfirmDialogApp.mount('#sto-confirm');
 
-    timer = setTimeout(close, 15000);
-  };
+  timer = setTimeout(close, CONFIRM_DIALOG_TTIL);
+};
 
-  const proceed = async () => {
-    loading.value = true;
+const drop = (...args) => {
+  icon.value = TrashIcon;
+  open(...args);
+};
 
-    try {
-      const action = proceedFunction.value;
-
-      const result = await action();
-
-      success.value = result?.success ?? true;
-      resultMsg.value = result?.message ?? 'Success. msg';
-    } catch (error) {
-      success.value = false;
-      resultMsg.value = 'Something went wrong!';
-
-      console.log(error);
-    } finally {
-      loading.value = false;
-    }
-  };
-
+export default function useConfirmDialog() {
   return {
-    proceedFunction,
-    opened,
     loading,
     title,
     text,
-    resultMsg,
     success,
 
     close,
     open,
-    proceed,
+    drop,
   };
 }

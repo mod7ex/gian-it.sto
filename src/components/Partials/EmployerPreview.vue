@@ -105,9 +105,10 @@ const { dropUser, selectedUser } = employers();
             <Button
                 size="xs"
                 color="red"
-                @click="() => dialogger.open(() => dropUser(selectedUser.id), 'продолжить удаление!', 'Удалить ?')"
+                @click="() => dialogger.drop(() => dropUser(selectedUser.id), 'продолжить удаление!', 'Удалить ?')"
             >
-            <TrashIcon class="mr-2 h-5 w-5 text-white" />Удалить</Button>
+                <TrashIcon class="mr-2 h-5 w-5 text-white" />Удалить
+            </Button>
         </div>
         </article>
     </div>

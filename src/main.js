@@ -1,4 +1,4 @@
-import Toast from 'vue-toastification';
+// import Toast from 'vue-toastification';
 import Maska from 'maska';
 import { createApp } from 'vue';
 import router from './router';
@@ -8,12 +8,14 @@ import { authByTokenFromLocalstorage } from './services/login';
 
 const app = createApp(App);
 
+app.config.performance = true; // for dev
+
 (async () => {
   await authByTokenFromLocalstorage(router);
 
   // app.use(uiImporteur);
   app.use(router);
   app.use(Maska);
-  app.use(Toast, { position: 'bottom-left' });
+  // app.use(Toast, { position: 'bottom-left' });
   app.mount('#app');
 })();

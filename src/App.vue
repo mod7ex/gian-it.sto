@@ -1,9 +1,11 @@
 <script setup>
-import ConfirmDialog from '~/components/Partials/ConfirmDialog.vue';
+import Loader from '~/components/Partials/Loader.vue';
+import { loading } from '~/composables/useAppLoader.js';
+
 </script>
 
 <template>
-  <ConfirmDialog />
+  <Loader v-if="loading"/>
   <router-view />
 </template>
 

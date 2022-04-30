@@ -54,7 +54,7 @@ await fetchRoles();
                 },
                 {
                   label: 'Удалить',
-                  click: () => dialogger.open(() => dropRole(item.id), 'продолжить удаление!', 'Удалить ?'),
+                  click: () => dialogger.drop(() => dropRole(item.id), 'продолжить удаление!', 'Удалить ?'),
                   icon: XIcon,
                 },
               ],

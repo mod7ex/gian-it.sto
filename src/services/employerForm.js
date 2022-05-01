@@ -76,8 +76,11 @@ const updatePassword = async (id) => {
 
   await call();
 
-  if (success.value) toaster.success('пароль успешно обновлен');
-  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось обновить пароль');
+  if (success.value) {
+    userFields.password = null;
+    userFields.password_confirmation = null;
+    toaster.success('пароль успешно обновлен');
+  } else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось обновить пароль');
 
   return success.value;
 };

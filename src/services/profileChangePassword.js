@@ -32,6 +32,11 @@ const changeProfilePassword = async () => {
   v$.value.$reset();
 
   await call();
+
+  if (!success.value) return;
+
+  form.password = '';
+  form.confirmPassword = '';
 };
 
 export default function profileChangePasswordHandler() {

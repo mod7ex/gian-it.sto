@@ -4,8 +4,6 @@ import Dialog from '@/UI/Dialog.vue';
 import Spinner from '@/UI/Spinner.vue';
 import Button from '@/UI/Button.vue';
 
-const CONFIRM_DIALOG_TTIL = 15000;
-
 const defaultDialogOptions = {
   loading: false,
   title: 'Подтверждать!',
@@ -93,7 +91,7 @@ const open = (_onYesFunction, _text, _title, _type) => {
   ConfirmDialogApp = newConfirmDialogApp();
   ConfirmDialogApp.mount('#sto-confirm');
 
-  timer = setTimeout(close, CONFIRM_DIALOG_TTIL);
+  timer = setTimeout(close, import.meta.env.STO_CONFIRM_DIALOG_TTL);
 };
 
 const drop = (...args) => {

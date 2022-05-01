@@ -1,16 +1,16 @@
 import { ref } from 'vue';
 
-const LOADER_TTL_AFTER_NAVIGATING = 1000;
-
 export const loading = ref(false);
 
 let timer;
 
-export const setLoader = (bool) => {
-  if (bool) loading.value = true;
+export const pingLoader = () => {
+  loading.value = true;
 
   clearTimeout(timer);
   timer = setTimeout(() => {
     loading.value = false;
-  }, LOADER_TTL_AFTER_NAVIGATING + (bool ? 500 : 0));
+  }, import.meta.env.STO_NAVIGATION_LOADER_DURATION);
 };
+
+// STO_NAVIGATION_LOADER_DURATION is like the duration that app takes to laod next route

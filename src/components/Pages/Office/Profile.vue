@@ -92,21 +92,24 @@ const { v$, avatar, isUploadingAvatar, toggles, log, form, save, isValideAvatarF
             subtitle="Здесь вы можете настроить поведение приложения - то что хотели бы не показывать"
             :items="[
               {
+                key: 'is_about_visible',
                 title: 'О себе',
                 subtitle: 'Скрыть информацию о себе для других сотрудников',
               },
               {
+                key: 'is_born_at_visible',
                 title: 'День рождения',
                 subtitle: 'Скрыть день рождения для других сотрудников',
               },
               {
+                key: 'is_active',
                 title: 'Виден активный статус',
                 subtitle: 'скрыть активный статус от других сотрудников',
               },
             ]"
           >
-            <template v-slot:right="{ index }">
-              <Toggle v-model="toggles[index]"/>
+            <template v-slot:right="{ item }">
+              <Toggle v-model="toggles[item.key]"/>
             </template>
           </List>
         </div>

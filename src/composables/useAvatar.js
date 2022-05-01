@@ -16,7 +16,7 @@ const isUploadingAvatar = ref(false);
 
 const isValideAvatarFileSize = computed(() => {
   if (!avatarFile.value) return true;
-  return avatarFile.value.size < 10000000;
+  return avatarFile.value.size < import.meta.env.STO_AVATAR_MAX_SIZE;
 });
 
 const log = (event) => {

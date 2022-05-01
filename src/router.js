@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import navigationGuards from '~/lib/permissions.js';
 
-import { setLoader } from '~/composables/useAppLoader.js';
+import { pingLoader } from '~/composables/useAppLoader.js';
 
 const routes = [
   { path: '/', component: () => import(/* webpackChunkName: "login-page" */ '@/Pages/Login/Login.vue'), name: 'Login', meta: { guest: true } },
@@ -86,12 +86,9 @@ const router = createRouter({
 });
 
 router.beforeEach(() => {
-  setLoader(true);
+  pingLoader(true);
 });
 
 router.beforeEach(navigationGuards);
 
-router.afterEach(() => {
-  setLoader();
-});
 export default router;

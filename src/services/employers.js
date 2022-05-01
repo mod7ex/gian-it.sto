@@ -118,7 +118,7 @@ const fetchEmployers = async (searchPayload = '') => {
 
   !success.value && danger(errorMsg.value ?? "Couldn't fetch employers !");
 
-  users.value = data.value.users || [];
+  users.value = data.value?.users ?? [];
 
   order.value.mod = -1; // return to desc(default) order mod
 };

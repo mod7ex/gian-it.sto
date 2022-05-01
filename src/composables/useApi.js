@@ -5,8 +5,8 @@ import useAuth from '~/composables/useAuth.js';
 const { token } = useAuth();
 
 const instance = axios.create({
-  baseURL: 'http://api.sto-test.ru/api/',
-  timeout: 30000,
+  baseURL: import.meta.env.STO_API_BASE_URI,
+  timeout: import.meta.env.STO_API_TIMEOUT,
 });
 
 watch(
@@ -80,6 +80,5 @@ const apiRequest = (url, config = {}) => {
 export default function useApi() {
   return {
     apiRequest,
-    axiosInstance: instance,
   };
 }

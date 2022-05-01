@@ -5,6 +5,7 @@ import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useAvatar from '~/composables/useAvatar.js';
+import useToggles from '~/composables/useToggles.js';
 
 let routeInstance;
 let isEditEmployerPage;
@@ -14,8 +15,8 @@ let v$;
 const { apiRequest } = useApi();
 const toaster = useToast();
 const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar } = useAvatar();
+const { toggles, setToggles, bitwisedToggles } = useToggles();
 
-const defaultTogglesState = [false, false, false];
 const defaultUserFields = {
   // password fields will be automatically set if we're creating a user
   name: '',
@@ -34,7 +35,6 @@ const roles = ref([]);
 const departments = ref([]);
 
 const userFields = reactive(defaultUserFields);
-const toggles = ref(defaultTogglesState);
 
 /* ************ Fetch Departments & Roles ************ */
 const departmentOptions = computed(() => departments.value.map((department) => ({
@@ -69,51 +69,42 @@ const fetchRoles = async () => {
 
 /* ************ User form ************ */
 const updatePassword = async (id) => {
-  const form = new FormData();
-
-  form.append('password', userFields.password);
-
   const { call, errorMsg, success } = apiRequest(`/users/${id}/password`, {
     method: 'put',
-    data: form,
-    headers: { 'Content-Type': 'multipart/form-data' },
+    data: { password: userFields.password },
   });
 
   await call();
 
-  !success.value && toaster.danger(errorMsg.value ?? "Something went wrong , password couldn't be updated");
+  if (success.value) toaster.success('пароль успешно обновлен');
+  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось обновить пароль');
 
   return success.value;
 };
 
 const saveRawUserFields = async () => {
-  const form = new FormData();
+  const form = {};
 
   Object.keys(userFields).forEach((key) => {
     // won't count password in case we're editing the user, password is updated siparatly (down)
     if (isEditEmployerPage.value && key.substr(0, 8) === 'password') return;
-    form.append(key, `${userFields[key]}`);
+    form[key] = `${userFields[key]}`;
   });
-
-  form.append('is_about_visible', toggles.value[0] & 1);
-  form.append('is_born_at_visible', toggles.value[1] & 1);
-  form.append('is_active', toggles.value[2] & 1);
 
   const { call, data, errorMsg, success } = apiRequest(`/users/${isEditEmployerPage.value ? routeInstance.params.id : ''}`, {
     method: isEditEmployerPage.value ? 'put' : 'post',
-    data: form,
+    data: { ...form, ...bitwisedToggles.value },
   });
 
   await call();
 
-  !success.value && toaster.danger(errorMsg.value ?? 'Something went wrong!');
+  if (success.value) toaster.success('ваши данные успешно сохранены');
+  else toaster.danger(errorMsg.value ?? 'не удалось сохранить ваши данные');
 
   return data.value?.user?.id;
 };
 
 const saveUser = async () => {
-  // we can make communication with user or alerts logic similar to the officeProfile
-
   let isValideForm = await v$.value.$validate();
 
   isValideForm = isValideAvatarFileSize.value && isValideForm;
@@ -138,12 +129,10 @@ const saveUser = async () => {
 
   await redirect({ name: 'EditEmployer', params: { id: userId } });
 
-  return successResponce && toaster.success('Profile updated successfully');
+  return successResponce;
 };
 
 const setEmployerForm = async (payload) => {
-  // avatarFile.value = null;
-  // avatar.value = payload.avatar ?? defaultEmployerAvatar;
   setAvatar(payload);
 
   Object.keys(userFields).forEach((key) => {
@@ -155,18 +144,16 @@ const setEmployerForm = async (payload) => {
     if (key === 'role_id') {
       // console.log(payload.roles); // array
       // userFields.role_id = payload.role?.id; // ===========> should be fixed later
-      userFields.role_id = 2;
+      userFields.role_id = payload.roles[0]?.id;
       return;
     }
 
     userFields[key] = payload[key] ?? '';
   });
 
-  toggles.value = [
-    payload.is_about_visible || false,
-    payload.is_born_at_visible || false,
-    payload.is_active || false,
-  ];
+  // eslint-disable-next-line camelcase
+  const { is_about_visible, is_born_at_visible, is_active } = payload;
+  setToggles({ is_about_visible, is_born_at_visible, is_active });
 
   if (!userFields.born_at) return;
 

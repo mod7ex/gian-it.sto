@@ -5,8 +5,6 @@ import Toast from '~/components/Partials/Toast.vue';
 
 let ToastsApp;
 
-const TOAST_TTL = 5000;
-
 const toastsList = ref([]);
 const isEmptyToastsList = computed(() => toastsList.value.length === 0);
 
@@ -48,7 +46,7 @@ const create = (text, title, color, icon, bool = true) => {
   setTimeout(() => {
     const i = toastsList.value.findIndex((item) => item.key === key);
     (i !== -1) && toastsList.value.splice(i, 1);
-  }, TOAST_TTL);
+  }, import.meta.env.STO_TOAST_TTL);
 
   return bool;
 };

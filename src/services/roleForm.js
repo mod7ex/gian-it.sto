@@ -4,6 +4,9 @@ import { minLength, required, helpers } from '@vuelidate/validators';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
+import useToggles from '~/composables/useToggles.js';
+
+const { toggles: permissions, setToggles, truthyTogglesArray } = useToggles();
 
 const toaster = useToast();
 
@@ -14,7 +17,6 @@ let redirect;
 const rawRolePermissions = ref([]);
 
 const roleTitle = ref('');
-const permissions = ref({});
 
 const { apiRequest } = useApi();
 
@@ -40,9 +42,7 @@ const saveRole = async () => {
     method: isEditRolePage.value ? 'put' : 'post',
     data: {
       title: roleTitle.value,
-      permissions: Object.keys(permissions.value).filter(
-        (key) => permissions.value[key],
-      ),
+      permissions: truthyTogglesArray.value,
     },
   });
 
@@ -81,11 +81,8 @@ const fetchSubjectRole = async (id) => {
 
 const setRoleForm = async (payload) => {
   roleTitle.value = payload?.title;
-  permissions.value = {};
 
-  (payload?.permissions ?? []).forEach((perm) => {
-    permissions.value[perm.name] = true;
-  });
+  setToggles(payload?.permissions, true, 'name');
 };
 
 const atMountedRoleForm = async () => {

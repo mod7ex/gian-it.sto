@@ -92,7 +92,7 @@ const log = (event) => avatar.value = window.URL.createObjectURL(event.target.fi
           <div>
             <List class="mt-2" :items="[
             {title: 'О себе', subtitle: 'Скрыть информацию о себе для других сотрудников'},
-            {title: 'День рождения', subtitle: 'Скрыть день рождения для других сотрудников'}
+            {title: 'День рождения', subtitle: 'Скрыть день рождения для других сотрудников'},
           ]" title="Приватность" subtitle="Здесь вы можете настроить поведение приложения - то что хотели бы не показывать">
               <template v-slot:right="{item, index}">
                 <Toggle v-model="toggles[index]" />

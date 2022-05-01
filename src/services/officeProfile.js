@@ -5,6 +5,7 @@ import useAuth from '~/composables/useAuth.js';
 import useToast from '~/composables/useToast.js';
 import useAvatar from '~/composables/useAvatar.js';
 import officeProfileRules from '~/validationsRules/officeProfile.js';
+import useToggles from '~/composables/useToggles.js';
 
 const toaster = useToast();
 
@@ -13,7 +14,7 @@ const { rules } = officeProfileRules();
 const { user, setUser } = useAuth();
 const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar } = useAvatar();
 
-const toggles = ref([user.value.is_about_visible ?? false, user.value.is_born_at_visible ?? false]);
+const { toggles, setToggles, bitwisedToggles } = useToggles();
 
 const form = reactive({
   name: user.value.name,
@@ -34,8 +35,7 @@ const updateRawFields = async () => {
     method: 'put',
     data: {
       ...form,
-      is_about_visible: toggles.value[0] ? 1 : 0,
-      is_born_at_visible: toggles.value[1] ? 1 : 0,
+      ...bitwisedToggles.value,
     },
   });
 
@@ -43,25 +43,20 @@ const updateRawFields = async () => {
 
   if (success.value) toaster.success('Your data was updated successfully');
   else toaster.danger(errorMsg.value ?? 'Undefined (network?) error');
-  // !success.value && toaster.danger(errorMsg.value ?? 'Undefined (network?) error');
 
   return data.value?.user;
 };
 
 const reset = async () => {
-  // avatarFile.value = null;
-  // avatar.value = user.value.avatar ?? defaultEmployerAvatar;
   setAvatar(user.value);
 
   Object.keys(form).forEach((key) => {
     form[key] = user.value[key] ?? '';
   });
 
-  toggles.value = [
-    user.value.is_about_visible || false,
-    user.value.is_born_at_visible || false,
-    user.value.is_active || false,
-  ];
+  // eslint-disable-next-line camelcase
+  const { is_about_visible, is_born_at_visible, is_active } = user.value;
+  setToggles({ is_about_visible, is_born_at_visible, is_active });
 
   if (!form.born_at) return;
 

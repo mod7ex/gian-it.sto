@@ -1,4 +1,6 @@
 <script setup>
+import { XCircleIcon } from '@heroicons/vue/outline';
+
 const props = defineProps({
   icon: {
     type: [Object, Function, null],
@@ -20,6 +22,8 @@ const props = defineProps({
     default: 'blue',
   },
 });
+
+defineEmits(['close']);
 
 // for prod parser
 // const colors = [
@@ -122,21 +126,28 @@ const props = defineProps({
           <component :is="props.icon" :class="['h-5 w-5', `text-${props.color}-400`]"/>
         </div>
 
-        <div class="ml-3 w-0 flex-1">
+        <div class="ml-3 w-0 flex-1 flex items-center">
 
           <slot name="title">
             <h3 :class="['text-sm font-medium', `text-${props.color}-800`]" v-if="props.title">
-              {{ props.title }}
+              <slot name="title">{{ props.title }}</slot>
             </h3>
           </slot>
 
           <slot name="text">
             <div :class="['ml-2 text-sm', `text-${props.color}-700`]" v-if="props.text">
-              <p>{{ props.text }}</p>
+              <p>
+                <slot name="text">{{ props.text }}</slot>
+              </p>
             </div>
           </slot>
 
         </div>
+
+        <div>
+          <span @click="$emit('close')"><XCircleIcon  :class="['h-5 w-5 cursor-pointer', `text-${props.color}-400`]" /></span>
+        </div>
+
       </div>
     </div>
   </div>

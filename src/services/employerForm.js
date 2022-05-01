@@ -144,7 +144,7 @@ const setEmployerForm = async (payload) => {
     if (key === 'role_id') {
       // console.log(payload.roles); // array
       // userFields.role_id = payload.role?.id; // ===========> should be fixed later
-      userFields.role_id = payload.roles[0]?.id;
+      userFields.role_id = Array.isArray(payload.roles) ? payload.roles[0]?.id : '';
       return;
     }
 

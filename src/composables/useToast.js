@@ -1,12 +1,16 @@
 import { h, createApp, ref, defineComponent, computed, watch } from 'vue';
 import { CheckIcon, ExclamationIcon, InformationCircleIcon } from '@heroicons/vue/outline';
-import Toast from '~/components/Partials/Toast.vue';
-// import Toast from '@/UI/Toast.vue';
+import Toast from '@/UI/Toast.vue';
 
 let ToastsApp;
 
-const toastsList = ref([]);
+const toastsList = ref([]); // there might be some issues using array we can implement it using Set
 const isEmptyToastsList = computed(() => toastsList.value.length === 0);
+
+const closeToast = (toastKey) => {
+  const i = toastsList.value.findIndex(({ key }) => key === toastKey);
+  (i !== -1) && toastsList.value.splice(i, 1);
+};
 
 const ToastsComponent = defineComponent({
   setup() {
@@ -20,7 +24,7 @@ const ToastsComponent = defineComponent({
       [h(
         'div',
         { class: 'w-full flex flex-col items-center space-y-4' },
-        list.value.map((props) => h(Toast, { ...props })), // we could've used toastsList directly
+        list.value.map((props) => h(Toast, { ...props, onClose: () => closeToast(props.key) })), // we could've used toastsList directly
       )]);
   },
 });
@@ -43,10 +47,7 @@ const create = (text, title, color, icon, bool = true) => {
   const key = Date.now().toString();
   toastsList.value.push({ color, icon, text, title, key });
 
-  setTimeout(() => {
-    const i = toastsList.value.findIndex((item) => item.key === key);
-    (i !== -1) && toastsList.value.splice(i, 1);
-  }, import.meta.env.STO_TOAST_TTL);
+  setTimeout(() => { closeToast(key); }, import.meta.env.STO_TOAST_TTL);
 
   return bool;
 };

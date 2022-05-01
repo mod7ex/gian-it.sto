@@ -20,6 +20,7 @@ module.exports = {
     'max-len': 'off',
     'consistent-return': 'off',
     'no-unused-expressions': 'off',
+    'no-bitwise': 'off',
     // 'no-console': 'off',
   },
   globals: {

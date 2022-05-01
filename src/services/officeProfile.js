@@ -1,8 +1,9 @@
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useApi from '~/composables/useApi.js';
 import useAuth from '~/composables/useAuth.js';
 import useToast from '~/composables/useToast.js';
+import useAvatar from '~/composables/useAvatar.js';
 import officeProfileRules from '~/validationsRules/officeProfile.js';
 
 const toaster = useToast();
@@ -10,19 +11,9 @@ const toaster = useToast();
 const { apiRequest } = useApi();
 const { rules } = officeProfileRules();
 const { user, setUser } = useAuth();
-
-const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
+const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar } = useAvatar();
 
 const toggles = ref([user.value.is_about_visible ?? false, user.value.is_born_at_visible ?? false]);
-
-const avatar = ref(user.value.avatar);
-
-const avatarFile = ref(null);
-
-const isValideAvatarFileSize = computed(() => {
-  if (!avatarFile.value) return true;
-  return avatarFile.value.size < 10000000;
-});
 
 const form = reactive({
   name: user.value.name,
@@ -37,40 +28,6 @@ const form = reactive({
 });
 
 const v$ = useVuelidate(rules, form, { $lazy: true });
-
-const log = (event) => {
-  [avatarFile.value] = event.target.files;
-  avatar.value = window.URL.createObjectURL(avatarFile.value);
-};
-
-const isUploadingAvatar = ref(false);
-
-const updateAvatar = async () => {
-  if (!avatarFile.value) return false;
-
-  isUploadingAvatar.value = true;
-
-  const aform = new FormData();
-  aform.append('avatar', avatarFile.value);
-
-  const { call, errorMsg, success } = apiRequest('profile/avatar', {
-    method: 'post',
-    data: aform,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  await call();
-
-  isUploadingAvatar.value = false;
-
-  if (success.value) toaster.success('Фото успешно обновлено');
-  else toaster.danger(errorMsg.value ?? "Something went wrong , avatar couldn't be set");
-  // !success.value && toaster.danger(errorMsg.value ?? "Something went wrong , avatar couldn't be set");
-
-  return success.value;
-};
 
 const updateRawFields = async () => {
   const { call, data, errorMsg, success } = apiRequest('/profile', {
@@ -92,7 +49,9 @@ const updateRawFields = async () => {
 };
 
 const reset = async () => {
-  avatarFile.value = null;
+  // avatarFile.value = null;
+  // avatar.value = user.value.avatar ?? defaultEmployerAvatar;
+  setAvatar(user.value);
 
   Object.keys(form).forEach((key) => {
     form[key] = user.value[key] ?? '';
@@ -103,8 +62,6 @@ const reset = async () => {
     user.value.is_born_at_visible || false,
     user.value.is_active || false,
   ];
-
-  avatar.value = user.value.avatar ?? defaultEmployerAvatar;
 
   if (!form.born_at) return;
 
@@ -125,7 +82,7 @@ const save = async () => {
 
   isBusy.value = true;
 
-  await updateAvatar();
+  await updateAvatar('profile/avatar');
 
   const maybeUser = await updateRawFields();
 

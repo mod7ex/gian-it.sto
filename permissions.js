@@ -194,7 +194,7 @@ const bitwisedRessources = ressources.map(({ title, permissions }) => {
         bit: 16  <=> 00010000 (just example 2**r)
     },
 
-    <-- user permissions will be a Number(2**r) (result of bitwise OR of some other permissions) -->
+    <-- user permissions will be a Number(2**r) (result of bitwise OR (|) of some other permissions) -->
     user.permissions = permission_a.bit | permission_b.bit | permission_j.bit
 
     <-- in order to check if user has permission X (no need to loop through arrays... ) -->

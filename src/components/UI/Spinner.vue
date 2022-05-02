@@ -1,12 +1,12 @@
 <script setup>
 const props = defineProps({
   h: {
-    type: String,
+    type: [String, Number],
     required: false,
     default: '8',
   },
   w: {
-    type: String,
+    type: [String, Number],
     required: false,
     default: '8',
   },

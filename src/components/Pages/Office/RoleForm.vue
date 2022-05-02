@@ -3,12 +3,12 @@ import { CheckIcon, ArrowLeftIcon, XIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
-import Spinner from '@/UI/Spinner.vue';
 import rolesService from '~/services/roles.js';
 import roleForm from '~/services/roleForm.js';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import RolePermissions from '~/components/Partials/RolePermissions.vue';
+import useSuspense from '~/composables/useSuspense.js';
 
 const dialogger = useConfirmDialog();
 
@@ -18,6 +18,8 @@ const { route } = useAppRouter();
 const { v$, isEditRolePage, saveRole, roleTitle } = roleForm();
 
 // const editor = "Текст задачи";
+
+const SuspensRolePermissions = useSuspense(RolePermissions);
 
 </script>
 
@@ -50,24 +52,13 @@ const { v$, isEditRolePage, saveRole, roleTitle } = roleForm();
           label="Название"
           v-model="roleTitle"
           :required="true"
+          mask="Aa* a*"
           :error="v$.roleTitle.$errors[0]?.$message"
           @input="v$.roleTitle.$touch"
         />
       </div>
 
-      <Suspense>
-        <RolePermissions />
-
-        <template #fallback>
-          <div class="col-span-12 sm:col-span-12 flex justify-center">
-            <Spinner h="4" w="4">
-              <span class="text-sm text-gray-600">fetching permissions...</span>
-            </Spinner>
-          </div>
-        </template>
-      </Suspense>
+      <SuspensRolePermissions loadingMsg="fetching permissions..." />
     </div>
   </OfficeLayout>
 </template>
-
-<style scoped></style>

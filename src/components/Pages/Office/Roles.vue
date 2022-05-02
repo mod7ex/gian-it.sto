@@ -2,9 +2,11 @@
 import { PlusCircleIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
-import Spinner from '@/UI/Spinner.vue';
+import useSuspense from '~/composables/useSuspense.js';
 
 import RolesTable from '~/components/Partials/RolesTable.vue';
+
+const SuspensRolesTable = useSuspense(RolesTable);
 </script>
 
 <template>
@@ -21,18 +23,7 @@ import RolesTable from '~/components/Partials/RolesTable.vue';
       </Button>
     </template>
 
-    <Suspense>
-      <RolesTable />
+    <SuspensRolesTable loadingMsg="получаем роли..." />
 
-      <template #fallback>
-        <div class="flex justify-center">
-          <Spinner h="4" w="4">
-            <span class="text-sm text-gray-600">получаем роли...</span>
-          </Spinner>
-        </div>
-      </template>
-    </Suspense>
   </OfficeLayout>
 </template>
-
-<style scoped></style>

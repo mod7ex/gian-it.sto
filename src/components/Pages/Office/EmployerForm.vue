@@ -2,9 +2,12 @@
 import { CheckIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
-import Spinner from '@/UI/Spinner.vue';
 import employerForm from '~/services/employerForm.js';
 import EmployerFormFields from '~/components/Partials/EmployerFormFields.vue';
+
+import useSuspense from '~/composables/useSuspense.js';
+
+const SuspensEmployerFormFields = useSuspense(EmployerFormFields);
 
 const { saveUser } = employerForm();
 </script>
@@ -23,17 +26,7 @@ const { saveUser } = employerForm();
       </Button>
     </template>
 
-    <Suspense>
-      <EmployerFormFields />
-
-      <template #fallback>
-        <div class="col-span-12 sm:col-span-12 flex justify-center">
-          <Spinner h="4" w="4">
-            <span class="text-sm text-gray-600">Получение данных...</span>
-          </Spinner>
-        </div>
-      </template>
-    </Suspense>
+      <SuspensEmployerFormFields />
   </OfficeLayout>
 </template>
 

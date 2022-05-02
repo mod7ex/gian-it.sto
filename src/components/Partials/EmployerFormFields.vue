@@ -33,6 +33,7 @@ let {
 
 await atMountedEmployerForm();
 
+
 </script>
 
 <template>
@@ -49,7 +50,7 @@ await atMountedEmployerForm();
     <div class="flex-grow space-y-6">
       <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-4">
-          <Input label="Фамилия" v-model="userFields.middle_name" />
+          <Input label="Фамилия" v-model="userFields.middle_name" mask="Aa*"/>
         </div>
 
         <div class="col-span-12 sm:col-span-4">
@@ -57,13 +58,14 @@ await atMountedEmployerForm();
             label="Имя"
             v-model="userFields.name"
             :required="true"
+            mask="Aa*"
             :error="v$.name.$errors[0]?.$message"
             @blured="v$.name.$touch"
           />
         </div>
 
         <div class="col-span-12 sm:col-span-4">
-          <Input label="Отчество" v-model="userFields.surname" />
+          <Input label="Отчество" v-model="userFields.surname" mask="Aa*"/>
         </div>
 
         <div class="col-span-12 sm:col-span-6">
@@ -116,7 +118,7 @@ await atMountedEmployerForm();
     </div>
 
     <div class="col-span-12 sm:col-span-6 lg:col-span-4">
-      <Input label="Должность" v-model="userFields.office_position" />
+      <Input label="Должность" v-model="userFields.office_position" mask="Aa*" />
     </div>
 
     <div class="col-span-12 sm:col-span-6 lg:col-span-4">

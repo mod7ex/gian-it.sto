@@ -7,6 +7,10 @@ let ToastsApp;
 const toastsList = ref([]); // there might be some issues using array we can implement it using Set
 const isEmptyToastsList = computed(() => toastsList.value.length === 0);
 
+const clear = () => {
+  toastsList.value = [];
+};
+
 const closeToast = (toastKey) => {
   const i = toastsList.value.findIndex(({ key }) => key === toastKey);
   (i !== -1) && toastsList.value.splice(i, 1);
@@ -53,11 +57,11 @@ const create = (text, title, color, icon, bool = true) => {
 };
 
 const success = (_text, _title) => create(_text, _title, 'green', CheckIcon);
-const info = (_text, _title = 'Info!') => create(_text, _title, 'gray', InformationCircleIcon);
 const primary = (_text, _title) => create(_text, _title, 'blue', CheckIcon);
 const danger = (_text, _title) => create(_text, _title, 'red', ExclamationIcon, false);
 const warn = (_text, _title) => create(_text, _title, 'yellow', ExclamationIcon, false);
+const info = (_text, _title = 'Info!') => create(_text, _title, 'gray', InformationCircleIcon);
 
 export default function useToast() {
-  return { success, info, primary, danger, warn };
+  return { success, info, primary, danger, warn, clear };
 }

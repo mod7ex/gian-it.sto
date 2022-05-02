@@ -184,7 +184,3 @@ if (props.circle) {
     <slot></slot>
   </router-link>
 </template>
-
-<style scoped>
-
-</style>

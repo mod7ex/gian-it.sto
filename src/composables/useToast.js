@@ -4,12 +4,9 @@ import Toast from '@/UI/Toast.vue';
 
 let ToastsApp;
 
-const toastsList = ref([]); // there might be some issues using array we can implement it using Set
-const isEmptyToastsList = computed(() => toastsList.value.length === 0);
+const toastsList = ref(new Map()); // there might be some issues using array we can implement it using Set
 
-const clear = () => {
-  toastsList.value = [];
-};
+const isEmptyToastsList = computed(() => toastsList.value.size === 0);
 
 const closeToast = (toastKey) => {
   const i = toastsList.value.findIndex(({ key }) => key === toastKey);
@@ -18,7 +15,7 @@ const closeToast = (toastKey) => {
 
 const ToastsComponent = defineComponent({
   setup() {
-    const list = computed(() => toastsList.value);
+    const list = computed(() => Array.from(toastsList.value.entries()));
 
     return () => h('div',
       {
@@ -28,7 +25,8 @@ const ToastsComponent = defineComponent({
       [h(
         'div',
         { class: 'w-full flex flex-col items-center space-y-4' },
-        list.value.map((props) => h(Toast, { ...props, onClose: () => closeToast(props.key) })), // we could've used toastsList directly
+        // we could've used toastsList directly
+        list.value.map(([key, props]) => h(Toast, { ...props, key, onClose: () => closeToast(key) })),
       )]);
   },
 });
@@ -49,9 +47,10 @@ watch(isEmptyToastsList, (v) => {
 
 const create = (text, title, color, icon, bool = true) => {
   const key = Date.now().toString();
-  toastsList.value.push({ color, icon, text, title, key });
 
-  setTimeout(() => { closeToast(key); }, import.meta.env.STO_TOAST_TTL);
+  toastsList.value.set(key, { color, icon, text, title });
+
+  setTimeout(() => { toastsList.value.delete(key); }, import.meta.env.STO_TOAST_TTL);
 
   return bool;
 };
@@ -62,6 +61,4 @@ const danger = (_text, _title) => create(_text, _title, 'red', ExclamationIcon, 
 const warn = (_text, _title) => create(_text, _title, 'yellow', ExclamationIcon, false);
 const info = (_text, _title = 'Info!') => create(_text, _title, 'gray', InformationCircleIcon);
 
-export default function useToast() {
-  return { success, info, primary, danger, warn, clear };
-}
+export default function useToast() { return { success, info, primary, danger, warn }; }

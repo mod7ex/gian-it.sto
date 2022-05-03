@@ -64,7 +64,5 @@ export const $roles = async (toast = true) => {
 
   toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить роли');
 
-  console.log('=====================> ', data.value?.roles);
-
   return data.value?.roles ?? [];
 };

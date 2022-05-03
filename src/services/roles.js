@@ -1,12 +1,11 @@
 import { ref, computed } from 'vue';
 import useApi from '~/composables/useApi.js';
-import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
+import { $roles } from '~/helpers/fetch.js';
 
 let redirect;
 let isEditRolePage;
 
-const { danger } = useToast();
 const { apiRequest } = useApi();
 
 const rawRoles = ref([]);
@@ -17,15 +16,7 @@ const roles = computed(() => rawRoles.value.map((role) => ({
   created_at: role.created_at,
 })));
 
-const fetchRoles = async () => {
-  const { call, data, errorMsg, success } = apiRequest('/roles');
-
-  await call();
-
-  !success.value && danger(errorMsg.value ?? "Couldn't fetch roles !");
-
-  rawRoles.value = data.value.roles || [];
-};
+const fetchRoles = async () => { rawRoles.value = await $roles(); };
 
 /* ************ Delete role ************ */
 const deleteRole = (id) => {
@@ -40,15 +31,13 @@ const dropRole = async (id) => {
 
   await call();
 
-  const wasRoleDeleted = success.value;
+  success.value && deleteRole(id);
 
-  wasRoleDeleted && deleteRole(id);
-
-  const deletionMsg = wasRoleDeleted ? 'Role was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить Роль');
+  const deletionMsg = success.value ? 'Role was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить Роль');
 
   isEditRolePage.value && await redirect({ name: 'Roles' });
 
-  return { message: deletionMsg, success: wasRoleDeleted };
+  return { message: deletionMsg, success: success.value };
 };
 
 /* ************ To Update role page ************ */

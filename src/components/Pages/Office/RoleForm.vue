@@ -7,7 +7,7 @@ import rolesService from '~/services/roles.js';
 import roleForm from '~/services/roleForm.js';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useAppRouter from '~/composables/useAppRouter.js';
-import RolePermissions from '~/components/Partials/RolePermissions.vue';
+import RolePermissions from '~/components/Partials/roles/RolePermissions.vue';
 import useSuspense from '~/composables/useSuspense.js';
 
 const dialogger = useConfirmDialog();
@@ -52,7 +52,6 @@ const SuspensRolePermissions = useSuspense(RolePermissions);
           label="Название"
           v-model="roleTitle"
           :required="true"
-          mask="Aa* a*"
           :error="v$.roleTitle.$errors[0]?.$message"
           @input="v$.roleTitle.$touch"
         />

@@ -4,20 +4,20 @@ import {
   DotsHorizontalIcon,
   PencilIcon,
   XIcon,
-  ArrowLeftIcon,
   CollectionIcon,
 } from '@heroicons/vue/outline';
-import {MenuButton} from '@headlessui/vue';
+import { MenuButton } from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
+import ButtonGroup from '@/UI/ButtonGroup.vue';
 import Badge from '@/UI/Badge.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import Link from '@/UI/Link.vue';
 import Select from '@/UI/Select.vue';
 import Input from '@/UI/Input.vue';
 import Label from '@/UI/Label.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
+import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
 
 const items = [
   {

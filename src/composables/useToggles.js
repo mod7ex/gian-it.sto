@@ -9,9 +9,7 @@ const bitwisedToggles = computed(() => Object.keys(toggles.value).reduce((obj, k
   return obj;
 }, {}));
 
-const truthyTogglesArray = computed(() => Object.keys(toggles.value).filter(
-  (key) => toggles.value[key],
-));
+const truthyTogglesArray = computed(() => Object.keys(toggles.value).filter((key) => toggles.value[key]));
 
 const setToggles = (v, bool, field) => {
   toggles.value = {}; // reset à 0

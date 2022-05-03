@@ -1,34 +1,28 @@
-import { ref, computed, readonly } from 'vue';
+import { ref, computed } from 'vue';
 import useApi from '~/composables/useApi.js';
-import useToast from '~/composables/useToast.js';
+import useOrder from '~/composables/useOrder.js';
+import { $employers } from '~/helpers/fetch.js';
 
-const { danger } = useToast();
 const { apiRequest } = useApi();
 
-const filter = readonly([
-  { criteria: 'id', label: 'По умолчанию' },
-  { criteria: 'surname', label: 'По фамилии' },
-  { criteria: 'department', label: 'По отделам' },
-]);
-
-const order = ref({
-  // show filter area
-  show: false,
-  // id, surname or department
-  criteria: 'id',
-  //  asc:1 or  desc:-1 the default always is desc:-1
-  mod: -1,
-});
-
 const users = ref([]);
-const selected = ref(false);
-const selectedUser = ref({});
-
 const usersCount = computed(() => users.value.length);
 
-const orderkey = computed(
-  () => `${order.value.criteria}-${order.value.mod === 1 ? 'asc' : 'desc'}`,
-);
+const selectedUser = ref({});
+const selected = computed(() => !!selectedUser.value?.id);
+
+const order = useOrder({
+  id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
+  department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
+  surname: {
+    label: 'По фамилии',
+    sort: (a, b) => {
+      if (a.surname > b.surname) return 1;
+      if (a.surname < b.surname) return -1;
+      return 0;
+    },
+  },
+}, 'id', (v) => { users.value.sort(v); });
 
 const directory = computed(
   () => [...new Set(users.value.map(({ surname }) => (surname ? surname[0].toUpperCase() : '_')))]
@@ -46,43 +40,8 @@ const directory = computed(
     }, {}),
 );
 
-const reOrder = (ctr = 'id') => {
-  order.value.mod = order.value.criteria === ctr ? -order.value.mod : -1;
-
-  order.value.criteria = ctr;
-
-  // sort by criteria
-  switch (ctr) {
-    case 'id':
-      users.value = users.value.sort(
-        (a, b) => (a.id - b.id) * order.value.mod,
-      );
-      break;
-
-    case 'surname':
-      users.value = users.value.sort((a, b) => {
-        if (a.surname > b.surname) return order.value.mod;
-        if (a.surname < b.surname) return -order.value.mod;
-        return 0;
-      });
-      break;
-
-    case 'department':
-      users.value = users.value.sort(
-        (a, b) => (a.department?.id - b.department?.id) * order.value.mod,
-      );
-      break;
-
-    default:
-      break;
-  }
-};
-
 const setSelectedUser = (user = null) => {
-  selectedUser.value = user
-    ? users.value.find(({ id }) => id === user.id) ?? {}
-    : {};
-  selected.value = !!user;
+  selectedUser.value = user ? users.value.find(({ id }) => id === user.id) ?? {} : {};
 };
 
 /* ************ Delete user ************ */
@@ -96,42 +55,26 @@ const dropUser = async (id) => {
 
   await call();
 
-  const wasEmployerDeleted = success.value;
+  success.value && deleteUser(id) && setSelectedUser();
 
-  wasEmployerDeleted && deleteUser(id) && setSelectedUser();
+  const deletionMsg = success.value ? 'Employer was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить пользователя');
 
-  const deletionMsg = wasEmployerDeleted ? 'Employer was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить пользователя');
-
-  return { message: deletionMsg, success: wasEmployerDeleted };
+  return { message: deletionMsg, success: success.value };
 };
 
 /* ************ Fetch employer ************ */
 const fetchEmployers = async (searchPayload = '') => {
-  const { call, data, errorMsg, success } = apiRequest('/users', {
-    params: {
-      order: order.value.criteria,
-      name: searchPayload,
-    },
-  });
+  users.value = await $employers({ order: order.criteria.value, name: searchPayload });
 
-  await call();
-
-  !success.value && danger(errorMsg.value ?? "Couldn't fetch employers !");
-
-  users.value = data.value?.users ?? [];
-
-  order.value.mod = -1; // return to desc(default) order mod
+  order.reset();
 };
 
 export default function employersService() {
   return {
+    order,
     users,
     deleteUser,
     directory,
-    reOrder,
-    orderkey,
-    filter,
-    order,
     usersCount,
     selected,
     selectedUser,

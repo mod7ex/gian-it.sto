@@ -55,12 +55,13 @@ if (props.position === 'center') {
     <div>
       <slot></slot>
     </div>
-    <transition enter-active-class="transition ease-out duration-100"
-                enter-from-class="transform opacity-0 scale-95"
-                enter-to-class="transform opacity-100 scale-100"
-                leave-active-class="transition ease-in duration-75"
-                leave-from-class="transform opacity-100 scale-100"
-                leave-to-class="transform opacity-0 scale-95"
+    <transition
+      enter-active-class="transition ease-out duration-100"
+      enter-from-class="transform opacity-0 scale-95"
+      enter-to-class="transform opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-75"
+      leave-from-class="transform opacity-100 scale-100"
+      leave-to-class="transform opacity-0 scale-95"
     >
       <MenuItems :class="menuStyles">
         <slot name="items" :items="items">
@@ -78,7 +79,7 @@ if (props.position === 'center') {
                 </button>
                 <router-link
                     v-else
-                    :to="item.href || '#'"
+                    :to="{name: item.name}"
                     :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'w-full text-left block px-4 py-2 text-sm']"
                 >
                   <span class="flex">

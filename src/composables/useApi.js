@@ -79,6 +79,6 @@ const apiRequest = (url, config = {}) => {
 
 export default function useApi() {
   return {
-    apiRequest,
+    apiRequest, axiosInstance: instance,
   };
 }

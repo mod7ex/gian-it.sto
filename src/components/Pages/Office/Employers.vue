@@ -1,34 +1,26 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import _ from 'lodash';
-import {
-  SearchIcon,
-  FilterIcon,
-  UserGroupIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-} from '@heroicons/vue/solid';
+import { SearchIcon, FilterIcon, UserGroupIcon } from '@heroicons/vue/solid';
 import { PlusCircleIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Input from '@/UI/Input.vue';
 import Button from '@/UI/Button.vue';
 import Spinner from '@/UI/Spinner.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
-import EmployerPreview from '@/Partials/EmployerPreview.vue';
-
+import EmployerPreview from '@/Partials/employers/EmployerPreview.vue';
 import employers from '~/services/employers.js';
 
 const {
-  directory,
-  reOrder,
-  orderkey,
-  filter,
   order,
+  directory,
   usersCount,
   selected,
   setSelectedUser,
   fetchEmployers,
 } = employers();
+
+const EmployersFilter = order.comp();
 
 /* ************ Search ************ */
 const search = ref('');
@@ -41,18 +33,14 @@ const headingMessage = computed(() => {
 
 const isFetchingEmployers = ref(false);
 
-watch(
-  // watching search
-  () => search.value,
-  _.debounce(async (v) => {
-    isFetchingEmployers.value = true;
-    await fetchEmployers(v);
-    isFetchingEmployers.value = false;
-  }, 1500),
-  {
-    immediate: true,
-  },
-);
+const loadEmployers = async (v) => {
+  isFetchingEmployers.value = true;
+  await fetchEmployers(v);
+  isFetchingEmployers.value = false;
+};
+
+watch(search, _.debounce(loadEmployers, 1500), { /* immediate: true <- we can't use immediate because of debounce it little slow */ });
+onMounted(async () => { await loadEmployers(''); });
 </script>
 
 <template>
@@ -73,12 +61,8 @@ watch(
     </template>
 
     <template #content>
-      <div
-        class="flex-1 relative z-0 flex md:overflow-hidden overflow-visible flex-col md:flex-row"
-      >
-        <div
-          class="order-2 md:order-first md:flex md:flex-col flex-shrink-0 w-96 border-r border-gray-200"
-        >
+      <div class="flex-1 relative z-0 flex md:overflow-hidden overflow-visible flex-col md:flex-row" >
+        <div class="order-2 md:order-first md:flex md:flex-col flex-shrink-0 w-96 border-r border-gray-200" >
           <div class="px-6 pt-6 pb-4">
             <h2 class="text-lg font-medium text-gray-900">Картотека</h2>
 
@@ -100,35 +84,20 @@ watch(
                 v-model="search"
               />
 
-              <Button type="secondary" @click="order.show = !order.show">
+              <Button type="secondary" @click="order.active.value = usersCount > 1 && !order.active.value">
                 <FilterIcon class="w-5 h-5 text-gray-400" />
               </Button>
             </div>
 
-            <Transition name="filter">
-              <div class="text-gray-600" v-if="order.show && usersCount > 1">
-                <div
-                  class="py-2 px-4 border cursor-pointer hover:bg-gray-50 flex justify-between items-center"
-                  v-for="(item, i) in filter"
-                  :key="i"
-                  @click="reOrder(item.criteria)"
-                >
-                  <span>{{ item.label }}</span>
-                  <component
-                    v-if="order.criteria === item.criteria"
-                    :is="order.mod === 1 ? ArrowUpIcon : ArrowDownIcon"
-                    class="w-4 h-4 text-gray-400"
-                  />
-                </div>
-              </div>
-            </Transition>
+            <employers-filter />
+
           </div>
 
           <StackedListWithHeadings
             class="flex-1 min-h-0 overflow-y-auto"
             :items="directory"
             @select="setSelectedUser"
-            :key="orderkey"
+            :key="order.key.value"
           />
         </div>
 
@@ -145,28 +114,3 @@ watch(
     </template>
   </OfficeLayout>
 </template>
-
-<style scoped>
-.filter-enter-active {
-  transition: all 1s ease;
-}
-
-.filter-leave-active,
-.filter-enter-active {
-  height: 7.85em;
-}
-
-.filter-enter-from {
-  height: 0;
-}
-
-.filter-leave-active,
-.filter-enter-from {
-  opacity: 0;
-  transition: all 1s ease;
-}
-
-.filter-leave-to {
-  height: 0;
-}
-</style>

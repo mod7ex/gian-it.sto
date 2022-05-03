@@ -50,7 +50,7 @@ await atMountedEmployerForm();
     <div class="flex-grow space-y-6">
       <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-4">
-          <Input label="Фамилия" v-model="userFields.middle_name" mask="Aa*"/>
+          <Input label="Фамилия" v-model="userFields.middle_name"/>
         </div>
 
         <div class="col-span-12 sm:col-span-4">
@@ -58,14 +58,13 @@ await atMountedEmployerForm();
             label="Имя"
             v-model="userFields.name"
             :required="true"
-            mask="Aa*"
             :error="v$.name.$errors[0]?.$message"
             @blured="v$.name.$touch"
           />
         </div>
 
         <div class="col-span-12 sm:col-span-4">
-          <Input label="Отчество" v-model="userFields.surname" mask="Aa*"/>
+          <Input label="Отчество" v-model="userFields.surname"/>
         </div>
 
         <div class="col-span-12 sm:col-span-6">

@@ -4,7 +4,7 @@ import {
   ViewBoardsIcon,
 } from '@heroicons/vue/outline';
 import { ref } from 'vue';
-import { useToast } from 'vue-toastification';
+// import { useToast } from 'vue-toastification';
 import Draggable from 'vuedraggable';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
@@ -14,7 +14,7 @@ import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import Header from '@/UI/Header.vue';
 
-const toast = useToast();
+// const toast = useToast();
 
 const columns = ref([
   {
@@ -81,22 +81,22 @@ const columns = ref([
     title: 'Завешено',
     color: 'green',
     orders: [],
-  }
+  },
 ]);
 
-const colors = [
-  'bg-gray-100',
-  'bg-red-100',
-  'bg-green-100',
-  'bg-blue-100',
-  'bg-purple-100',
-  'bg-yellow-100',
-  'bg-indigo-100',
-];
+// const colors = [
+//   'bg-gray-100',
+//   'bg-red-100',
+//   'bg-green-100',
+//   'bg-blue-100',
+//   'bg-purple-100',
+//   'bg-yellow-100',
+//   'bg-indigo-100',
+// ];
 
-const log = (evt) => {
-  toast.success('Сохранено');
-};
+// const log = (evt) => {
+//   toast.success('Сохранено');
+// };
 </script>
 
 <template>

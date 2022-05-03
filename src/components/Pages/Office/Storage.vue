@@ -13,15 +13,14 @@ import {
   PlusIcon,
   PencilIcon as PencilSolidIcon,
 } from '@heroicons/vue/solid';
-import {ref} from 'vue';
+import { ref } from 'vue';
+import { MenuButton } from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
-import Tabs from '@/UI/Tabs.vue';
-import {MenuButton} from '@headlessui/vue';
 import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Dropdown from '@/UI/Dropdown.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
+import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
 
 const files = [
   {

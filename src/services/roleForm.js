@@ -5,6 +5,7 @@ import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useToggles from '~/composables/useToggles.js';
+import { $rawPermissions, $role } from '~/helpers/fetch.js';
 
 const { toggles: permissions, setToggles, truthyTogglesArray } = useToggles();
 
@@ -57,26 +58,9 @@ const saveRole = async () => {
 
 /* ************ Role Raw Permissions ************ */
 const fetchRawRolePermissions = async () => {
-  const { call, data, errorMsg, success } = apiRequest('/permissions');
+  rawRolePermissions.value = await $rawPermissions();
 
-  await call();
-
-  if (!success.value) return toaster.danger(errorMsg.value ?? 'Не удалось получить разрешения');
-
-  rawRolePermissions.value = data.value?.permissions || [];
-  rawRolePermissions.value.sort(
-    (a, b) => b.permissions?.length - a.permissions?.length,
-  );
-};
-
-const fetchSubjectRole = async (id) => {
-  const { call, data, errorMsg, success } = apiRequest(`/roles/${id}`);
-
-  await call();
-
-  !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить роль');
-
-  return data.value.role || {};
+  rawRolePermissions.value.sort((a, b) => b.permissions?.length - a.permissions?.length);
 };
 
 const setRoleForm = async (payload) => {
@@ -86,9 +70,9 @@ const setRoleForm = async (payload) => {
 };
 
 const atMountedRoleForm = async () => {
-  const role = (isEditRolePage.value && routeInstance.params.id) && await fetchSubjectRole(routeInstance.params.id);
+  const role = (isEditRolePage.value && routeInstance.params.id) && await $role(routeInstance.params.id);
 
-  await setRoleForm(role || null);
+  await setRoleForm(role || {});
 
   await fetchRawRolePermissions();
 };
@@ -102,7 +86,6 @@ export default function roleFormService() {
     isEditRolePage,
     v$,
     saveRole,
-    fetchSubjectRole,
     setRoleForm,
     permissions,
     rawRolePermissions,

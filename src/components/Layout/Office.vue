@@ -10,6 +10,7 @@ import {
   CurrencyDollarIcon,
   CollectionIcon,
   MenuAlt1Icon,
+  CogIcon,
 } from '@heroicons/vue/outline';
 import { SearchIcon, SelectorIcon } from '@heroicons/vue/solid';
 import Avatar from '@/UI/Avatar.vue';
@@ -45,11 +46,11 @@ setTitle(props.title);
 
 const sidebarOpen = ref(false);
 const userMenu = [
-  [{ label: 'Профиль', href: '/profile' }],
+  [{ label: 'Профиль', name: 'Profile' }],
   [
     {
       label: 'Выход',
-      href: '/',
+      name: 'Login',
       click: () => {
         axiosInstance.post('auth/logout').catch((error) => {
           // Just out to console, because system need to be stable
@@ -64,39 +65,15 @@ const userMenu = [
   ],
 ];
 const menu = [
-  {
-    label: 'Главная',
-    href: '/dashboard',
-    name: 'Dashboard',
-    icon: PresentationChartLineIcon,
-    current: false,
-  },
-  { label: 'Заказ-наряды', href: '/orders', name: 'Orders', icon: ChipIcon, current: false },
-  { label: 'Задачи', href: '/tasks', name: 'Tasks', icon: TableIcon, current: false },
-  {
-    label: 'Рабочие процессы',
-    href: '/processes',
-    name: 'Processes',
-    icon: PuzzleIcon,
-    current: false,
-  },
-  { label: 'Склад', href: '/storages', name: 'Storages', icon: CollectionIcon, current: false },
-  { label: 'Клиенты', href: '/clients', name: 'Clients', icon: UserGroupIcon, current: false },
-  {
-    label: 'Сотрудники',
-    href: '/employers',
-    name: 'Employers',
-    icon: UserGroupIcon,
-    current: false,
-  },
-  {
-    label: 'Финансы',
-    href: '/finances',
-    name: 'Finances',
-    icon: CurrencyDollarIcon,
-    current: false,
-  },
-  // {label: 'Настройки', href: '/settings', icon: CogIcon, current: false},
+  { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon, current: false },
+  { label: 'Заказ-наряды', name: 'Orders', icon: ChipIcon, current: false },
+  { label: 'Задачи', name: 'Tasks', icon: TableIcon, current: false },
+  { label: 'Рабочие процессы', name: 'Processes', icon: PuzzleIcon, current: false },
+  { label: 'Склад', name: 'Storages', icon: CollectionIcon, current: false },
+  { label: 'Клиенты', name: 'Clients', icon: UserGroupIcon, current: false },
+  { label: 'Сотрудники', name: 'Employers', icon: UserGroupIcon, current: false },
+  { label: 'Финансы', name: 'Finances', icon: CurrencyDollarIcon, current: false },
+  { label: 'Настройки', name: 'Settings', icon: CogIcon, current: false },
 ].filter((menuItem) => isRouteAccessableForCurrentUser(menuItem.name));
 
 const departments = [
@@ -150,16 +127,9 @@ const userRoleTitle = computed(() => {
         <!-- Sidebar -->
         <div class="h-0 flex-1 flex flex-col overflow-y-auto">
           <Dropdown :items="userMenu" direction="justify" class="px-3 mt-4">
-            <MenuButton
-              class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500"
-            >
+            <MenuButton class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500" >
               <span class="flex w-full justify-between items-center">
-                <Avatar
-                  :image="user.avatar"
-                  :title="userFullName"
-                  :subtitle="userRoleTitle"
-                />
-
+                <Avatar :image="user.avatar" :title="userFullName" :subtitle="userRoleTitle" />
                 <SelectorIcon
                   class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500"
                   aria-hidden="true"

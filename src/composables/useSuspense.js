@@ -6,7 +6,8 @@ const wrapper = h('div', { class: 'col-span-12 sm:col-span-12 flex justify-cente
 
 const defaultFallback = (text) => h(
   wrapper,
-  [h(Spinner, { h: 4, w: 4 }, [h('span', text)])],
+  {},
+  [h(Spinner, { h: 4, w: 4 }, { default: () => h('span', text) })],
 );
 
 const errorFallback = (text) => h(

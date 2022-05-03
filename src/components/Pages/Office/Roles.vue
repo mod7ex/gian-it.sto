@@ -4,7 +4,7 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense.js';
 
-import RolesTable from '~/components/Partials/RolesTable.vue';
+import RolesTable from '~/components/Partials/roles/RolesTable.vue';
 
 const SuspensRolesTable = useSuspense(RolesTable);
 </script>

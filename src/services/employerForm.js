@@ -6,6 +6,7 @@ import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useAvatar from '~/composables/useAvatar.js';
 import useToggles from '~/composables/useToggles.js';
+import { $roles, $departments, $employer } from '~/helpers/fetch.js';
 
 let routeInstance;
 let isEditEmployerPage;
@@ -31,41 +32,21 @@ const defaultUserFields = {
   department_id: '',
 };
 
-const roles = ref([]);
-const departments = ref([]);
-
 const userFields = reactive(defaultUserFields);
 
-/* ************ Fetch Departments & Roles ************ */
-const departmentOptions = computed(() => departments.value.map((department) => ({
+/* ************ Departments & Roles ************ */
+const rawRoles = ref([]);
+const rawDepartments = ref([]);
+
+const departmentOptions = computed(() => rawDepartments.value.map((department) => ({
   value: department.id,
   label: department.name,
 })));
 
-const roleOptions = computed(() => roles.value.map((role) => ({
+const roleOptions = computed(() => rawRoles.value.map((role) => ({
   value: role.id,
   label: role.title,
 })));
-
-const fetchDepartments = async () => {
-  const { call, data, errorMsg, success } = apiRequest('/departments');
-
-  await call();
-
-  departments.value = data.value?.departments || [];
-
-  !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить отделы');
-};
-
-const fetchRoles = async () => {
-  const { call, data, errorMsg, success } = apiRequest('/roles');
-
-  await call();
-
-  roles.value = data.value?.roles || [];
-
-  !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить роли');
-};
 
 /* ************ User form ************ */
 const updatePassword = async (id) => {
@@ -77,8 +58,8 @@ const updatePassword = async (id) => {
   await call();
 
   if (success.value) {
-    userFields.password = null;
-    userFields.password_confirmation = null;
+    userFields.password = null; // empty form
+    userFields.password_confirmation = null; // empty form
     toaster.success('пароль успешно обновлен');
   } else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось обновить пароль');
 
@@ -110,29 +91,30 @@ const saveRawUserFields = async () => {
 const saveUser = async () => {
   let isValideForm = await v$.value.$validate();
 
-  isValideForm = isValideAvatarFileSize.value && isValideForm;
+  // isValideForm = isValideForm && isValideAvatarFileSize.value ;
+  isValideForm &&= isValideAvatarFileSize.value;
 
   if (!isValideForm) return;
 
   v$.value.$reset();
 
-  let successResponce;
+  let success;
 
   // ********* Form request
   const userId = await saveRawUserFields();
-  successResponce = !!userId;
+  success = !!userId;
 
-  if (!successResponce) return;
+  if (!success) return;
 
   // ********* Avatar request
-  successResponce = await updateAvatar(`/users/${userId}/avatar`);
+  success = await updateAvatar(`/users/${userId}/avatar`);
 
   // ********* Password update request
-  if (isEditEmployerPage.value && userFields.password) { successResponce = await updatePassword(userId); }
+  if (isEditEmployerPage.value && userFields.password) { success = await updatePassword(userId); }
 
   await redirect({ name: 'EditEmployer', params: { id: userId } });
 
-  return successResponce;
+  return success;
 };
 
 const setEmployerForm = async (payload) => {
@@ -164,23 +146,13 @@ const setEmployerForm = async (payload) => {
   userFields.born_at = `${y}-${m}-${d}`;
 };
 
-const fetchSubjectUser = async (id) => {
-  const { call, data, errorMsg, success } = apiRequest(`/users/${id}`);
-
-  await call();
-
-  !success.value && toaster.success(errorMsg.value ?? 'Не удалось получить пользователя');
-
-  return data.value.user;
-};
-
 const atMountedEmployerForm = async () => {
-  const employer = (isEditEmployerPage.value && routeInstance.params.id) && await fetchSubjectUser(routeInstance.params.id);
+  const employer = (isEditEmployerPage.value && routeInstance.params.id) && await $employer(routeInstance.params.id);
 
   await setEmployerForm(employer || {});
 
-  await fetchDepartments();
-  await fetchRoles();
+  rawDepartments.value = await $departments();
+  rawRoles.value = await $roles();
 };
 
 export default function employerFormService() {
@@ -193,13 +165,10 @@ export default function employerFormService() {
   v$ = useVuelidate(rules, userFields, { $lazy: true });
 
   return {
-    roles,
-    fetchSubjectUser,
-    departments,
+    roles: rawRoles,
+    departments: rawDepartments,
     departmentOptions,
     roleOptions,
-    fetchDepartments,
-    fetchRoles,
     isValideAvatarFileSize,
     log,
     avatar,

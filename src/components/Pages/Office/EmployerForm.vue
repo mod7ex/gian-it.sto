@@ -3,7 +3,7 @@ import { CheckIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import employerForm from '~/services/employerForm.js';
-import EmployerFormFields from '~/components/Partials/EmployerFormFields.vue';
+import EmployerFormFields from '~/components/Partials/employers/EmployerFormFields.vue';
 
 import useSuspense from '~/composables/useSuspense.js';
 

@@ -66,3 +66,23 @@ export const $roles = async (toast = true) => {
 
   return data.value?.roles ?? [];
 };
+
+export const $cities = async (toast = true) => {
+  const { call, data, errorMsg, success } = apiRequest('/cities');
+
+  await call();
+
+  toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить города');
+
+  return data.value?.cities ?? [];
+};
+
+export const $department = async (id, toast = true) => {
+  const { call, data, errorMsg, success } = apiRequest(`/departments/${id}`);
+
+  await call();
+
+  toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить отделение');
+
+  return data.value?.department ?? {};
+};

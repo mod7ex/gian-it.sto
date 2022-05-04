@@ -10,6 +10,7 @@ const routesPermissionsMap = {
   Employers: ['read users', 'crud users'],
   Clients: ['read clients', 'crud clients'],
   Pipelines: 'crud pipelines',
+  Departments: 'crud departments',
 };
 
 export function userHasPermission(permissionName) {

@@ -51,7 +51,7 @@ const saveRole = async () => {
 
   if (!success.value) return toaster.danger(errorMsg.value ?? 'Something went wrong!');
 
-  await redirect({ name: 'EditRole', params: { id: data.value?.role?.id } });
+  !isEditRolePage.value && await redirect({ name: 'EditRole', params: { id: data.value?.role?.id } });
 
   return toaster.success('Role saved.');
 };

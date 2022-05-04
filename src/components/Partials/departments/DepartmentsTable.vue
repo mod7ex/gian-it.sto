@@ -9,14 +9,14 @@ import Dropdown from "@/UI/Dropdown.vue";
 import Link from "@/UI/Link.vue";
 import { Table, THead, TBody, Tr, Td, Th } from "@/UI/Table";
 import useConfirmDialog from "~/composables/useConfirmDialog.js";
-import rolesService from "~/services/roles/roles.js";
+import departmentsService from "~/services/departments/departments.js";
 
-let { roles, fetchRoles, movetoEditRolePage, dropRole } = rolesService();
+let { fetchDepartments, movetoEditDepartmentPage, dropDepartment, departments } = departmentsService();
 
 const dialogger = useConfirmDialog();
 
-/* ************ Fetch roles ************ */
-await fetchRoles();
+/* ************ Fetch departments ************ */
+await fetchDepartments();
 
 </script>
 
@@ -25,28 +25,32 @@ await fetchRoles();
   <Table class="mt-5">
 
     <THead>
-      <Tr> <Th>Название</Th> <Th>Дата создания</Th> <Th class="text-center">Действия</Th> </Tr>
+      <Tr>
+        <Th>Название</Th>
+        <Th>Город</Th>
+        <Th>Дата создания</Th>
+        <Th class="text-center">Действия</Th>
+      </Tr>
     </THead>
 
     <TBody>
-      <Tr v-for="(item, index) in roles" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'" >
+      <Tr v-for="(item, index) in departments" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'" >
 
         <Td><Link :href="`/roles/update/${item.id}`">{{ item.name }}</Link></Td>
+        <Td><Badge :point="true" color="blue">{{ item.city }}</Badge></Td>
         <Td>{{ item.created_at }}</Td>
         <Td class="text-center py-5">
-
           <Dropdown
             direction="right"
             position="center"
             :items="[
                       [
-                        { label: 'Изменить', click: () => movetoEditRolePage(item.id), icon: PencilIcon },
-                        { label: 'Удалить', click: () => dialogger.drop(() => dropRole(item.id), 'продолжить удаление!', 'Удалить ?'), icon: XIcon },
+                        { label: 'Изменить', click: () => movetoEditDepartmentPage(item.id), icon: PencilIcon },
+                        { label: 'Удалить', click: () => dialogger.drop(() => dropDepartment(item.id), 'продолжить удаление!', 'Удалить ?'), icon: XIcon },
                       ],
                     ]"
 
           >
-
             <MenuButton>
               <Button type="secondary" :circle="true">
                 <DotsHorizontalIcon class="w-4 h-4" />

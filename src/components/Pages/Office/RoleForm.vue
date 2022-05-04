@@ -4,11 +4,11 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import rolesService from '~/services/roles/roles.js';
-import roleForm from '~/services/roles/roleForm.js';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import RolePermissions from '~/components/Partials/roles/RolePermissions.vue';
 import useSuspense from '~/composables/useSuspense.js';
+import roleForm from '~/services/roles/roleForm.js';
 
 const dialogger = useConfirmDialog();
 
@@ -26,14 +26,12 @@ const SuspensRolePermissions = useSuspense(RolePermissions);
 <template>
   <OfficeLayout title="Создание новой роли">
     <template #actions>
-      <Button type="secondary" link="/roles">
-        <ArrowLeftIcon class="w-5 h-5 mr-1" />
-        Вернуться
+      <Button type="secondary" :link="{name: 'Roles'}">
+        <ArrowLeftIcon class="w-5 h-5 mr-1" />Вернуться
       </Button>
 
       <Button color="green" @click="saveRole">
-        <CheckIcon class="w-5 h-5 mr-1" />
-        Сохранить
+        <CheckIcon class="w-5 h-5 mr-1" />Сохранить
       </Button>
 
       <Button
@@ -41,8 +39,7 @@ const SuspensRolePermissions = useSuspense(RolePermissions);
         @click="() => dialogger.drop(() => dropRole(route.params.id), 'продолжить удаление!', 'Удалить ?')"
         v-if="isEditRolePage"
       >
-        <XIcon class="w-5 h-5 mr-1" />
-        Удалить
+        <XIcon class="w-5 h-5 mr-1" />Удалить
       </Button>
     </template>
 

@@ -11,6 +11,7 @@ import {
   CollectionIcon,
   MenuAlt1Icon,
   CogIcon,
+  OfficeBuildingIcon,
 } from '@heroicons/vue/outline';
 import { SearchIcon, SelectorIcon } from '@heroicons/vue/solid';
 import Avatar from '@/UI/Avatar.vue';
@@ -74,6 +75,7 @@ const menu = [
   { label: 'Сотрудники', name: 'Employers', icon: UserGroupIcon, current: false },
   { label: 'Финансы', name: 'Finances', icon: CurrencyDollarIcon, current: false },
   { label: 'Настройки', name: 'Settings', icon: CogIcon, current: false },
+  { label: 'Отделы', name: 'Departments', icon: OfficeBuildingIcon, current: false },
 ].filter((menuItem) => isRouteAccessableForCurrentUser(menuItem.name));
 
 const departments = [

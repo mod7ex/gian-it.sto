@@ -4,14 +4,11 @@ import Toast from '@/UI/Toast.vue';
 
 let ToastsApp;
 
-const toastsList = ref(new Map()); // there might be some issues using array we can implement it using Set
+const toastsList = ref(new Map()); // Map works well with frequent deletion and adding
 
 const isEmptyToastsList = computed(() => toastsList.value.size === 0);
 
-const closeToast = (toastKey) => {
-  const i = toastsList.value.findIndex(({ key }) => key === toastKey);
-  (i !== -1) && toastsList.value.splice(i, 1);
-};
+const closeToast = (toastKey) => { toastsList.value.delete(toastKey); };
 
 const ToastsComponent = defineComponent({
   setup() {

@@ -7,14 +7,14 @@ const { apiRequest } = useApi();
 
 const form = reactive({});
 const { rules } = refreshPasswordValidationsRules(form);
-const v$ = useVuelidate(rules, form);
+const v$ = useVuelidate(rules, form, { $lazy: true });
 
 const isModalUp = ref(false);
 const setModalVisibility = (bool) => {
   isModalUp.value = bool ?? !isModalUp.value;
-  form.password = '';
-  form.confirmPassword = '';
   v$.value.$reset();
+  form.password = null;
+  form.confirmPassword = null;
 };
 
 const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest('profile/password', {
@@ -35,8 +35,8 @@ const changeProfilePassword = async () => {
 
   if (!success.value) return;
 
-  form.password = '';
-  form.confirmPassword = '';
+  form.password = null;
+  form.confirmPassword = null;
 };
 
 export default function profileChangePasswordHandler() {

@@ -13,4 +13,11 @@ export const pingLoader = () => {
   }, import.meta.env.STO_NAVIGATION_LOADER_DURATION);
 };
 
-// STO_NAVIGATION_LOADER_DURATION is like the duration that app takes to laod next route
+/*
+
+STO_NAVIGATION_LOADER_DURATION is like the duration that app takes to laod next route
+we have chosen a constant for STO_NAVIGATION_LOADER_DURATION,
+
+we could have started the loader before entring the route and then close it later when we're in the route
+
+*/

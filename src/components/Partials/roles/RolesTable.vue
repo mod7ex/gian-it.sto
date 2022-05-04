@@ -9,7 +9,7 @@ import Dropdown from "@/UI/Dropdown.vue";
 import Link from "@/UI/Link.vue";
 import { Table, THead, TBody, Tr, Td, Th } from "@/UI/Table";
 import useConfirmDialog from "~/composables/useConfirmDialog.js";
-import rolesService from "~/services/roles.js";
+import rolesService from "~/services/roles/roles.js";
 
 let { roles, fetchRoles, movetoEditRolePage, dropRole } = rolesService();
 
@@ -17,6 +17,8 @@ const dialogger = useConfirmDialog();
 
 /* ************ Fetch roles ************ */
 await fetchRoles();
+
+
 </script>
 
 <template>
@@ -45,22 +47,15 @@ await fetchRoles();
         </Td>
         <Td class="text-center py-5">
           <Dropdown
-            :items="[
-              [
-                {
-                  label: 'Изменить',
-                  click: () => movetoEditRolePage(item.id),
-                  icon: PencilIcon,
-                },
-                {
-                  label: 'Удалить',
-                  click: () => dialogger.drop(() => dropRole(item.id), 'продолжить удаление!', 'Удалить ?'),
-                  icon: XIcon,
-                },
-              ],
-            ]"
             direction="right"
             position="center"
+            :items="[
+                      [
+                        { label: 'Изменить', click: () => movetoEditRolePage(item.id), icon: PencilIcon },
+                        { label: 'Удалить', click: () => dialogger.drop(() => dropRole(item.id), 'продолжить удаление!', 'Удалить ?'), icon: XIcon },
+                      ],
+                    ]"
+
           >
             <MenuButton>
               <Button type="secondary" :circle="true">

@@ -13,7 +13,7 @@ import Toggle from "@/UI/Toggle.vue";
 import Select from "@/UI/Select.vue";
 import List from "@/UI/List.vue";
 import { onMounted } from "@vue/runtime-core";
-import employerForm from "~/services/employerForm.js";
+import employerForm from "~/services/employers/employerForm.js";
 import useAppRouter from "~/composables/useAppRouter.js";
 
 const { router, route } = useAppRouter();

@@ -9,7 +9,7 @@ import Button from '@/UI/Button.vue';
 import Spinner from '@/UI/Spinner.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import EmployerPreview from '@/Partials/employers/EmployerPreview.vue';
-import employers from '~/services/employers.js';
+import employers from '~/services/employers/employers.js';
 
 const {
   order,

@@ -9,7 +9,7 @@ import Toggle from '@/UI/Toggle.vue';
 import List from '@/UI/List.vue';
 
 import ProfilePasswordModal from '@/Partials/ProfileChangePasswordModal.vue';
-import profileChangePasswordHandler from '~/services/profileChangePassword.js';
+import profileChangePasswordHandler from '~/services/auth/profileChangePassword.js';
 import officeProfile from '~/services/officeProfile.js';
 
 const { setModalVisibility } = profileChangePasswordHandler();

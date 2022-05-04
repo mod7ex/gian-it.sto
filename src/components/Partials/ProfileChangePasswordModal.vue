@@ -3,9 +3,9 @@ import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import DialogModal from '@/UI/DialogModal.vue';
 import Spinner from '@/UI/Spinner.vue';
-import handler from '~/services/profileChangePassword.js';
+import changePasswordModalHandler from '~/services/auth/profileChangePassword.js';
 
-const { v$, changeProfilePassword, data, loading, errorMsg, success, ready, isModalUp, form } = handler();
+const { v$, changeProfilePassword, data, loading, errorMsg, success, ready, isModalUp, form } = changePasswordModalHandler();
 
 defineEmits(['close']);
 
@@ -19,10 +19,10 @@ defineEmits(['close']);
       <p v-if="ready && !success" class="text-red-500 text-sm text-center mb-6"> {{ errorMsg ?? 'Undefined (network?) error' }} </p>
 
       <form class="space-y-6">
-        <Input label="Новый пароль" type="password" v-model="form.password" @blured="v$.password.$touch" :error="(v$.password.$error) ? v$.password.$silentErrors[0].$message : ''" />
+        <Input label="Новый пароль" type="password" v-model="form.password" @input="v$.password.$touch" :error="(v$.password.$error) ? v$.password.$silentErrors[0].$message : ''" />
 
         <div class="space-y-1">
-         <Input label="Повторите пароль" type="password" v-model="form.confirmPassword" @blured="v$.confirmPassword.$touch" :error="(v$.confirmPassword.$error) ? v$.confirmPassword.$silentErrors[0].$message : ''" />
+         <Input label="Повторите пароль" type="password" v-model="form.confirmPassword" @input="v$.confirmPassword.$touch" :error="(v$.confirmPassword.$error) ? v$.confirmPassword.$silentErrors[0].$message : ''" />
         </div>
 
         <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">

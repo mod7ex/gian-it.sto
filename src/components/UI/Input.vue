@@ -1,11 +1,11 @@
 <script setup>
-import { ExclamationCircleIcon } from "@heroicons/vue/solid";
+import { ExclamationCircleIcon } from '@heroicons/vue/solid';
 
 const props = defineProps({
   label: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   mask: {
     type: String,
@@ -14,32 +14,32 @@ const props = defineProps({
   placeholder: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   type: {
     type: String,
     required: false,
-    default: "text",
+    default: 'text',
   },
   help: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   error: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   meta: {
     type: String,
     required: false,
-    default: "",
+    default: '',
   },
   view: {
     type: String,
     required: false,
-    default: "default", // default, inset, over
+    default: 'default', // default, inset, over
   },
   classMap: {
     type: Array,
@@ -60,40 +60,34 @@ const props = defineProps({
 });
 
 const styles = props.classMap.concat([
-  "shadow-sm block w-full sm:text-sm rounded-md",
+  'shadow-sm block w-full sm:text-sm rounded-md',
 ]);
 
-if (props.type === "color") {
-  styles.push("h-9 p-1");
+if (props.type === 'color') {
+  styles.push('h-9 p-1');
 }
 
 if (props.disabled) {
-  styles.push("bg-gray-200");
+  styles.push('bg-gray-200');
 }
 
 if (props.error.length > 0) {
   styles.push(
-    "pr-10 border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500"
+    'pr-10 border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500',
   );
 } else {
-  styles.push("focus:ring-blue-500 focus:border-blue-500 border-gray-300");
+  styles.push('focus:ring-blue-500 focus:border-blue-500 border-gray-300');
 }
 
 if (props.icon) {
-  styles.push("pl-10");
+  styles.push('pl-10');
 }
 </script>
 
 <template>
   <div>
-    <div
-      class="flex justify-between mb-1"
-      v-if="props.label.length || props.meta.length"
-    >
-      <label
-        class="block text-sm font-medium text-gray-700"
-        v-if="props.label.length > 0"
-      >
+    <div class="flex justify-between mb-1" v-if="props.label.length || props.meta.length" >
+      <label class="block text-sm font-medium text-gray-700" v-if="props.label.length > 0" >
         {{ props.label }}
       </label>
 
@@ -104,16 +98,8 @@ if (props.icon) {
 
     <div class="relative rounded-md shadow-sm">
       <slot name="before">
-        <div
-          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-          aria-hidden="true"
-          v-if="props.icon"
-        >
-          <component
-            :is="props.icon"
-            class="mr-3 h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          />
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true" v-if="props.icon" >
+          <component :is="props.icon" class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
         </div>
       </slot>
 
@@ -129,14 +115,8 @@ if (props.icon) {
       />
 
       <slot name="after">
-        <div
-          class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
-          v-if="props.error.length > 0"
-        >
-          <ExclamationCircleIcon
-            class="h-5 w-5 text-red-500"
-            aria-hidden="true"
-          />
+        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" v-if="props.error.length > 0" >
+          <ExclamationCircleIcon class="h-5 w-5 text-red-500" aria-hidden="true" />
         </div>
       </slot>
     </div>

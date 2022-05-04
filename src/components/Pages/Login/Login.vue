@@ -4,7 +4,7 @@ import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import Link from '@/UI/Link.vue';
 import LoginLayout from '@/Layout/Login.vue';
-import loginHandler from '~/services/login.js';
+import loginHandler from '~/services/auth/login.js';
 
 const { loginUser, v$, loading, success, errorMsg } = loginHandler();
 

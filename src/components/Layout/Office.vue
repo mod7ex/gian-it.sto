@@ -85,7 +85,7 @@ const departments = [
 const userFullName = computed(() => {
   const userData = user.value;
 
-  if (userData.id) return `${userData.name} ${userData.surname}`;
+  if (userData?.id) return `${userData.name} ${userData.surname}`;
 
   return 'Гость';
 });
@@ -93,7 +93,7 @@ const userFullName = computed(() => {
 const userRoleTitle = computed(() => {
   const userData = user.value;
 
-  if (userData.roles[0]) return `${userData.roles[0].title}`;
+  if (userData?.roles[0]) return `${userData.roles[0].title}`;
 
   return 'Гость';
 });
@@ -109,7 +109,7 @@ const userRoleTitle = computed(() => {
 
       <!-- Mobile Nav -->
       <div class="mt-5 flex-1 h-0 overflow-y-auto">
-        <NavBar :items="menu" class="px-2" />
+        <NavBar :items="menu" />
         <SecondNavbar :items="departments" title="Отделы" class="mt-8" />
       </div>
     </Sidebar>

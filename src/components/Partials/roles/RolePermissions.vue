@@ -1,7 +1,7 @@
 <script setup>
 import Toggle from "@/UI/Toggle.vue";
 import { onMounted } from "@vue/runtime-core";
-import roleForm from "~/services/roleForm.js";
+import roleForm from "~/services/roles/roleForm.js";
 import useAppRouter from "~/composables/useAppRouter.js";
 
 const { router, route } = useAppRouter();
@@ -17,12 +17,7 @@ await atMountedRoleForm();
     <div v-for="(field, i) in rawRolePermissions" :key="i" class="my-6">
       <div class="mb-3">{{ field.title }}</div>
       <div class="grid auto-rows-max grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pl-16" >
-        <Toggle
-          v-for="perm in field.permissions"
-          :key="perm.id"
-          :label="perm.title"
-          v-model="permissions[perm.id]"
-        />
+        <Toggle v-for="perm in field.permissions" :key="perm.id" :label="perm.title" v-model="permissions[perm.id]" />
       </div>
     </div>
   </div>

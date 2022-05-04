@@ -69,7 +69,7 @@ const isBusy = ref(false);
 const save = async () => {
   let isValideForm = await v$.value.$validate();
 
-  isValideForm = isValideAvatarFileSize.value && isValideForm;
+  isValideForm &&= isValideAvatarFileSize.value;
 
   if (!isValideForm) return;
 

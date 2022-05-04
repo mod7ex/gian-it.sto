@@ -6,7 +6,7 @@ import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import Link from '@/UI/Link.vue';
 import LoginLayout from '@/Layout/Login.vue';
-import useRefreshPassword from '~/services/refreshPassword.js';
+import useRefreshPassword from '~/services/auth/refreshPassword.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 
 const { router } = useAppRouter();

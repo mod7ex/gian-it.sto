@@ -13,7 +13,7 @@ import {
 
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
-import employers from '~/services/employers.js';
+import employers from '~/services/employers/employers.js';
 
 const dialogger = useConfirmDialog();
 

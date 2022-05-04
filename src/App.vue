@@ -34,4 +34,17 @@ import Loader from '~/components/Partials/Loader.vue';
 .filter-leave-to {
   height: 0;
 }
+
+/* ************ scroll-area ************ */
+.scroll-area::-webkit-scrollbar {
+  width: .5em;
+}
+
+.scroll-area::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+}
 </style>

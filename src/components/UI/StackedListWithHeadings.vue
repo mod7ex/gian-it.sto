@@ -8,7 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <nav class="h-full overflow-y-auto" aria-label="Directory">
+  <nav class="h-full overflow-y-auto scroll-area" aria-label="Directory">
     <div v-for="letter in Object.keys(props.items)" :key="letter" class="relative">
       <div class="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
         <h3>{{ letter }}</h3>
@@ -40,5 +40,3 @@ const props = defineProps({
     </div>
   </nav>
 </template>
-
-

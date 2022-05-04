@@ -1,16 +1,12 @@
 <script setup>
-import {ref} from 'vue';
+import { ref } from 'vue';
 import _ from 'lodash';
+import { PlusCircleIcon, CogIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
-import Input from '@/UI/Input.vue';
-import Link from '@/UI/Link.vue';
 import Button from '@/UI/Button.vue';
-import Badge from '@/UI/Badge.vue';
-import Avatar from '@/UI/Avatar.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
-import {SearchIcon, FilterIcon, PhoneIcon, UserGroupIcon,} from '@heroicons/vue/solid';
-import {PlusCircleIcon, CogIcon} from '@heroicons/vue/outline';
-import {DescriptionList, DescriptionListItems, DescriptionListItem} from '../../UI/DescriptionList';
+import ClientPreview from '@/Partials/clients/Preview.vue';
+import UClients from '@/Layout/users/Users.vue';
 
 const selected = ref(false);
 const directory = ref({
@@ -235,107 +231,19 @@ const search = ref('');
       </template>
 
       <template #content>
-        <div class="flex-1 relative z-0 flex md:overflow-hidden overflow-visible flex-col md:flex-row">
-          <div class="order-2 md:order-first md:flex md:flex-col flex-shrink-0 w-96 border-r border-gray-200">
-            <div class="px-6 pt-6 pb-4">
-              <h2 class="text-lg font-medium text-gray-900">Картотека</h2>
+        <u-clients selectText="Выберите клиента" v-model="search" :selected="selected">
 
-              <p class="mt-1 text-sm text-gray-600">
-                Искать среди 1008 клиентов
-              </p>
+          <template #filter> </template>
 
-              <div class="mt-6 flex space-x-4">
-                <Input placeholder="Поиск" class="flex-grow" :icon="SearchIcon" v-model="search" />
-
-                <Button type="secondary">
-                  <FilterIcon class="w-5 h-5 text-gray-400" />
-                </Button>
-              </div>
-            </div>
-
+          <template #list>
             <StackedListWithHeadings class="flex-1 min-h-0 overflow-y-auto" :items="directory" @select="selected = true" />
-          </div>
+          </template>
 
-          <div class="flex flex-col items-center justify-center w-full" v-if="!selected">
-            <UserGroupIcon class="h-12 w-12 mx-auto text-gray-600" />
+          <template #preview>
+            <client-preview />
+          </template>
 
-            <span class="mt-2 block text-sm font-medium text-gray-900">
-              Выберите клиента
-            </span>
-          </div>
-
-
-          <div class="flex-1 relative z-0 overflow-y-auto focus:outline-none xl:order-last" v-if="selected">
-            <article>
-              <!-- Profile header -->
-              <div class="border-b border-gray-200 flex justify-between px-4 sm:px-6 py-3 lg:items-center items-baseline lg:flex-row flex-col gap-2">
-                <h1 class="text-2xl font-bold text-gray-900 truncate">
-                  Абдулович Василий
-                </h1>
-
-                <Button type="secondary" size="sm">
-                  <PhoneIcon class="mr-2 h-5 w-5 text-gray-400" />
-                  Позвонить
-                </Button>
-              </div>
-
-              <!-- Description list -->
-              <DescriptionList :bordered="false" class="mt-5" type="columns">
-                <DescriptionListItems type="columns">
-                  <DescriptionListItem label="Телефон" value="+7 900 999-99-99" type="columns" />
-                  <DescriptionListItem label="Почта" value="email@example.com" type="columns" />
-                  <DescriptionListItem label="Город" value="Ростов-на-Дону" type="columns" />
-                  <DescriptionListItem label="Паспорт" value="1234 123456" type="columns" />
-                  <DescriptionListItem label="Заказов на" value="146 000 ₽" type="columns" />
-                  <DescriptionListItem label="Дата рождения" value="11.06.1989" type="columns" />
-                  <DescriptionListItem label="О клиенте" type="columns" columns="2" value="Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsum aliquip consequat sint. Sit id mollit nulla mollit nostrud in ea officia proident. Irure nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu." />
-                  <DescriptionListItem label="Заказ-наряды" type="columns" columns="2">
-                    <div class="grid grid-cols-12 mt-1 gap-2">
-                      <div class="sm:col-span-6 col-span-12 shadow border px-4 py-2 rounded">
-                        <div class="flex justify-between items-center">
-                          <div class="text-sm mb-2 font-bold">
-                            <Link>
-                              Заказ наряд #0001
-                            </Link>
-                          </div>
-
-                          <Badge color="green">
-                            Завершён
-                          </Badge>
-                        </div>
-                        <Avatar
-                          class="mb-1"
-                          image="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          title="Тим Кук"
-                          subtitle="Ответственный"
-                        />
-                      </div>
-                      <div class="sm:col-span-6 col-span-12 shadow border px-4 py-2 rounded">
-                        <div class="flex justify-between items-center">
-                          <div class="text-sm mb-2 font-bold">
-                            <Link>
-                              Заказ наряд #0002
-                            </Link>
-                          </div>
-
-                          <Badge color="yellow">
-                            В работе
-                          </Badge>
-                        </div>
-                        <Avatar
-                          class="mb-1"
-                          image="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          title="Тим Кук"
-                          subtitle="Ответственный"
-                        />
-                      </div>
-                    </div>
-                  </DescriptionListItem>
-                </DescriptionListItems>
-              </DescriptionList>
-            </article>
-          </div>
-        </div>
+        </u-clients>
       </template>
     </OfficeLayout>
 </template>

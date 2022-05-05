@@ -3,6 +3,10 @@ import useApi from '~/composables/useApi.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import { $departments } from '~/helpers/fetch.js';
 
+import { userHasPermission } from '~/lib/permissions.js';
+
+const hasCRUD = userHasPermission('crud departments');
+
 let redirect;
 let isEditDepartmentPage;
 
@@ -10,13 +14,15 @@ const { apiRequest } = useApi();
 
 const rawDepartments = ref([]);
 
-const departments = computed(() => rawDepartments.value.map(({ id,
-  name,
-  city,
-  // eslint-disable-next-line camelcase
-  created_at }) => ({ id, name, city, created_at })));
+// eslint-disable-next-line camelcase
+const departments = computed(() => rawDepartments.value.map(({ id, name, city, created_at }) => ({ id, name, city, created_at })));
 
-const fetchDepartments = async () => { rawDepartments.value = await $departments(); };
+const departmentsLinks = computed(() => rawDepartments.value.map(({ id, name }) => ({ href: { name: 'Employers', query: { department_id: id, name } }, label: name })));
+
+const fetchDepartments = async () => {
+  if (!hasCRUD) return;
+  rawDepartments.value = await $departments();
+};
 
 /* ************ Delete department ************ */
 const deleteDepartment = (id) => {
@@ -57,5 +63,7 @@ export default function departmentsService() {
     movetoEditDepartmentPage,
     dropDepartment,
     departments,
+    departmentsLinks,
+    hasCRUDdepartments: hasCRUD
   };
 }

@@ -8,7 +8,10 @@ import Button from '@/UI/Button.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import EmployerPreview from '@/Partials/employers/Preview.vue';
 import employers from '~/services/employers/employers.js';
+import useAppRouter from '~/composables/useAppRouter.js';
 import UEmployers from '@/Layout/users/Users.vue';
+
+const { query } = useAppRouter();
 
 const {
   order,
@@ -21,29 +24,34 @@ const {
 
 const EmployersFilter = order.comp();
 
-/* ************ Search ************ */
-const search = ref('');
-
 const headingMessage = computed(() => {
   if (usersCount.value > 1) return `Искать среди ${usersCount.value} сотрудников`;
   if (usersCount.value === 1) return 'Oдин пользователь!';
   return 'нет пользователей!';
 });
 
+const search = ref('');
+
 const loading = ref(false);
 
-const loadEmployers = async (v) => {
+const loadEmployers = async () => {
   loading.value = true;
-  await fetchEmployers(v);
+  await fetchEmployers(search.value, query.value?.department_id);
   loading.value = false;
 };
 
 watch(search, _.debounce(loadEmployers, 1500), { /* immediate: true <- we can't use immediate because of debounce it little slow */ });
-onMounted(async () => { await loadEmployers(''); });
+
+watch(() => query.value?.department_id, async () => {
+  setSelectedUser();
+  await loadEmployers();
+});
+
+onMounted(async () => { await loadEmployers(); });
 </script>
 
 <template>
-  <OfficeLayout title="Сотрудники" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
+  <OfficeLayout :title="'Сотрудники' + (query.name ? `${' в отделе ' + query.name}` : '')" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
     <template #actions>
       <Button type="secondary" link="/roles">
         <UserGroupIcon class="w-5 h-5 mr-1" />

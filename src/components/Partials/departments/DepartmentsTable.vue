@@ -36,7 +36,7 @@ await fetchDepartments();
     <TBody>
       <Tr v-for="(item, index) in departments" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'" >
 
-        <Td><Link :href="`/roles/update/${item.id}`">{{ item.name }}</Link></Td>
+        <Td><Link :href="{name: 'EditDepartment', params: { id: item.id }}">{{ item.name }}</Link></Td>
         <Td><Badge :point="true" color="blue">{{ item.city }}</Badge></Td>
         <Td>{{ item.created_at }}</Td>
         <Td class="text-center py-5">

@@ -42,21 +42,6 @@ const { isEditDepartmentPage, saveDepartment } = departmentForm();
 
     <SuspensDepartmentFields loadingMsg="fetching data..." />
 
-    <!-- <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-12 sm:col-span-4">
-        <Input
-          label="Название отдела"
-          v-mode="department.name"
-          :required="true"
-          :error="v$.name.$errors[0]?.$message"
-          @input="v$.name.$touch"
-        />
-      </div>
-
-      <div class="col-span-12 sm:col-span-4">
-        <Select label="Город" :options="cities" v-mode="department.city" />
-      </div>
-    </div> -->
   </OfficeLayout>
 </template>
 

@@ -1,7 +1,7 @@
 <script setup>
 const props = defineProps({
   href: {
-    type: String,
+    type: [String, Object],
     required: false,
     default: '#',
   },

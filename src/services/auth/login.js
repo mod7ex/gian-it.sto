@@ -40,7 +40,7 @@ export default function loginHandler() {
     setToken(data.value.api_token);
     setUser(data.value.user);
 
-    router.push({ name: 'Dashboard' });
+    router.go({ name: 'Dashboard' }); // better to use go then push, in order to pull up the token from local storage
   };
 
   return {

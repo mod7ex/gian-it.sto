@@ -5,6 +5,9 @@ import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import departmentFormRules from '~/validationsRules/departmentForm.js';
 import { $cities, $department } from '~/helpers/fetch.js';
+import departmentsService from './departments';
+
+const { fetchDepartments } = departmentsService();
 
 const toaster = useToast();
 
@@ -42,7 +45,13 @@ const saveDepartment = async () => {
 
   if (!success.value) return toaster.danger(errorMsg.value ?? 'Something went wrong!');
 
-  !isEditDepartmentPage.value && await redirect({ name: 'EditDepartment', params: { id: data.value?.department?.id } });
+  if (!isEditDepartmentPage.value) {
+    await fetchDepartments();
+    // we can just add the department to the rawDepartments but
+    // there might be other departments created at the same time by other user
+    // so it's rather a good choice to re-fetch them
+    await redirect({ name: 'EditDepartment', params: { id: data.value?.department?.id } });
+  }
 
   return toaster.success('Department saved.');
 };

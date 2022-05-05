@@ -31,7 +31,7 @@ await fetchRoles();
     <TBody>
       <Tr v-for="(item, index) in roles" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'" >
 
-        <Td><Link :href="`/roles/update/${item.id}`">{{ item.name }}</Link></Td>
+        <Td><Link :href="{name: 'EditRole', params: { id: item.id }}">{{ item.name }}</Link></Td>
         <Td>{{ item.created_at }}</Td>
         <Td class="text-center py-5">
 

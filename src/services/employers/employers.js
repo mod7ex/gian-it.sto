@@ -8,9 +8,6 @@ const { apiRequest } = useApi();
 const users = ref([]);
 const usersCount = computed(() => users.value.length);
 
-const selectedUser = ref({});
-const selected = computed(() => !!selectedUser.value?.id);
-
 const order = useOrder({
   id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
   department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
@@ -40,9 +37,9 @@ const directory = computed(
     }, {}),
 );
 
-const setSelectedUser = (user = null) => {
-  selectedUser.value = user ? users.value.find(({ id }) => id === user.id) ?? {} : {};
-};
+const selectedUser = ref({});
+const selected = computed(() => !!selectedUser.value?.id);
+const setSelectedUser = (user) => { selectedUser.value = user ? users.value.find(({ id }) => id === user?.id) ?? {} : {}; };
 
 /* ************ Delete user ************ */
 const deleteUser = (userId) => !!users.value.splice(
@@ -63,8 +60,9 @@ const dropUser = async (id) => {
 };
 
 /* ************ Fetch employer ************ */
-const fetchEmployers = async (searchPayload = '') => {
-  users.value = await $employers({ order: order.criteria.value, name: searchPayload });
+// eslint-disable-next-line camelcase
+const fetchEmployers = async (searchPayload = '', department_id) => {
+  users.value = await $employers({ order: order.criteria.value, name: searchPayload, department_id });
 
   order.reset();
 };

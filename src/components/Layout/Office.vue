@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { MenuButton } from '@headlessui/vue';
 import {
   UserGroupIcon,
@@ -22,14 +22,14 @@ import Input from '@/UI/Input.vue';
 import Sidebar from '@/UI/Sidebar.vue';
 import Logo from '@/Partials/Logo.vue';
 import { setTitle } from '~/lib/meta.js';
-import useApi from '~/composables/useApi.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useAuth from '~/composables/useAuth.js';
 import { isRouteAccessableForCurrentUser } from '~/lib/permissions.js';
+import departmentsService from '~/services/departments/departments.js';
 
-const { axiosInstance } = useApi();
-const { user, resetUser } = useAuth();
-const { router } = useAppRouter();
+const { departmentsLinks, fetchDepartments, hasCRUDdepartments } = departmentsService();
+const { user, logOut } = useAuth();
+const { isCurrentFullPath, router } = useAppRouter();
 
 const props = defineProps({
   title: {
@@ -46,43 +46,25 @@ const props = defineProps({
 setTitle(props.title);
 
 const sidebarOpen = ref(false);
-const userMenu = [
-  [{ label: 'Профиль', name: 'Profile' }],
-  [
-    {
-      label: 'Выход',
-      name: 'Login',
-      click: () => {
-        axiosInstance.post('auth/logout').catch((error) => {
-          // Just out to console, because system need to be stable
-          // and not stop when logout method returns something wrong
-          console.error(error);
-        });
+const userMenu = [[{ label: 'Профиль', name: 'Profile' }], [{ label: 'Выход', name: 'Login', click: () => logOut(router) }]];
 
-        resetUser();
-        router.push('/');
-      },
-    },
-  ],
-];
 const menu = [
-  { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon, current: false },
-  { label: 'Заказ-наряды', name: 'Orders', icon: ChipIcon, current: false },
-  { label: 'Задачи', name: 'Tasks', icon: TableIcon, current: false },
-  { label: 'Рабочие процессы', name: 'Processes', icon: PuzzleIcon, current: false },
-  { label: 'Склад', name: 'Storages', icon: CollectionIcon, current: false },
-  { label: 'Клиенты', name: 'Clients', icon: UserGroupIcon, current: false },
-  { label: 'Сотрудники', name: 'Employers', icon: UserGroupIcon, current: false },
-  { label: 'Финансы', name: 'Finances', icon: CurrencyDollarIcon, current: false },
-  { label: 'Настройки', name: 'Settings', icon: CogIcon, current: false },
-  { label: 'Отделы', name: 'Departments', icon: OfficeBuildingIcon, current: false },
-].filter((menuItem) => isRouteAccessableForCurrentUser(menuItem.name));
+  { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon },
+  { label: 'Заказ-наряды', name: 'Orders', icon: ChipIcon },
+  { label: 'Задачи', name: 'Tasks', icon: TableIcon },
+  { label: 'Рабочие процессы', name: 'Processes', icon: PuzzleIcon },
+  { label: 'Склад', name: 'Storages', icon: CollectionIcon },
+  { label: 'Клиенты', name: 'Clients', icon: UserGroupIcon },
+  { label: 'Сотрудники', name: 'Employers', icon: UserGroupIcon },
+  { label: 'Финансы', name: 'Finances', icon: CurrencyDollarIcon },
+  { label: 'Настройки', name: 'Settings', icon: CogIcon },
+  { label: 'Отделы', name: 'Departments', icon: OfficeBuildingIcon },
+].filter(({ name }) => isRouteAccessableForCurrentUser(name))
+  .map(({ label, name, icon }) => ({ label, name, icon, current: isCurrentFullPath({ name }) }));
 
-const departments = [
-  { label: 'Ростов-на-Дону / Центр', href: '#', color: 'yellow' },
-  { label: 'Ростов-на-Дону / Западный', href: '#', color: 'green' },
-  { label: 'Краснодар / Центр', href: '#', color: 'indigo' },
-];
+const links = computed(() => departmentsLinks.value.map(({ href, label }, i) => ({ label, href, color: i, current: isCurrentFullPath(href) })));
+
+onMounted(async () => { await fetchDepartments(); });
 
 const userFullName = computed(() => {
   const userData = user.value;
@@ -112,7 +94,7 @@ const userRoleTitle = computed(() => {
       <!-- Mobile Nav -->
       <div class="mt-5 flex-1 h-0 overflow-y-auto">
         <NavBar :items="menu" />
-        <SecondNavbar :items="departments" title="Отделы" class="mt-8" />
+        <SecondNavbar :key="`mobile-${links.lenght}`" :items="links" title="Отделы" class="mt-8" v-if="hasCRUDdepartments" />
       </div>
     </Sidebar>
 
@@ -128,10 +110,7 @@ const userRoleTitle = computed(() => {
             <MenuButton class="group w-full bg-gray-100 rounded-md px-3.5 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500" >
               <span class="flex w-full justify-between items-center">
                 <Avatar :image="user.avatar" :title="userFullName" :subtitle="userRoleTitle" />
-                <SelectorIcon
-                  class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                  aria-hidden="true"
-                />
+                <SelectorIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true"/>
               </span>
             </MenuButton>
           </Dropdown>
@@ -143,7 +122,7 @@ const userRoleTitle = computed(() => {
 
           <!-- Navigation -->
           <NavBar :items="menu" class="px-3 mt-6" />
-          <SecondNavbar :items="departments" title="Отделы" class="mt-8 px-3" />
+          <SecondNavbar :key="`descktop-${links.lenght}`" :items="links" title="Отделы" class="mt-8 px-3" v-if="hasCRUDdepartments" />
         </div>
       </div>
     </div>
@@ -151,9 +130,7 @@ const userRoleTitle = computed(() => {
     <!-- Main column -->
     <div class="flex flex-col w-0 flex-1 overflow-hidden">
       <!-- Mobile -->
-      <div
-        class="relative z-9 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden"
-      >
+      <div class="relative z-9 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
         <button
           type="button"
           class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
@@ -166,12 +143,8 @@ const userRoleTitle = computed(() => {
         <div class="flex-1 flex justify-between px-4 sm:px-6 lg:px-8">
           <div class="flex-1 flex">
             <form class="w-full flex md:ml-0" action="#" method="GET">
-              <div
-                class="relative w-full text-gray-400 focus-within:text-gray-600"
-              >
-                <div
-                  class="absolute inset-y-0 left-0 flex items-center pointer-events-none"
-                >
+              <div class="relative w-full text-gray-400 focus-within:text-gray-600">
+                <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
                   <SearchIcon class="h-5 w-5" aria-hidden="true" />
                 </div>
                 <input
@@ -184,14 +157,8 @@ const userRoleTitle = computed(() => {
           </div>
           <div class="flex items-center">
             <Dropdown :items="userMenu" direction="right" class="ml-3 relative">
-              <MenuButton
-                class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <img
-                  class="h-8 w-8 rounded-full object-cover"
-                  :src="user.avatar"
-                  alt=""
-                />
+              <MenuButton class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <img class="h-8 w-8 rounded-full object-cover" :src="user.avatar"/>
               </MenuButton>
             </Dropdown>
           </div>
@@ -200,14 +167,10 @@ const userRoleTitle = computed(() => {
 
       <main :class="props.mainClasses">
         <!-- Page title & actions -->
-        <div
-          class="border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between px-3 sm:px-4 lg:px-5"
-        >
+        <div class="border-b border-gray-200 py-4 sm:flex sm:items-center sm:justify-between px-3 sm:px-4 lg:px-5">
           <div class="flex-1 min-w-0">
             <slot name="title">
-              <h1
-                class="text-lg font-medium leading-6 text-gray-900 sm:truncate"
-              >
+              <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">
                 {{ props.title }}
               </h1>
             </slot>

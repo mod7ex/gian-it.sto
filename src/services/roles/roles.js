@@ -2,6 +2,10 @@ import { ref, computed } from 'vue';
 import useApi from '~/composables/useApi.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import { $roles } from '~/helpers/fetch.js';
+import { maybeRun } from '~/helpers';
+import { userHasPermission } from '~/lib/permissions.js';
+
+const hasCRUD = userHasPermission('crud roles');
 
 let redirect;
 let isEditRolePage;
@@ -16,7 +20,7 @@ const roles = computed(() => rawRoles.value.map((role) => ({
   created_at: role.created_at,
 })));
 
-const fetchRoles = async () => { rawRoles.value = await $roles(); };
+const fetchRoles = maybeRun(async () => { rawRoles.value = await $roles(); }, hasCRUD);
 
 /* ************ Delete role ************ */
 const deleteRole = (id) => {
@@ -26,7 +30,7 @@ const deleteRole = (id) => {
   );
 };
 
-const dropRole = async (id) => {
+const dropRole = maybeRun(async (id) => {
   const { call, errorMsg, success } = apiRequest(`roles/${id}`, { method: 'delete' });
 
   await call();
@@ -38,12 +42,12 @@ const dropRole = async (id) => {
   isEditRolePage.value && await redirect({ name: 'Roles' });
 
   return { message: deletionMsg, success: success.value };
-};
+}, hasCRUD);
 
 /* ************ To Update role page ************ */
-const movetoEditRolePage = async (id) => {
+const movetoEditRolePage = maybeRun(async (id) => {
   await redirect({ name: 'EditRole', params: { id } });
-};
+}, hasCRUD);
 
 export default function rolesService() {
   const { redirectTo, isThePage } = useAppRouter('EditRole');

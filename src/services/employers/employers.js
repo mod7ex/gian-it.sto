@@ -2,6 +2,11 @@ import { ref, computed } from 'vue';
 import useApi from '~/composables/useApi.js';
 import useOrder from '~/composables/useOrder.js';
 import { $employers } from '~/helpers/fetch.js';
+import { maybeRun } from '~/helpers';
+import { userHasPermission } from '~/lib/permissions.js';
+
+const hasCRUD = userHasPermission('crud users');
+const hasR = userHasPermission('crud users');
 
 const { apiRequest } = useApi();
 
@@ -47,7 +52,7 @@ const deleteUser = (userId) => !!users.value.splice(
   1,
 ).length;
 
-const dropUser = async (id) => {
+const dropUser = maybeRun(async (id) => {
   const { call, errorMsg, success } = apiRequest(`users/${id}`, { method: 'delete' });
 
   await call();
@@ -57,15 +62,15 @@ const dropUser = async (id) => {
   const deletionMsg = success.value ? 'Employer was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить пользователя');
 
   return { message: deletionMsg, success: success.value };
-};
+}, hasCRUD);
 
 /* ************ Fetch employer ************ */
 // eslint-disable-next-line camelcase
-const fetchEmployers = async (searchPayload = '', department_id) => {
+const fetchEmployers = maybeRun(async (searchPayload = '', department_id) => {
   users.value = await $employers({ order: order.criteria.value, name: searchPayload, department_id });
 
   order.reset();
-};
+}, hasR || hasCRUD);
 
 export default function employersService() {
   return {
@@ -79,5 +84,7 @@ export default function employersService() {
     dropUser,
     setSelectedUser,
     fetchEmployers,
+    hasCRUD,
+    hasR,
   };
 }

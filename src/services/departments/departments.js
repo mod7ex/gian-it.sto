@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import useApi from '~/composables/useApi.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import { $departments } from '~/helpers/fetch.js';
-
+import { maybeRun } from '~/helpers';
 import { userHasPermission } from '~/lib/permissions.js';
 
 const hasCRUD = userHasPermission('crud departments');
@@ -19,10 +19,9 @@ const departments = computed(() => rawDepartments.value.map(({ id, name, city, c
 
 const departmentsLinks = computed(() => rawDepartments.value.map(({ id, name }) => ({ href: { name: 'Employers', query: { department_id: id, name } }, label: name })));
 
-const fetchDepartments = async () => {
-  if (!hasCRUD) return;
+const fetchDepartments = maybeRun(async () => {
   rawDepartments.value = await $departments();
-};
+}, hasCRUD);
 
 /* ************ Delete department ************ */
 const deleteDepartment = (id) => {
@@ -32,7 +31,7 @@ const deleteDepartment = (id) => {
   );
 };
 
-const dropDepartment = async (id) => {
+const dropDepartment = maybeRun(async (id) => {
   const { call, errorMsg, success } = apiRequest(`departments/${id}`, { method: 'delete' });
 
   await call();
@@ -44,12 +43,12 @@ const dropDepartment = async (id) => {
   isEditDepartmentPage.value && await redirect({ name: 'Departments' });
 
   return { message: deletionMsg, success: success.value };
-};
+}, hasCRUD);
 
 /* ************ To Update department page ************ */
-const movetoEditDepartmentPage = async (id) => {
+const movetoEditDepartmentPage = maybeRun(async (id) => {
   await redirect({ name: 'EditDepartment', params: { id } });
-};
+}, hasCRUD);
 
 export default function departmentsService() {
   const { redirectTo, isThePage } = useAppRouter('EditDepartment');
@@ -64,6 +63,6 @@ export default function departmentsService() {
     dropDepartment,
     departments,
     departmentsLinks,
-    hasCRUDdepartments: hasCRUD
+    hasCRUDdepartments: hasCRUD,
   };
 }

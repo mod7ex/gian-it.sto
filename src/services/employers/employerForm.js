@@ -7,6 +7,10 @@ import useAppRouter from '~/composables/useAppRouter.js';
 import useAvatar from '~/composables/useAvatar.js';
 import useToggles from '~/composables/useToggles.js';
 import { $roles, $departments, $employer } from '~/helpers/fetch.js';
+import { maybeRun } from '~/helpers';
+import { userHasPermission } from '~/lib/permissions.js';
+
+const hasCRUD = userHasPermission('crud users');
 
 let routeInstance;
 let isEditEmployerPage;
@@ -88,7 +92,7 @@ const saveRawUserFields = async () => {
   return data.value?.user?.id;
 };
 
-const saveUser = async () => {
+const saveUser = maybeRun(async () => {
   let isValideForm = await v$.value.$validate();
 
   // isValideForm = isValideForm && isValideAvatarFileSize.value ;
@@ -115,7 +119,7 @@ const saveUser = async () => {
   await redirect({ name: 'EditEmployer', params: { id: userId } });
 
   return success;
-};
+}, hasCRUD);
 
 const setEmployerForm = async (payload) => {
   setAvatar(payload);
@@ -147,7 +151,7 @@ const setEmployerForm = async (payload) => {
 };
 
 const atMountedEmployerForm = async () => {
-  const employer = (isEditEmployerPage.value && routeInstance.params.id) && await $employer(routeInstance.params.id);
+  const employer = (isEditEmployerPage.value && hasCRUD && routeInstance.params.id) && await $employer(routeInstance.params.id);
 
   await setEmployerForm(employer || {});
 
@@ -180,5 +184,6 @@ export default function employerFormService() {
     setEmployerForm,
     atMountedEmployerForm,
     isUploadingAvatar,
+    hasCRUD,
   };
 }

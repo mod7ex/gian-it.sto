@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, unref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import _ from 'lodash';
 import { UserGroupIcon } from '@heroicons/vue/solid';
 import { PlusCircleIcon } from '@heroicons/vue/outline';
@@ -9,13 +9,6 @@ import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import EmployerPreview from '@/Partials/employers/Preview.vue';
 import employers from '~/services/employers/employers.js';
 import UEmployers from '@/Layout/users/Users.vue';
-
-import useAuth from '~/composables/useAuth.js';
-import { userHasPermission } from '~/lib/permissions.js';
-
-const { userDepartment } = useAuth();
-
-const hasCRUDdepartments = userHasPermission('crud departments');
 
 const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers } = employers();
 
@@ -31,14 +24,9 @@ const search = ref('');
 
 const loading = ref(false);
 
-const departmentID = computed(() => {
-  if (hasCRUDdepartments) return undefined;
-  return userDepartment.value;
-});
-
 const loadEmployers = async () => {
   loading.value = true;
-  await fetchEmployers(search.value, unref(departmentID));
+  await fetchEmployers(search.value);
   loading.value = false;
 };
 

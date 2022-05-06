@@ -2,6 +2,11 @@ import { ref, computed } from 'vue';
 import useApi from '~/composables/useApi.js';
 import useOrder from '~/composables/useOrder.js';
 import { $employers } from '~/helpers/fetch.js';
+import useAuth from '~/composables/useAuth.js';
+import { userHasPermission } from '~/lib/permissions.js';
+
+const { userDepartment } = useAuth();
+const hasCRUDdepartments = userHasPermission('crud departments');
 
 const { apiRequest } = useApi();
 
@@ -61,7 +66,7 @@ const dropUser = async (id) => {
 
 /* ************ Fetch employer ************ */
 // eslint-disable-next-line camelcase
-const fetchEmployers = async (searchPayload = '', department_id) => {
+const fetchEmployers = async (searchPayload = '', department_id = hasCRUDdepartments ? undefined : userDepartment.value) => {
   users.value = await $employers({ order: order.criteria.value, name: searchPayload, department_id });
 
   order.reset();

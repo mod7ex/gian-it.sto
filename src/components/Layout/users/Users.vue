@@ -48,7 +48,7 @@ defineEmits(['toggle-filter', 'update:modelValue']);
             <p class="my-1 text-sm text-gray-600" v-else><span> {{ message }} </span></p>
 
             <div class="mt-6 flex space-x-4 mb-3">
-                <Input mask="a* a*" placeholder="Поиск" class="flex-grow" :icon="SearchIcon" @input="(e) => $emit('update:modelValue', e.target.value)" />
+                <Input placeholder="Поиск" class="flex-grow" :icon="SearchIcon" @input="(e) => $emit('update:modelValue', e.target.value)" />
 
                 <Button type="secondary" @click="() => $emit('toggle-filter')">
                     <FilterIcon class="w-5 h-5 text-gray-400" />

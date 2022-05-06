@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, unref, watch } from 'vue';
 import _ from 'lodash';
 import { UserGroupIcon } from '@heroicons/vue/solid';
 import { PlusCircleIcon } from '@heroicons/vue/outline';
@@ -11,16 +11,16 @@ import employers from '~/services/employers/employers.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import UEmployers from '@/Layout/users/Users.vue';
 
+import useAuth from '~/composables/useAuth.js';
+import { userHasPermission } from '~/lib/permissions.js';
+
+const { userDepartment } = useAuth();
+
+const hasCRUDdepartments = userHasPermission('crud departments');
+
 const { query } = useAppRouter();
 
-const {
-  order,
-  directory,
-  usersCount,
-  selected,
-  setSelectedUser,
-  fetchEmployers,
-} = employers();
+const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers } = employers();
 
 const EmployersFilter = order.comp();
 
@@ -34,18 +34,25 @@ const search = ref('');
 
 const loading = ref(false);
 
+const departmentID = computed(() => {
+  if (hasCRUDdepartments) return query.value?.department_id;
+  return userDepartment.value;
+});
+
 const loadEmployers = async () => {
   loading.value = true;
-  await fetchEmployers(search.value, query.value?.department_id);
+  await fetchEmployers(search.value, unref(departmentID));
   loading.value = false;
 };
 
-watch(search, _.debounce(loadEmployers, 1500), { /* immediate: true <- we can't use immediate because of debounce it little slow */ });
+watch(search, _.debounce(loadEmployers, 1500), { /* 'immediate: true' <- we can't use immediate because of debounce it little slow */ });
 
-watch(() => query.value?.department_id, async () => {
-  setSelectedUser();
-  await loadEmployers();
-});
+if (hasCRUDdepartments) {
+  watch(() => query.value?.department_id, async () => {
+    setSelectedUser();
+    await loadEmployers();
+  });
+}
 
 onMounted(async () => { await loadEmployers(); });
 </script>
@@ -53,15 +60,17 @@ onMounted(async () => { await loadEmployers(); });
 <template>
   <OfficeLayout :title="'Сотрудники' + (query.name ? `${' в отделе ' + query.name}` : '')" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
     <template #actions>
-      <Button type="secondary" link="/roles">
-        <UserGroupIcon class="w-5 h-5 mr-1" />
-        Роли
-      </Button>
+      <v-can ability="crud roles">
+        <Button type="secondary" :link="{name: 'Roles'}">
+          <UserGroupIcon class="w-5 h-5 mr-1" />Роли
+        </Button>
+      </v-can>
 
-      <Button color="blue" :link="{name: 'EmployerForm'}">
-        <PlusCircleIcon class="w-5 h-5 mr-1" />
-        Создать
-      </Button>
+      <v-can ability="crud users">
+        <Button color="blue" :link="{name: 'EmployerForm'}">
+          <PlusCircleIcon class="w-5 h-5 mr-1" />Создать
+        </Button>
+      </v-can>
     </template>
 
     <template #content>

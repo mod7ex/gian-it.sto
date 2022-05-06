@@ -15,6 +15,7 @@ import List from "@/UI/List.vue";
 import { onMounted } from "@vue/runtime-core";
 import employerForm from "~/services/employers/employerForm.js";
 import useAppRouter from "~/composables/useAppRouter.js";
+import EditUser from "@/Layout/users/EditUser.vue";
 
 const { router, route } = useAppRouter();
 
@@ -28,99 +29,97 @@ let {
   v$,
   toggles,
   atMountedEmployerForm,
-  isUploadingAvatar
+  isUploadingAvatar,
 } = employerForm();
 
 await atMountedEmployerForm();
-
-
 </script>
 
 <template>
-  <div class="flex flex-col lg:flex-row">
-    <UploadImage
-      @selected="log"
-      :image="avatar"
-      label="Фото"
-      class="mb-3"
-      :error="!isValideAvatarFileSize ? 'Размер фото не должен превышать 10000 Кб' : ''"
-      :loader="isUploadingAvatar"
-    />
+  <edit-user>
+    <template #avatar>
+      <UploadImage
+        @selected="log"
+        :image="avatar"
+        label="Фото"
+        class="mb-3"
+        :error="!isValideAvatarFileSize ? 'Размер фото не должен превышать 10000 Кб' : ''"
+        :loader="isUploadingAvatar"
+      />
+    </template>
 
-    <div class="flex-grow space-y-6">
-      <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 sm:col-span-4">
-          <Input label="Фамилия" v-model="userFields.middle_name"/>
-        </div>
+    <template #middle_name>
+      <Input label="Фамилия" v-model="userFields.middle_name" />
+    </template>
 
-        <div class="col-span-12 sm:col-span-4">
-          <Input
-            label="Имя"
-            v-model="userFields.name"
-            :required="true"
-            :error="v$.name.$errors[0]?.$message"
-            @blured="v$.name.$touch"
-          />
-        </div>
+    <template #name>
+      <Input
+        label="Имя"
+        v-model="userFields.name"
+        :required="true"
+        :error="v$.name.$errors[0]?.$message"
+        @blured="v$.name.$touch"
+      />
+    </template>
 
-        <div class="col-span-12 sm:col-span-4">
-          <Input label="Отчество" v-model="userFields.surname"/>
-        </div>
+    <template #surname>
+      <Input label="Отчество" v-model="userFields.surname" />
+    </template>
 
-        <div class="col-span-12 sm:col-span-6">
-          <Input
-            label="Почта"
-            type="email"
-            v-model="userFields.email"
-            :required="true"
-            :error="v$.email.$errors[0]?.$message"
-            @blured="v$.email.$touch"
-          />
-        </div>
+    <template #email>
+      <Input
+        label="Почта"
+        type="email"
+        v-model="userFields.email"
+        :required="true"
+        :error="v$.email.$errors[0]?.$message"
+        @blured="v$.email.$touch"
+      />
+    </template>
 
-        <div class="col-span-12 sm:col-span-6">
-          <Input
-            label="Телефон"
-            mask="+7 ### ###-##-##"
-            v-model="userFields.phone"
-          />
-        </div>
+    <template #phone>
+      <Input
+        label="Телефон"
+        mask="+7 ### ###-##-##"
+        v-model="userFields.phone"
+      />
+    </template>
 
-        <div class="col-span-12 sm:col-span-6">
-          <Input
-            label="Новый пароль"
-            type="password"
-            v-model="userFields.password"
-            :required="true"
-            :error="v$.password.$errors[0]?.$message"
-            @blured="v$.password.$touch"
-          />
-        </div>
+    <template #password>
+      <Input
+        label="Новый пароль"
+        type="password"
+        v-model="userFields.password"
+        :required="true"
+        :error="v$.password.$errors[0]?.$message"
+        @blured="v$.password.$touch"
+      />
+    </template>
 
-        <div class="col-span-12 sm:col-span-6">
-          <Input
-            label="Подтвердите новый пароль"
-            type="password"
-            v-model="userFields.password_confirmation"
-            :required="true"
-            :error="v$.password_confirmation.$errors[0]?.$message"
-            @blured="v$.password_confirmation.$touch"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
+    <template #password_confirmation>
+      <Input
+        label="Подтвердите новый пароль"
+        type="password"
+        v-model="userFields.password_confirmation"
+        :required="true"
+        :error="v$.password_confirmation.$errors[0]?.$message"
+        @blured="v$.password_confirmation.$touch"
+      />
+    </template>
 
-  <div class="grid grid-cols-12 gap-6 mt-5">
-    <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+    <template #born_at>
       <Input label="Дата рождения" type="date" v-model="userFields.born_at" />
-    </div>
+    </template>
 
-    <div class="col-span-12 sm:col-span-6 lg:col-span-4">
-      <Input label="Должность" v-model="userFields.office_position" mask="Aa*" />
-    </div>
+    <template #office_position>
+      <Input
+        label="Должность"
+        v-model="userFields.office_position"
+        mask="Aa*"
+      />
+    </template>
 
-    <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+    <template #role>
       <Select
         label="Роль"
         :options="roleOptions"
@@ -129,9 +128,9 @@ await atMountedEmployerForm();
         :error="v$.role_id.$errors[0]?.$message"
         @blured="v$.role_id.$touch"
       />
-    </div>
+    </template>
 
-    <div class="col-span-12 sm:col-span-6 lg:col-span-4">
+    <template #department>
       <Select
         label="Отделение"
         :options="departmentOptions"
@@ -140,43 +139,14 @@ await atMountedEmployerForm();
         :error="v$.department_id.$errors[0]?.$message"
         @blured="v$.department_id.$touch"
       />
-    </div>
+    </template>
 
-    <div class="col-span-12">
+    <template #about>
       <TextArea label="О сотруднике" rows="3" v-model="userFields.about" />
-    </div>
-  </div>
+    </template>
 
-  <div class="pt-6 divide-y divide-gray-200">
-    <div>
-      <List
-        class="mt-2"
-        :items="[
-          {
-            key: 'is_about_visible',
-            title: 'О себе',
-            subtitle: 'Скрыть информацию о себе для других сотрудников',
-          },
-          {
-            key: 'is_born_at_visible',
-            title: 'День рождения',
-            subtitle: 'Скрыть день рождения для других сотрудников',
-          },
-          {
-            key: 'is_active',
-            title: 'Виден активный статус',
-            subtitle: 'скрыть активный статус от других сотрудников',
-          },
-        ]"
-        title="Приватность"
-        subtitle="Здесь вы можете настроить поведение приложения - то что хотели бы не показывать"
-      >
-        <template v-slot:right="{ item }">
-          <Toggle v-model="toggles[item.key]" />
-        </template>
-      </List>
-    </div>
-  </div>
+    <template #settings="{ item }">
+      <Toggle v-model="toggles[item.key]" />
+    </template>
+  </edit-user>
 </template>
-
-<style scoped></style>

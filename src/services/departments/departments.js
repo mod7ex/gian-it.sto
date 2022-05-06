@@ -20,7 +20,6 @@ const departments = computed(() => rawDepartments.value.map(({ id, name, city, c
 const departmentsLinks = computed(() => rawDepartments.value.map(({ id, name }) => ({ href: { name: 'Employers', query: { department_id: id, name } }, label: name })));
 
 const fetchDepartments = async () => {
-  if (!hasCRUD) return;
   rawDepartments.value = await $departments();
 };
 
@@ -64,6 +63,6 @@ export default function departmentsService() {
     dropDepartment,
     departments,
     departmentsLinks,
-    hasCRUDdepartments: hasCRUD
+    hasCRUD,
   };
 }

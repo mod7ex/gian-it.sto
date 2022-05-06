@@ -6,3 +6,5 @@ dist-ssr
 .idea
 .vscode
 public
+test.ts
+testa.ts

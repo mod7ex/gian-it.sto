@@ -26,7 +26,7 @@ const { dropUser, selectedUser } = employers();
         </template>
 
         <template #actions>
-            <div class="px-6 flex justify-between">
+            <v-can ability="crud users" class="px-6 flex justify-between">
                 <Button type="secondary" size="xs" :link="{ name: 'EditEmployer', params: { id: selectedUser.id } }">
                     <PencilIcon class="mr-2 h-5 w-5 text-gray-400" />Изменить
                 </Button>
@@ -34,7 +34,7 @@ const { dropUser, selectedUser } = employers();
                 <Button size="xs" color="red" @click="() => dialogger.drop(() => dropUser(selectedUser.id), 'продолжить удаление!', 'Удалить ?')">
                     <TrashIcon class="mr-2 h-5 w-5 text-white" />Удалить
                 </Button>
-            </div>
+            </v-can>
         </template>
 
     </l-preview>

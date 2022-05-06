@@ -7,6 +7,12 @@ import useAppRouter from '~/composables/useAppRouter.js';
 import useAvatar from '~/composables/useAvatar.js';
 import useToggles from '~/composables/useToggles.js';
 import { $roles, $departments, $employer } from '~/helpers/fetch.js';
+import useAuth from '~/composables/useAuth.js';
+import { userHasPermission } from '~/lib/permissions.js';
+
+const { userDepartment } = useAuth();
+
+const hasCRUDdepartments = userHasPermission('crud departments');
 
 let routeInstance;
 let isEditEmployerPage;
@@ -122,13 +128,12 @@ const setEmployerForm = async (payload) => {
 
   Object.keys(userFields).forEach((key) => {
     if (key === 'department_id') {
-      userFields.department_id = payload.department?.id ?? '';
+      if (!hasCRUDdepartments) userFields.department_id = userDepartment.value;
+      else userFields.department_id = payload.department?.id ?? '';
       return;
     }
 
     if (key === 'role_id') {
-      // console.log(payload.roles); // array
-      // userFields.role_id = payload.role?.id; // ===========> should be fixed later
       userFields.role_id = Array.isArray(payload.roles) ? payload.roles[0]?.id : '';
       return;
     }
@@ -151,7 +156,8 @@ const atMountedEmployerForm = async () => {
 
   await setEmployerForm(employer || {});
 
-  rawDepartments.value = await $departments();
+  if (hasCRUDdepartments)rawDepartments.value = await $departments();
+
   rawRoles.value = await $roles();
 };
 

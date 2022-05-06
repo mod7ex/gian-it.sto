@@ -27,7 +27,7 @@ import useAuth from '~/composables/useAuth.js';
 import { isRouteAccessableForCurrentUser } from '~/lib/permissions.js';
 import departmentsService from '~/services/departments/departments.js';
 
-const { departmentsLinks, fetchDepartments, hasCRUDdepartments } = departmentsService();
+const { departmentsLinks, fetchDepartments, hasCRUD: hasCRUDdepartments } = departmentsService();
 const { user, logOut } = useAuth();
 const { isCurrentFullPath, router } = useAppRouter();
 
@@ -64,7 +64,10 @@ const menu = [
 
 const links = computed(() => departmentsLinks.value.map(({ href, label }, i) => ({ label, href, color: i, current: isCurrentFullPath(href) })));
 
-onMounted(async () => { await fetchDepartments(); });
+onMounted(async () => {
+  if (!hasCRUDdepartments) return;
+  await fetchDepartments();
+});
 
 const userFullName = computed(() => {
   const userData = user.value;
@@ -94,7 +97,11 @@ const userRoleTitle = computed(() => {
       <!-- Mobile Nav -->
       <div class="mt-5 flex-1 h-0 overflow-y-auto">
         <NavBar :items="menu" />
-        <SecondNavbar :key="`mobile-${links.lenght}`" :items="links" title="Отделы" class="mt-8" v-if="hasCRUDdepartments" />
+
+        <v-can ability="crud departmentss">
+          <SecondNavbar :key="`mobile-${links.lenght}`" :items="links" title="Отделы" class="mt-8" />
+        </v-can>
+
       </div>
     </Sidebar>
 
@@ -122,7 +129,10 @@ const userRoleTitle = computed(() => {
 
           <!-- Navigation -->
           <NavBar :items="menu" class="px-3 mt-6" />
-          <SecondNavbar :key="`descktop-${links.lenght}`" :items="links" title="Отделы" class="mt-8 px-3" v-if="hasCRUDdepartments" />
+
+          <v-can ability="crud departments">
+            <SecondNavbar :key="`descktop-${links.lenght}`" :items="links" title="Отделы" class="mt-8 px-3" />
+          </v-can>
         </div>
       </div>
     </div>

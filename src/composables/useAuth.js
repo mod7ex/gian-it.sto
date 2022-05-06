@@ -13,6 +13,7 @@ const token = computed({
 
 const user = ref(defaultUserFields);
 const isUserLogged = computed(() => !!user.value.id);
+const userDepartment = computed(() => user.value?.department?.id);
 
 const setToken = ((payload) => {
   if (!payload) return localStorage.removeItem('token');
@@ -54,5 +55,6 @@ export default function useAuth() {
     isUserLogged,
     user: readonly(user),
     logOut,
+    userDepartment,
   };
 }

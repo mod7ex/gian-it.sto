@@ -78,6 +78,8 @@ const routes = [
   { path: '/w/profile', component: () => import('@/Pages/Work/Profile.vue'), name: 'WorkerProfile' },
   { path: '/w/times', component: () => import('@/Pages/Work/Times.vue'), name: 'WorkerTimes' },
   { path: '/w/change', component: () => import('@/Pages/Work/ChangeWorker.vue'), name: 'ChangeWorker' },
+
+  { path: '/404', component: () => import('@/Pages/Office/Employers.vue'), name: '404' },
 ];
 
 const router = createRouter({

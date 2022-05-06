@@ -7,10 +7,18 @@ const routesPermissionsMap = {
   Storages: 'crud storages',
   Tasks: ['read tasks', 'crud tasks'],
   TaskCreateForm: 'create tasks',
+
   Employers: ['read users', 'crud users'],
+  EmployerForm: 'crud users',
+  EditEmployer: 'crud users',
+
   Clients: ['read clients', 'crud clients'],
   Pipelines: 'crud pipelines',
   Departments: 'crud departments',
+
+  Roles: 'crud roles',
+  RoleForm: 'crud roles',
+  EditRole: 'crud roles',
 };
 
 export function userHasPermission(permissionName) {
@@ -22,6 +30,7 @@ export function isRouteAccessableForCurrentUser(routeName) {
 
   const maybePermissionName = routesPermissionsMap[routeName];
 
+  // one role is enough to let the user pass (| <--> U)
   if (Array.isArray(maybePermissionName)) return !!(maybePermissionName.find((perm) => userHasPermission(perm)));
 
   return userHasPermission(maybePermissionName);

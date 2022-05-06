@@ -40,6 +40,7 @@ const routes = [
   { path: '/roles/update/:id', component: () => import('@/Pages/Office/RoleForm.vue'), name: 'EditRole' },
 
   { path: '/departments', component: () => import('@/Pages/Office/Departments.vue'), name: 'Departments' },
+  { path: '/department/:id', component: () => import('@/Pages/Office/DepartmentUsers.vue'), name: 'DepartmentUsers' },
   { path: '/departments/create', component: () => import('@/Pages/Office/DepartmentForm.vue'), name: 'DepartmentForm' },
   { path: '/departments/update/:id', component: () => import('@/Pages/Office/DepartmentForm.vue'), name: 'EditDepartment' },
 
@@ -79,7 +80,7 @@ const routes = [
   { path: '/w/times', component: () => import('@/Pages/Work/Times.vue'), name: 'WorkerTimes' },
   { path: '/w/change', component: () => import('@/Pages/Work/ChangeWorker.vue'), name: 'ChangeWorker' },
 
-  { path: '/404', component: () => import('@/Pages/Office/Employers.vue'), name: '404' },
+  { path: '/:pathMatch(.*)*', component: () => import('@/Pages/404.vue'), name: '404' },
 ];
 
 const router = createRouter({

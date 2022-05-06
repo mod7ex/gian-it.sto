@@ -26,7 +26,7 @@ const colors = ['indigo', 'blue', 'red', 'yellow', 'green', 'purple', 'gray'];
         :key="item.label"
         :to="item.href"
         :class="[
-            item.current ? 'bg-white text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800',
+            item.current ? 'bg-blue-600 text-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800',
             'group flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md'
           ]"
       >

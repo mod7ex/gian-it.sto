@@ -1,21 +1,14 @@
 <script setup>
-import { computed, onMounted, ref, unref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import _ from 'lodash';
-import { UserGroupIcon } from '@heroicons/vue/solid';
-import { PlusCircleIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
-import Button from '@/UI/Button.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import EmployerPreview from '@/Partials/employers/Preview.vue';
 import employers from '~/services/employers/employers.js';
+import useAppRouter from '~/composables/useAppRouter.js';
 import UEmployers from '@/Layout/users/Users.vue';
 
-import useAuth from '~/composables/useAuth.js';
-import { userHasPermission } from '~/lib/permissions.js';
-
-const { userDepartment } = useAuth();
-
-const hasCRUDdepartments = userHasPermission('crud departments');
+const { params, query } = useAppRouter();
 
 const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers } = employers();
 
@@ -30,39 +23,19 @@ const headingMessage = computed(() => {
 const search = ref('');
 
 const loading = ref(false);
-
-const departmentID = computed(() => {
-  if (hasCRUDdepartments) return undefined;
-  return userDepartment.value;
-});
-
 const loadEmployers = async () => {
+  if (!params.value?.id) return;
   loading.value = true;
-  await fetchEmployers(search.value, unref(departmentID));
+  await fetchEmployers(search.value, params.value.id);
   loading.value = false;
 };
 
 watch(search, _.debounce(loadEmployers, 1500), { /* 'immediate: true' <- we can't use immediate because of debounce it little slow */ });
-
-onMounted(async () => { await loadEmployers(); });
+watch(params, loadEmployers, { immediate: true });
 </script>
 
 <template>
-  <OfficeLayout title="Сотрудники" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
-    <template #actions>
-      <v-can ability="crud roles">
-        <Button type="secondary" :link="{name: 'Roles'}">
-          <UserGroupIcon class="w-5 h-5 mr-1" />Роли
-        </Button>
-      </v-can>
-
-      <v-can ability="crud users">
-        <Button color="blue" :link="{name: 'EmployerForm'}">
-          <PlusCircleIcon class="w-5 h-5 mr-1" />Создать
-        </Button>
-      </v-can>
-    </template>
-
+  <OfficeLayout :title="'Сотрудники' + (query.name ? `${' в отделе ' + query.name}` : '')" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
     <template #content>
 
       <u-employers

@@ -14,19 +14,19 @@ const params = computed(() => routeInstance?.params);
 const query = computed(() => routeInstance?.query);
 const fullPath = computed(() => routeInstance?.fullPath);
 
-const isCurrentFullPath = (payload) => routerInstance.resolve(payload).fullPath === routeInstance?.fullPath;
+const isCurrentFullPath = (payload, dynamic = false) => {
+  if (!dynamic) return routerInstance.resolve(payload).fullPath === routeInstance?.fullPath;
+  return computed(() => routerInstance.resolve(payload).fullPath === routeInstance?.fullPath);
+};
 
 export default function useAppRouter(pageName = '_') {
-  const route = useRoute();
-  const router = useRouter();
+  [routerInstance, routeInstance] = [useRouter(), useRoute()];
 
-  [routerInstance, routeInstance] = [router, route];
-
-  const isThePage = computed(() => route?.name === pageName);
+  const isThePage = computed(() => routeInstance?.name === pageName);
 
   return {
-    route,
-    router,
+    route: routeInstance,
+    router: routerInstance,
     isThePage,
     redirectTo,
     currentPageName,

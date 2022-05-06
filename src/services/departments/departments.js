@@ -17,7 +17,7 @@ const rawDepartments = ref([]);
 // eslint-disable-next-line camelcase
 const departments = computed(() => rawDepartments.value.map(({ id, name, city, created_at }) => ({ id, name, city, created_at })));
 
-const departmentsLinks = computed(() => rawDepartments.value.map(({ id, name }) => ({ href: { name: 'Employers', query: { department_id: id, name } }, label: name })));
+const departmentsLinks = computed(() => rawDepartments.value.map(({ id, name }) => ({ href: { name: 'DepartmentUsers', params: { id }, query: { name } }, label: name })));
 
 const fetchDepartments = async () => {
   rawDepartments.value = await $departments();

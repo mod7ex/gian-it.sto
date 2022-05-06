@@ -1,3 +1,1 @@
-export const setTitle = (title) => {
-  window.document.title = title;
-};
+export const setTitle = (title) => { window.document.title = title; };

@@ -27,7 +27,7 @@ import useAuth from '~/composables/useAuth.js';
 import { isRouteAccessableForCurrentUser } from '~/lib/permissions.js';
 import departmentsService from '~/services/departments/departments.js';
 
-const { departmentsLinks, fetchDepartments, hasCRUD: hasCRUDdepartments } = departmentsService();
+const { departmentsLinks, fetchDepartments } = departmentsService();
 const { user, logOut } = useAuth();
 const { isCurrentFullPath, router } = useAppRouter();
 
@@ -46,6 +46,7 @@ const props = defineProps({
 setTitle(props.title);
 
 const sidebarOpen = ref(false);
+
 const userMenu = [[{ label: 'Профиль', name: 'Profile' }], [{ label: 'Выход', name: 'Login', click: () => logOut(router) }]];
 
 const menu = [
@@ -63,11 +64,7 @@ const menu = [
   .map(({ label, name, icon }) => ({ label, name, icon, current: isCurrentFullPath({ name }) }));
 
 const links = computed(() => departmentsLinks.value.map(({ href, label }, i) => ({ label, href, color: i, current: isCurrentFullPath(href) })));
-
-onMounted(async () => {
-  if (!hasCRUDdepartments) return;
-  await fetchDepartments();
-});
+onMounted(async () => { await fetchDepartments(); });
 
 const userFullName = computed(() => {
   const userData = user.value;

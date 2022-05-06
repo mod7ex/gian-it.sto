@@ -2,7 +2,7 @@ import { defineComponent, h } from 'vue';
 import { userHasPermission } from '~/lib/permissions.js';
 
 // const rights = [];
-// we might use some directive for permission names
+// we might use some directive for permission names , but there should be a pattern
 
 export default defineComponent({
   props: {

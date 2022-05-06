@@ -20,6 +20,7 @@ const departments = computed(() => rawDepartments.value.map(({ id, name, city, c
 const departmentsLinks = computed(() => rawDepartments.value.map(({ id, name }) => ({ href: { name: 'DepartmentUsers', params: { id }, query: { name } }, label: name })));
 
 const fetchDepartments = async () => {
+  if (!hasCRUD) return;
   rawDepartments.value = await $departments();
 };
 

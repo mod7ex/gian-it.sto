@@ -4,85 +4,63 @@ import useToast from '~/composables/useToast.js';
 const toaster = useToast();
 const { apiRequest } = useApi();
 
+const $fetch = async (uri, fallBackErrorMsg, toast = true, config) => {
+  const { call, data, errorMsg, success } = apiRequest(uri, config);
+
+  await call();
+
+  toast && !success.value && toaster.danger(errorMsg.value ?? fallBackErrorMsg);
+
+  return data.value ?? {};
+};
+
 // eslint-disable-next-line camelcase
-export const $employers = async ({ active, order, department_id, name }, toast = true) => {
-  const { call, data, errorMsg, success } = apiRequest('/users', {
+export const $employers = async ({ active, order, department_id, name }, toast) => {
+  const { users } = await $fetch('/users', "Couldn't fetch employers !", toast, {
     params: { active, order, department_id, name },
   });
 
-  await call();
-
-  toast && !success.value && toaster.danger(errorMsg.value ?? "Couldn't fetch employers !");
-
-  return data.value?.users ?? [];
+  return users ?? [];
 };
 
-export const $employer = async (id, toast = true) => {
-  const { call, data, errorMsg, success } = apiRequest(`/users/${id}`);
+export const $employer = async (id, toast) => {
+  const { user } = await $fetch(`/users/${id}`, 'Не удалось получить пользователя !', toast);
 
-  await call();
-
-  toast && !success.value && toaster.success(errorMsg.value ?? 'Не удалось получить пользователя');
-
-  return data.value?.user ?? {};
+  return user ?? {};
 };
 
-export const $rawPermissions = async (toast = true) => {
-  const { call, data, errorMsg, success } = apiRequest('/permissions');
+export const $rawPermissions = async (toast) => {
+  const { permissions } = await $fetch('/permissions', 'Не удалось получить разрешения !', toast);
 
-  await call();
-
-  toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить разрешения');
-
-  return data.value?.permissions ?? [];
+  return permissions ?? [];
 };
 
-export const $role = async (id, toast = true) => {
-  const { call, data, errorMsg, success } = apiRequest(`/roles/${id}`);
+export const $role = async (id, toast) => {
+  const { role } = await $fetch(`/roles/${id}`, 'Не удалось получить роль !', toast);
 
-  await call();
-
-  toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить роль');
-
-  return data.value?.role ?? {};
+  return role ?? {};
 };
 
-export const $departments = async (toast = true) => {
-  const { call, data, errorMsg, success } = apiRequest('/departments');
+export const $departments = async (toast) => {
+  const { departments } = await $fetch('/departments', 'Не удалось получить отделы !', toast);
 
-  await call();
-
-  toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить отделы');
-
-  return data.value?.departments ?? [];
+  return departments ?? [];
 };
 
-export const $roles = async (toast = true) => {
-  const { call, data, errorMsg, success } = apiRequest('/roles');
+export const $roles = async (toast) => {
+  const { roles } = await $fetch('/roles', 'Не удалось получить роли !', toast);
 
-  await call();
-
-  toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить роли');
-
-  return data.value?.roles ?? [];
+  return roles ?? [];
 };
 
-export const $cities = async (toast = true) => {
-  const { call, data, errorMsg, success } = apiRequest('/cities');
+export const $cities = async (toast) => {
+  const { cities } = await $fetch('/cities', 'Не удалось получить города !', toast);
 
-  await call();
-
-  toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить города');
-
-  return data.value?.cities ?? [];
+  return cities ?? [];
 };
 
-export const $department = async (id, toast = true) => {
-  const { call, data, errorMsg, success } = apiRequest(`/departments/${id}`);
+export const $department = async (id, toast) => {
+  const { department } = await $fetch(`/departments/${id}`, 'Не удалось получить отделение !', toast);
 
-  await call();
-
-  toast && !success.value && toaster.danger(errorMsg.value ?? 'Не удалось получить отделение');
-
-  return data.value?.department ?? {};
+  return department ?? {};
 };

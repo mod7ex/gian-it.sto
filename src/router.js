@@ -41,8 +41,6 @@ const routes = [
 
   { path: '/departments', component: () => import('@/Pages/Office/Departments.vue'), name: 'Departments' },
   { path: '/department/:id', component: () => import('@/Pages/Office/DepartmentUsers.vue'), name: 'DepartmentUsers' },
-  { path: '/departments/create', component: () => import('@/Pages/Office/DepartmentForm.vue'), name: 'DepartmentForm' },
-  { path: '/departments/update/:id', component: () => import('@/Pages/Office/DepartmentForm.vue'), name: 'EditDepartment' },
 
   { path: '/developers', component: () => import('@/Pages/Office/Developers.vue'), name: 'Developers' },
   { path: '/developers/create', component: () => import('@/Pages/Office/DeveloperForm.vue'), name: 'DeveloperForm' },

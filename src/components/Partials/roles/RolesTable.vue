@@ -15,7 +15,6 @@ let { roles, fetchRoles, movetoEditRolePage, dropRole } = rolesService();
 
 const dialogger = useConfirmDialog();
 
-/* ************ Fetch roles ************ */
 await fetchRoles();
 
 </script>

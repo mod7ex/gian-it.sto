@@ -10,6 +10,9 @@ import Link from "@/UI/Link.vue";
 import { Table, THead, TBody, Tr, Td, Th } from "@/UI/Table";
 import useConfirmDialog from "~/composables/useConfirmDialog.js";
 import departmentsService from "~/services/departments/departments.js";
+import departmentForm from '~/services/departments/departmentForm.js';
+
+const { setModalVisibility } = departmentForm();
 
 let { fetchDepartments, movetoEditDepartmentPage, dropDepartment, departments } = departmentsService();
 
@@ -36,21 +39,23 @@ await fetchDepartments();
     <TBody>
       <Tr v-for="(item, index) in departments" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'" >
 
-        <Td><Link :href="{name: 'EditDepartment', params: { id: item.id }}">{{ item.name }}</Link></Td>
+        <Td><Link @click="() => setModalVisibility(true, item.id)" href="">{{ item.name }}</Link></Td>
         <Td><Badge :point="true" color="blue">{{ item.city }}</Badge></Td>
         <Td>{{ item.created_at }}</Td>
         <Td class="text-center py-5">
+
           <Dropdown
             direction="right"
             position="center"
             :items="[
                       [
-                        { label: 'Изменить', click: () => movetoEditDepartmentPage(item.id), icon: PencilIcon },
+                        { label: 'Изменить', click: () => setModalVisibility(true, item.id), icon: PencilIcon },
                         { label: 'Удалить', click: () => dialogger.drop(() => dropDepartment(item.id), 'продолжить удаление!', 'Удалить ?'), icon: XIcon },
                       ],
                     ]"
 
-          >
+            >
+
             <MenuButton>
               <Button type="secondary" :circle="true">
                 <DotsHorizontalIcon class="w-4 h-4" />

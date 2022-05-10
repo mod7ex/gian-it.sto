@@ -28,8 +28,9 @@ const isModalUp = ref(false);
 const isUpdate = ref();
 
 const setForm = async (payload) => {
-  department.name = payload?.name;
-  department.city = payload?.city;
+  Reflect.ownKeys(department).forEach((key) => Reflect.set(department, key, Reflect.get(payload ?? {}, key)));
+  // department.name = payload?.name;
+  // department.city = payload?.city;
 };
 
 const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest(`/departments/${departmentId.value ?? ''}`, {

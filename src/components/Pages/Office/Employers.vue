@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { UserGroupIcon } from '@heroicons/vue/solid';
 import { PlusCircleIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';

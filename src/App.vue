@@ -9,7 +9,6 @@ import Loader from '~/components/Partials/Loader.vue';
 </template>
 
 <style>
-@import "vue-toastification/dist/index.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

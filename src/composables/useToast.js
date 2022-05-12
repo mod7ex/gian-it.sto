@@ -55,7 +55,7 @@ const create = (text, title, color, icon, bool = true) => {
 const success = (_text, _title) => create(_text, _title, 'green', CheckIcon);
 const primary = (_text, _title) => create(_text, _title, 'blue', CheckIcon);
 const danger = (_text, _title) => create(_text, _title, 'red', ExclamationIcon, false);
-const warn = (_text, _title) => create(_text, _title, 'yellow', ExclamationIcon, false);
+const warn = (_text, _title = 'Предупреждение!') => create(_text, _title, 'yellow', ExclamationIcon, false);
 const info = (_text, _title = 'Info!') => create(_text, _title, 'gray', InformationCircleIcon);
 
 export default function useToast() { return { success, info, primary, danger, warn }; }

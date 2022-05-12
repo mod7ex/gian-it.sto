@@ -27,7 +27,8 @@ const apiRequest = (url, config = {}) => {
   const error = ref();
   const loading = ref(false);
 
-  const ready = computed(() => !!responce.value || !!error.value); // request was sent and we recieved responce either error or success
+  // ready ==> request was sent and we recieved responce either error or success
+  const ready = computed(() => !!responce.value || !!error.value);
 
   const success = computed(() => !ready.value || (ready.value && !!data.value?.success));
   // const success = computed(() => ready.value && !!data.value?.success); // is also a valid approach
@@ -41,9 +42,9 @@ const apiRequest = (url, config = {}) => {
     if (!error.value) return null;
 
     if (error.value.response) {
-      return error.value.response?.data?.message ?? 'Something went wrong with responce!';
+      return error.value.response?.data?.message ?? 'Что-то пошло не так с ответом !';
     } if (error.value.request) {
-      return error.value.request?.message ?? 'Something went wrong with request!';
+      return error.value.request?.message ?? 'Что-то пошло не так с запросом !';
     }
     return error.value.message;
   });

@@ -67,7 +67,7 @@ const updatePassword = async (id) => {
     userFields.password = null; // empty form
     userFields.password_confirmation = null; // empty form
     toaster.success('пароль успешно обновлен');
-  } else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось обновить пароль');
+  } else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось обновить пароль !');
 
   return success.value;
 };
@@ -88,8 +88,8 @@ const saveRawUserFields = async () => {
 
   await call();
 
-  if (success.value) toaster.success('ваши данные успешно сохранены');
-  else toaster.danger(errorMsg.value ?? 'не удалось сохранить ваши данные');
+  if (success.value) toaster.success('Данные сотрудника успешно сохранены');
+  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, Не удалось сохранить данные сотрудника !');
 
   return data.value?.user?.id;
 };

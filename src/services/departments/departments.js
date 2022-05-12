@@ -15,7 +15,7 @@ const { apiRequest } = useApi();
 const rawDepartments = ref([]);
 
 // eslint-disable-next-line camelcase
-const departments = computed(() => rawDepartments.value.map(({ id, name, city, created_at }) => ({ id, name, city, created_at })));
+const departments = computed(() => rawDepartments.value.map(({ id, name, created_at }) => ({ id, name, created_at })));
 
 const departmentsLinks = computed(() => rawDepartments.value.map(({ id, name }) => ({ href: { name: 'DepartmentUsers', params: { id }, query: { name } }, label: name })));
 
@@ -39,7 +39,7 @@ const dropDepartment = async (id) => {
 
   success.value && deleteDepartment(id);
 
-  const deletionMsg = success.value ? 'Department was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить отделение');
+  const deletionMsg = success.value ? 'Отдел успешно удален' : (errorMsg.value ?? 'Не удалось удалить отделение !');
 
   isEditDepartmentPage.value && await redirect({ name: 'Departments' });
 

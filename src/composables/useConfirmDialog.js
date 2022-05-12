@@ -49,10 +49,10 @@ const proceed = async () => {
     const result = await action();
 
     success.value = result?.success ?? false;
-    resultMsg.value = result?.message ?? 'Something went wrong!';
+    resultMsg.value = result?.message ?? 'Что-то пошло не так !';
   } catch (error) {
     success.value = false;
-    resultMsg.value = 'Something went wrong!';
+    resultMsg.value = 'Что-то пошло не так !';
 
     console.log(error);
   } finally {

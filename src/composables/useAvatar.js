@@ -51,7 +51,7 @@ const updateAvatar = async (uri) => {
   isUploadingAvatar.value = false;
 
   if (success.value) toaster.success('Фото успешно обновлено');
-  else toaster.danger(errorMsg.value ?? "Something went wrong , avatar couldn't be set");
+  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось установить аватар');
 
   return success.value;
 };

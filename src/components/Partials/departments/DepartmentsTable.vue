@@ -30,7 +30,6 @@ await fetchDepartments();
     <THead>
       <Tr>
         <Th>Название</Th>
-        <Th>Город</Th>
         <Th>Дата создания</Th>
         <Th class="text-center">Действия</Th>
       </Tr>
@@ -40,8 +39,7 @@ await fetchDepartments();
       <Tr v-for="(item, index) in departments" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'" >
 
         <Td><Link @click="() => setModalVisibility(true, item.id)" href="">{{ item.name }}</Link></Td>
-        <Td><Badge :point="true" color="blue">{{ item.city }}</Badge></Td>
-        <Td>{{ item.created_at }}</Td>
+        <Td><Badge :point="true" color="blue" >{{ item.created_at }}</Badge></Td>
         <Td class="text-center py-5">
 
           <Dropdown
@@ -56,11 +54,11 @@ await fetchDepartments();
 
             >
 
-            <MenuButton>
+            <menu-button>
               <Button type="secondary" :circle="true">
                 <DotsHorizontalIcon class="w-4 h-4" />
               </Button>
-            </MenuButton>
+            </menu-button>
 
           </Dropdown>
         </Td>

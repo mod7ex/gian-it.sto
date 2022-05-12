@@ -49,11 +49,11 @@ const saveRole = async () => {
 
   await call();
 
-  if (!success.value) return toaster.danger(errorMsg.value ?? 'Something went wrong!');
+  if (!success.value) return toaster.danger(errorMsg.value ?? 'Что-то пошло не так !');
 
   !isEditRolePage.value && await redirect({ name: 'EditRole', params: { id: data.value?.role?.id } });
 
-  return toaster.success('Role saved.');
+  return toaster.success(`Роль успешно ${isEditRolePage.value ? 'обновлена' : 'создана'}`);
 };
 
 /* ************ Role Raw Permissions ************ */

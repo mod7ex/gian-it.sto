@@ -1,8 +1,8 @@
 import useVuelidate from '@vuelidate/core';
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
 import departmentFormRules from '~/validationsRules/departmentForm.js';
-import { $cities, $department } from '~/helpers/fetch.js';
+import { $department } from '~/helpers/fetch.js';
 
 import departmentsService from './departments';
 
@@ -10,12 +10,8 @@ const { fetchDepartments } = departmentsService();
 
 const { apiRequest } = useApi();
 
-const rawCities = ref([]);
-const cities = computed(() => rawCities.value.map(({ id, name }) => ({ value: id, label: name })));
-
 const department = reactive({
   name: null,
-  city: null,
 });
 
 const departmentId = ref();
@@ -28,9 +24,8 @@ const isModalUp = ref(false);
 const isUpdate = ref();
 
 const setForm = async (payload) => {
-  Reflect.ownKeys(department).forEach((key) => Reflect.set(department, key, Reflect.get(payload ?? {}, key)));
-  // department.name = payload?.name;
-  // department.city = payload?.city;
+  // Reflect.ownKeys(department).forEach((key) => Reflect.set(department, key, Reflect.get(payload ?? {}, key)));
+  department.name = payload?.name;
 };
 
 const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest(`/departments/${departmentId.value ?? ''}`, {
@@ -70,8 +65,6 @@ const atMountedDepartmentForm = async () => {
   await setForm(dep || {});
 
   isUpdate.value = !!(dep || false);
-
-  rawCities.value = await $cities();
 };
 
 export default function profileChangePasswordHandler() {
@@ -80,7 +73,6 @@ export default function profileChangePasswordHandler() {
     data,
     save,
     responce,
-    cities,
     error,
     loading,
     errorMsg,

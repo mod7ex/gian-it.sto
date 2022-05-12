@@ -16,12 +16,12 @@ defineEmits(['close']);
 </script>
 
 <template>
-    <DialogModal :title="`${isUpdate ? 'Oбновляете' : 'Создайте'} отдела`" :open="isModalUp">
+    <dialog-modal :title="`${isUpdate ? 'Oбновляете' : 'Создайте'} отдела`" :open="isModalUp">
         <template v-slot:dialog-inner>
             <div class="mt-6 mb-6">
 
                 <p v-if="ready" :class="[`text-${success ? 'green' : 'red'}-700 text-sm text-center mb-6`]">
-                    {{ success ? 'Department saved.' : (errorMsg ?? 'Something went wrong !') }}
+                    {{ success ? 'Отдел успешно сохранен' : (errorMsg ?? 'Что-то пошло не так !') }}
                 </p>
 
                 <form class="space-y-6">
@@ -39,5 +39,5 @@ defineEmits(['close']);
                 </form>
             </div>
         </template>
-    </DialogModal>
+    </dialog-modal>
 </template>

@@ -115,7 +115,6 @@ await atMountedEmployerForm();
       <Input
         label="Должность"
         v-model="userFields.office_position"
-        mask="Aa*"
       />
     </template>
 

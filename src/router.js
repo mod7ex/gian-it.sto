@@ -6,7 +6,7 @@ import { pingLoader } from '~/composables/useAppLoader.js';
 const routes = [
   { path: '/', component: () => import(/* webpackChunkName: "login-page" */ '@/Pages/Login/Login.vue'), name: 'Login', meta: { guest: true } },
   { path: '/forgot-password', component: () => import('@/Pages/Login/ForgotPassword.vue'), name: 'ForgotPassword', meta: { guest: true } },
-  { path: '/refresh-password/:token', component: () => import('@/Pages/Login/RefreshPassword.vue'), name: 'RefreshPassword', meta: { guest: true } },
+  { path: '/password/reset/:token', component: () => import('@/Pages/Login/RefreshPassword.vue'), name: 'RefreshPassword', meta: { guest: true } },
 
   { path: '/dashboard', component: () => import('@/Pages/Office/Dashboard.vue'), name: 'Dashboard' },
 

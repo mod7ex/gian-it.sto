@@ -9,7 +9,7 @@ import useSuspense from '~/composables/useSuspense.js';
 
 const SuspensRawForm = useSuspense(RawForm);
 
-const { save, loading, errorMsg, success, ready, isModalUp, isUpdate } = departmentForm();
+const { saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = departmentForm();
 
 defineEmits(['close']);
 
@@ -29,7 +29,7 @@ defineEmits(['close']);
 
                     <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
 
-                        <Button :disabled="loading" @click.prevent="save" :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }" color="blue" class="w-full inline-flex justify-center  px-4 py-2 sm:col-start-2" >
+                        <Button :disabled="loading" @click.prevent="saveForm" :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }" color="blue" class="w-full inline-flex justify-center  px-4 py-2 sm:col-start-2" >
                             <Spinner  v-if="loading" />
                             <span v-else>Сохранить</span>
                         </Button>

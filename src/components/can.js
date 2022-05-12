@@ -15,13 +15,19 @@ export default defineComponent({
       type: String,
     },
 
+    orIf: {
+      type: Boolean,
+      default: false,
+    },
+
     cClass: {
       type: String,
     },
   },
 
-  setup({ ability, cClass, tag }, { slots }) {
-    const show = userHasPermission(ability);
+  setup({ ability, cClass, tag, orIf }, { slots }) {
+    let show = orIf;
+    if (ability) show = show || userHasPermission(ability);
 
     // return () => (show ? h(tag, { class: cClass }, { default: () => slots }) : null);
     return () => (show ? h(tag, { class: cClass }, [slots.default()]) : null);

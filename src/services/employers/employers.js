@@ -59,7 +59,7 @@ const dropUser = async (id) => {
 
   success.value && deleteUser(id) && setSelectedUser();
 
-  const deletionMsg = success.value ? 'Employer was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить пользователя');
+  const deletionMsg = success.value ? 'Сотрудник успешно удален' : (errorMsg.value ?? 'Не удалось удалить пользователя');
 
   return { message: deletionMsg, success: success.value };
 };

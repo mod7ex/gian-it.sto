@@ -56,13 +56,13 @@ const apiRequest = (url, config = {}) => {
     loading.value = false;
   };
 
-  const call = async () => {
+  const call = async (onTheFlyURL, onTheFlyConfig = {}) => {
     loading.value = true;
 
     try {
       const result = await instance.request({
-        url,
-        ...config,
+        url: url ?? onTheFlyURL,
+        ...{ ...config, ...onTheFlyConfig },
       });
       responce.value = result;
       data.value = result.data;

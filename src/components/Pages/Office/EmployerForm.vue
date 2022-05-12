@@ -9,11 +9,11 @@ import useSuspense from '~/composables/useSuspense.js';
 
 const SuspensEmployerFormFields = useSuspense(EmployerFormFields);
 
-const { saveUser } = employerForm();
+const { saveUser, isEditEmployerPage } = employerForm();
 </script>
 
 <template>
-  <OfficeLayout title="Создание нового сотрудника">
+  <OfficeLayout :title="isEditEmployerPage ? 'Обновить сотрудника' : 'Создание нового сотрудника'">
     <template #actions>
       <Button type="secondary" link="/employers">
         <ArrowLeftIcon class="w-5 h-5 mr-1" />

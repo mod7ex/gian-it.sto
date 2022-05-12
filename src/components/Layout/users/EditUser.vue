@@ -1,18 +1,24 @@
 <script setup>
 import List from '@/UI/List.vue';
 
-defineProps({
+const props = defineProps({
   settings_title: {
     type: String,
     default: 'Приватность',
   },
+
   settings_subtitle: {
     type: String,
     default: 'Здесь вы можете настроить поведение приложения - то что хотели бы не показывать',
   },
+
+  items: {
+    type: Array,
+    default: [],
+  },
 });
 
-const items = [
+const finalOptions = [
   {
     key: 'is_about_visible',
     title: 'О себе',
@@ -25,10 +31,17 @@ const items = [
   },
   {
     key: 'is_active',
-    title: 'Виден активный статус',
-    subtitle: 'скрыть активный статус от других сотрудников',
+    title: 'Активный статус аккаунта',
+    subtitle: 'выбрать статус активности аккаунта',
   },
+  //   {
+  //     key: 'is_active',
+  //     title: 'Виден активный статус',
+  //     subtitle: 'скрыть активный статус от других сотрудников',
+  //   },
+  ...props.items,
 ];
+
 </script>
 
 <template>
@@ -94,13 +107,11 @@ const items = [
         </div>
 
         <div class="pt-6 divide-y divide-gray-200">
-            <div>
-            <List class='mt-2' :items="items" :title="settings_title" :subtitle="settings_subtitle" >
+            <List class='mt-2' :items="finalOptions" :title="settings_title" :subtitle="settings_subtitle" >
                 <template v-slot:right="{ item, index }">
                     <slot name="settings" :item="item" :index="index"></slot>
                 </template>
             </List>
-            </div>
         </div>
     </div>
 

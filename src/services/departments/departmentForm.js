@@ -1,7 +1,5 @@
-import useVuelidate from '@vuelidate/core';
-import { reactive, ref } from 'vue';
+import { computed, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
-import departmentFormRules from '~/validationsRules/departmentForm.js';
 import { $department } from '~/helpers/fetch.js';
 
 import departmentsService from './departments';
@@ -10,49 +8,39 @@ const { fetchDepartments } = departmentsService();
 
 const { apiRequest } = useApi();
 
-const department = reactive({
-  name: null,
-});
-
 const departmentId = ref();
-
-const { rules } = departmentFormRules();
-const v$ = useVuelidate(rules, department, { $lazy: true });
+const departmentName = ref();
 
 const isModalUp = ref(false);
 
-const isUpdate = ref();
+const isUpdate = computed(() => !!departmentId.value);
 
-const setForm = async (payload) => {
-  // Reflect.ownKeys(department).forEach((key) => Reflect.set(department, key, Reflect.get(payload ?? {}, key)));
-  department.name = payload?.name;
+const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest();
+
+const setForm = (payload = {}) => {
+  departmentName.value = payload.name;
+  departmentId.value = payload.id;
 };
 
-const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest(`/departments/${departmentId.value ?? ''}`, {
-  method: departmentId.value ? 'put' : 'post',
-  data: department,
-});
+const setModalVisibility = (bool, id) => {
+  setForm({ id });
 
-const setModalVisibility = (bool, dId) => {
-  isModalUp.value = bool ?? !isModalUp.value;
-  reset();
-  v$.value.$reset();
-  setForm();
-  departmentId.value = dId;
+  if (bool) reset();
+
+  isModalUp.value = bool ?? false;
 };
 
-const save = async () => {
+const saveForm = async () => {
   reset();
 
-  v$.value.$touch();
-
-  if (v$.value.$invalid) return;
-
-  v$.value.$reset();
-
-  await call();
+  await call(`/departments/${departmentId.value ?? ''}`, {
+    method: isUpdate.value ? 'put' : 'post',
+    data: { name: departmentName.value },
+  });
 
   if (!success.value) return false;
+
+  setForm(data.value.department);
 
   await fetchDepartments();
 
@@ -60,18 +48,18 @@ const save = async () => {
 };
 
 const atMountedDepartmentForm = async () => {
-  const dep = !!departmentId.value && await $department(departmentId.value);
+  const id = departmentId.value;
 
-  await setForm(dep || {});
+  let dep = {};
+  if (id) dep = await $department(id);
 
-  isUpdate.value = !!(dep || false);
+  setForm(dep);
 };
 
 export default function profileChangePasswordHandler() {
   return {
-    v$,
     data,
-    save,
+    saveForm,
     responce,
     error,
     loading,
@@ -79,7 +67,7 @@ export default function profileChangePasswordHandler() {
     success,
     ready,
     isModalUp,
-    department,
+    departmentName,
     setModalVisibility,
     atMountedDepartmentForm,
     isUpdate,

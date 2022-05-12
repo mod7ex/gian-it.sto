@@ -11,7 +11,7 @@ import useAppRouter from '~/composables/useAppRouter.js';
 
 const { router } = useAppRouter();
 
-const { saveNewPassword, form, v$, loading, success, errorMsg, data, reponce } = useRefreshPassword();
+const { save, form, v$, loading, success, errorMsg, data, reponce, ready } = useRefreshPassword();
 
 onMounted(() => {
   const { token } = router.currentRoute.value.params;
@@ -28,10 +28,10 @@ onMounted(() => {
     <div class="mt-8">
       <div class="mt-6">
 
-        <p v-if="success" class="text-green-700 text-sm mb-6">Теперь вы можете войти с новым паролем</p>
-         <p v-else class="text-red-500 text-sm mb-6"> {{ errorMsg ?? 'Undefined (network?) error' }} </p>
+        <p v-if="ready && success " class="text-green-700 text-sm mb-6">{{ data.message ?? 'Ваш пароль был сброшен' }}</p>
+        <p v-if="ready && !success " class="text-red-500 text-sm mb-6">{{ errorMsg ?? 'Undefined (network?) error' }}</p>
 
-        <form class="space-y-6" @submit.prevent="saveNewPassword">
+        <form class="space-y-6" @submit.prevent="save">
 
           <Input v-if="!reponce" label="Новый пароль" type="password" v-model="v$.password.$model" :error="(v$.password.$error) ? v$.password.$silentErrors[0].$message : ''" />
 
@@ -39,7 +39,7 @@ onMounted(() => {
             <Input label="Повторите пароль" type="password" v-model="v$.confirmPassword.$model" :error="(v$.confirmPassword.$error) ? v$.confirmPassword.$silentErrors[0].$message : ''" />
           </div>
 
-          <Button v-if="!reponce" :disabled="loading" :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }" color="blue" class="w-full justify-center" @click.prevent="saveNewPassword">
+          <Button v-if="!reponce" :disabled="loading" :class="{ 'cursor-not-allowed': loading, 'opacity-60': loading }" color="blue" class="w-full justify-center" @click.prevent="save">
             <Spinner  v-if="loading" />
             <span v-else>Сохранить</span>
           </Button>
@@ -47,10 +47,11 @@ onMounted(() => {
           <!-- We need this button to make form generally submittable -->
           <button class="hidden" type="submit">accessible submit button</button>
 
-          <Link to="/" class="flex text-sm">
+          <Link :to="{name: 'Login'}" class="flex text-sm">
             <ArrowNarrowLeftIcon class="h-5 w-5 mr-1" aria-hidden="true" />
             На страницу входа
           </Link>
+
         </form>
       </div>
     </div>

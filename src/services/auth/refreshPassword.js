@@ -16,12 +16,12 @@ const { rules } = refreshPasswordValidationsRules(form);
 
 const v$ = useVuelidate(rules, form);
 
-const { call, data, loading, errorMsg, success, reset, reponce } = apiRequest('auth/password/reset', {
+const { call, data, loading, errorMsg, success, reset, reponce, ready } = apiRequest('auth/password/reset', {
   method: 'post',
   data: form,
 });
 
-const saveNewPassword = async () => {
+const save = async () => {
   v$.value.$touch();
 
   reset();
@@ -35,7 +35,7 @@ const saveNewPassword = async () => {
 
 export default function useRefreshPassword() {
   return {
-    saveNewPassword,
+    save,
     form,
     v$,
     loading,
@@ -43,5 +43,6 @@ export default function useRefreshPassword() {
     errorMsg,
     data,
     reponce,
+    ready,
   };
 }

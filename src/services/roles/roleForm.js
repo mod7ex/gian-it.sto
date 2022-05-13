@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { minLength, required, helpers } from '@vuelidate/validators';
 import useApi from '~/composables/useApi.js';
@@ -15,7 +15,7 @@ let routeInstance;
 let isEditRolePage;
 let redirect;
 
-const rawRolePermissions = ref([]);
+const rawRolePermissions = shallowRef([]);
 
 const roleTitle = ref('');
 
@@ -58,9 +58,9 @@ const saveRole = async () => {
 
 /* ************ Role Raw Permissions ************ */
 const fetchRawRolePermissions = async () => {
-  rawRolePermissions.value = await $rawPermissions();
+  const arr = await $rawPermissions();
 
-  rawRolePermissions.value.sort((a, b) => b.permissions?.length - a.permissions?.length);
+  rawRolePermissions.value = arr.sort((a, b) => b.permissions?.length - a.permissions?.length);
 };
 
 const setRoleForm = async (payload) => {

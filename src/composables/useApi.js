@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { watch, ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import useAuth from '~/composables/useAuth.js';
 
 const { token } = useAuth();
@@ -9,17 +9,7 @@ const instance = axios.create({
   timeout: import.meta.env.STO_API_TIMEOUT,
 });
 
-watch(
-  () => token.value,
-  (v) => {
-    instance.defaults.headers.common.Authorization = v
-      ? `Bearer ${v}`
-      : null;
-  },
-  {
-    immediate: true,
-  },
-);
+watchEffect(() => { instance.defaults.headers.common.Authorization = token.value ? `Bearer ${token.value}` : null; });
 
 const apiRequest = (url, config = {}) => {
   const data = ref();

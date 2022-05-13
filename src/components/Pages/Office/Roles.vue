@@ -13,13 +13,11 @@ const SuspensRolesTable = useSuspense(RolesTable);
   <OfficeLayout title="Роли">
     <template #actions>
       <Button type="secondary" link="/employers">
-        <ArrowLeftIcon class="w-5 h-5 mr-1" />
-        сотрудникам
+        <ArrowLeftIcon class="w-5 h-5 mr-1" />сотрудникам
       </Button>
 
       <Button color="blue" link="/roles/create">
-        <PlusCircleIcon class="w-5 h-5 mr-1" />
-        Создать
+        <PlusCircleIcon class="w-5 h-5 mr-1" />Создать
       </Button>
     </template>
 

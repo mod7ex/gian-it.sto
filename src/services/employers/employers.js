@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import useApi from '~/composables/useApi.js';
 import useOrder from '~/composables/useOrder.js';
 import { $employers } from '~/helpers/fetch.js';
@@ -42,7 +42,7 @@ const directory = computed(
     }, {}),
 );
 
-const selectedUser = ref({});
+const selectedUser = shallowRef({});
 const selected = computed(() => !!selectedUser.value?.id);
 const setSelectedUser = (user) => { selectedUser.value = user ? users.value.find(({ id }) => id === user?.id) ?? {} : {}; };
 

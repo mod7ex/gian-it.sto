@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import navigationGuards from '~/lib/permissions.js';
-
 import { pingLoader } from '~/composables/useAppLoader.js';
 
 const routes = [
@@ -86,10 +85,8 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(() => {
-  pingLoader(true);
-});
-
 router.beforeEach(navigationGuards);
+
+router.beforeEach(() => { pingLoader(); });
 
 export default router;

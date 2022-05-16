@@ -6,7 +6,7 @@ let ToastsApp;
 
 const toastsList = ref(new Map()); // Map works well with frequent deletion and adding
 
-const isEmptyToastsList = computed(() => toastsList.value.size === 0);
+export const isEmptyToastsList = computed(() => toastsList.value.size === 0);
 
 const closeToast = (toastKey) => { toastsList.value.delete(toastKey); };
 

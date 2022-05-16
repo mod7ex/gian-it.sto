@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { minLength, required, helpers } from '@vuelidate/validators';
 import useApi from '~/composables/useApi.js';
@@ -15,7 +15,7 @@ let routeInstance;
 let isEditRolePage;
 let redirect;
 
-const rawRolePermissions = ref([]);
+const rawRolePermissions = shallowRef([]);
 
 const roleTitle = ref('');
 
@@ -51,16 +51,18 @@ const saveRole = async () => {
 
   if (!success.value) return toaster.danger(errorMsg.value ?? 'Что-то пошло не так !');
 
+  toaster.success(`Роль успешно ${isEditRolePage.value ? 'обновлена' : 'создана'}`);
+
   !isEditRolePage.value && await redirect({ name: 'EditRole', params: { id: data.value?.role?.id } });
 
-  return toaster.success(`Роль успешно ${isEditRolePage.value ? 'обновлена' : 'создана'}`);
+  return true;
 };
 
 /* ************ Role Raw Permissions ************ */
 const fetchRawRolePermissions = async () => {
-  rawRolePermissions.value = await $rawPermissions();
+  const arr = await $rawPermissions();
 
-  rawRolePermissions.value.sort((a, b) => b.permissions?.length - a.permissions?.length);
+  rawRolePermissions.value = arr.sort((a, b) => b.permissions?.length - a.permissions?.length);
 };
 
 const setRoleForm = async (payload) => {

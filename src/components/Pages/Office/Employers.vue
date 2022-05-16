@@ -20,9 +20,9 @@ const headingMessage = computed(() => {
   return 'нет пользователей!';
 });
 
-const search = ref('');
-
 const loading = ref(false);
+
+const search = ref('');
 
 const loadEmployers = async () => {
   loading.value = true;

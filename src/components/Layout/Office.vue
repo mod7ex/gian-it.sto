@@ -63,7 +63,7 @@ const menu = [
 ].filter(({ name }) => isRouteAccessableForCurrentUser(name))
   .map(({ label, name, icon }) => ({ label, name, icon, current: isCurrentFullPath({ name }) }));
 
-const links = computed(() => departmentsLinks.value.map(({ href, label }, i) => ({ label, href, color: i, current: isCurrentFullPath(href) })));
+const links = computed(() => departmentsLinks.value.map(({ href, label }) => ({ label, href, current: isCurrentFullPath(href) })));
 onMounted(async () => { await fetchDepartments(); });
 
 const userFullName = computed(() => {

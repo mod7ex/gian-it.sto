@@ -22,7 +22,7 @@ const colors = ['indigo', 'blue', 'red', 'yellow', 'green', 'purple', 'gray'];
 
     <div class="mt-1 space-y-1" role="group">
       <router-link
-        v-for="item in items"
+        v-for="(item, i) in items"
         :key="item.label"
         :to="item.href"
         :class="[
@@ -30,7 +30,7 @@ const colors = ['indigo', 'blue', 'red', 'yellow', 'green', 'purple', 'gray'];
             'group flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md'
           ]"
       >
-        <span :class="[`bg-${colors[item.color % colors.length]}-500`, 'w-2.5 h-2.5 mr-2 rounded-full']" aria-hidden="true" />
+        <span :class="[`bg-${colors[i % colors.length]}-500`, 'w-2.5 h-2.5 mr-2 rounded-full']" aria-hidden="true" />
         <span class="truncate">
           {{ item.label }}
         </span>

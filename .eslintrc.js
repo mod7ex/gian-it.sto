@@ -21,6 +21,7 @@ module.exports = {
     'consistent-return': 'off',
     'no-unused-expressions': 'off',
     'no-bitwise': 'off',
+    'no-nested-ternary': 'off',
     // 'no-console': 'off',
   },
   globals: {

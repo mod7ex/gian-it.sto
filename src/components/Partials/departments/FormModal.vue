@@ -20,8 +20,8 @@ defineEmits(['close']);
         <template v-slot:dialog-inner>
             <div class="mt-6 mb-6">
 
-                <p v-if="ready" :class="[`text-${success ? 'green' : 'red'}-700 text-sm text-center mb-6`]">
-                    {{ success ? 'Отдел успешно сохранен' : (errorMsg ?? 'Что-то пошло не так !') }}
+                <p v-if="ready && !success" class="text-red-700 text-sm text-center mb-6">
+                    {{ errorMsg ?? 'Что-то пошло не так !' }}
                 </p>
 
                 <form class="space-y-6">

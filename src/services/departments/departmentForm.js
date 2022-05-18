@@ -1,10 +1,13 @@
 import { computed, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
 import { $department } from '~/helpers/fetch.js';
+import useToast from '~/composables/useToast.js';
 
 import departmentsService from './departments';
 
 const { fetchDepartments } = departmentsService();
+
+const toaster = useToast();
 
 const { apiRequest } = useApi();
 
@@ -23,11 +26,11 @@ const setForm = (payload = {}) => {
 };
 
 const setModalVisibility = (bool, id) => {
-  setForm({ id });
+  isModalUp.value = bool ?? false;
 
   if (bool) reset();
 
-  isModalUp.value = bool ?? false;
+  setForm({ id });
 };
 
 const saveForm = async () => {
@@ -40,11 +43,13 @@ const saveForm = async () => {
 
   if (!success.value) return false;
 
-  setForm(data.value.department);
+  // setForm(data.value.department);
 
   await fetchDepartments();
 
-  return true;
+  setModalVisibility(false);
+
+  return toaster.success('Отдел успешно сохранен');
 };
 
 const atMountedDepartmentForm = async () => {

@@ -16,14 +16,7 @@ const usersCount = computed(() => users.value.length);
 const order = useOrder({
   id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
   department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
-  surname: {
-    label: 'По фамилии',
-    sort: (a, b) => {
-      if (a.surname > b.surname) return 1;
-      if (a.surname < b.surname) return -1;
-      return 0;
-    },
-  },
+  surname: { label: 'По фамилии', sort: (a, b) => (a.surname > b.surname ? 1 : (a.surname < b.surname ? -1 : 0)) },
 }, 'id', (v) => { users.value.sort(v); });
 
 const directory = computed(
@@ -67,6 +60,8 @@ const dropUser = async (id) => {
 /* ************ Fetch employer ************ */
 // eslint-disable-next-line camelcase
 const fetchEmployers = async (searchPayload = '', department_id = hasCRUDdepartments ? undefined : userDepartment.value) => {
+  selectedUser.value = {};
+
   users.value = await $employers({ order: order.criteria.value, name: searchPayload, department_id });
 
   order.reset();

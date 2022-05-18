@@ -26,11 +26,10 @@ await fetchDepartments();
 <template>
   <!-- Table -->
   <Table class="mt-5">
-
     <THead>
       <Tr>
         <Th>Название</Th>
-        <Th>Дата создания</Th>
+        <!-- <Th>Дата создания</Th> -->
         <Th class="text-center">Действия</Th>
       </Tr>
     </THead>
@@ -39,9 +38,8 @@ await fetchDepartments();
       <Tr v-for="(item, index) in departments" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'" >
 
         <Td><Link @click="() => setModalVisibility(true, item.id)" href="">{{ item.name }}</Link></Td>
-        <Td><Badge :point="true" color="blue" >{{ item.created_at }}</Badge></Td>
+        <!-- <Td><Badge :point="true" color="blue" >{{ item.created_at }}</Badge></Td> -->
         <Td class="text-center py-5">
-
           <Dropdown
             direction="right"
             position="center"
@@ -63,7 +61,6 @@ await fetchDepartments();
           </Dropdown>
         </Td>
       </Tr>
-
     </TBody>
   </Table>
 </template>

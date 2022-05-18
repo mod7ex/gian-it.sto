@@ -18,9 +18,9 @@ const { dropUser, selectedUser } = employers();
         <template #description-list>
             <DescriptionListItem label="Телефон" :value="selectedUser.phone" type="columns" />
             <DescriptionListItem label="Почта" :value="selectedUser.email" type="columns" />
-            <DescriptionListItem label="Город / Отдел" :value="selectedUser.city" type="columns" />
+            <DescriptionListItem label="Отдел" :value="selectedUser.department?.name" type="columns" />
             <DescriptionListItem label="Должность" :value="selectedUser.office_position" type="columns" />
-            <DescriptionListItem label="Задач в работе" value="5" type="columns" />
+            <!-- <DescriptionListItem label="Задач в работе" value="5" type="columns" /> -->
             <v-can ability="crud users" :orIf="selectedUser.is_born_at_visible">
                 <DescriptionListItem label="Дата рождения" :value="selectedUser.born_at" type="columns" />
             </v-can>

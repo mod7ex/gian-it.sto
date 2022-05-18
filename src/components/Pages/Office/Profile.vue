@@ -43,16 +43,16 @@ const { v$, avatar, isUploadingAvatar, toggles, log, form, save, isValideAvatarF
             />
           </template>
 
-          <template #surname>
-            <Input label="Фамилия" v-model="form.surname" />
+          <template #middle_name>
+            <Input label="Фамилия" v-model="form.middle_name"/>
           </template>
 
           <template #name>
             <Input label="Имя" v-model="form.name" :error="(v$.name.$error) ? v$.name.$silentErrors[0].$message : ''" />
           </template>
 
-          <template #middle_name>
-            <Input label="Отчество" v-model="form.middle_name"/>
+          <template #surname>
+            <Input label="Отчество" v-model="form.surname" />
           </template>
 
           <template #email>

@@ -64,7 +64,11 @@ const menu = [
   .map(({ label, name, icon }) => ({ label, name, icon, current: isCurrentFullPath({ name }) }));
 
 const links = computed(() => departmentsLinks.value.map(({ href, label }) => ({ label, href, current: isCurrentFullPath(href) })));
-onMounted(async () => { await fetchDepartments(); });
+onMounted(async () => {
+  if (links.value.length) return;
+
+  await fetchDepartments();
+});
 
 const userFullName = computed(() => {
   const userData = user.value;

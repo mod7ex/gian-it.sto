@@ -87,6 +87,8 @@ const router = createRouter({
 
 router.beforeEach(navigationGuards);
 
-router.beforeEach(() => { pingLoader(); });
+router.beforeEach(pingLoader);
+
+router.afterEach(() => pingLoader(false));
 
 export default router;

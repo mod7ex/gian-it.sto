@@ -17,11 +17,11 @@ const ToastsComponent = defineComponent({
     return () => h('div',
       {
         'aria-live': 'assertive',
-        class: 'fixed inset-0 flex items-start px-4 py-6 pointer-events-none sm:p-6 z-50 bg-green-800',
+        class: 'fixed inset-0 flex items-start px-4 py-6 pointer-events-none sm:p-6 z-50',
       },
       [h(
         'div',
-        { class: 'w-full flex flex-col items-center space-y-4 bg-red-800' },
+        { class: 'w-full flex flex-col items-center space-y-4' },
 
         // we could've used toastsList directly
         list.value.map(([key, props]) => h(Transition, {

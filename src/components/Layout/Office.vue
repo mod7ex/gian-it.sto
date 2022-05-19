@@ -64,6 +64,7 @@ const menu = [
   .map(({ label, name, icon }) => ({ label, name, icon, current: isCurrentFullPath({ name }) }));
 
 const links = computed(() => departmentsLinks.value.map(({ href, label }) => ({ label, href, current: isCurrentFullPath(href) })));
+
 onMounted(async () => {
   if (links.value.length) return;
 

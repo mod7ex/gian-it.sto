@@ -10,14 +10,18 @@ const hasCRUDdepartments = userHasPermission('crud departments');
 
 const { apiRequest } = useApi();
 
+const DEFAULT_ORDER_CRITERIA = 'id';
+
+const pivot = {
+  id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
+  surname: { label: 'По фамилии', sort: (a, b) => (a.surname > b.surname ? 1 : (a.surname < b.surname ? -1 : 0)) },
+  department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
+};
+
 const users = ref([]);
 const usersCount = computed(() => users.value.length);
 
-const order = useOrder({
-  id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
-  department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
-  surname: { label: 'По фамилии', sort: (a, b) => (a.surname > b.surname ? 1 : (a.surname < b.surname ? -1 : 0)) },
-}, 'id', (v) => { users.value.sort(v); });
+const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { users.value.sort(v); });
 
 const directory = computed(
   () => [...new Set(users.value.map(({ surname }) => (surname ? surname[0].toUpperCase() : '_')))]
@@ -61,6 +65,8 @@ const dropUser = async (id) => {
 // eslint-disable-next-line camelcase
 const fetchEmployers = async (searchPayload = '', department_id = hasCRUDdepartments ? undefined : userDepartment.value) => {
   selectedUser.value = {};
+
+  order.active.value = false;
 
   users.value = await $employers({ order: order.criteria.value, name: searchPayload, department_id });
 

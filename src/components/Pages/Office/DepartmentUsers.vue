@@ -12,7 +12,7 @@ const { params, query } = useAppRouter();
 
 const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers } = employers();
 
-const EmployersFilter = order.comp();
+const EmployersFilter = order.comp(['department']);
 
 const headingMessage = computed(() => {
   if (usersCount.value > 1) return `Искать среди ${usersCount.value} сотрудников`;

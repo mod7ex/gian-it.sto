@@ -2,10 +2,11 @@ import { ref, computed, watch, defineComponent, h, Transition } from 'vue';
 import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/vue/solid';
 
 /*
-
-  mod ==> 1 or -1
-
+ *
+ * mod ==> 1 or -1
+ *
 */
+
 let cb;
 
 let pivot;
@@ -24,20 +25,34 @@ const key = computed(() => `${criteria.value}-${mod.value > 0 ? 'a' : 'de'}sc`);
 
 const sort = computed(() => pivot[criteria.value].sort);
 
-// **********************************************************************
+// ********************************************************************** Create filter component for users
 
-const comp = () => defineComponent({
+const comp = (excludedFields = []) => defineComponent({
   setup() {
-    const cclass = 'py-2 px-4 border cursor-pointer hover:bg-gray-50 flex justify-between items-center';
+    const cclass = 'py-1 px-4 h-8 border cursor-pointer hover:bg-gray-50 flex justify-between items-center';
+
+    const fieldsCriterias = criterias.value.filter((item) => !excludedFields.includes(item));
+
+    const count = fieldsCriterias.length;
 
     return () => h(
       Transition,
-      { name: 'filter' },
+      {
+        name: 'filter',
+
+        enterFromClass: 'h-0 opacity-0',
+        enterToClass: `h-${count * 8}`,
+        enterActiveClass: 'transition-all ease-out duration-300',
+
+        leaveFromClass: `h-${count * 8}`,
+        leaveActiveClass: 'transition-all ease-in duration-300',
+        leaveToClass: 'h-0',
+      },
       () => [
         active.value ? h(
           'div',
           { class: 'text-gray-600' },
-          criterias.value.map((c) => h(
+          fieldsCriterias.map((c) => h(
             'div',
             { key: c, onClick: () => change(c), class: cclass },
             [

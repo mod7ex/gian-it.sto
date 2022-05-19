@@ -118,7 +118,7 @@ const saveUser = async () => {
   // ********* Password update request
   if (isEditEmployerPage.value && userFields.password) { success = await updatePassword(userId); }
 
-  await redirect({ name: 'EditEmployer', params: { id: userId } });
+  await redirect({ name: 'Employers' });
 
   return success;
 };

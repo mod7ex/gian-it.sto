@@ -98,26 +98,8 @@ defineEmits(['close']);
 //   'focus:ring-purple-600',
 // ];
 </script>
-<template>
-  <!-- Global notification live region, render this permanently at the end of the document -->
-  <!-- Notification panel, dynamically insert this into the live region when it needs to be displayed -->
-  <!-- <div
-    aria-live="assertive"
-    class="fixed inset-0 flex items-start px-4 py-6 pointer-events-none sm:p-6 z-50 bg-red-900 opacity-25"
-  >
-    <div class="w-full flex flex-col items-center space-y-4 bg-green-800">
-      <transition
-        enter-active-class="transform ease-out duration-300 transition"
-        enter-from-class="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-        enter-to-class="translate-y-0 opacity-100 sm:translate-x-0"
-        leave-active-class="transition ease-in duration-100"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
-      </transition>
-    </div>
-  </div> -->
 
+<template>
   <div class="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
     <div :class="['rounded-md p-4', `bg-${props.color}-50`]">
       <div class="flex items-start">
@@ -151,5 +133,4 @@ defineEmits(['close']);
       </div>
     </div>
   </div>
-
 </template>

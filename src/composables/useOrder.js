@@ -46,7 +46,7 @@ const comp = (excludedFields = []) => defineComponent({
 
         leaveFromClass: `h-${count * 8}`,
         leaveActiveClass: 'transition-all ease-in duration-300',
-        leaveToClass: 'h-0',
+        leaveToClass: 'h-0 opacity-0',
       },
       () => [
         active.value ? h(

@@ -27,9 +27,9 @@ const ToastsComponent = defineComponent({
         list.value.map(([key, props]) => h(Transition, {
           name: 'toast',
           enterFromclass: 'opacity-0',
-          enterActiveclass: 'ease-out duration-1000 transition-all',
+          enterActiveclass: 'ease-out duration-300 transition-all',
           enterToclass: 'opacity-100',
-          leaveActiveclass: 'transition-all ease-in duration-1000',
+          leaveActiveclass: 'transition-all ease-in duration-300',
           leaveFromclass: 'opacity-100',
           leavetoclass: 'opacity-0',
         }, () => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),

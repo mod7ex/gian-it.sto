@@ -15,8 +15,6 @@ const colors = ['indigo', 'blue', 'red', 'yellow', 'green', 'purple', 'gray'];
 </script>
 
 <template>
-  <div v-if="false" class="bg-indigo-500 bg-blue-500  bg-red-500 bg-yellow-500 bg-green-500 bg-purple-500 bg-gray-500 "></div>
-
   <div>
     <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
       {{ props.title }}
@@ -40,7 +38,3 @@ const colors = ['indigo', 'blue', 'red', 'yellow', 'green', 'purple', 'gray'];
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

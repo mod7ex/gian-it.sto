@@ -22,7 +22,7 @@ const props = defineProps({
             </div>
 
             <div class="flex-1 min-w-0">
-              <button @click="$emit('select', item)" class="focus:outline-none text-left">
+              <button @click="$emit('select', item.id)" class="focus:outline-none text-left">
                 <span class="absolute inset-0" aria-hidden="true" />
                 <p class="text-sm font-medium text-gray-900" v-if="item.title">
                   {{ item.title }}

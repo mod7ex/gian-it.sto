@@ -6,6 +6,7 @@ import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useAvatar from '~/composables/useAvatar.js';
 import useToggles from '~/composables/useToggles.js';
+import employers from '~/services/employers/employers';
 import { $roles, $departments, $employer } from '~/helpers/fetch.js';
 import useAuth from '~/composables/useAuth.js';
 import { userHasPermission } from '~/lib/permissions.js';
@@ -18,6 +19,14 @@ let routeInstance;
 let isEditEmployerPage;
 let redirectBack;
 let v$;
+
+const { setSelectedUser } = employers();
+
+const previousPage = async () => {
+  if (isEditEmployerPage.value) setSelectedUser(routeInstance.params.id);
+
+  await redirectBack();
+};
 
 const { apiRequest } = useApi();
 const toaster = useToast();
@@ -117,7 +126,7 @@ const saveUser = async () => {
   // ********* Password update request
   if (isEditEmployerPage.value && userFields.password) { success = await updatePassword(userId); }
 
-  await redirectBack();
+  await previousPage();
 
   return success;
 };
@@ -185,5 +194,6 @@ export default function employerFormService() {
     setEmployerForm,
     atMountedEmployerForm,
     isUploadingAvatar,
+    previousPage,
   };
 }

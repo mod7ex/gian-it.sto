@@ -1,4 +1,4 @@
-import { computed, ref, shallowRef } from 'vue';
+import { computed, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
 import useOrder from '~/composables/useOrder.js';
 import { $employers } from '~/helpers/fetch.js';
@@ -39,9 +39,15 @@ const directory = computed(
     }, {}),
 );
 
-const selectedUser = shallowRef({});
-const selected = computed(() => !!selectedUser.value?.id);
-const setSelectedUser = (user) => { selectedUser.value = user ? users.value.find(({ id }) => id === user?.id) ?? {} : {}; };
+const selectedUserId = ref();
+const setSelectedUser = (id) => {
+  // eslint-disable-next-line no-param-reassign
+  id = Number(id);
+  selectedUserId.value = Number.isNaN(id) ? undefined : id;
+};
+
+const selectedUser = computed(() => (selectedUserId.value ? users.value.find(({ id }) => id === selectedUserId.value) ?? {} : {}));
+const selected = computed(() => !!selectedUser.value.id);
 
 /* ************ Delete user ************ */
 const deleteUser = (userId) => !!users.value.splice(

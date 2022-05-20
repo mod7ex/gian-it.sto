@@ -108,7 +108,7 @@ if (props.icon) {
         :class="styles"
         :placeholder="props.placeholder"
         :value="props.modelValue"
-        @input="(event) => $emit('update:modelValue', trim(event.target.value))"
+        @input="(event) => $emit('update:modelValue', event.target.value)"
         @blur="(event) => $emit('blured')"
         :disabled="props.disabled"
         v-maska="props.mask"

@@ -4,6 +4,11 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+
+  selected: {
+    type: [String, Number],
+    required: false,
+  },
 });
 </script>
 
@@ -15,8 +20,8 @@ const props = defineProps({
       </div>
 
       <ul role="list" class="relative z-0 divide-y divide-gray-200">
-        <li v-for="item in props.items[letter]" :key="item.id" class="bg-white">
-          <div class="relative px-6 py-5 flex items-center space-x-3 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
+        <li v-for="item in props.items[letter]" :key="item.id" :class="[`bg-${selected == item.id ? 'gray-200 ring-indigo-300 ring-inset ring-1' : 'white'}`, `hover:bg-gray-${selected == item.id ? '200' : '100'}`]">
+          <div class="relative px-6 py-5 flex items-center space-x-3 ">
             <div class="flex-shrink-0" v-if="item.image">
               <img class="h-10 w-10 rounded-full" :src="item.image" alt="" />
             </div>

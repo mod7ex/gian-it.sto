@@ -89,5 +89,6 @@ export default function employersService() {
     dropUser,
     setSelectedUser,
     fetchEmployers,
+    selectedUserId,
   };
 }

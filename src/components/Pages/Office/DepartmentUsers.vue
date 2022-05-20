@@ -10,7 +10,7 @@ import UEmployers from '@/Layout/users/Users.vue';
 
 const { params, query } = useAppRouter();
 
-const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers } = employers();
+const { order, directory, usersCount, selected, selectedUserId, setSelectedUser, fetchEmployers } = employers();
 
 const EmployersFilter = order.comp(['department']);
 
@@ -52,7 +52,13 @@ watch(params, loadEmployers, { immediate: true });
         </template>
 
         <template #list>
-          <StackedListWithHeadings class="flex-1 min-h-0 overflow-y-auto" :items="directory" @select="setSelectedUser" :key="order.key.value" />
+          <StackedListWithHeadings
+            class="flex-1 min-h-0 overflow-y-auto"
+            :items="directory"
+            @select="setSelectedUser"
+            :key="order.key.value"
+            :selected="selectedUserId"
+          />
         </template>
 
         <template #preview>

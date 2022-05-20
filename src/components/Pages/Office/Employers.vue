@@ -10,7 +10,7 @@ import EmployerPreview from '@/Partials/employers/Preview.vue';
 import employers from '~/services/employers/employers.js';
 import UEmployers from '@/Layout/users/Users.vue';
 
-const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers } = employers();
+const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers, selectedUserId } = employers();
 
 const EmployersFilter = order.comp();
 
@@ -67,7 +67,13 @@ onMounted(async () => { await loadEmployers(); });
         </template>
 
         <template #list>
-          <StackedListWithHeadings class="flex-1 min-h-0 overflow-y-auto" :items="directory" @select="setSelectedUser" :key="order.key.value" />
+          <StackedListWithHeadings
+            class="flex-1 min-h-0 overflow-y-auto"
+            :items="directory"
+            @select="setSelectedUser"
+            :key="order.key.value"
+            :selected="selectedUserId"
+          />
         </template>
 
         <template #preview>

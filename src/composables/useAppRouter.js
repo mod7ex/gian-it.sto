@@ -9,6 +9,8 @@ const redirectTo = async (to = '/') => {
   await routerInstance.push(to); // we can handle navigation failure here
 };
 
+const back = () => routerInstance.back();
+
 const currentPageName = computed(() => routeInstance?.name);
 const params = computed(() => routeInstance?.params);
 const query = computed(() => routeInstance?.query);
@@ -34,5 +36,6 @@ export default function useAppRouter(pageName = '_') {
     query,
     fullPath,
     isCurrentFullPath,
+    back,
   };
 }

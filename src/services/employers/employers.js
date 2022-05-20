@@ -64,8 +64,6 @@ const dropUser = async (id) => {
 /* ************ Fetch employer ************ */
 // eslint-disable-next-line camelcase
 const fetchEmployers = async (searchPayload = '', department_id = hasCRUDdepartments ? undefined : userDepartment.value) => {
-  selectedUser.value = {};
-
   order.active.value = false;
 
   users.value = await $employers({ order: order.criteria.value, name: searchPayload, department_id });

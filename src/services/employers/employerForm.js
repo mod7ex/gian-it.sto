@@ -16,7 +16,7 @@ const hasCRUDdepartments = userHasPermission('crud departments');
 
 let routeInstance;
 let isEditEmployerPage;
-let redirect;
+let redirectBack;
 let v$;
 
 const { apiRequest } = useApi();
@@ -97,7 +97,6 @@ const saveRawUserFields = async () => {
 const saveUser = async () => {
   let isValideForm = await v$.value.$validate();
 
-  // isValideForm = isValideForm && isValideAvatarFileSize.value ;
   isValideForm &&= isValideAvatarFileSize.value;
 
   if (!isValideForm) return;
@@ -118,7 +117,7 @@ const saveUser = async () => {
   // ********* Password update request
   if (isEditEmployerPage.value && userFields.password) { success = await updatePassword(userId); }
 
-  await redirect({ name: 'Employers' });
+  await redirectBack();
 
   return success;
 };
@@ -162,9 +161,9 @@ const atMountedEmployerForm = async () => {
 };
 
 export default function employerFormService() {
-  const { route, isThePage, redirectTo } = useAppRouter('EditEmployer');
+  const { route, isThePage, back } = useAppRouter('EditEmployer');
 
-  [routeInstance, isEditEmployerPage, redirect] = [route, isThePage, redirectTo];
+  [routeInstance, isEditEmployerPage, redirectBack] = [route, isThePage, back];
 
   const { rules } = employerFormValidationsRules(userFields, isEditEmployerPage.value);
 

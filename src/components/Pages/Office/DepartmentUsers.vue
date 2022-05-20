@@ -24,6 +24,7 @@ const search = ref('');
 
 const loading = ref(false);
 const loadEmployers = async () => {
+  console.log(params.value);
   if (!params.value?.id) return;
   loading.value = true;
   await fetchEmployers(search.value, params.value.id);

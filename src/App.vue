@@ -26,4 +26,8 @@ import Loader from '~/components/Partials/Loader.vue';
 .scroll-area::-webkit-scrollbar-thumb {
   background-color: darkgrey;
 }
+
+.scroll-area::-webkit-scrollbar-thumb:hover {
+  background-color: #2563EB;
+}
 </style>

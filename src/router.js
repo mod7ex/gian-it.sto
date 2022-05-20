@@ -39,7 +39,6 @@ const routes = [
   { path: '/roles/update/:id', component: () => import('@/Pages/Office/RoleForm.vue'), name: 'EditRole' },
 
   { path: '/departments', component: () => import('@/Pages/Office/Departments.vue'), name: 'Departments' },
-  { path: '/department/:id', component: () => import('@/Pages/Office/DepartmentUsers.vue'), name: 'DepartmentUsers' },
 
   { path: '/developers', component: () => import('@/Pages/Office/Developers.vue'), name: 'Developers' },
   { path: '/developers/create', component: () => import('@/Pages/Office/DeveloperForm.vue'), name: 'DeveloperForm' },

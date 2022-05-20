@@ -21,20 +21,19 @@ const colors = ['indigo', 'blue', 'red', 'yellow', 'green', 'purple', 'gray'];
     </h3>
 
     <div class="mt-1 space-y-1" role="group">
-      <router-link
+      <button
         v-for="(item, i) in items"
         :key="item.label"
-        :to="item.href"
+        @click="$emit('switch', item.id)"
         :class="[
-            item.current ? 'bg-blue-600 text-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800',
-            'group flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md'
-          ]"
+          'w-full',
+          item.current ? 'bg-green-700 text-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800',
+          'group flex items-center px-3 py-2 text-sm leading-5 font-medium rounded-md'
+        ]"
       >
         <span :class="[`bg-${colors[i % colors.length]}-500`, 'w-2.5 h-2.5 mr-2 rounded-full']" aria-hidden="true" />
-        <span class="truncate">
-          {{ item.label }}
-        </span>
-      </router-link>
+        <span class="truncate">{{ item.label }}</span>
+      </button>
     </div>
   </div>
 </template>

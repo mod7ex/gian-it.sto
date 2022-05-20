@@ -10,9 +10,9 @@ import EmployerPreview from '@/Partials/employers/Preview.vue';
 import employers from '~/services/employers/employers.js';
 import UEmployers from '@/Layout/users/Users.vue';
 
-const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers, selectedUserId } = employers();
+const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers, selectedUserId, loading } = employers();
 
-const EmployersFilter = order.comp();
+const EmployersFilter = order.comp(['department']);
 
 const headingMessage = computed(() => {
   if (usersCount.value > 1) return `Искать среди ${usersCount.value} сотрудников`;
@@ -20,19 +20,12 @@ const headingMessage = computed(() => {
   return 'нет пользователей!';
 });
 
-const loading = ref(false);
-
 const search = ref('');
 
-const loadEmployers = async () => {
-  loading.value = true;
-  await fetchEmployers(search.value);
-  loading.value = false;
-};
+watch(search, _.debounce(fetchEmployers, 1500), { /* 'immediate: true' <- we can't use immediate because of debounce it little slow */ });
 
-watch(search, _.debounce(loadEmployers, 1500), { /* 'immediate: true' <- we can't use immediate because of debounce it little slow */ });
+onMounted(async () => { await fetchEmployers(); });
 
-onMounted(async () => { await loadEmployers(); });
 </script>
 
 <template>

@@ -1,12 +1,10 @@
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import useApi from '~/composables/useApi.js';
 import useOrder from '~/composables/useOrder.js';
 import { $employers } from '~/helpers/fetch.js';
-import useAuth from '~/composables/useAuth.js';
-import { userHasPermission } from '~/lib/permissions.js';
+import departments from '~/services/departments/departments';
 
-const { userDepartment } = useAuth();
-const hasCRUDdepartments = userHasPermission('crud departments');
+const { currentDepartment } = departments();
 
 const { apiRequest } = useApi();
 
@@ -68,16 +66,26 @@ const dropUser = async (id) => {
 };
 
 /* ************ Fetch employer ************ */
+const loading = ref(false);
+
 // eslint-disable-next-line camelcase
-const fetchEmployers = async (searchPayload = '', department_id = hasCRUDdepartments ? undefined : userDepartment.value) => {
+const fetchEmployers = async (searchPayload) => {
+  loading.value = true;
+
   order.active.value = false;
 
-  users.value = await $employers({ order: order.criteria.value, name: searchPayload, department_id });
+  users.value = await $employers({ order: order.criteria.value, name: searchPayload ?? '', department_id: currentDepartment.value });
 
   order.reset();
+
+  loading.value = false;
 };
 
 export default function employersService() {
+  watch(currentDepartment, async () => {
+    await fetchEmployers();
+  });
+
   return {
     order,
     users,
@@ -90,5 +98,6 @@ export default function employersService() {
     setSelectedUser,
     fetchEmployers,
     selectedUserId,
+    loading,
   };
 }

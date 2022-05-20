@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue';
 import useApi from '~/composables/useApi.js';
 import useAppRouter from '~/composables/useAppRouter.js';
+import useAuth from '~/composables/useAuth.js';
 import { $departments } from '~/helpers/fetch.js';
 
 import { userHasPermission } from '~/lib/permissions.js';
@@ -15,14 +16,22 @@ const { apiRequest } = useApi();
 const rawDepartments = ref([]);
 
 // eslint-disable-next-line camelcase
-const departments = computed(() => rawDepartments.value.map(({ id, name, created_at }) => ({ id, name, created_at })));
-
-const departmentsLinks = computed(() => rawDepartments.value.map(({ id, name }) => ({ href: { name: 'DepartmentUsers', params: { id }, query: { name } }, label: name })));
+const departments = computed(() => rawDepartments.value.map(({ id, name }) => ({ id, name })));
 
 const fetchDepartments = async () => {
   if (!hasCRUD) return;
   rawDepartments.value = await $departments();
 };
+
+/* ************ App Current Department ************ */
+const { userDepartment } = useAuth();
+const currentDepartment = ref();
+
+const setCurrentDepartment = (id) => {
+  currentDepartment.value = id ?? userDepartment.value;
+};
+
+const isCurrentDepartment = (id) => id === currentDepartment.value;
 
 /* ************ Delete department ************ */
 const deleteDepartment = (id) => {
@@ -63,7 +72,9 @@ export default function departmentsService() {
     movetoEditDepartmentPage,
     dropDepartment,
     departments,
-    departmentsLinks,
     hasCRUD,
+    currentDepartment,
+    setCurrentDepartment,
+    isCurrentDepartment,
   };
 }

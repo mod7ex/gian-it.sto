@@ -22,9 +22,8 @@ let v$;
 
 const { setSelectedUser } = employers();
 
-const previousPage = async () => {
-  if (isEditEmployerPage.value) setSelectedUser(routeInstance.params.id);
-
+const previousPage = async (id) => {
+  if (id) setSelectedUser(id);
   await redirectBack();
 };
 
@@ -126,7 +125,7 @@ const saveUser = async () => {
   // ********* Password update request
   if (isEditEmployerPage.value && userFields.password) { success = await updatePassword(userId); }
 
-  await previousPage();
+  await previousPage(userId);
 
   return success;
 };

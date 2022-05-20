@@ -15,7 +15,7 @@ const { saveUser, isEditEmployerPage, previousPage } = employerForm();
 <template>
   <OfficeLayout :title="isEditEmployerPage ? 'Обновить сотрудника' : 'Создание нового сотрудника'">
     <template #actions>
-      <Button type="secondary" @click="previousPage">
+      <Button type="secondary" @click="()=>previousPage()">
         <ArrowLeftIcon class="w-5 h-5 mr-1" />
         Вернуться
       </Button>

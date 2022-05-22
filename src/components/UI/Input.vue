@@ -86,47 +86,43 @@ if (props.icon) {
 
 <template>
   <div>
-    <div class="flex justify-between mb-1" v-if="props.label.length || props.meta.length" >
-      <label class="block text-sm font-medium text-gray-700" v-if="props.label.length > 0" >
-        {{ props.label }}
+    <div class="flex justify-between mb-1" v-if="label.length || meta.length" >
+      <label class="block text-sm font-medium text-gray-700" v-if="label.length > 0" >
+        {{ label }}
       </label>
 
-      <span class="text-sm text-gray-500" v-if="props.meta.length > 0">
-        {{ props.meta }}
+      <span class="text-sm text-gray-500" v-if="meta.length > 0">
+        {{ meta }}
       </span>
     </div>
 
     <div class="relative rounded-md shadow-sm">
       <slot name="before">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true" v-if="props.icon" >
-          <component :is="props.icon" class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" aria-hidden="true" v-if="icon" >
+          <component :is="icon" class="mr-3 h-5 w-5 text-gray-400" aria-hidden="true" />
         </div>
       </slot>
 
       <input
-        :type="props.type"
+        :type="type"
         :class="styles"
-        :placeholder="props.placeholder"
-        :value="props.modelValue"
+        :placeholder="placeholder"
+        :value="modelValue"
         @input="(event) => $emit('update:modelValue', event.target.value)"
         @blur="(event) => $emit('blured')"
-        :disabled="props.disabled"
-        v-maska="props.mask"
+        :disabled="disabled"
+        v-maska="mask"
       />
 
       <slot name="after">
-        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" v-if="props.error.length > 0" >
+        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none" v-if="error.length > 0" >
           <ExclamationCircleIcon class="h-5 w-5 text-red-500" aria-hidden="true" />
         </div>
       </slot>
     </div>
 
-    <p class="mt-2 text-sm text-gray-500" v-if="props.help.length > 0">
-      {{ props.help }}
-    </p>
-
-    <p class="mt-2 text-sm text-red-600" v-if="props.error.length > 0">
-      {{ props.error }}
+    <p class="mt-1 text-xs text-red-600" :class="[`text-${error.lenght ? 'red-600' : 'gray-500'}`]">
+      &#160;{{ error ?? help  }}
     </p>
   </div>
 </template>

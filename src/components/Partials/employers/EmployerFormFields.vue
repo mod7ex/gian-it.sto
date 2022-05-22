@@ -89,10 +89,10 @@ await atMountedEmployerForm();
       <Input
         label="Новый пароль"
         type="password"
-        v-model.trim="userFields.password"
+        v-model="userFields.password"
         :required="true"
         :error="v$.password.$errors[0]?.$message"
-        @blured="v$.password.$touch"
+        @input="v$.password.$touch"
       />
     </template>
 
@@ -100,10 +100,10 @@ await atMountedEmployerForm();
       <Input
         label="Подтвердите новый пароль"
         type="password"
-        v-model.trim="userFields.password_confirmation"
+        v-model="userFields.password_confirmation"
         :required="true"
         :error="v$.password_confirmation.$errors[0]?.$message"
-        @blured="v$.password_confirmation.$touch"
+        @input="v$.password_confirmation.$touch"
       />
     </template>
 

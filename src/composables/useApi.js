@@ -51,7 +51,7 @@ const apiRequest = (url, config = {}) => {
 
     try {
       const result = await instance.request({
-        url: url ?? onTheFlyURL,
+        url: onTheFlyURL ?? url,
         ...{ ...config, ...onTheFlyConfig },
       });
       responce.value = result;
@@ -64,6 +64,42 @@ const apiRequest = (url, config = {}) => {
       loading.value = false;
     }
   };
+
+  /*
+
+  const get = async (onTheFlyURL, onTheFlyConfig = {}) => {
+    loading.value = true;
+
+    try {
+      const result = await instance.get(onTheFlyURL ?? url, { ...config, ...onTheFlyConfig });
+      responce.value = result;
+      data.value = result.data;
+    } catch (e) {
+      error.value = e;
+      console.log('Error; ', e);
+      console.log('Error message; ', errorMsg.value);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const post = async (onTheFlyURL, onTheFlyConfig = {}) => {
+    loading.value = true;
+
+    try {
+      const result = await instance.post(onTheFlyURL ?? url, { ...config, ...onTheFlyConfig });
+      responce.value = result;
+      data.value = result.data;
+    } catch (e) {
+      error.value = e;
+      console.log('Error; ', e);
+      console.log('Error message; ', errorMsg.value);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+*/
 
   return { call, data, responce, error, loading, errorMsg, success, reset, ready };
 };

@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from '@vue/runtime-core';
+import { computed } from 'vue';
 
 const props = defineProps({
   label: {
@@ -86,13 +86,10 @@ const options = computed(() => props.options.map((e) => {
 
     </select>
 
-    <p class="mt-2 text-sm text-gray-500" v-if="props.help.length > 0">
-      {{ props.help }}
+    <p class="mt-1 text-xs text-red-600" :class="[`text-${error.lenght ? 'red-600' : 'gray-500'}`]">
+      &#160;{{ error ?? help  }}
     </p>
 
-    <p class="mt-2 text-sm text-red-600" v-if="props.error.length > 0">
-      {{ props.error }}
-    </p>
   </div>
 </template>
 

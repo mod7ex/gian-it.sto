@@ -22,6 +22,7 @@ module.exports = {
     'no-unused-expressions': 'off',
     'no-bitwise': 'off',
     'no-nested-ternary': 'off',
+    'func-names': 'off',
     // 'no-console': 'off',
   },
   globals: {

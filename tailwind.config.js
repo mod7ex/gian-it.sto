@@ -16,6 +16,8 @@ module.exports = {
         'bg-gray-500',
         'bg-gray-200',
         'bg-gray-100',
+        'text-gray-500',
+        'text-red-600',
         'bg-white',
         'h-24',
       ],

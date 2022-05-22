@@ -130,23 +130,25 @@ const saveUser = async () => {
   return success;
 };
 
+const setUserField = function (key) {
+  if (key === 'department_id') {
+    if (!hasCRUDdepartments) userFields.department_id = userDepartment.value;
+    else userFields.department_id = this.department?.id ?? '';
+    return;
+  }
+
+  if (key === 'role_id') {
+    userFields.role_id = Array.isArray(this.roles) ? this.roles[0]?.id : '';
+    return;
+  }
+
+  userFields[key] = this[key] ?? '';
+};
+
 const setEmployerForm = async (payload) => {
   setAvatar(payload);
 
-  Object.keys(userFields).forEach((key) => {
-    if (key === 'department_id') {
-      if (!hasCRUDdepartments) userFields.department_id = userDepartment.value;
-      else userFields.department_id = payload.department?.id ?? '';
-      return;
-    }
-
-    if (key === 'role_id') {
-      userFields.role_id = Array.isArray(payload.roles) ? payload.roles[0]?.id : '';
-      return;
-    }
-
-    userFields[key] = payload[key] ?? '';
-  });
+  Object.keys(userFields).forEach(setUserField, payload);
 
   // eslint-disable-next-line camelcase
   const { is_about_visible, is_born_at_visible, is_active } = payload;

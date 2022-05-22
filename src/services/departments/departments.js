@@ -6,6 +6,8 @@ import { $departments } from '~/helpers/fetch.js';
 
 import { userHasPermission } from '~/lib/permissions.js';
 
+const LOCAL_STORAGE_DEPARTMENT = 'department';
+
 const hasCRUD = userHasPermission('crud departments');
 
 let redirect;
@@ -28,13 +30,20 @@ const { userDepartment } = useAuth();
 const currentDepartment = ref();
 
 const setCurrentDepartment = (id) => {
-  currentDepartment.value = id ?? userDepartment.value;
+  const currentDepartmentId = id ?? localStorage.getItem(LOCAL_STORAGE_DEPARTMENT) ?? userDepartment.value;
+  localStorage.setItem(LOCAL_STORAGE_DEPARTMENT, `${currentDepartmentId}`);
+  currentDepartment.value = Number(currentDepartmentId);
 };
 
 const isCurrentDepartment = (id) => id === currentDepartment.value;
 
 /* ************ Delete department ************ */
 const deleteDepartment = (id) => {
+  if (localStorage.getItem(LOCAL_STORAGE_DEPARTMENT) === `${id}`) {
+    localStorage.removeItem(LOCAL_STORAGE_DEPARTMENT);
+    setCurrentDepartment();
+  }
+
   rawDepartments.value.splice(
     rawDepartments.value.findIndex((dep) => dep.id === id),
     1,

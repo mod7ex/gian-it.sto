@@ -84,8 +84,10 @@ const apiRequest = (url, config = {}) => {
       data.value = result.data;
     } catch (e) {
       error.value = e;
-      console.log('Error; ', e);
-      console.log('Error message; ', errorMsg.value);
+      if (__STO_DEV__) {
+        console.log('Error; ', e);
+        console.log('Error message; ', errorMsg.value);
+      }
     } finally {
       loading.value = false;
     }

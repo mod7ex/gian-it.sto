@@ -12,6 +12,8 @@ app.config.performance = true; // for dev
 
 app.component('v-can', Can);
 
+console.log(import.meta.env.MODE);
+
 (async () => {
   await authByTokenFromLocalstorage(router);
 

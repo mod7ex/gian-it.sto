@@ -2,6 +2,9 @@ import axios from 'axios';
 import { ref, computed, watchEffect } from 'vue';
 import useAuth from '~/composables/useAuth.js';
 
+// eslint-disable-next-line no-underscore-dangle
+const __STO_DEV__ = import.meta.env.MODE === 'development';
+
 const { token } = useAuth();
 
 const instance = axios.create({
@@ -28,15 +31,38 @@ const apiRequest = (url, config = {}) => {
     do we consider success status when request isn't sent yet or not
   */
 
+  /*
+    const errorMsg = computed(() => {
+      if (!error.value) return null;
+
+      if (error.value.response) {
+        return error.value.response?.data?.message ?? 'Что-то пошло не так с ответом !';
+      } if (error.value.request) {
+        return error.value.request?.message ?? 'Что-то пошло не так с запросом !';
+      }
+      return error.value.message;
+    });
+  */
+
   const errorMsg = computed(() => {
     if (!error.value) return null;
 
     if (error.value.response) {
-      return error.value.response?.data?.message ?? 'Что-то пошло не так с ответом !';
+      if (__STO_DEV__) {
+        return error.value.response?.data?.message ?? 'Что-то пошло не так с ответом !';
+      }
+      return 'Что-то пошло не так с ответом !';
     } if (error.value.request) {
-      return error.value.request?.message ?? 'Что-то пошло не так с запросом !';
+      if (__STO_DEV__) {
+        return error.value.request?.message ?? 'Что-то пошло не так с запросом !';
+      }
+      return 'Что-то пошло не так с запросом !';
     }
-    return error.value.message;
+
+    if (__STO_DEV__) {
+      return error.value.message;
+    }
+    return 'Что-то пошло не так !';
   });
 
   const reset = () => {

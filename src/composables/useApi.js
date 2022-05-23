@@ -3,7 +3,8 @@ import { ref, computed, watchEffect } from 'vue';
 import useAuth from '~/composables/useAuth.js';
 
 // eslint-disable-next-line no-underscore-dangle
-const __STO_DEV__ = import.meta.env.MODE === 'development';
+const __STO_DEV__ = import.meta.env.DEV;
+// const __STO_DEV__ = import.meta.env.MODE === 'development';
 
 const { token } = useAuth();
 

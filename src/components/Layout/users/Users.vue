@@ -45,9 +45,9 @@ defineEmits(['toggle-filter', 'update:modelValue']);
                 </Spinner>
             </div>
 
-            <p class="my-1 text-sm text-gray-600" v-else><span> {{ message }} </span></p>
+            <p class="mt-1 text-sm text-gray-600" v-else><span> {{ message }} </span></p>
 
-            <div class="mt-6 flex space-x-4 mb-3">
+            <div class="mt-6 flex space-x-4 items-start">
                 <Input placeholder="Поиск" class="flex-grow" :icon="SearchIcon" @input="(e) => $emit('update:modelValue', e.target.value)" />
 
                 <Button type="secondary" @click="() => $emit('toggle-filter')">

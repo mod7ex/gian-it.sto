@@ -12,13 +12,13 @@ app.config.performance = true; // for dev
 
 app.component('v-can', Can);
 
-console.log(import.meta.env.MODE);
-
 (async () => {
-  await authByTokenFromLocalstorage(router);
-
-  // app.use(uiImporteur);
-  app.use(router);
-  app.use(Maska);
-  app.mount('#app');
+  try {
+    await authByTokenFromLocalstorage(router);
+  } finally {
+    // app.use(uiImporteur);
+    app.use(router);
+    app.use(Maska);
+    app.mount('#app');
+  }
 })();

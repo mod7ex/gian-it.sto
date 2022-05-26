@@ -28,6 +28,7 @@ defineProps({
             <div class="border-b border-gray-200 flex justify-between px-4 sm:px-6 py-3 lg:items-end items-baseline lg:flex-row flex-col gap-2">
                 <div class="flex items-end">
                     <div
+                        v-if="avatar"
                         class="w-32 h-32 rounded-full mr-2 bg-center bg-no-repeat bg-cover shadow-sm"
                         :style="`background-image: url(${avatar});`"
                     />

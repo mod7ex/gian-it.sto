@@ -36,7 +36,10 @@ const pick = (e) => {
         >
           <div class="relative px-6 py-5 flex items-center space-x-3 ">
             <div class="flex-shrink-0" v-if="item.image">
-              <img class="h-10 w-10 rounded-full" :src="item.image" alt="" />
+              <div
+                class="h-10 w-10 rounded-full mr-2 bg-center bg-no-repeat bg-cover shadow-2xl"
+                :style="`background-image: url(${item.image});`"
+              />
             </div>
 
             <div class="flex-1 min-w-0">

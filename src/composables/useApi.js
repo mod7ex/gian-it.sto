@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ref, computed, watchEffect } from 'vue';
-import useAuth from '~/composables/useAuth.js';
+import useAuth, { logOut } from '~/composables/useAuth';
 
 // eslint-disable-next-line no-underscore-dangle
 const __STO_DEV__ = import.meta.env.DEV;
@@ -13,6 +13,14 @@ const instance = axios.create({
   timeout: import.meta.env.STO_API_TIMEOUT,
 });
 
+// for test token TTL
+/*
+setTimeout(() => {
+  token.value = '';
+  instance.defaults.headers.common.Authorization = null;
+}, 30000);
+*/
+
 watchEffect(() => { instance.defaults.headers.common.Authorization = token.value ? `Bearer ${token.value}` : null; });
 
 const apiRequest = (url, config = {}) => {
@@ -23,26 +31,11 @@ const apiRequest = (url, config = {}) => {
 
   // ready ==> request was sent and we recieved responce either error or success
   const ready = computed(() => !!responce.value || !!error.value);
-
   const success = computed(() => !ready.value || (ready.value && !!data.value?.success));
   // const success = computed(() => ready.value && !!data.value?.success); // is also a valid approach
-
   /*
     we should change templates & js files based on what is success definition here
     do we consider success status when request isn't sent yet or not
-  */
-
-  /*
-    const errorMsg = computed(() => {
-      if (!error.value) return null;
-
-      if (error.value.response) {
-        return error.value.response?.data?.message ?? 'Что-то пошло не так с ответом !';
-      } if (error.value.request) {
-        return error.value.request?.message ?? 'Что-то пошло не так с запросом !';
-      }
-      return error.value.message;
-    });
   */
 
   const errorMsg = computed(() => {
@@ -91,6 +84,8 @@ const apiRequest = (url, config = {}) => {
       }
     } finally {
       loading.value = false;
+
+      if (error.value?.request && error.value.request.status === 401) logOut();
     }
   };
 

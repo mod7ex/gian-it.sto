@@ -1,0 +1,24 @@
+<script setup>
+import Input from '@/UI/Input.vue';
+import Select from '@/UI/Select.vue';
+import form from '~/services/finances/form';
+
+const { finance, atMountedFinanceForm, financeGroupOptions } = form();
+
+const types = [
+  { label: 'Приход', value: 'in' },
+  { label: 'Расход', value: 'out' },
+];
+
+await atMountedFinanceForm();
+
+</script>
+
+<template>
+    <div>
+        <Input label="Hазвание финансовая сделка" v-model="finance.name" :required="true" />
+        <Input label="Сумма" v-model="finance.sum" :required="true" type="number" min="0" step="1" />
+        <Select label="Тип операции" v-model="finance.operation_type" :required="true" :options="types" />
+        <Select label="группа" v-model="finance.finance_group_id" :required="true" :options="financeGroupOptions" />
+    </div>
+</template>

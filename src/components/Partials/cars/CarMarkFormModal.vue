@@ -16,7 +16,7 @@ defineEmits(['close']);
 </script>
 
 <template>
-    <dialog-modal :title="`${isUpdate ? 'Oбновляете' : 'Создайте'} отдела`" :open="isModalUp">
+    <dialog-modal :title="`${isUpdate ? 'Oбновляете' : 'Создайте'} марка автомобиля`" :open="isModalUp">
         <template v-slot:dialog-inner>
             <div class="mt-6 mb-6">
 

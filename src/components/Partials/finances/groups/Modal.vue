@@ -2,21 +2,21 @@
 import Button from '@/UI/Button.vue';
 import DialogModal from '@/UI/DialogModal.vue';
 import Spinner from '@/UI/Spinner.vue';
-import carModelForm from '~/services/cars/carModelForm';
-import RawForm from '~/components/Partials/cars/carModelRawForm.vue';
+import form from '~/services/finances/groups/form';
+import RawForm from '~/components/Partials/finances/groups/RawForm.vue';
 
 import useSuspense from '~/composables/useSuspense.js';
 
 const SuspensRawForm = useSuspense(RawForm);
 
-const { saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = carModelForm();
+const { saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = form();
 
 defineEmits(['close']);
 
 </script>
 
 <template>
-    <dialog-modal :title="`${isUpdate ? 'Oбновляете' : 'Создайте'} Модель автомобиля`" :open="isModalUp">
+    <dialog-modal :title="`${isUpdate ? 'Oбновляете' : 'Создайте'} финансовая группа`" :open="isModalUp">
         <template v-slot:dialog-inner>
             <div class="mt-6 mb-6">
 

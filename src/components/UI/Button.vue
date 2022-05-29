@@ -105,6 +105,9 @@ if (props.circle) {
       styles.push('p-3');
       styles.push('text-base');
       break;
+
+    default:
+      break;
   }
 } else {
   switch (props.size) {
@@ -131,6 +134,9 @@ if (props.circle) {
     case 'xl':
       styles.push('px-6 py-3');
       styles.push('text-base');
+      break;
+
+    default:
       break;
   }
 }

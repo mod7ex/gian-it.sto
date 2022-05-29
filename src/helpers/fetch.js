@@ -130,3 +130,29 @@ export const $carFuels = async (toast) => {
 
   return fuels ?? [];
 };
+
+export const $financeGroups = async (toast) => {
+  const { finance_groups } = await $fetch('/finance-groups', 'Не удалось получить cписок финансовые группы !', toast);
+
+  return finance_groups ?? [];
+};
+
+export const $financeGroup = async (id, toast) => {
+  const { finance_group } = await $fetch(`/finance-groups/${id}`, 'Не удалось получить финансовых групп !', toast);
+
+  return finance_group ?? {};
+};
+
+export const $finances = async ({ order, name, type, sum, department_id, start_date, end_date } = {}, toast) => {
+  const { finance_groups } = await $fetch('/finances', 'Не удалось получить финансы !', toast, {
+    params: cleanUp({ order, name, type, sum, department_id, start_date, end_date }),
+  });
+
+  return finance_groups ?? [];
+};
+
+export const $finance = async (id, toast) => {
+  const { finance } = await $fetch(`/finances/${id}`, 'Не удалось получить финансовая сделка !', toast);
+
+  return finance ?? {};
+};

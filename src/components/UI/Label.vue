@@ -1,13 +1,5 @@
-<script setup>
-
-</script>
-
 <template>
-    <div class="text-sm font-medium text-gray-700">
+    <div class="text-sm font-medium text-gray-700 mb-1">
         <slot></slot>
     </div>
 </template>
-
-<style scoped>
-
-</style>

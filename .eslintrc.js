@@ -23,6 +23,8 @@ module.exports = {
     'no-bitwise': 'off',
     'no-nested-ternary': 'off',
     'func-names': 'off',
+    'no-plusplus': 'off',
+    camelcase: 'off',
     // 'no-console': 'off',
   },
   globals: {

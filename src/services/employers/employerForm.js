@@ -8,6 +8,7 @@ import useAvatar from '~/composables/useAvatar.js';
 import useToggles from '~/composables/useToggles.js';
 import employers from '~/services/employers/employers';
 import { $roles, $departments, $employer } from '~/helpers/fetch.js';
+import { hyphenatedDateFormat } from '~/helpers';
 import useAuth from '~/composables/useAuth.js';
 import { userHasPermission } from '~/lib/permissions.js';
 
@@ -156,8 +157,7 @@ const setEmployerForm = async (payload) => {
 
   if (!userFields.born_at) return;
 
-  const [d, m, y] = userFields.born_at.split('.');
-  userFields.born_at = `${y}-${m}-${d}`;
+  userFields.born_at = hyphenatedDateFormat(userFields.born_at);
 };
 
 const atMountedEmployerForm = async () => {

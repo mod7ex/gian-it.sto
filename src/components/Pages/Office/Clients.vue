@@ -1,242 +1,70 @@
 <script setup>
-import { ref } from 'vue';
-import _ from 'lodash';
+import { ref, onMounted, watch, computed } from 'vue';
+import * as _ from 'lodash';
 import { PlusCircleIcon, CogIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import ClientPreview from '@/Partials/clients/Preview.vue';
 import UClients from '@/Layout/users/Users.vue';
+import clients from '~/services/clients/clients';
 
-const selected = ref(false);
-const directory = ref({
-  A: [
-    {
-      id: 1,
-      title: 'Leslie Abbott',
-      subtitle: 'Co-Founder / CEO',
-      image:
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 2,
-      title: 'Hector Adams',
-      subtitle: 'VP, Marketing',
-      image:
-        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 3,
-      title: 'Blake Alexander',
-      subtitle: 'Account Coordinator',
-      image:
-        'https://images.unsplash.com/photo-1520785643438-5bf77931f493?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 4,
-      title: 'Fabricio Andrews',
-      subtitle: 'Senior Art Director',
-      image:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  B: [
-    {
-      id: 5,
-      title: 'Angela Beaver',
-      subtitle: 'Chief Strategy Officer',
-      image:
-        'https://images.unsplash.com/photo-1501031170107-cfd33f0cbdcc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 6,
-      title: 'Yvette Blanchard',
-      subtitle: 'Studio Artist',
-      image:
-        'https://images.unsplash.com/photo-1506980595904-70325b7fdd90?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 7,
-      title: 'Lawrence Brooks',
-      subtitle: 'Content Specialist',
-      image:
-        'https://images.unsplash.com/photo-1513910367299-bce8d8a0ebf6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  C: [
-    {
-      id: 8,
-      title: 'Jeffrey Clark',
-      subtitle: 'Senior Art Director',
-      image:
-        'https://images.unsplash.com/photo-1517070208541-6ddc4d3efbcb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 9,
-      title: 'Kathryn Cooper',
-      subtitle: 'Associate Creative Director',
-      image:
-        'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  E: [
-    {
-      id: 10,
-      title: 'Alicia Edwards',
-      subtitle: 'Junior Copywriter',
-      image:
-        'https://images.unsplash.com/photo-1509783236416-c9ad59bae472?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 11,
-      title: 'Benjamin Emerson',
-      subtitle: 'Director, Print Operations',
-      image:
-        'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 12,
-      title: 'Jillian Erics',
-      subtitle: 'Designer',
-      image:
-        'https://images.unsplash.com/photo-1504703395950-b89145a5425b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 13,
-      title: 'Chelsea Evans',
-      subtitle: 'Human Resources Manager',
-      image:
-        'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  G: [
-    {
-      id: 14,
-      title: 'Michael Gillard',
-      subtitle: 'Co-Founder / CTO',
-      image:
-        'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 15,
-      title: 'Dries Giuessepe',
-      subtitle: 'Manager, Business Relations',
-      image:
-        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  M: [
-    {
-      id: 16,
-      title: 'Jenny Harrison',
-      subtitle: 'Studio Artist',
-      image:
-        'https://images.unsplash.com/photo-1507101105822-7472b28e22ac?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 17,
-      title: 'Lindsay Hatley',
-      subtitle: 'Front-end Developer',
-      image:
-        'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 18,
-      title: 'Anna Hill',
-      subtitle: 'Partner, Creative',
-      image:
-        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  S: [
-    {
-      id: 19,
-      title: 'Courtney Samuels',
-      subtitle: 'Designer',
-      image:
-        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 20,
-      title: 'Tom Simpson',
-      subtitle: 'Director, Product Development',
-      image:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  T: [
-    {
-      id: 21,
-      title: 'Floyd Thompson',
-      subtitle: 'Principal Designer',
-      image:
-        'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 22,
-      title: 'Leonard Timmons',
-      subtitle: 'Senior Designer',
-      image:
-        'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 23,
-      title: 'Whitney Trudeau',
-      subtitle: 'Copywriter',
-      image:
-        'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  W: [
-    {
-      id: 24,
-      title: 'Kristin Watson',
-      subtitle: 'VP, Human Resources',
-      image:
-        'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-    {
-      id: 25,
-      title: 'Emily Wilson',
-      subtitle: 'VP, User Experience',
-      image:
-        'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
-  Y: [
-    {
-      id: 26,
-      title: 'Emma Young',
-      subtitle: 'Senior Front-end Developer',
-      image:
-        'https://images.unsplash.com/photo-1505840717430-882ce147ef2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    },
-  ],
+const { order, directory, clientsCount, selected, setSelectedClient, fetchClients, selectedClientId, loading } = clients();
+
+const ClientsFilter = order.comp(['department']);
+
+const headingMessage = computed(() => {
+  if (clientsCount.value > 1) return `Искать среди ${clientsCount.value} клиентов`;
+  if (clientsCount.value === 1) return 'Один клиент!';
+  return 'Нет клиентов!';
 });
+
 const search = ref('');
+
+/* 'immediate: true' <- we can't use immediate because of debounce it little slow */
+watch(search, _.debounce(fetchClients, 1500));
+
+onMounted(async () => { await fetchClients(); });
 </script>
 
 <template>
     <OfficeLayout title="Клиенты" main-classes="flex flex-col min-w-0 flex-1 md:overflow-hidden overflow-auto">
       <template #actions>
-        <Button type="secondary" link="/cars">
-          <CogIcon class="w-5 h-5 mr-1" />
-          Автомобили
-        </Button>
+        <v-can :ability="['crud cars', 'crud car marks', 'crud fuels', 'crud engine volumes', 'crud car models']">
+          <Button type="secondary" :link="{name: 'Cars'}">
+            <CogIcon class="w-5 h-5 mr-1" />Автомобили
+          </Button>
+        </v-can>
 
-        <Button color="blue" link="/clients/create">
-          <PlusCircleIcon class="w-5 h-5 mr-1"/>
-          Создать
-        </Button>
+        <v-can ability="crud clients">
+          <Button color="blue" :link="{name: 'ClientForm'}">
+            <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
+          </Button>
+        </v-can>
       </template>
 
       <template #content>
-        <u-clients selectText="Выберите клиента" v-model="search" :selected="selected">
+        <u-clients
+          @toggle-filter="order.active.value = clientsCount > 1 && !order.active.value"
+          selectText="Выберите клиента"
+          :loading="loading"
+          :message="headingMessage"
+          :selected="selected"
+          v-model="search"
+        >
 
-          <template #filter> </template>
+          <template #filter>
+            <clients-filter />
+          </template>
 
           <template #list>
-            <StackedListWithHeadings class="flex-1 min-h-0 overflow-y-auto" :items="directory" @select="selected = true" />
+            <StackedListWithHeadings
+              class="flex-1 min-h-0 overflow-y-auto"
+              :items="directory"
+              @select="setSelectedClient"
+              :key="order.key.value"
+              :selected="selectedClientId"
+            />
           </template>
 
           <template #preview>
@@ -247,7 +75,3 @@ const search = ref('');
       </template>
     </OfficeLayout>
 </template>
-
-<style scoped>
-
-</style>

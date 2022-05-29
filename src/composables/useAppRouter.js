@@ -11,7 +11,7 @@ export default function useAppRouter(pageName = '_') {
     await router.push(to); // we can handle navigation failure here
   };
 
-  const back = () => router.back();
+  const back = () => router.back(); // don't use destructuring because it depends on the current scope
 
   const currentPageName = computed(() => route?.name);
   const params = computed(() => route?.params);

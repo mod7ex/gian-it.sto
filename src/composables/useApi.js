@@ -2,10 +2,6 @@ import axios from 'axios';
 import { ref, computed, watchEffect } from 'vue';
 import useAuth, { logOut } from '~/composables/useAuth';
 
-// eslint-disable-next-line no-underscore-dangle
-const __STO_DEV__ = import.meta.env.DEV;
-// const __STO_DEV__ = import.meta.env.MODE === 'development';
-
 const { token } = useAuth();
 
 const instance = axios.create({

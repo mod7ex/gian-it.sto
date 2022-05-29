@@ -57,6 +57,18 @@ const props = defineProps({
   modelValue: {
     type: [String, Number],
   },
+  min: {
+    type: Number,
+    required: false,
+  },
+  max: {
+    type: Number,
+    required: false,
+  },
+  step: {
+    type: Number,
+    default: 1,
+  },
 });
 
 const styles = props.classMap.concat([
@@ -107,9 +119,13 @@ if (props.icon) {
         :type="type"
         :class="styles"
         :placeholder="placeholder"
+        :min="props.min"
+        :max="props.max"
+        :step="props.step"
         :value="modelValue"
         @input="(event) => $emit('update:modelValue', event.target.value)"
         @blur="(event) => $emit('blured')"
+        @focus="(event) => $emit('focused')"
         :disabled="disabled"
         v-maska="mask"
       />

@@ -12,3 +12,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
     readonly env: ImportMetaEnv
 }
+
+declare global {
+    interface window {
+        __STO_DEV__: boolean;
+    }
+}

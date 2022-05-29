@@ -4,7 +4,7 @@ import { MenuButton } from "@headlessui/vue";
 import OfficeLayout from "@/Layout/Office.vue";
 import Header from "@/UI/Header.vue";
 import Button from "@/UI/Button.vue";
-import Badge from "@/UI/Badge.vue";
+// import Badge from "@/UI/Badge.vue";
 import Dropdown from "@/UI/Dropdown.vue";
 import Link from "@/UI/Link.vue";
 import { Table, THead, TBody, Tr, Td, Th } from "@/UI/Table";
@@ -43,15 +43,12 @@ await fetchDepartments();
           <Dropdown
             direction="right"
             position="center"
-            :items="[
-                      [
-                        { label: 'Изменить', click: () => setModalVisibility(true, item.id), icon: PencilIcon },
-                        { label: 'Удалить', click: () => dialogger.drop(() => dropDepartment(item.id), 'продолжить удаление!', 'Удалить ?'), icon: XIcon },
-                      ],
-                    ]"
+            :items="[[
+                      { label: 'Изменить', click: () => setModalVisibility(true, item.id), icon: PencilIcon },
+                      { label: 'Удалить', click: () => dialogger.drop(() => dropDepartment(item.id), 'продолжить удаление!', 'Удалить ?'), icon: XIcon },
+                    ]]"
 
             >
-
             <menu-button>
               <Button type="secondary" :circle="true">
                 <DotsHorizontalIcon class="w-4 h-4" />

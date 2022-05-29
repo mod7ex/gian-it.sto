@@ -11,7 +11,7 @@ const LOCAL_STORAGE_DEPARTMENT = 'department';
 const hasCRUD = userHasPermission('crud departments');
 
 let redirect;
-let isEditDepartmentPage;
+// let isEditDepartmentPage;
 
 const { apiRequest } = useApi();
 
@@ -59,7 +59,7 @@ const dropDepartment = async (id) => {
 
   const deletionMsg = success.value ? 'Отдел успешно удален' : (errorMsg.value ?? 'Не удалось удалить отделение !');
 
-  isEditDepartmentPage.value && await redirect({ name: 'Departments' });
+  // isEditDepartmentPage.value && await redirect({ name: 'Departments' });
 
   return { message: deletionMsg, success: success.value };
 };
@@ -70,9 +70,10 @@ const movetoEditDepartmentPage = async (id) => {
 };
 
 export default function departmentsService() {
-  const { redirectTo, isThePage } = useAppRouter('EditDepartment');
+  const { redirectTo } = useAppRouter('EditDepartment');
 
-  [redirect, isEditDepartmentPage] = [redirectTo, isThePage];
+  // [redirect, isEditDepartmentPage] = [redirectTo, isThePage];
+  redirect = redirectTo;
 
   return {
     rawDepartments,

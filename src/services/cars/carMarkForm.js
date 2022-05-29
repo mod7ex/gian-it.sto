@@ -1,28 +1,28 @@
 import { computed, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
-import { $department } from '~/helpers/fetch.js';
+import { $carMark } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 
-import departmentsService from './departments';
+import carsService from './carMarks';
 
-const { fetchDepartments } = departmentsService();
+const { fetchCarMarks } = carsService();
 
 const toaster = useToast();
 
 const { apiRequest } = useApi();
 
-const departmentId = ref();
-const departmentName = ref();
+const carMarkId = ref();
+const carMarkName = ref();
 
 const isModalUp = ref(false);
 
-const isUpdate = computed(() => !!departmentId.value);
+const isUpdate = computed(() => !!carMarkId.value);
 
 const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest();
 
 const setForm = (payload = {}) => {
-  departmentName.value = payload.name;
-  departmentId.value = payload.id;
+  carMarkName.value = payload.name;
+  carMarkId.value = payload.id;
 };
 
 const setModalVisibility = (bool, id) => {
@@ -36,30 +36,30 @@ const setModalVisibility = (bool, id) => {
 const saveForm = async () => {
   reset();
 
-  await call(`/departments/${departmentId.value ?? ''}`, {
+  await call(`/car-marks/${carMarkId.value ?? ''}`, {
     method: isUpdate.value ? 'put' : 'post',
-    data: { name: departmentName.value },
+    data: { name: carMarkName.value },
   });
 
   if (!success.value) return false;
 
-  await fetchDepartments();
+  await fetchCarMarks();
 
   setModalVisibility(false);
 
-  return toaster.success('Отдел успешно сохранен');
+  return toaster.success('Марка автомобиля успешно сохранен');
 };
 
-const atMountedDepartmentForm = async () => {
-  const id = departmentId.value;
+const atMountedCarMarksForm = async () => {
+  const id = carMarkId.value;
 
-  let dep = {};
-  if (id) dep = await $department(id);
+  let cm = {};
+  if (id) cm = await $carMark(id);
 
-  setForm(dep);
+  setForm(cm);
 };
 
-export default function departmentFormService() {
+export default function carMarkFormService() {
   return {
     data,
     saveForm,
@@ -70,9 +70,9 @@ export default function departmentFormService() {
     success,
     ready,
     isModalUp,
-    departmentName,
+    carMarkName,
     setModalVisibility,
-    atMountedDepartmentForm,
+    atMountedCarMarksForm,
     isUpdate,
   };
 }

@@ -1,74 +1,33 @@
 <script setup>
-import {
-  PlusCircleIcon,
-  DotsHorizontalIcon,
-  PencilIcon,
-  XIcon,
-  ArrowLeftIcon,
-} from '@heroicons/vue/outline';
-import {MenuButton} from '@headlessui/vue';
+import { PlusCircleIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
-import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
-import Badge from '@/UI/Badge.vue';
-import Dropdown from '@/UI/Dropdown.vue';
-import Link from '@/UI/Link.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
+import useSuspense from '~/composables/useSuspense.js';
+import CarMarksTable from '~/components/Partials/cars/CarMarksTable.vue';
+import CarMarkFormModal from '~/components/Partials/cars/CarMarkFormModal.vue';
+import carMarkForm from '~/services/cars/carMarkForm';
 
-const cars = [
-  {name: 'Audi'},
-  {name: 'Skoda'},
-  {name: 'Volkswagen'},
-];
+const { setModalVisibility } = carMarkForm();
+
+const SuspensCarMarksTable = useSuspense(CarMarksTable);
+
 </script>
 
 <template>
   <OfficeLayout title="Марки автомобилей">
     <template #actions>
-      <Button type="secondary" link="/cars">
-        <ArrowLeftIcon class="w-5 h-5 mr-1"/>
-        К автомобилям
+      <Button type="secondary" :link="{name: 'Cars'}">
+        <ArrowLeftIcon class="w-5 h-5 mr-1"/>К автомобилям
       </Button>
 
-      <Button color="blue" link="/car-marks/create">
-        <PlusCircleIcon class="w-5 h-5 mr-1"/>
-        Создать
+      <Button color="blue" @click="() => setModalVisibility(true)">
+        <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
       </Button>
     </template>
 
-    <Table>
-      <THead>
-      <Tr>
-        <Th>Название</Th>
-        <Th class="text-center">Действия</Th>
-      </Tr>
-      </THead>
-      <TBody>
-      <Tr v-for="(car, index) in cars" :key="car.name" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
-        <Td>
-          <Link href="/car-marks/create">
-            {{ car.name }}
-          </Link>
-        </Td>
-        <Td class="text-center py-5">
-          <Dropdown
-            :items="[[{label: 'Изменить', click: '', icon: PencilIcon}, {label: 'Удалить', click: '', icon: XIcon}]]"
-            direction="right"
-            position="center"
-          >
-            <MenuButton>
-              <Button type="secondary" :circle="true">
-                <DotsHorizontalIcon class="w-4 h-4" />
-              </Button>
-            </MenuButton>
-          </Dropdown>
-        </Td>
-      </Tr>
-      </TBody>
-    </Table>
+    <car-mark-form-modal @close="() => setModalVisibility(false)" />
+
+    <SuspensCarMarksTable loadingMsg="получаем марки автомобиля..." />
+
   </OfficeLayout>
 </template>
-
-<style scoped>
-
-</style>

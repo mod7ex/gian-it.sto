@@ -1,52 +1,44 @@
 <script setup>
 import {
   PlusCircleIcon,
-  DotsHorizontalIcon,
-  PencilIcon,
-  XIcon,
   GlobeIcon,
   ArrowsExpandIcon,
-  UserGroupIcon,
+  // UserGroupIcon,
 } from '@heroicons/vue/outline';
-import {MenuButton} from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
-import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
-import Badge from '@/UI/Badge.vue';
-import Dropdown from '@/UI/Dropdown.vue';
-import Link from '@/UI/Link.vue';
-import Cars from '@/Partials/Cars.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
+import CarsTable from '~/components/Partials/cars/CarsTable.vue';
+import useSuspense from '~/composables/useSuspense.js';
+
+const SuspensCarsTable = useSuspense(CarsTable);
+
 </script>
 
 <template>
   <OfficeLayout title="Автомобили">
     <template #actions>
-      <Button type="secondary" link="/car-marks">
-        <GlobeIcon class="w-5 h-5 mr-1" />
-        Марки автомобилей
-      </Button>
 
-      <Button type="secondary" link="/car-models">
-        <ArrowsExpandIcon class="w-5 h-5 mr-1" />
-        Модели автомобилей
-      </Button>
+      <v-can ability="crud car marks">
+        <Button type="secondary" :link="{name: 'CarMarks'}">
+          <GlobeIcon class="w-5 h-5 mr-1" />Марки автомобилей
+        </Button>
+      </v-can>
 
-      <Button type="secondary" link="/clients">
-        <UserGroupIcon class="w-5 h-5 mr-1" />
-        Клиенты
-      </Button>
+      <v-can ability="crud car models">
+        <Button type="secondary" :link="{name: 'CarModels'}">
+          <ArrowsExpandIcon class="w-5 h-5 mr-1" />Модели автомобилей
+        </Button>
+      </v-can>
 
-      <Button color="blue" link="/cars/create">
-        <PlusCircleIcon class="w-5 h-5 mr-1"/>
-        Создать
-      </Button>
+      <v-can ability="crud cars">
+        <Button color="blue" :link="{name: 'CarForm'}">
+          <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
+        </Button>
+      </v-can>
+
     </template>
 
-    <Cars class="mt-5" />
+    <SuspensCarsTable />
+
   </OfficeLayout>
 </template>
-
-<style scoped>
-
-</style>

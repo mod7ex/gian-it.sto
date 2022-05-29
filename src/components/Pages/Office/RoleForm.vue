@@ -10,14 +10,12 @@ import RolePermissions from '~/components/Partials/roles/RolePermissions.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import roleForm from '~/services/roles/roleForm.js';
 
-const dialogger = useConfirmDialog();
+const { drop } = useConfirmDialog();
 
 const { dropRole } = rolesService();
 const { route } = useAppRouter();
 
 const { v$, isEditRolePage, saveRole, roleTitle } = roleForm();
-
-// const editor = "Текст задачи";
 
 const SuspensRolePermissions = useSuspense(RolePermissions);
 
@@ -36,7 +34,7 @@ const SuspensRolePermissions = useSuspense(RolePermissions);
 
       <Button
         color="red"
-        @click="() => dialogger.drop(() => dropRole(route.params.id), 'продолжить удаление!', 'Удалить ?')"
+        @click="() => drop(() => dropRole(route.params.id), 'продолжить удаление!', 'Удалить ?')"
         v-if="isEditRolePage"
       >
         <XIcon class="w-5 h-5 mr-1" />Удалить

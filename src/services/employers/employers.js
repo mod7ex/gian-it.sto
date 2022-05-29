@@ -68,8 +68,9 @@ const dropUser = async (id) => {
 /* ************ Fetch employer ************ */
 const loading = ref(false);
 
-// eslint-disable-next-line camelcase
 const fetchEmployers = async (searchPayload) => {
+  if (loading.value) return;
+
   loading.value = true;
 
   order.active.value = false;

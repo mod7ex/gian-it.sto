@@ -7,7 +7,7 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 import employers from '~/services/employers/employers.js';
 
-const dialogger = useConfirmDialog();
+const { drop } = useConfirmDialog();
 
 const { dropUser, selectedUser } = employers();
 </script>
@@ -36,7 +36,7 @@ const { dropUser, selectedUser } = employers();
                     <PencilIcon class="mr-2 h-5 w-5 text-gray-400" />Изменить
                 </Button>
 
-                <Button size="xs" color="red" @click="() => dialogger.drop(() => dropUser(selectedUser.id), 'продолжить удаление!', 'Удалить ?')">
+                <Button size="xs" color="red" @click="() => drop(() => dropUser(selectedUser.id), 'продолжить удаление!', 'Удалить ?')">
                     <TrashIcon class="mr-2 h-5 w-5 text-white" />Удалить
                 </Button>
             </v-can>

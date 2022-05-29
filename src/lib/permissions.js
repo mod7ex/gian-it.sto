@@ -4,8 +4,11 @@ const { isUserLogged, user } = useAuth();
 
 const routesPermissionsMap = {
   Finances: 'crud finances',
+
   Storages: 'crud storages',
+
   Tasks: ['read tasks', 'crud tasks'],
+
   TaskCreateForm: 'create tasks',
 
   Employers: ['read users', 'crud users'],
@@ -19,10 +22,17 @@ const routesPermissionsMap = {
   Roles: 'crud roles',
   RoleForm: 'crud roles',
   EditRole: 'crud roles',
+
+  Cars: ['crud cars', 'crud car marks', 'crud fuels', 'crud engine volumes', 'crud car models'],
 };
 
 export function userHasPermission(permissionName) {
   return !!(user.value.permissions.find((perm) => (perm.name === permissionName)));
+}
+
+export function userHasAtLeastOnePermission(permissionsArray) {
+  // one role is enough to let the user pass (| <--> U)
+  return !!(permissionsArray.find((perm) => userHasPermission(perm)));
 }
 
 export function isRouteAccessableForCurrentUser(routeName) {
@@ -31,7 +41,7 @@ export function isRouteAccessableForCurrentUser(routeName) {
   const maybePermissionName = routesPermissionsMap[routeName];
 
   // one role is enough to let the user pass (| <--> U)
-  if (Array.isArray(maybePermissionName)) return !!(maybePermissionName.find((perm) => userHasPermission(perm)));
+  if (Array.isArray(maybePermissionName)) return userHasAtLeastOnePermission(maybePermissionName);
 
   return userHasPermission(maybePermissionName);
 }

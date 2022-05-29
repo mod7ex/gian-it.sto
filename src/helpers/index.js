@@ -21,3 +21,17 @@ export const maybeRun0 = (cb, allow, ctx = window) => async function (...args) {
   await cb.call(ctx, ...args);
   // await  cb.apply(ctx, arguments);
 };
+
+export const hyphenatedDateFormat = (strDate) => {
+  const [d, m, y] = strDate.split('.');
+  return `${y}-${m}-${d}`;
+};
+
+export const cleanUp = (obj) => {
+  Object.keys(obj).forEach((prop) => {
+    if (!Reflect.get(obj, prop)) {
+      Reflect.deleteProperty(obj, prop);
+    }
+  });
+  return obj;
+};

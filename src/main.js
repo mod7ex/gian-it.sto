@@ -8,7 +8,11 @@ import Can from './components/can';
 
 const app = createApp(App);
 
-app.config.performance = true; // for dev
+// eslint-disable-next-line no-underscore-dangle
+window.__STO_DEV__ = import.meta.env.DEV;
+// window.__STO_DEV__ = import.meta.env.MODE === 'development';
+
+if (__STO_DEV__) app.config.performance = true; // for dev
 
 app.component('v-can', Can);
 

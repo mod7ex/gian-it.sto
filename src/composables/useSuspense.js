@@ -34,7 +34,7 @@ export default function useSuspense(Comp, FallbackComp) {
       const isThereError = ref(false);
 
       onErrorCaptured((e) => {
-        console.log(e);
+        // console.log(e);
         isThereError.value = true;
       });
 

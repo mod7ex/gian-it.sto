@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
-import * as _ from 'lodash';
 import { PlusCircleIcon, CogIcon } from '@heroicons/vue/outline';
+import { debounce } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
@@ -22,7 +22,7 @@ const headingMessage = computed(() => {
 const search = ref('');
 
 /* 'immediate: true' <- we can't use immediate because of debounce it little slow */
-watch(search, _.debounce(fetchClients, 1500));
+watch(search, debounce(fetchClients, 1500));
 
 onMounted(async () => { await fetchClients(); });
 </script>

@@ -48,17 +48,13 @@ const selectedClient = computed(() => (selectedClientId.value ? clients.value.fi
 const selected = computed(() => !!selectedClient.value.id);
 
 /* ************ Delete client ************ */
-const deleteClient = (clientId) => !!clients.value.splice(
-  clients.value.findIndex(({ id }) => id === clientId),
-  1,
-).length;
 
 const dropClient = async (id) => {
   const { call, errorMsg, success } = apiRequest(`clients/${id}`, { method: 'delete' });
 
   await call();
 
-  success.value && deleteClient(id) && setSelectedClient();
+  success.value && clients.value.deleteById(id) && setSelectedClient();
 
   const deletionMsg = success.value ? 'Сотрудник успешно удален' : (errorMsg.value ?? 'Не удалось удалить пользователя');
 
@@ -94,7 +90,6 @@ export default function clientsService() {
   return {
     order,
     clients,
-    deleteClient,
     directory,
     clientsCount,
     selected,

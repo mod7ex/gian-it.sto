@@ -11,13 +11,11 @@ const LOCAL_STORAGE_DEPARTMENT = 'department';
 const hasCRUD = userHasPermission('crud departments');
 
 let redirect;
-// let isEditDepartmentPage;
 
 const { apiRequest } = useApi();
 
 const rawDepartments = ref([]);
 
-// eslint-disable-next-line camelcase
 const departments = computed(() => rawDepartments.value.map(({ id, name }) => ({ id, name })));
 
 const fetchDepartments = async () => {
@@ -44,10 +42,7 @@ const deleteDepartment = (id) => {
     setCurrentDepartment();
   }
 
-  rawDepartments.value.splice(
-    rawDepartments.value.findIndex((dep) => dep.id === id),
-    1,
-  );
+  rawDepartments.value.deleteById(id);
 };
 
 const dropDepartment = async (id) => {
@@ -59,8 +54,6 @@ const dropDepartment = async (id) => {
 
   const deletionMsg = success.value ? 'Отдел успешно удален' : (errorMsg.value ?? 'Не удалось удалить отделение !');
 
-  // isEditDepartmentPage.value && await redirect({ name: 'Departments' });
-
   return { message: deletionMsg, success: success.value };
 };
 
@@ -70,15 +63,13 @@ const movetoEditDepartmentPage = async (id) => {
 };
 
 export default function departmentsService() {
-  const { redirectTo } = useAppRouter('EditDepartment');
+  const { redirectTo } = useAppRouter();
 
-  // [redirect, isEditDepartmentPage] = [redirectTo, isThePage];
   redirect = redirectTo;
 
   return {
     rawDepartments,
     fetchDepartments,
-    deleteDepartment,
     movetoEditDepartmentPage,
     dropDepartment,
     departments,

@@ -19,19 +19,13 @@ const roles = computed(() => rawRoles.value.map((role) => ({
 const fetchRoles = async () => { rawRoles.value = await $roles(); };
 
 /* ************ Delete role ************ */
-const deleteRole = (id) => {
-  rawRoles.value.splice(
-    rawRoles.value.findIndex((role) => role.id === id),
-    1,
-  );
-};
 
 const dropRole = async (id) => {
   const { call, errorMsg, success } = apiRequest(`roles/${id}`, { method: 'delete' });
 
   await call();
 
-  success.value && deleteRole(id);
+  success.value && rawRoles.value.deleteById(id);
 
   const deletionMsg = success.value ? 'Role was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить Роль');
 
@@ -54,7 +48,6 @@ export default function rolesService() {
     rawRoles,
     roles,
     fetchRoles,
-    deleteRole,
     movetoEditRolePage,
     dropRole,
   };

@@ -14,6 +14,7 @@ let pivot;
 let change;
 
 const criterias = computed(() => Object.keys(pivot));
+const criteriaOptions = computed(() => Object.keys(pivot).map((key) => ({ value: key, label: pivot[key].label })));
 
 const active = ref(false);
 
@@ -103,5 +104,6 @@ export default function order(payload, defaultCriteria, onReorderCb, defaultMod 
     reset,
     change,
     comp,
+    criteriaOptions,
   };
 }

@@ -1,8 +1,8 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import * as _ from 'lodash';
 import { UserGroupIcon } from '@heroicons/vue/solid';
 import { PlusCircleIcon } from '@heroicons/vue/outline';
+import { debounce } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
@@ -22,7 +22,7 @@ const headingMessage = computed(() => {
 
 const search = ref('');
 
-watch(search, _.debounce(fetchEmployers, 1500), { /* 'immediate: true' <- we can't use immediate because of debounce it little slow */ });
+watch(search, debounce(fetchEmployers, 1500), { /* 'immediate: true' <- we can't use immediate because of debounce it little slow */ });
 
 onMounted(async () => { await fetchEmployers(); });
 

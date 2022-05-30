@@ -35,3 +35,19 @@ export const cleanUp = (obj) => {
   });
   return obj;
 };
+
+export const debounce = function (fn, d = 1500) {
+  let timer;
+  return function () {
+    const ctx = this;
+
+    // eslint-disable-next-line prefer-rest-params
+    const args = arguments;
+
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      fn.apply(ctx, args);
+    }, d);
+  };
+};

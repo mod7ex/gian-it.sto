@@ -16,19 +16,13 @@ const fetchGroups = async () => {
 };
 
 /* ************ Delete finance-groups ************ */
-const deleteGroup = (id) => {
-  rawGroups.value.splice(
-    rawGroups.value.findIndex((dep) => dep.id === id),
-    1,
-  );
-};
 
 const dropGroup = async (id) => {
   const { call, errorMsg, success } = apiRequest(`finance-groups/${id}`, { method: 'delete' });
 
   await call();
 
-  success.value && deleteGroup(id);
+  success.value && rawGroups.value.deleteById(id);
 
   const deletionMsg = success.value ? 'финансовые группы успешно удален' : (errorMsg.value ?? 'Не удалось удалить финансовые группы !');
 
@@ -39,7 +33,6 @@ export default function financeGroupsService() {
   return {
     rawGroups,
     fetchGroups,
-    deleteGroup,
     dropGroup,
     hasCRUD,
   };

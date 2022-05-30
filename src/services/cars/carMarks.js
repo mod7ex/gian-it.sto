@@ -16,19 +16,13 @@ const fetchCarMarks = async () => {
 };
 
 /* ************ Delete car-mark ************ */
-const deleteCarMark = (id) => {
-  rawCarMarks.value.splice(
-    rawCarMarks.value.findIndex((dep) => dep.id === id),
-    1,
-  );
-};
 
 const dropCarMark = async (id) => {
   const { call, errorMsg, success } = apiRequest(`car-marks/${id}`, { method: 'delete' });
 
   await call();
 
-  success.value && deleteCarMark(id);
+  success.value && rawCarMarks.value.deleteById(id);
 
   const deletionMsg = success.value ? 'Марка автомобиля успешно удален' : (errorMsg.value ?? 'Не удалось удалить Марка автомобиля !');
 
@@ -39,7 +33,6 @@ export default function carMarksService() {
   return {
     rawCarMarks,
     fetchCarMarks,
-    deleteCarMark,
     dropCarMark,
     hasCRUD,
   };

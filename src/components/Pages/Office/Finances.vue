@@ -15,7 +15,9 @@ import ModalForm from '@/Partials/ModalForm.vue';
 import RawForm from '~/components/Partials/finances/RawForm.vue';
 
 const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = form();
-const { filter, order } = service();
+const { filter, order, filterSignature } = service();
+
+const { criteriaOptions, criteria } = order;
 
 const SuspenseTable = useSuspense(Table);
 
@@ -54,7 +56,8 @@ const SuspenseTable = useSuspense(Table);
         <div>
           <Select
             label="Сортировать"
-            :options="order.criterias.value"
+            :options="criteriaOptions"
+            v-model="criteria"
             class="w-44"
           />
         </div>
@@ -74,7 +77,7 @@ const SuspenseTable = useSuspense(Table);
         <template #form><raw-form /></template>
       </modal-form>
 
-      <SuspenseTable />
+      <SuspenseTable :key="filterSignature"/>
 
     </OfficeLayout>
 </template>

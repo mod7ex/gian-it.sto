@@ -48,17 +48,13 @@ const selectedUser = computed(() => (selectedUserId.value ? users.value.find(({ 
 const selected = computed(() => !!selectedUser.value.id);
 
 /* ************ Delete user ************ */
-const deleteUser = (userId) => !!users.value.splice(
-  users.value.findIndex(({ id }) => id === userId),
-  1,
-).length;
 
 const dropUser = async (id) => {
   const { call, errorMsg, success } = apiRequest(`users/${id}`, { method: 'delete' });
 
   await call();
 
-  success.value && deleteUser(id) && setSelectedUser();
+  success.value && users.value.deleteById(id) && setSelectedUser();
 
   const deletionMsg = success.value ? 'Сотрудник успешно удален' : (errorMsg.value ?? 'Не удалось удалить пользователя');
 
@@ -90,7 +86,6 @@ export default function employersService() {
   return {
     order,
     users,
-    deleteUser,
     directory,
     usersCount,
     selected,

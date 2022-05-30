@@ -30,11 +30,11 @@ export default function useSuspense(Comp, FallbackComp) {
       },
     },
 
-    setup({ loadingMsg, errorMsg }) {
+    setup({ loadingMsg, errorMsg }, { slots }) {
       const isThereError = ref(false);
 
       onErrorCaptured((e) => {
-        // console.log(e);
+        console.log(e);
         isThereError.value = true;
       });
 
@@ -44,7 +44,7 @@ export default function useSuspense(Comp, FallbackComp) {
         Suspense,
         {},
         {
-          default: () => h(Comp),
+          default: () => (Comp ? h(Comp) : slots.default()),
           fallback: () => (!isThereError.value ? Fallback : errorFallback(errorMsg)),
         },
       );

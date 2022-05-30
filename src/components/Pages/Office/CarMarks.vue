@@ -4,10 +4,11 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import CarMarksTable from '~/components/Partials/cars/CarMarksTable.vue';
-import CarMarkFormModal from '~/components/Partials/cars/CarMarkFormModal.vue';
 import carMarkForm from '~/services/cars/carMarkForm';
+import RawForm from '~/components/Partials/cars/CarMarkRawForm.vue';
+import ModalForm from '@/Partials/ModalForm.vue';
 
-const { setModalVisibility } = carMarkForm();
+const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = carMarkForm();
 
 const SuspensCarMarksTable = useSuspense(CarMarksTable);
 
@@ -25,7 +26,19 @@ const SuspensCarMarksTable = useSuspense(CarMarksTable);
       </Button>
     </template>
 
-    <car-mark-form-modal @close="() => setModalVisibility(false)" />
+    <modal-form
+      :loading="loading"
+      :errorMsg="errorMsg"
+      :success="success"
+      :ready="ready"
+      :open="isModalUp"
+      @close="() => setModalVisibility(false)"
+      @submited="()=>saveForm()"
+    >
+      <template #title>{{ `${isUpdate ? 'Oбновляете' : 'Создайте'} марка автомобиля` }}</template>
+
+      <template #form><raw-form /></template>
+    </modal-form>
 
     <SuspensCarMarksTable loadingMsg="получаем марки автомобиля..." />
 

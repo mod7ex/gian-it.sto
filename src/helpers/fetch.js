@@ -65,7 +65,7 @@ export const $department = async (id, toast) => {
   return department ?? {};
 };
 
-export const $clients = async ({ order, department_id, city_id, name, search, number } = {}, toast) => {
+export const $clients = async ({ order, department_id, city_id, name, search, number } = {}, toast = false) => {
   const { clients } = await $fetch('/clients', 'Не удалось получить клиентов !', toast, {
     params: cleanUp({ order, department_id, city_id, name, search, number }),
   });
@@ -143,12 +143,12 @@ export const $financeGroup = async (id, toast) => {
   return finance_group ?? {};
 };
 
-export const $finances = async ({ order, name, type, sum, department_id, start_date, end_date } = {}, toast) => {
-  const { finance_groups } = await $fetch('/finances', 'Не удалось получить финансы !', toast, {
+export const $finances = async ({ order, name, type, sum, department_id, start_date, end_date } = {}, toast = false) => {
+  const { finances } = await $fetch('/finances', 'Не удалось получить финансы !', toast, {
     params: cleanUp({ order, name, type, sum, department_id, start_date, end_date }),
   });
 
-  return finance_groups ?? [];
+  return finances ?? [];
 };
 
 export const $finance = async (id, toast) => {

@@ -11,5 +11,5 @@ defineEmits(['close']);
 </script>
 
 <template>
-    <Input label="Название марки автомобиля" v-model="carMarkName" :required="true" />
+    <Input label="Название маркa автомобиля" v-model="carMarkName" :required="true" />
 </template>

@@ -10,10 +10,12 @@ import Label from '@/UI/Label.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import Table from '@/Partials/finances/Table.vue';
 import form from '~/services/finances/form';
+import service from '~/services/finances/index';
+import ModalForm from '@/Partials/ModalForm.vue';
+import RawForm from '~/components/Partials/finances/RawForm.vue';
 
-import FinanceFormModal from '~/components/Partials/finances/Modal.vue';
-
-const { setModalVisibility } = form();
+const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = form();
+const { filter, order } = service();
 
 const SuspenseTable = useSuspense(Table);
 
@@ -35,30 +37,42 @@ const SuspenseTable = useSuspense(Table);
       <Header>Фильтр</Header>
 
       <div class="flex flex-wrap gap-2 items-start">
-        <Input label="Название"/>
+        <Input label="Название" v-model="filter.name"/>
 
         <div>
           <Label >Статус</Label>
 
           <ButtonGroup>
-            <Button type="secondary" group="left" class="whitespace-nowrap">Приход</Button>
-            <Button type="secondary" group="right" class="whitespace-nowrap">Расход</Button>
+            <Button type="secondary" group="left" class="whitespace-nowrap" @click="filter.type = 'in'">Приход</Button>
+            <Button type="secondary" group="right" class="whitespace-nowrap" @click="filter.type = 'out'">Расход</Button>
           </ButtonGroup>
         </div>
 
-        <Input label="Дата от" type="date" />
-        <Input label="Дата до" type="date" />
+        <Input label="Дата от" type="date" v-model="filter.start_date" />
+        <Input label="Дата до" type="date" v-model="filter.end_date" />
 
         <div>
           <Select
             label="Сортировать"
-            :options="[{label: 'По дате создания', value: null}]"
+            :options="order.criterias.value"
             class="w-44"
           />
         </div>
       </div>
 
-      <finance-form-modal @close="() => setModalVisibility(false)" />
+      <modal-form
+        :loading="loading"
+        :errorMsg="errorMsg"
+        :success="success"
+        :ready="ready"
+        :open="isModalUp"
+        @close="() => setModalVisibility(false)"
+        @submited="()=>saveForm()"
+      >
+        <template #title>{{ `${isUpdate ? 'Oбновляете' : 'Создайте'} финансовая сделка` }}</template>
+
+        <template #form><raw-form /></template>
+      </modal-form>
 
       <SuspenseTable />
 

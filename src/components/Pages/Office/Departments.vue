@@ -4,13 +4,14 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import DepartmentsTable from '~/components/Partials/departments/DepartmentsTable.vue';
-import DepartmentFormModal from '~/components/Partials/departments/FormModal.vue';
-
 import departmentForm from '~/services/departments/departmentForm.js';
+import ModalForm from '@/Partials/ModalForm.vue';
+import RawForm from '~/components/Partials/departments/Form.vue';
 
-const { setModalVisibility } = departmentForm();
+const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = departmentForm();
 
 const SuspensDepartmentsTable = useSuspense(DepartmentsTable);
+
 </script>
 
 <template>
@@ -21,7 +22,19 @@ const SuspensDepartmentsTable = useSuspense(DepartmentsTable);
       </Button>
     </template>
 
-    <department-form-modal @close="() => setModalVisibility(false)" />
+    <modal-form
+      :loading="loading"
+      :errorMsg="errorMsg"
+      :success="success"
+      :ready="ready"
+      :open="isModalUp"
+      @close="() => setModalVisibility(false)"
+      @submited="()=>saveForm()"
+    >
+      <template #title>{{ `${isUpdate ? 'Oбновляете' : 'Создайте'} отдела` }}</template>
+
+      <template #form><raw-form /></template>
+    </modal-form>
 
     <SuspensDepartmentsTable loadingMsg="получаем oтделы..." />
   </OfficeLayout>

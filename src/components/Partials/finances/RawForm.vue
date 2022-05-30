@@ -17,7 +17,7 @@ await atMountedFinanceForm();
 <template>
     <div>
         <Input label="Hазвание финансовая сделка" v-model="finance.name" :required="true" />
-        <Input label="Сумма" v-model="finance.sum" :required="true" type="number" min="0" step="1" />
+        <Input label="Сумма" v-model="finance.sum" :required="true" type="number" :min="0" :step="1" />
         <Select label="Тип операции" v-model="finance.operation_type" :required="true" :options="types" />
         <Select label="группа" v-model="finance.finance_group_id" :required="true" :options="financeGroupOptions" />
     </div>

@@ -5,9 +5,10 @@ import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import Table from '@/Partials/finances/groups/Table.vue';
 import form from '~/services/finances/groups/form';
-import FinanceGroupFormModal from '~/components/Partials/finances/groups/Modal.vue';
+import RawForm from '~/components/Partials/finances/groups/RawForm.vue';
+import ModalForm from '@/Partials/ModalForm.vue';
 
-const { setModalVisibility } = form();
+const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = form();
 
 const SuspensFinanceGroupsTable = useSuspense(Table);
 
@@ -25,7 +26,19 @@ const SuspensFinanceGroupsTable = useSuspense(Table);
       </Button>
     </template>
 
-    <finance-group-form-modal @close="() => setModalVisibility(false)" />
+    <modal-form
+      :loading="loading"
+      :errorMsg="errorMsg"
+      :success="success"
+      :ready="ready"
+      :open="isModalUp"
+      @close="() => setModalVisibility(false)"
+      @submited="()=>saveForm()"
+    >
+      <template #title>{{ `${isUpdate ? 'Oбновляете' : 'Создайте'} финансовая группа` }}</template>
+
+      <template #form><raw-form /></template>
+    </modal-form>
 
     <SuspensFinanceGroupsTable />
 

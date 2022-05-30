@@ -66,6 +66,7 @@ const { v$, avatar, isUploadingAvatar, toggles, log, form, save, isValideAvatarF
           <template #born_at>
             <Input label="Дата рождения" type="date" v-model="form.born_at" />
           </template>
+
           <template #office_position>
             <Input label="Должность" v-model="form.office_position" />
           </template>

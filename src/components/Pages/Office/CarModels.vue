@@ -5,9 +5,11 @@ import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import CarModelsTable from '~/components/Partials/cars/CarModelsTable.vue';
 import carModelForm from '~/services/cars/carModelForm';
-import carModelFormModal from '~/components/Partials/cars/carModelFormModal.vue';
+import ModalForm from '@/Partials/ModalForm.vue';
+import RawForm from '~/components/Partials/cars/carModelRawForm.vue';
 
-const { setModalVisibility } = carModelForm();
+const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = carModelForm();
+
 const SuspensCarModelsTable = useSuspense(CarModelsTable);
 
 </script>
@@ -24,7 +26,19 @@ const SuspensCarModelsTable = useSuspense(CarModelsTable);
       </Button>
     </template>
 
-    <car-model-form-modal @close="() => setModalVisibility(false)" />
+    <modal-form
+      :loading="loading"
+      :errorMsg="errorMsg"
+      :success="success"
+      :ready="ready"
+      :open="isModalUp"
+      @close="() => setModalVisibility(false)"
+      @submited="()=>saveForm()"
+    >
+      <template #title>{{ `${isUpdate ? 'Oбновляете' : 'Создайте'} Модель автомобиля` }}</template>
+
+      <template #form><raw-form /></template>
+    </modal-form>
 
     <SuspensCarModelsTable loadingMsg="получаем модели автомобиля..." />
 

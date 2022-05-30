@@ -26,8 +26,8 @@ const filter = reactive({
   sum: undefined,
   order: order.criteria,
   department_id: currentDepartment,
-  start_date: undefined, // 01/31/2022
-  end_date: undefined, // 01/31/2022
+  start_date: undefined,
+  end_date: undefined,
 });
 
 /* ************ Delete finance ************ */

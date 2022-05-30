@@ -36,11 +36,13 @@ await fetchFinances();
             <Td>
                 <Link href="/finances/create">{{ item.name }}</Link>
             </Td>
-            <Td class="font-bold">{{ 'item.sum' }} ₽</Td>
+            <Td class="font-bold">{{ item.sum }} ₽</Td>
             <Td>
-                <Badge :point="true" :color="(i&1) ? 'green' : 'red'">{{ 'item.type' }}</Badge>
+                <Badge :point="true" :color="(item.operation_type === 'in') ? 'green' : 'red'">
+                    {{ item.operation_type === 'in' ? 'Приход' : 'Расход' }}
+                </Badge>
             </Td>
-            <Td>{{ 'item.created_at' }}</Td>
+            <Td>{{ item.created_at?.split(' ')[0] }}</Td>
             <Td class="text-center py-5">
                 <Dropdown
                     direction="right"

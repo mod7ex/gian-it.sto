@@ -53,7 +53,3 @@ setTitle(props.title);
     </Dialog>
   </TransitionRoot>
 </template>
-
-<style scoped>
-
-</style>

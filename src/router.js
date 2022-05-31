@@ -83,6 +83,15 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  if (to.name === '404') {
+    if (from.name === undefined) return next({ name: 'Dashboard' });
+    return;
+  }
+
+  next();
+});
+
 router.beforeEach(navigationGuards);
 
 router.beforeEach(pingLoader);

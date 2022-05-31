@@ -143,11 +143,11 @@ if (props.circle) {
 </script>
 
 <template>
-  <button type="button" :class="styles.concat($attrs.class)" v-if="!props.link">
-    <slot></slot>
-  </button>
-
-  <router-link :class="styles.concat($attrs.class)" :to="props.link" v-else>
+  <router-link :class="styles.concat($attrs.class)" :to="props.link" v-if="props.link" >
     <slot></slot>
   </router-link>
+
+  <button type="button" :class="styles.concat($attrs.class)" v-else>
+    <slot></slot>
+  </button>
 </template>

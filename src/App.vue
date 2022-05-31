@@ -3,10 +3,8 @@ import Loader from '~/components/Partials/Loader.vue';
 </script>
 
 <template>
-
   <Loader />
   <router-view />
-
 </template>
 
 <style>

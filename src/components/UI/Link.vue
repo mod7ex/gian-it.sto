@@ -3,7 +3,7 @@ const props = defineProps({
   href: {
     type: [String, Object],
     required: false,
-    default: '#',
+    default: '',
   },
 });
 </script>

@@ -42,7 +42,7 @@ const movetoEditCarPage = async (id) => {
   await redirect({ name: 'EditCar', params: { id } });
 };
 
-export default function carsService() {
+export default function () {
   const { redirectTo, isThePage, back } = useAppRouter('EditCar');
 
   [redirect, isEditCarPage, redirectBack] = [redirectTo, isThePage, back];

@@ -29,7 +29,7 @@ const dropGroup = async (id) => {
   return { message: deletionMsg, success: success.value };
 };
 
-export default function financeGroupsService() {
+export default function () {
   return {
     rawGroups,
     fetchGroups,

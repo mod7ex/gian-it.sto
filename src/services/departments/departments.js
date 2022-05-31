@@ -1,6 +1,5 @@
 import { ref, computed } from 'vue';
 import useApi from '~/composables/useApi.js';
-import useAppRouter from '~/composables/useAppRouter.js';
 import useAuth from '~/composables/useAuth.js';
 import { $departments } from '~/helpers/fetch.js';
 
@@ -9,8 +8,6 @@ import { userHasPermission } from '~/lib/permissions.js';
 const LOCAL_STORAGE_DEPARTMENT = 'department';
 
 const hasCRUD = userHasPermission('crud departments');
-
-let redirect;
 
 const { apiRequest } = useApi();
 
@@ -57,20 +54,10 @@ const dropDepartment = async (id) => {
   return { message: deletionMsg, success: success.value };
 };
 
-/* ************ To Update department page ************ */
-const movetoEditDepartmentPage = async (id) => {
-  await redirect({ name: 'EditDepartment', params: { id } });
-};
-
-export default function departmentsService() {
-  const { redirectTo } = useAppRouter();
-
-  redirect = redirectTo;
-
+export default function () {
   return {
     rawDepartments,
     fetchDepartments,
-    movetoEditDepartmentPage,
     dropDepartment,
     departments,
     hasCRUD,

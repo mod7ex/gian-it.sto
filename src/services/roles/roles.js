@@ -27,14 +27,14 @@ const dropRole = async (id) => {
 
   success.value && rawRoles.value.deleteById(id);
 
-  const deletionMsg = success.value ? 'Role was deleted successfully.' : (errorMsg.value ?? 'Не удалось удалить Роль');
+  const deletionMsg = success.value ? 'Роль успешно удалена.' : (errorMsg.value ?? 'Не удалось удалить Роль !');
 
   isEditRolePage.value && await redirect({ name: 'Roles' });
 
   return { message: deletionMsg, success: success.value };
 };
 
-/* ************ To Update role page ************ */
+/* ************ ==> To Update role page ************ */
 const movetoEditRolePage = async (id) => {
   await redirect({ name: 'EditRole', params: { id } });
 };

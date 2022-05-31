@@ -1,15 +1,9 @@
 <script setup>
 import {
-  Dialog,
-  DialogOverlay,
   Menu,
-  MenuButton,
   MenuItem,
   MenuItems,
-  TransitionChild,
-  TransitionRoot,
 } from '@headlessui/vue';
-import Link from '@/UI/Link.vue';
 
 const props = defineProps({
   items: {

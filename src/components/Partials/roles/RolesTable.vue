@@ -1,61 +1,38 @@
 <script setup>
-import { DotsHorizontalIcon, PencilIcon, XIcon } from "@heroicons/vue/outline";
-import { MenuButton } from "@headlessui/vue";
-import OfficeLayout from "@/Layout/Office.vue";
-import Header from "@/UI/Header.vue";
-import Button from "@/UI/Button.vue";
-import Badge from "@/UI/Badge.vue";
-import Dropdown from "@/UI/Dropdown.vue";
-import Link from "@/UI/Link.vue";
-import { Table, THead, TBody, Tr, Td, Th } from "@/UI/Table";
-import useConfirmDialog from "~/composables/useConfirmDialog.js";
-import rolesService from "~/services/roles/roles.js";
+import Link from '@/UI/Link.vue';
+import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import rolesService from '~/services/roles/roles.js';
 
-let { roles, fetchRoles, movetoEditRolePage, dropRole } = rolesService();
+import Table from '@/Layout/Table.vue';
 
-const dialogger = useConfirmDialog();
+const { roles, fetchRoles, movetoEditRolePage, dropRole } = rolesService();
+
+const { drop } = useConfirmDialog();
+
+const fields = [
+  { label: 'Название', key: 'name' },
+  { label: 'Дата создания', key: 'created_at' },
+];
 
 await fetchRoles();
 
 </script>
 
 <template>
-  <!-- Table -->
-  <Table class="mt-5">
+  <Table
+      :fields="fields"
+      :items="roles"
+      @delete="(id) => drop(() => dropRole(id))"
+      @edit="(id) => movetoEditRolePage(id)"
+  >
+      <!-- Body -->
+      <template #td-name="{ value, item: {id} }" >
+          <Link @click="()=>movetoEditRolePage(id)">{{ value }}</Link>
+      </template>
 
-    <THead>
-      <Tr> <Th>Название</Th> <Th>Дата создания</Th> <Th class="text-center">Действия</Th> </Tr>
-    </THead>
-
-    <TBody>
-      <Tr v-for="(item, index) in roles" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'" >
-
-        <Td><Link :href="{name: 'EditRole', params: { id: item.id }}">{{ item.name }}</Link></Td>
-        <Td>{{ item.created_at }}</Td>
-        <Td class="text-center py-5">
-
-          <Dropdown
-            direction="right"
-            position="center"
-            :items="[
-                      [
-                        { label: 'Изменить', click: () => movetoEditRolePage(item.id), icon: PencilIcon },
-                        { label: 'Удалить', click: () => dialogger.drop(() => dropRole(item.id), 'продолжить удаление!', 'Удалить ?'), icon: XIcon },
-                      ],
-                    ]"
-
-          >
-
-            <MenuButton>
-              <Button type="secondary" :circle="true">
-                <DotsHorizontalIcon class="w-4 h-4" />
-              </Button>
-            </MenuButton>
-
-          </Dropdown>
-        </Td>
-      </Tr>
-
-    </TBody>
+      <template #td-created_at="{ value }" >
+          {{ value }}
+      </template>
+      <!-- ****** -->
   </Table>
 </template>

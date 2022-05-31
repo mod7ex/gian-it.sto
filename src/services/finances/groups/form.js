@@ -61,7 +61,7 @@ const atMountedFinanceGroup = async () => {
   setForm(fg);
 };
 
-export default function form() {
+export default function () {
   return {
     data,
     saveForm,

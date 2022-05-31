@@ -6,8 +6,8 @@ import Button from '@/UI/Button.vue';
 
 const defaultDialogOptions = {
   loading: false,
-  title: 'Подтверждать!',
-  text: 'Вы уверены что хотите продолжить ?',
+  title: 'Удалить ?',
+  text: 'продолжить удаление!',
   resultMsg: null,
   success: true,
   icon: null,

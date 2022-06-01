@@ -1,8 +1,8 @@
 <script setup>
 import Input from '@/UI/Input.vue';
-import carMarkForm from '~/services/cars/carMarkForm';
+import form from '~/services/cars/carMarkForm';
 
-const { carMarkName, atMountedCarMarksForm } = carMarkForm();
+const { carMarkName, atMountedCarMarksForm } = form();
 
 await atMountedCarMarksForm();
 

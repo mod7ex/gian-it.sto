@@ -4,7 +4,7 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import CarFormFields from '~/components/Partials/cars/CarFormFields.vue';
 import useSuspense from '~/composables/useSuspense.js';
-import carForm from '~/services/cars/carForm';
+import form from '~/services/cars/carForm';
 import cars from '~/services/cars/cars';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
@@ -12,7 +12,9 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 const { route, back } = useAppRouter();
 
 const SuspensCarFormFields = useSuspense(CarFormFields);
-const { saveCar, isEditCarPage } = carForm();
+
+const { saveCar, isEditCarPage } = form();
+
 const { dropCar } = cars();
 
 const { drop } = useConfirmDialog();

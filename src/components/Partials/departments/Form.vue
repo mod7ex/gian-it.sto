@@ -1,6 +1,6 @@
 <script setup>
 import Input from '@/UI/Input.vue';
-import departmentForm from '~/services/departments/departmentForm.js';
+import departmentForm from '~/services/departments/form.js';
 
 const { departmentName, atMountedDepartmentForm } = departmentForm();
 

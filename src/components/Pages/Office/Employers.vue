@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { UserGroupIcon } from '@heroicons/vue/solid';
 import { PlusCircleIcon } from '@heroicons/vue/outline';
 import { debounce } from '~/helpers';
@@ -9,22 +9,23 @@ import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import EmployerPreview from '@/Partials/employers/Preview.vue';
 import employers from '~/services/employers/employers.js';
 import UEmployers from '@/Layout/users/Users.vue';
+import store from '~/store/empoyees.js';
 
-const { order, directory, usersCount, selected, setSelectedUser, fetchEmployers, selectedUserId, loading } = employers();
+const { state, count, selected, select, directory } = store;
 
-const EmployersFilter = order.comp(['department']);
+const { order, fetchEmployers } = employers();
+
+const EmployersFilter = order.comp();
 
 const headingMessage = computed(() => {
-  if (usersCount.value > 1) return `Искать среди ${usersCount.value} сотрудников`;
-  if (usersCount.value === 1) return 'Oдин пользователь!';
+  if (count.value > 1) return `Искать среди ${count.value} сотрудников`;
+  if (count.value === 1) return 'Oдин пользователь!';
   return 'нет пользователей!';
 });
 
 const search = ref('');
 
-watch(search, debounce(fetchEmployers, 1500), { /* 'immediate: true' <- we can't use immediate because of debounce it little slow */ });
-
-onMounted(async () => { await fetchEmployers(); });
+watch(search, debounce(fetchEmployers), { /* 'immediate: true' <- we can't use immediate because of debounce it little slow */ });
 
 </script>
 
@@ -47,9 +48,9 @@ onMounted(async () => { await fetchEmployers(); });
     <template #content>
 
       <u-employers
-        @toggle-filter="order.active.value = usersCount > 1 && !order.active.value"
+        @toggle-filter="order.active.value = count > 1 && !order.active.value"
         selectText="Выберите сотрудника"
-        :loading="loading"
+        :loading="state.loading"
         :message="headingMessage"
         :selected="selected"
         v-model="search"
@@ -63,9 +64,9 @@ onMounted(async () => { await fetchEmployers(); });
           <StackedListWithHeadings
             class="flex-1 min-h-0 overflow-y-auto"
             :items="directory"
-            @select="setSelectedUser"
+            @select="select"
             :key="order.key.value"
-            :selected="selectedUserId"
+            :selected="state.selectedId"
           />
         </template>
 

@@ -1,99 +1,39 @@
-import { computed, ref, watch } from 'vue';
-import useApi from '~/composables/useApi.js';
+import { watch } from 'vue';
 import useOrder from '~/composables/useOrder.js';
-import { $employers } from '~/helpers/fetch.js';
-import departments from '~/services/departments/departments';
+import store from '~/store/empoyees.js';
+import departmentStore from '~/store/departments';
 
-const { currentDepartment } = departments();
+const { current } = departmentStore;
 
-const { apiRequest } = useApi();
+const { load, sort, state } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
 const pivot = {
   id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
   surname: { label: 'По фамилии', sort: (a, b) => (a.surname > b.surname ? 1 : (a.surname < b.surname ? -1 : 0)) },
-  department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
+  // department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
 };
 
-const users = ref([]);
-const usersCount = computed(() => users.value.length);
-
-const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { users.value.sort(v); });
-
-const directory = computed(
-  () => [...new Set(users.value.map(({ surname }) => (surname ? surname[0].toUpperCase() : '_')))]
-    .sort()
-    .reduce((userGroups, key) => {
-      // eslint-disable-next-line no-param-reassign
-      userGroups[key] = users.value.filter(({ surname }) => (surname ? surname[0].toUpperCase() : '_') === key)
-        .map(({ id, name, surname, office_position: op, avatar }) => ({
-          id,
-          title: `${name} ${surname ?? ''}`,
-          subtitle: `${op || ''}`,
-          image: `${avatar || ''}`,
-        }));
-      return userGroups;
-    }, {}),
-);
-
-const selectedUserId = ref();
-const setSelectedUser = (id) => {
-  // eslint-disable-next-line no-param-reassign
-  id = Number(id);
-  selectedUserId.value = Number.isNaN(id) ? undefined : id;
-};
-
-const selectedUser = computed(() => (selectedUserId.value ? users.value.find(({ id }) => id === selectedUserId.value) ?? {} : {}));
-const selected = computed(() => !!selectedUser.value.id);
-
-/* ************ Delete user ************ */
-
-const dropUser = async (id) => {
-  const { call, errorMsg, success } = apiRequest(`users/${id}`, { method: 'delete' });
-
-  await call();
-
-  success.value && users.value.deleteById(id) && setSelectedUser();
-
-  const deletionMsg = success.value ? 'Сотрудник успешно удален' : (errorMsg.value ?? 'Не удалось удалить пользователя');
-
-  return { message: deletionMsg, success: success.value };
-};
+export const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
 
 /* ************ Fetch employer ************ */
-const loading = ref(false);
 
-const fetchEmployers = async (searchPayload) => {
-  if (loading.value) return;
-
-  loading.value = true;
+export const fetchEmployers = async (name) => {
+  if (state.loading || !current.value) return;
 
   order.active.value = false;
 
-  users.value = await $employers({ order: order.criteria.value, name: searchPayload ?? '', department_id: currentDepartment.value });
+  await load({ order: order.criteria.value, name, department_id: current.value });
 
   order.reset();
-
-  loading.value = false;
 };
 
-export default function employersService() {
-  watch(currentDepartment, async () => {
-    await fetchEmployers();
-  });
+export default function () {
+  watch(current, async () => { await fetchEmployers(); }, { immediate: true });
 
   return {
     order,
-    users,
-    directory,
-    usersCount,
-    selected,
-    selectedUser,
-    dropUser,
-    setSelectedUser,
     fetchEmployers,
-    selectedUserId,
-    loading,
   };
 }

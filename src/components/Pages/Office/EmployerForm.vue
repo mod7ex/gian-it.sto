@@ -2,14 +2,14 @@
 import { CheckIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
-import employerForm from '~/services/employers/employerForm.js';
+import form from '~/services/employers/form';
 import EmployerFormFields from '~/components/Partials/employers/EmployerFormFields.vue';
 
 import useSuspense from '~/composables/useSuspense.js';
 
 const SuspensEmployerFormFields = useSuspense(EmployerFormFields);
 
-const { saveUser, isEditEmployerPage, previousPage } = employerForm();
+const { saveUser, isEditEmployerPage, previousPage } = form();
 </script>
 
 <template>

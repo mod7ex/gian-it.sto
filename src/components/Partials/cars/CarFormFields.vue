@@ -1,22 +1,34 @@
 <script setup>
+import { computed } from 'vue';
 import Input from '@/UI/Input.vue';
 import TextArea from '@/UI/TextArea.vue';
 import Select from '@/UI/Select.vue';
+import form from '~/services/cars/carForm';
+import markStore from '~/store/cars/marks';
+import modelStore from '~/store/cars/models';
+import engineStore from '~/store/cars/engines';
+import fuelStore from '~/store/cars/fuels';
+import clientStore from '~/store/clients';
 
-import carForm from '~/services/cars/carForm';
+const { options: markOptions, load: loadMarks } = markStore;
+const { getMarkModels, load: loadModels } = modelStore;
+const { options: engineOptions, load: loadEngines } = engineStore;
+const { options: fuelOptions, load: loadFuels } = fuelStore;
+const { options: clientOptions, load: loadClients } = clientStore;
 
-const {
-  atMountedCarForm,
-  carFields,
-  markOptions,
-  modelOptions,
-  engineOptions,
-  fuelOptions,
-  clientOptions,
-  theSelectedCarMark,
-} = carForm();
+const { atMountedCarForm, carFields, theSelectedCarMark } = form();
 
-await atMountedCarForm();
+const extractor = ({ id, name }) => ({ value: id, label: name });
+const modelOptions = computed(() => getMarkModels(theSelectedCarMark.value).map(extractor));
+
+await (async () => {
+  await loadMarks();
+  await loadModels();
+  await loadEngines();
+  await loadFuels();
+  await loadClients();
+  await atMountedCarForm();
+})();
 
 </script>
 
@@ -35,7 +47,7 @@ await atMountedCarForm();
         </div>
 
         <div class="col-span-12 sm:col-span-4">
-            <Input label="Год выпуска" type="number" min="1950" :max="new Date().getFullYear()" step="2" mask="####" v-model="carFields.year" />
+            <Input label="Год выпуска" type="number" :min="1950" :max="new Date().getFullYear()" :step="2" mask="####" v-model="carFields.year" />
         </div>
 
         <div class="col-span-12 sm:col-span-4">

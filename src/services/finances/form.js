@@ -1,13 +1,13 @@
 import { computed, reactive, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
-import { $finance, $financeGroups } from '~/helpers/fetch.js';
+import { $finance } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
-import service from './index';
-import departments from '~/services/departments/departments';
+import departmentStore from '~/store/departments';
+import store from '~/store/finances/finances';
 
-const { currentDepartment } = departments();
+const { state: departmentState } = departmentStore;
 
-const { fetchFinances } = service();
+const { load } = store;
 
 const toaster = useToast();
 
@@ -19,13 +19,10 @@ const finance = reactive({
   operation_type: undefined,
   sum: undefined,
   finance_group_id: undefined,
-  department_id: currentDepartment,
-
+  department_id: departmentState.current,
 });
 
 /* ********************* Car marks ********************* */
-const rawFinanceGroups = ref([]);
-const financeGroupOptions = computed(() => rawFinanceGroups.value.map(({ id, name }) => ({ value: id, label: name })));
 
 const isModalUp = ref(false);
 
@@ -66,7 +63,7 @@ const saveForm = async () => {
 
   if (!success.value) return false;
 
-  await fetchFinances();
+  await load();
 
   setModalVisibility(false);
 
@@ -78,7 +75,6 @@ const atMountedFinanceForm = async () => {
 
   let f = {};
   if (id) f = await $finance(id);
-  rawFinanceGroups.value = await $financeGroups();
 
   setForm(f);
 };
@@ -98,6 +94,5 @@ export default function () {
     atMountedFinanceForm,
     isUpdate,
     finance,
-    financeGroupOptions,
   };
 }

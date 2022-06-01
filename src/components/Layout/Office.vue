@@ -25,9 +25,18 @@ import { setTitle } from '~/lib/meta.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useAuth from '~/composables/useAuth.js';
 import { isRouteAccessableForCurrentUser } from '~/lib/permissions.js';
-import departmentsService from '~/services/departments/departments.js';
+import store from '~/store/departments';
 
-const { departments, fetchDepartments, setCurrentDepartment, isCurrentDepartment } = departmentsService();
+const { setCurrent, links, load } = store;
+
+onMounted(async () => {
+  if (!load.called) await load();
+  if (!setCurrent.called) setCurrent();
+
+  load.called = true;
+  setCurrent.called = true;
+});
+
 const { user, logOut } = useAuth();
 const { isCurrentFullPath, router } = useAppRouter();
 
@@ -63,16 +72,6 @@ const menu = [
 ].filter(({ name }) => isRouteAccessableForCurrentUser(name))
   .map(({ label, name, icon }) => ({ label, name, icon, current: isCurrentFullPath({ name }) }));
 
-const links = computed(() => departments.value.map(({ id, name }) => ({ label: name, id, current: isCurrentDepartment(id) })));
-
-onMounted(async () => {
-  if (!setCurrentDepartment.called) setCurrentDepartment();
-  if (!fetchDepartments.called) await fetchDepartments();
-
-  setCurrentDepartment.called = true;
-  fetchDepartments.called = true;
-});
-
 const userFullName = computed(() => {
   const userData = user.value;
 
@@ -103,7 +102,7 @@ const userRoleTitle = computed(() => {
         <NavBar :items="menu" />
 
         <v-can ability="crud departmentss">
-          <SecondNavbar :key="`mobile-${links.lenght}`" :items="links" @switch="setCurrentDepartment" title="Отделы" class="mt-8" />
+          <SecondNavbar :key="`mobile-${links.lenght}`" :items="links" @switch="setCurrent" title="Отделы" class="mt-8" />
         </v-can>
 
       </div>
@@ -135,7 +134,7 @@ const userRoleTitle = computed(() => {
           <NavBar :items="menu" class="px-3 mt-6" />
 
           <v-can ability="crud departments">
-            <SecondNavbar :key="`descktop-${links.lenght}`" :items="links" @switch="setCurrentDepartment" title="Отделы" class="mt-8 px-3" />
+            <SecondNavbar :key="`descktop-${links.lenght}`" :items="links" @switch="setCurrent" title="Отделы" class="mt-8 px-3" />
           </v-can>
         </div>
       </div>

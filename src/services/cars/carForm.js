@@ -1,13 +1,11 @@
-import { ref, computed, reactive } from 'vue';
+import { ref, reactive } from 'vue';
 // import useVuelidate from '@vuelidate/core';
 // import carFormValidationsRules from '~/validationsRules/carForm.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
-// import departments from '~/services/departments/departments';
-import { $clients, $car, $carModels, $carMarks, $carEngines, $carFuels } from '~/helpers/fetch.js';
 
-// const { currentDepartment } = departments();
+import { $car } from '~/helpers/fetch.js';
 
 let routeInstance;
 let isEditCarPage;
@@ -17,7 +15,7 @@ let redirectBack;
 const { apiRequest } = useApi();
 const toaster = useToast();
 
-const defaultCarFields = {
+const carFields = reactive({
   number: '',
   vin: '',
   year: '',
@@ -29,48 +27,9 @@ const defaultCarFields = {
   engine_volume_id: '',
   client_id: '',
   car_model_id: '',
-};
-
-const carFields = reactive(defaultCarFields);
+});
 
 const theSelectedCarMark = ref();
-
-/* ************ Clients & Marks & Models & Engines & Fuels ************ */
-const rawClients = ref([]);
-const rawMarks = ref([]);
-const rawModels = ref([]);
-const rawEngines = ref([]);
-const rawFuels = ref([]);
-
-const clientOptions = computed(() => rawClients.value.map((item) => ({
-  value: item.id,
-  label: `${item.name} ${item.surname}`,
-})));
-
-const markOptions = computed(() => rawMarks.value.map((item) => ({
-  value: item.id,
-  label: item.name,
-})));
-
-const modelOptions = computed(() => (() => {
-  if (theSelectedCarMark.value) {
-    return rawModels.value.filter(({ car_mark }) => car_mark?.id === Number(theSelectedCarMark.value));
-  }
-  return rawModels.value;
-})().map((item) => ({
-  value: item.id,
-  label: item.name,
-})));
-
-const engineOptions = computed(() => rawEngines.value.map((item) => ({
-  value: item.id,
-  label: item.value,
-})));
-
-const fuelOptions = computed(() => rawFuels.value.map((item) => ({
-  value: item.id,
-  label: item.name,
-})));
 
 /* ************ Car form ************ */
 
@@ -126,16 +85,9 @@ const atMountedCarForm = async () => {
   }
 
   await setCarForm(car);
-
-  // rawClients.value = await $clients({ department_id: currentDepartment.value });
-  rawClients.value = await $clients();
-  rawModels.value = await $carModels();
-  rawMarks.value = await $carMarks();
-  rawEngines.value = await $carEngines();
-  rawFuels.value = await $carFuels();
 };
 
-export default function carFormService() {
+export default function () {
   const { route, isThePage, back } = useAppRouter('EditCar');
 
   [routeInstance, isEditCarPage, redirectBack] = [route, isThePage, back];
@@ -150,11 +102,6 @@ export default function carFormService() {
     saveCar,
     setCarForm,
     atMountedCarForm,
-    clientOptions,
-    markOptions,
-    modelOptions,
-    engineOptions,
-    fuelOptions,
     theSelectedCarMark,
   };
 }

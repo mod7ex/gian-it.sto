@@ -1,12 +1,12 @@
 import { computed, reactive, readonly } from 'vue';
-import { $employers } from '~/helpers/fetch.js';
+import { $clients } from '~/helpers/fetch.js';
 import useApi from '~/composables/useApi.js';
 import { alphaGroupper } from '~/helpers';
 
 const { apiRequest } = useApi();
 
 const state = reactive({
-  employees: [],
+  clients: [],
   selectedId: undefined,
   loading: false,
 });
@@ -18,34 +18,34 @@ const select = (id) => {
 };
 
 const sort = (v) => {
-  state.employees.sort(v);
+  state.clients.sort(v);
 };
 
 const reset = () => {
-  state.employees = [];
+  state.clients = [];
   state.selectedId = undefined;
   state.loading = false;
 };
 
 const load = async (payload) => {
   state.loading = true;
-  state.employees = await $employers(payload);
+  state.clients = await $clients(payload);
   state.loading = false;
 };
 
 const drop = async (id) => {
-  const { call, errorMsg, success } = apiRequest(`users/${id}`, { method: 'delete' });
+  const { call, errorMsg, success } = apiRequest(`clients/${id}`, { method: 'delete' });
 
   await call();
 
-  success.value && state.employees.deleteById(id) && select();
+  success.value && state.clients.deleteById(id) && select();
 
   const deletionMsg = success.value ? 'Сотрудник успешно удален' : (errorMsg.value ?? 'Не удалось удалить пользователя');
 
   return { message: deletionMsg, success: success.value };
 };
 
-const selectedUser = computed(() => (state.selectedId ? state.employees.find(({ id }) => id === state.selectedId) ?? {} : {}));
+const selectedUser = computed(() => (state.selectedId ? state.clients.find(({ id }) => id === state.selectedId) ?? {} : {}));
 
 export default {
   state: readonly(state),
@@ -54,13 +54,21 @@ export default {
   drop,
   sort,
   select,
+
   selectedUser,
-  count: computed(() => state.employees.length),
+
+  count: computed(() => state.clients.length),
+
   selected: computed(() => !!(selectedUser.value.id)),
-  directory: computed(() => alphaGroupper(state.employees, 'surname', ({ id, name, surname, office_position: op, avatar }) => ({
+
+  options: computed(() => state.clients.map((item) => ({
+    value: item.id,
+    label: `${item.name} ${item.surname}`,
+  }))),
+
+  directory: computed(() => alphaGroupper(state.clients, 'surname', ({ id, name, surname, avatar }) => ({
     id,
     title: `${name ?? ''} ${surname ?? ''}`,
-    subtitle: `${op || ''}`,
-    image: `${avatar || ''}`,
+    image: `${avatar ?? ''}`,
   }))),
 };

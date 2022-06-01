@@ -1,10 +1,10 @@
 <script setup>
-import carsService from '~/services/cars/cars';
-import CarsTable from '~/components/Layout/cars/CarsTable.vue';
+import CarsTable from '~/components/Layout/cars/CarsTable.vue'; 
+import store from '~/store/cars/cars';
 
-const { cars, fetchCars } = carsService();
+const { cars, load } = store;
 
-await fetchCars();
+await load();
 
 </script>
 

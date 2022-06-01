@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { PlusCircleIcon, CogIcon } from '@heroicons/vue/outline';
 import { debounce } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -7,15 +7,18 @@ import Button from '@/UI/Button.vue';
 import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import ClientPreview from '@/Partials/clients/Preview.vue';
 import UClients from '@/Layout/users/Users.vue';
-import clients from '~/services/clients/clients';
+import service from '~/services/clients/clients';
+import store from '~/store/clients';
 
-const { order, directory, clientsCount, selected, setSelectedClient, fetchClients, selectedClientId, loading } = clients();
+const { directory, count, selected, select, state } = store;
 
-const ClientsFilter = order.comp(['department']);
+const { order, fetchClients } = service();
+
+const ClientsFilter = order.comp();
 
 const headingMessage = computed(() => {
-  if (clientsCount.value > 1) return `Искать среди ${clientsCount.value} клиентов`;
-  if (clientsCount.value === 1) return 'Один клиент!';
+  if (count.value > 1) return `Искать среди ${count.value} клиентов`;
+  if (count.value === 1) return 'Один клиент!';
   return 'Нет клиентов!';
 });
 
@@ -24,7 +27,6 @@ const search = ref('');
 /* 'immediate: true' <- we can't use immediate because of debounce it little slow */
 watch(search, debounce(fetchClients, 1500));
 
-onMounted(async () => { await fetchClients(); });
 </script>
 
 <template>
@@ -45,9 +47,9 @@ onMounted(async () => { await fetchClients(); });
 
       <template #content>
         <u-clients
-          @toggle-filter="order.active.value = clientsCount > 1 && !order.active.value"
+          @toggle-filter="order.active.value = count > 1 && !order.active.value"
           selectText="Выберите клиента"
-          :loading="loading"
+          :loading="state.loading"
           :message="headingMessage"
           :selected="selected"
           v-model="search"
@@ -61,9 +63,9 @@ onMounted(async () => { await fetchClients(); });
             <StackedListWithHeadings
               class="flex-1 min-h-0 overflow-y-auto"
               :items="directory"
-              @select="setSelectedClient"
+              @select="select"
               :key="order.key.value"
-              :selected="selectedClientId"
+              :selected="state.selectedId"
             />
           </template>
 

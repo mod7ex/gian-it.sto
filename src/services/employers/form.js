@@ -1,4 +1,4 @@
-import { ref, computed, reactive } from 'vue';
+import { reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import employerFormValidationsRules from '~/validationsRules/employerForm.js';
 import useApi from '~/composables/useApi.js';
@@ -6,11 +6,16 @@ import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useAvatar from '~/composables/useAvatar.js';
 import useToggles from '~/composables/useToggles.js';
-import employers from '~/services/employers/employers';
-import { $roles, $departments, $employer } from '~/helpers/fetch.js';
+import { $employer } from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
 import useAuth from '~/composables/useAuth.js';
 import { userHasPermission } from '~/lib/permissions.js';
+import store from '~/store/empoyees.js';
+import departmentStore from '~/store/departments';
+
+const { current, setCurrent } = departmentStore;
+
+const { select } = store;
 
 const { userDepartment } = useAuth();
 
@@ -21,10 +26,8 @@ let isEditEmployerPage;
 let redirectBack;
 let v$;
 
-const { setSelectedUser } = employers();
-
 const previousPage = async (id) => {
-  if (id) setSelectedUser(id);
+  if (id) select(id);
   await redirectBack();
 };
 
@@ -48,20 +51,6 @@ const defaultUserFields = {
 };
 
 const userFields = reactive(defaultUserFields);
-
-/* ************ Departments & Roles ************ */
-const rawRoles = ref([]);
-const rawDepartments = ref([]);
-
-const departmentOptions = computed(() => rawDepartments.value.map((department) => ({
-  value: department.id,
-  label: department.name,
-})));
-
-const roleOptions = computed(() => rawRoles.value.map((role) => ({
-  value: role.id,
-  label: role.title,
-})));
 
 /* ************ User form ************ */
 const updatePassword = async (id) => {
@@ -100,7 +89,7 @@ const saveRawUserFields = async () => {
   if (success.value) toaster.success('Данные сотрудника успешно сохранены');
   else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, Не удалось сохранить данные сотрудника !');
 
-  return data.value?.user?.id;
+  return data.value?.user;
 };
 
 const saveUser = async () => {
@@ -115,18 +104,20 @@ const saveUser = async () => {
   let success;
 
   // ********* Form request
-  const userId = await saveRawUserFields();
-  success = !!userId;
+  const user = await saveRawUserFields();
+  success = !!user;
 
   if (!success) return;
 
   // ********* Avatar request
-  success = await updateAvatar(`/users/${userId}/avatar`);
+  success = await updateAvatar(`/users/${user?.id}/avatar`);
 
   // ********* Password update request
-  if (isEditEmployerPage.value && userFields.password) { success = await updatePassword(userId); }
+  if (isEditEmployerPage.value && userFields.password) { success = await updatePassword(user?.id); }
 
-  await previousPage(userId);
+  if (user?.department?.id) setCurrent(user?.department?.id);
+
+  await previousPage(user?.id);
 
   return success;
 };
@@ -134,7 +125,7 @@ const saveUser = async () => {
 const setUserField = function (key) {
   if (key === 'department_id') {
     if (!hasCRUDdepartments) userFields.department_id = userDepartment.value;
-    else userFields.department_id = this.department?.id ?? '';
+    else userFields.department_id = this.department?.id ?? current.value;
     return;
   }
 
@@ -151,7 +142,6 @@ const setEmployerForm = async (payload) => {
 
   Object.keys(userFields).forEach(setUserField, payload);
 
-  // eslint-disable-next-line camelcase
   const { is_about_visible, is_born_at_visible, is_active } = payload;
   setToggles({ is_about_visible, is_born_at_visible, is_active });
 
@@ -164,13 +154,9 @@ const atMountedEmployerForm = async () => {
   const employer = (isEditEmployerPage.value && routeInstance.params.id) && await $employer(routeInstance.params.id);
 
   await setEmployerForm(employer || {});
-
-  if (hasCRUDdepartments)rawDepartments.value = await $departments();
-
-  rawRoles.value = await $roles();
 };
 
-export default function employerFormService() {
+export default function () {
   const { route, isThePage, back } = useAppRouter('EditEmployer');
 
   [routeInstance, isEditEmployerPage, redirectBack] = [route, isThePage, back];
@@ -180,10 +166,6 @@ export default function employerFormService() {
   v$ = useVuelidate(rules, userFields, { $lazy: true });
 
   return {
-    roles: rawRoles,
-    departments: rawDepartments,
-    departmentOptions,
-    roleOptions,
     isValideAvatarFileSize,
     log,
     avatar,

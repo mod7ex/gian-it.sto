@@ -54,7 +54,6 @@ const routes = [
   { path: '/why/create', component: () => import(/* webpackChunkName: "WhyForm" */ '@/Pages/Office/WhyForm.vue'), name: 'WhyForm' },
 
   { path: '/finances', component: () => import(/* webpackChunkName: "Finances" */ '@/Pages/Office/Finances.vue'), name: 'Finances' },
-  // { path: '/finances/create', component: () => import(/* webpackChunkName: "FinanceForm" */ '@/Pages/Office/FinanceForm.vue'), name: 'FinanceForm' }, ******************************* ==> got to be deleted later on
   { path: '/finances-groups', component: () => import(/* webpackChunkName: "FinanceGroups" */ '@/Pages/Office/FinanceGroups.vue'), name: 'FinanceGroups' },
 
   { path: '/settings', component: () => import(/* webpackChunkName: "Settings" */ '@/Pages/Office/Settings.vue'), name: 'Settings' },

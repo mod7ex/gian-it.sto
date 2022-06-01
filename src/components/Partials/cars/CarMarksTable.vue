@@ -1,10 +1,11 @@
 <script setup>
 import Link from '@/UI/Link.vue';
 import carMarkForm from '~/services/cars/carMarkForm';
-import carMarksService from '~/services/cars/carMarks';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-
 import Table from '@/Layout/Table.vue';
+import store from '~/store/cars/marks';
+
+const { state, load, drop: dropMark } = store;
 
 const { drop } = useConfirmDialog();
 
@@ -14,21 +15,17 @@ const fields = [
   { label: 'Название', key: 'name' },
 ];
 
-const {
-  rawCarMarks,
-  fetchCarMarks,
-  dropCarMark,
-} = carMarksService();
 
-await fetchCarMarks();
+
+await load();
 
 </script>
 
 <template>
     <Table
         :fields="fields"
-        :items="rawCarMarks"
-        @delete="(id) => drop(() => dropCarMark(id))"
+        :items="state.raw"
+        @delete="(id) => drop(() => dropMark(id))"
         @edit="(id) => setModalVisibility(true, id)"
     >
         <!-- Body -->

@@ -1,5 +1,5 @@
 <script setup>
-import { PlusCircleIcon, CollectionIcon } from '@heroicons/vue/outline';
+import { PlusCircleIcon, CollectionIcon, RefreshIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
@@ -15,6 +15,7 @@ import ModalForm from '@/Partials/ModalForm.vue';
 import RawForm from '~/components/Partials/finances/RawForm.vue';
 
 const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = form();
+
 const { filter, order, filterSignature } = service();
 
 const { criteriaOptions, criteria } = order;
@@ -60,6 +61,13 @@ const SuspenseTable = useSuspense(Table);
             v-model="criteria"
             class="w-44"
           />
+        </div>
+
+        <div class="text-center ml-5">
+          <Label>Reset</Label>
+          <Button type="secondary" class="rounded-full" @click="()=>{}">
+            <RefreshIcon class="h-4 w-4 text-gray-600" />
+          </Button>
         </div>
       </div>
 

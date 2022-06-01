@@ -1,6 +1,6 @@
-import { ref } from 'vue';
-import useApi from '~/composables/useApi.js';
+import { reactive, readonly, computed } from 'vue';
 import { $financeGroups } from '~/helpers/fetch.js';
+import useApi from '~/composables/useApi.js';
 
 import { userHasPermission } from '~/lib/permissions.js';
 
@@ -8,32 +8,36 @@ const hasCRUD = userHasPermission('crud finances');
 
 const { apiRequest } = useApi();
 
-const rawGroups = ref([]);
+const state = reactive({
+  raw: [],
+});
 
-const fetchGroups = async () => {
-  if (!hasCRUD) return;
-  rawGroups.value = await $financeGroups();
+const reset = () => {
+  state.raw = [];
 };
 
-/* ************ Delete finance-groups ************ */
+const load = async () => {
+  if (!hasCRUD) return;
+  state.raw = await $financeGroups();
+};
 
-const dropGroup = async (id) => {
+const drop = async (id) => {
   const { call, errorMsg, success } = apiRequest(`finance-groups/${id}`, { method: 'delete' });
 
   await call();
 
-  success.value && rawGroups.value.deleteById(id);
+  success.value && state.raw.deleteById(id);
 
   const deletionMsg = success.value ? 'финансовые группы успешно удален' : (errorMsg.value ?? 'Не удалось удалить финансовые группы !');
 
   return { message: deletionMsg, success: success.value };
 };
 
-export default function () {
-  return {
-    rawGroups,
-    fetchGroups,
-    dropGroup,
-    hasCRUD,
-  };
-}
+export default {
+  state: readonly(state),
+
+  load,
+  drop,
+  reset,
+  options: computed(() => state.raw.map(({ id, name }) => ({ value: id, label: name }))),
+};

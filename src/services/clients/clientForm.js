@@ -1,19 +1,23 @@
-import { ref, computed, reactive } from 'vue';
+import { reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import clientFormValidationsRules from '~/validationsRules/clientForm';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
-import clients from '~/services/clients/clients';
-import { $departments, $client, $cities } from '~/helpers/fetch.js';
+import { $client } from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
 import useAuth from '~/composables/useAuth.js';
 import { userHasPermission } from '~/lib/permissions.js';
+import departmentStore from '~/store/departments';
+import store from '~/store/clients';
+
+const { select } = store;
+
+const { current, setCurrent } = departmentStore;
 
 const { apiRequest } = useApi();
 const toaster = useToast();
 const { userDepartment } = useAuth();
-const { setSelectedClient } = clients();
 const hasCRUDdepartments = userHasPermission('crud departments');
 
 let routeInstance;
@@ -22,7 +26,7 @@ let redirectBack;
 let v$;
 
 const previousPage = async (id) => {
-  if (id) setSelectedClient(id);
+  if (id) select(id);
   await redirectBack();
 };
 
@@ -45,20 +49,6 @@ const defaultClientFields = {
 
 const clientFields = reactive(defaultClientFields);
 
-/* ************ Departments & Cities ************ */
-const rawDepartments = ref([]);
-const rawCities = ref([]);
-
-const departmentOptions = computed(() => rawDepartments.value.map((department) => ({
-  value: department.id,
-  label: department.name,
-})));
-
-const cityOptions = computed(() => rawCities.value.map((city) => ({
-  value: city.id,
-  label: city.name,
-})));
-
 /* ************ client form ************ */
 const saveRawClientFields = async () => {
   const { call, data, errorMsg, success } = apiRequest(`/clients/${isEditClientPage.value ? routeInstance.params.id : ''}`, {
@@ -71,7 +61,7 @@ const saveRawClientFields = async () => {
   if (success.value) toaster.success('Данные клиента успешно сохранены');
   else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, Не удалось сохранить данные клиента !');
 
-  return data.value?.client?.id;
+  return data.value?.client;
 };
 
 const saveClient = async () => {
@@ -81,18 +71,22 @@ const saveClient = async () => {
 
   v$.value.$reset();
 
-  const clientId = await saveRawClientFields();
+  const client = await saveRawClientFields();
 
-  if (!clientId) return;
+  if (!client?.id) return;
 
-  await previousPage(clientId);
+  if (client?.department?.id) setCurrent(client?.department?.id);
 
-  return !!clientId;
+  await previousPage(client?.id);
+
+  return !!client?.id;
 };
 
 const setClientField = function (key) {
   if (key === 'department_id') {
-    clientFields.department_id = hasCRUDdepartments ? (this.department?.id ?? '') : userDepartment.value;
+    if (!hasCRUDdepartments) clientFields.department_id = userDepartment.value;
+    clientFields.department_id = this.department?.id ?? current.value;
+    // i the think first if statement is not needed
     return;
   }
 
@@ -130,13 +124,9 @@ const atMountedClientForm = async () => {
   const client = (isEditClientPage.value && routeInstance.params.id) && await $client(routeInstance.params.id);
 
   await setClientForm(client || {});
-
-  rawCities.value = await $cities();
-  if (hasCRUDdepartments) rawDepartments.value = await $departments();
 };
 
 const addItem = (item) => () => {
-  console.log(clientFields.cars);
   if (Array.isArray(clientFields[item]) && clientFields[item].length) {
     Reflect.deleteProperty(clientFields[item], 'active');
     clientFields[item] = clientFields[item].filter((el) => !!el);
@@ -153,7 +143,7 @@ const addItem = (item) => () => {
   clientFields[item] = [''];
 };
 
-export default function clientFormService() {
+export default function () {
   const { route, isThePage, back } = useAppRouter('EditClient');
 
   [routeInstance, isEditClientPage, redirectBack] = [route, isThePage, back];
@@ -163,15 +153,12 @@ export default function clientFormService() {
   v$ = useVuelidate(rules, clientFields, { $lazy: true });
 
   return {
-    departmentOptions,
     clientFields,
     isEditClientPage,
     v$,
     saveClient,
-    setClientForm,
     atMountedClientForm,
     previousPage,
-    cityOptions,
     addItem,
   };
 }

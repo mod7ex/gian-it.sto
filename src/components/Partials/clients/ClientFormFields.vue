@@ -6,17 +6,19 @@ import TextArea from '@/UI/TextArea.vue';
 import clientForm from '~/services/clients/clientForm.js';
 import Button from '@/UI/Button.vue';
 import CarsTable from '~/components/Layout/cars/CarsTable.vue';
+import departmentStore from '~/store/departments';
+import cityStore from '~/store/cities';
 
-const {
-  departmentOptions,
-  clientFields,
-  v$,
-  atMountedClientForm,
-  cityOptions,
-  addItem,
-} = clientForm();
+const { options: departmentOptions } = departmentStore;
+const { options: cityOptions, load } = cityStore;
 
-await atMountedClientForm();
+const { clientFields, v$, atMountedClientForm, addItem } = clientForm();
+
+
+await (async ()=>{
+    await load();
+    await atMountedClientForm();
+})();
 
 const addMail = addItem('emails');
 const addPhone = addItem('phones');

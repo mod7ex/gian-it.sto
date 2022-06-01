@@ -1,10 +1,10 @@
 import { computed, reactive, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
-import { $carModel, $carMarks } from '~/helpers/fetch.js';
+import { $carModel } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
-import carModelsService from './carModels';
+import store from '~/store/cars/models';
 
-const { fetchCarModels } = carModelsService();
+const { load } = store;
 
 const toaster = useToast();
 
@@ -15,10 +15,6 @@ const carModel = reactive({
   name: undefined,
   car_mark_id: undefined,
 });
-
-/* ********************* Car marks ********************* */
-const rawCarMarks = ref([]);
-const carMarkOptions = computed(() => rawCarMarks.value.map(({ id, name }) => ({ value: id, label: name })));
 
 const isModalUp = ref(false);
 
@@ -50,7 +46,7 @@ const saveForm = async () => {
 
   if (!success.value) return false;
 
-  await fetchCarModels();
+  await load();
 
   setModalVisibility(false);
 
@@ -62,7 +58,6 @@ const atMountedCarModelsForm = async () => {
 
   let cm = {};
   if (id) cm = await $carModel(id);
-  rawCarMarks.value = await $carMarks();
 
   setForm(cm);
 };
@@ -82,6 +77,5 @@ export default function carModelFormService() {
     atMountedCarModelsForm,
     isUpdate,
     carModel,
-    carMarkOptions,
   };
 }

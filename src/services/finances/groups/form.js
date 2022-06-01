@@ -2,10 +2,9 @@ import { computed, ref, reactive } from 'vue';
 import useApi from '~/composables/useApi.js';
 import { $financeGroup } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
+import store from '~/store/finances/groups';
 
-import service from './index';
-
-const { fetchGroups } = service();
+const { load } = store;
 
 const toaster = useToast();
 
@@ -45,7 +44,7 @@ const saveForm = async () => {
 
   if (!success.value) return false;
 
-  await fetchGroups();
+  await load();
 
   setModalVisibility(false);
 

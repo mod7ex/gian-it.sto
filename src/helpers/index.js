@@ -51,3 +51,18 @@ export const debounce = function (fn, d = 1500) {
     }, d);
   };
 };
+
+// personsObjs is an array of users that have fields;
+export const alphaGroupper = (personsObjs = [], field = '', shape) => [...new Set(personsObjs.map((item) => {
+  const str = Reflect.get(item, field); // supposed to be string
+  return str ? str[0].toUpperCase() : '_';
+}))]
+  .sort()
+  .reduce((groups, key) => {
+    // eslint-disable-next-line no-param-reassign
+    groups[key] = personsObjs.filter((item) => {
+      const str = Reflect.get(item, field);
+      return (str ? str[0].toUpperCase() : '_') === key;
+    }).map(shape);
+    return groups;
+  }, {});

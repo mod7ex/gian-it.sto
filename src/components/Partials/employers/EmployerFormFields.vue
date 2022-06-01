@@ -1,27 +1,18 @@
 <script setup>
-import {
-  CheckIcon,
-  ArrowLeftIcon,
-  ExclamationIcon,
-} from "@heroicons/vue/outline";
-import OfficeLayout from "@/Layout/Office.vue";
-import Button from "@/UI/Button.vue";
-import Input from "@/UI/Input.vue";
-import TextArea from "@/UI/TextArea.vue";
-import UploadImage from "@/UI/UploadImage.vue";
-import Toggle from "@/UI/Toggle.vue";
-import Select from "@/UI/Select.vue";
-import List from "@/UI/List.vue";
-import { onMounted } from "@vue/runtime-core";
-import employerForm from "~/services/employers/employerForm.js";
-import useAppRouter from "~/composables/useAppRouter.js";
-import EditUser from "@/Layout/users/EditUser.vue";
+import Input from '@/UI/Input.vue';
+import TextArea from '@/UI/TextArea.vue';
+import UploadImage from '@/UI/UploadImage.vue';
+import Toggle from '@/UI/Toggle.vue';
+import Select from '@/UI/Select.vue';
+import employerForm from '~/services/employers/form.js';
+import EditUser from '@/Layout/users/EditUser.vue';
+import departmentStore from '~/store/departments';
+import roleStore from '~/store/roles';
 
-const { router, route } = useAppRouter();
+const { options: departmentOptions, load: loadDepartments } = departmentStore;
+const { options: roleOptions, load: loadRoles } = roleStore;
 
-let {
-  departmentOptions,
-  roleOptions,
+const {
   isValideAvatarFileSize,
   log,
   avatar,
@@ -32,7 +23,12 @@ let {
   isUploadingAvatar,
 } = employerForm();
 
-await atMountedEmployerForm();
+await (async () => {
+  await loadRoles();
+  await loadDepartments();
+  await atMountedEmployerForm();
+})();
+
 </script>
 
 <template>

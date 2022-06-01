@@ -4,12 +4,12 @@ import Button from '@/UI/Button.vue';
 import LPreview from '@/Layout/users/Preview.vue';
 import { DescriptionListItem } from '@/UI/DescriptionList';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-
-import employers from '~/services/employers/employers.js';
+import store from '~/store/empoyees';
 
 const { drop } = useConfirmDialog();
 
-const { dropUser, selectedUser } = employers();
+const { drop: dropUser, selectedUser } = store;
+
 </script>
 
 <template>

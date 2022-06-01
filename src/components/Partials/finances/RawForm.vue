@@ -2,15 +2,21 @@
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import form from '~/services/finances/form';
+import store from '~/store/finances/groups';
 
-const { finance, atMountedFinanceForm, financeGroupOptions } = form();
+const { options, load } = store;
+
+const { finance, atMountedFinanceForm } = form();
 
 const types = [
   { label: 'Приход', value: 'in' },
   { label: 'Расход', value: 'out' },
 ];
 
-await atMountedFinanceForm();
+await (async () => {
+  await load();
+  await atMountedFinanceForm();
+})()
 
 </script>
 
@@ -19,6 +25,6 @@ await atMountedFinanceForm();
         <Input label="Hазвание финансовая сделка" v-model="finance.name" :required="true" />
         <Input label="Сумма" v-model="finance.sum" :required="true" type="number" :min="0" :step="1" />
         <Select label="Тип операции" v-model="finance.operation_type" :required="true" :options="types" />
-        <Select label="группа" v-model="finance.finance_group_id" :required="true" :options="financeGroupOptions" />
+        <Select label="группа" v-model="finance.finance_group_id" :required="true" :options="options" />
     </div>
 </template>

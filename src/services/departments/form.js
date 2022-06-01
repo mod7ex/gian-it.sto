@@ -2,10 +2,9 @@ import { computed, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
 import { $department } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
+import store from '~/store/departments';
 
-import departmentsService from './departments';
-
-const { fetchDepartments } = departmentsService();
+const { load } = store;
 
 const toaster = useToast();
 
@@ -43,7 +42,7 @@ const saveForm = async () => {
 
   if (!success.value) return false;
 
-  await fetchDepartments();
+  await load();
 
   setModalVisibility(false);
 
@@ -59,7 +58,7 @@ const atMountedDepartmentForm = async () => {
   setForm(dep);
 };
 
-export default function departmentFormService() {
+export default function () {
   return {
     data,
     saveForm,

@@ -7,45 +7,26 @@ import Avatar from '@/UI/Avatar.vue';
 import { DescriptionListItem } from '@/UI/DescriptionList';
 import LPreview from '@/Layout/users/Preview.vue';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-
-import clients from '~/services/clients/clients.js';
+import store from '~/store/clients';
 
 const { drop } = useConfirmDialog();
 
-const { dropClient, selectedClient: client } = clients();
-
-const ff = {
-  id: 10,
-  name: 'Вера',
-  surname: 'Лапин',
-  middle_name: 'Никодимович',
-  born_at: '10.12.1981',
-  notes: 'Dicta explicabo eos quia delectus et.',
-  address: 'Aut qui assumenda aut harum atque quia.',
-  passport: 'Iste doloribus distinctio quo aut nihil eos beatae sequi.',
-  phones: ['+7 (922) 866-8934', '(35222) 49-9002', '(35222) 33-7325'],
-  gender: 'female',
-  emails: ['tfrolova@fedorova.ru'],
-  created_at: '07.02.2022 23:00',
-  updated_at: '07.02.2022 23:00',
-  department: { id: 3, name: 'Нансена 59', slug: 'nansena-59' },
-  city: { id: 89, name: 'Щёлково 7798' },
-};
+const { drop: dropClient, selectedUser } = store;
 
 </script>
 
 <template>
-  <l-preview :phone="client.phones[0]" :full_name="`${client.name} ${client.surname ?? ''}`">
+  <l-preview :phone="selectedUser.phones[0]" :full_name="`${selectedUser.name} ${selectedUser.surname ?? ''}`">
     <template #description-list>
-        <DescriptionListItem label="Телефон" :value="client.phones" type="columns" />
-        <DescriptionListItem label="Почта" :value="client.emails" type="columns" />
-        <DescriptionListItem label="Отдел" :value="client.department?.name" type="columns" />
-        <DescriptionListItem label="Город" :value="client.city?.name" type="columns" />
-        <DescriptionListItem label="Адрес" :value="client.address" type="columns" />
-        <DescriptionListItem label="Паспорт" :value="client.passport" type="columns" />
-        <DescriptionListItem label="Заказов на" :value="client.orders" type="columns" />
-        <DescriptionListItem label="Дата рождения" :value="client.born_at" type="columns" />
-        <DescriptionListItem label="О клиенте" :value="client.notes" type="columns" columns="2" />
+        <DescriptionListItem label="Телефон" :value="selectedUser.phones" type="columns" />
+        <DescriptionListItem label="Почта" :value="selectedUser.emails" type="columns" />
+        <DescriptionListItem label="Отдел" :value="selectedUser.department?.name" type="columns" />
+        <DescriptionListItem label="Город" :value="selectedUser.city?.name" type="columns" />
+        <DescriptionListItem label="Адрес" :value="selectedUser.address" type="columns" />
+        <DescriptionListItem label="Паспорт" :value="selectedUser.passport" type="columns" />
+        <DescriptionListItem label="Заказов на" :value="selectedUser.orders" type="columns" />
+        <DescriptionListItem label="Дата рождения" :value="selectedUser.born_at" type="columns" />
+        <DescriptionListItem label="О клиенте" :value="selectedUser.notes" type="columns" columns="2" />
 
         <DescriptionListItem label="Заказ-наряды" type="columns" columns="2">
           <div class="grid grid-cols-12 mt-1 gap-2">
@@ -80,10 +61,10 @@ const ff = {
 
       <template #actions>
         <v-can ability="crud clients" class="px-6 flex justify-between">
-            <Button type="secondary" size="xs" :link="{ name: 'EditClient', params: { id: client.id } }">
+            <Button type="secondary" size="xs" :link="{ name: 'EditClient', params: { id: selectedUser.id } }">
                 <PencilIcon class="mr-2 h-5 w-5 text-gray-400" />Изменить
             </Button>
-            <Button size="xs" color="red" @click="() => drop(() => dropClient(client.id), 'продолжить удаление!', 'Удалить ?')">
+            <Button size="xs" color="red" @click="() => drop(() => dropClient(selectedUser.id), 'продолжить удаление!', 'Удалить ?')">
                 <TrashIcon class="mr-2 h-5 w-5 text-white" />Удалить
             </Button>
         </v-can>

@@ -1,5 +1,6 @@
 <script setup>
 import Loader from '~/components/Partials/Loader.vue';
+
 </script>
 
 <template>

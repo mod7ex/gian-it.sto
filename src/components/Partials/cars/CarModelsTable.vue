@@ -1,8 +1,8 @@
 <script setup>
 import Link from '@/UI/Link.vue';
 import carModelForm from '~/services/cars/carModelForm';
-import carModelsService from '~/services/cars/carModels';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import store from '~/store/cars/models';
 
 import Table from '@/Layout/Table.vue';
 
@@ -15,16 +15,16 @@ const { drop } = useConfirmDialog();
 
 const { setModalVisibility } = carModelForm();
 
-const { rawCarModels, fetchCarModels, dropCarModel } = carModelsService();
+const { state, load, drop: dropCarModel } = store;
 
-await fetchCarModels();
+await load();
 
 </script>
 
 <template>
     <Table
         :fields="fields"
-        :items="rawCarModels"
+        :items="state.raw"
         @delete="(id) => drop(() => dropCarModel(id))"
         @edit="(id) => setModalVisibility(true, id)"
     >

@@ -4,11 +4,11 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import DepartmentsTable from '~/components/Partials/departments/DepartmentsTable.vue';
-import departmentForm from '~/services/departments/departmentForm.js';
+import form from '~/services/departments/form.js';
 import ModalForm from '@/Partials/ModalForm.vue';
 import RawForm from '~/components/Partials/departments/Form.vue';
 
-const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = departmentForm();
+const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = form();
 
 const SuspensDepartmentsTable = useSuspense(DepartmentsTable);
 

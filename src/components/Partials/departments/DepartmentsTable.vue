@@ -2,14 +2,15 @@
 import Link from '@/UI/Link.vue';
 // import Badge from "@/UI/Badge.vue";
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-import departmentsService from '~/services/departments/departments.js';
-import departmentForm from '~/services/departments/departmentForm.js';
+import departmentForm from '~/services/departments/form.js';
+
+import store from '~/store/departments';
 
 import Table from '@/Layout/Table.vue';
 
-const { setModalVisibility } = departmentForm();
+const { load, drop: dropDepartment, departments } = store;
 
-const { fetchDepartments, dropDepartment, departments } = departmentsService();
+const { setModalVisibility } = departmentForm();
 
 const { drop } = useConfirmDialog();
 
@@ -18,7 +19,7 @@ const fields = [
   // { label: 'Дата создания', key: 'created_at' },
 ];
 
-await fetchDepartments();
+await load();
 
 </script>
 

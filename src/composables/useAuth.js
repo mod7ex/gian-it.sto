@@ -25,6 +25,9 @@ const setToken = ((payload) => {
 
 const setUser = (userData) => {
   user.value = userData;
+  if (!localStorage.getItem('department')) {
+    localStorage.setItem('department', `${userData?.department?.id}`);
+  }
   if (!userData?.avatar) user.value.avatar = 'src/assets/noAvatar.svg';
   return !!userData;
 };

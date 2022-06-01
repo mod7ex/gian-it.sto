@@ -1,11 +1,13 @@
 <script setup>
 import Link from '@/UI/Link.vue';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-import rolesService from '~/services/roles/roles.js';
-
+import service from '~/services/roles/roles.js';
+import store from '~/store/roles';
 import Table from '@/Layout/Table.vue';
 
-const { roles, fetchRoles, movetoEditRolePage, dropRole } = rolesService();
+const { roles, load } = store;
+
+const { movetoEditRolePage, dropRole } = service();
 
 const { drop } = useConfirmDialog();
 
@@ -14,7 +16,7 @@ const fields = [
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-await fetchRoles();
+await load();
 
 </script>
 

@@ -2,10 +2,9 @@ import { computed, ref } from 'vue';
 import useApi from '~/composables/useApi.js';
 import { $carMark } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
+import store from '~/store/cars/marks';
 
-import carsService from './carMarks';
-
-const { fetchCarMarks } = carsService();
+const { load } = store;
 
 const toaster = useToast();
 
@@ -43,7 +42,7 @@ const saveForm = async () => {
 
   if (!success.value) return false;
 
-  await fetchCarMarks();
+  await load();
 
   setModalVisibility(false);
 
@@ -59,7 +58,7 @@ const atMountedCarMarksForm = async () => {
   setForm(cm);
 };
 
-export default function carMarkFormService() {
+export default function () {
   return {
     data,
     saveForm,

@@ -1,15 +1,15 @@
 <script setup>
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
-import service from '~/services/finances/index';
 import form from '~/services/finances/form';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import store from '~/store/finances/finances';
 
 import Table from '@/Layout/Table.vue';
 
 const { setModalVisibility } = form();
 
-const { fetchFinances, finances, dropFinance } = service();
+const { load, state, drop: dropFinance } = store;
 
 const { drop } = useConfirmDialog();
 
@@ -20,14 +20,14 @@ const fields = [
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-await fetchFinances();
+await load();
 
 </script>
 
 <template>
     <Table
         :fields="fields"
-        :items="finances"
+        :items="state.raw"
         @delete="(id) => drop(() => dropFinance(id))"
         @edit="(id) => setModalVisibility(true, id)"
     >

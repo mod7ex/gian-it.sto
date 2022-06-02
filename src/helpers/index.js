@@ -66,3 +66,9 @@ export const alphaGroupper = (personsObjs = [], field = '', shape) => [...new Se
     }).map(shape);
     return groups;
   }, {});
+
+export function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}

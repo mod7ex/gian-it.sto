@@ -7,6 +7,7 @@ import {
   TransitionChild,
   TransitionRoot,
 } from '@headlessui/vue';
+
 import { CheckIcon, ExclamationIcon } from '@heroicons/vue/outline';
 
 const props = defineProps({

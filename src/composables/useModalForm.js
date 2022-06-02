@@ -1,109 +1,69 @@
-/*
-  composable needs some work might be used later
-*/
+import { defineComponent, h, createApp, ref } from 'vue';
+import Actions from '@/Layout/modal/FormActions.vue';
+import useSuspense from '~/composables/useSuspense';
+import { sleep } from '~/helpers';
+import Modal from '@/Layout/modal/Modal.vue';
 
-import { defineComponent, h, ref, createApp } from 'vue';
-import Modal from '@/Partials/ModalForm.vue';
-// import Button from '@/UI/Button.vue';
-// import DialogModal from '@/UI/DialogModal.vue';
-// import Spinner from '@/UI/Spinner.vue';
-import useSuspense from '~/composables/useSuspense.js';
-
-let theAction;
 let app;
-let timer;
-// let ConfirmDialogApp;
 
-const DEFAULT_MODAL_OPTIONS = {
-  loading: false,
-  success: true,
-  ready: false,
-  open: false,
-  errorMsg: undefined,
-};
+export default ({ title, RawForm, submit, atClose, closeAfterSubmit } = {}) => {
+  const show = ref(false);
+  const loading = ref(false);
+  const message = ref();
 
-const loading = ref();
-const errorMsg = ref();
-const success = ref();
-const ready = ref();
-const open = ref();
+  const onClose = async () => {
+    show.value = false;
 
-const reset = () => {
-  loading.value = DEFAULT_MODAL_OPTIONS.loading;
-  errorMsg.value = DEFAULT_MODAL_OPTIONS.errorMsg;
-  success.value = DEFAULT_MODAL_OPTIONS.success;
-  ready.value = DEFAULT_MODAL_OPTIONS.ready;
-  open.value = DEFAULT_MODAL_OPTIONS.open;
+    await sleep(300);
 
-  theAction = undefined;
-  app = undefined;
-};
+    if (app) {
+      app.unmount();
+      app = undefined;
+    }
 
-const close = async () => {
-  clearTimeout(timer);
+    if (atClose) await atClose();
+  };
 
-  if (!app) return;
-  app.unmount();
-  reset();
-};
+  const onSubmited = async () => {
+    message.value = undefined;
 
-const onSubmit = async () => {
-  if (!theAction) return;
+    let res = {};
 
-  console.log(theAction);
+    loading.value = true;
+    try {
+      res = await submit();
+    } finally {
+      loading.value = false;
+    }
 
-  loading.value = false;
+    if (closeAfterSubmit && res?.success) {
+      await onClose();
+      return;
+    }
 
-  try {
-    const result = await theAction();
+    message.value = res?.message;
+  };
 
-    success.value = result?.success ?? false;
+  return {
+    render: () => {
+      app = createApp(defineComponent({
 
-    if (!success.value) errorMsg.value = result?.message;
-  } catch (error) {
-    success.value = false;
+        setup() {
+          return () => h(
+            Modal,
+            { onClose, open: show.value ?? false, title, message: message.value }, // onOutclick: onClose
+            {
+              default: () => h(useSuspense(RawForm)),
+              actions: () => h(Actions, { onClose, onSubmited, loading: loading.value }),
+            },
+          );
+        },
 
-    console.log(error);
-  } finally {
-    loading.value = false;
+      }));
 
-    if (close && success.value) await close();
+      app.mount('#sto-modal');
 
-    ready.value = true;
-  }
-};
-
-const comp = (path, title) => defineComponent({
-  setup() {
-    const RawForm = () => import(path);
-
-    return () => h(
-      Modal,
-      {
-        loading: loading.value,
-        errorMsg: errorMsg.value,
-        success: success.value,
-        ready: ready.value,
-        open: true,
-        onClose: close,
-        onSubmit: () => onSubmit(),
-      },
-      {
-        form: () => h(useSuspense(RawForm), { loadingMsg: 'loading...' }),
-        title: () => title,
-      },
-    );
-  },
-});
-
-export default ({ path, action, title }) => {
-  reset();
-
-  theAction = action;
-
-  app = createApp(comp(path, title));
-
-  app.mount('#sto-confirm');
-
-  timer = setTimeout(close, import.meta.env.STO_CONFIRM_DIALOG_TTL);
+      show.value = true;
+    },
+  };
 };

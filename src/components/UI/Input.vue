@@ -9,7 +9,7 @@ const props = defineProps({
   },
   mask: {
     type: String,
-    required: false,
+    default: '',
   },
   placeholder: {
     type: String,
@@ -116,6 +116,7 @@ if (props.icon) {
       </slot>
 
       <input
+        v-if="mask"
         :type="type"
         :class="styles"
         :placeholder="placeholder"
@@ -123,11 +124,26 @@ if (props.icon) {
         :max="props.max"
         :step="props.step"
         :value="modelValue"
-        @input="(event) => $emit('update:modelValue', event.target.value)"
-        @blur="(event) => $emit('blured')"
-        @focus="(event) => $emit('focused')"
+        @input="(e) => $emit('update:modelValue', e.target.value)"
+        @blur="() => $emit('blured')"
+        @focus="() => $emit('focused')"
         :disabled="disabled"
         v-maska="mask"
+      />
+
+      <input
+        v-else
+        :type="type"
+        :class="styles"
+        :placeholder="placeholder"
+        :min="props.min"
+        :max="props.max"
+        :step="props.step"
+        :value="modelValue"
+        @input="(e) => $emit('update:modelValue', e.target.value)"
+        @blur="() => $emit('blured')"
+        @focus="() => $emit('focused')"
+        :disabled="disabled"
       />
 
       <slot name="after">

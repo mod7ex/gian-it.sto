@@ -15,7 +15,6 @@ const app = createApp(App);
 
 // eslint-disable-next-line no-underscore-dangle
 window.__STO_DEV__ = import.meta.env.DEV;
-// window.__STO_DEV__ = import.meta.env.MODE === 'development';
 
 if (__STO_DEV__) app.config.performance = true; // for dev
 

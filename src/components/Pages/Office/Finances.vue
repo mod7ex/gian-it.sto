@@ -1,5 +1,6 @@
 <script setup>
 import { PlusCircleIcon, CollectionIcon, RefreshIcon } from '@heroicons/vue/outline';
+import { ref, watch } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
@@ -12,15 +13,31 @@ import Table from '@/Partials/finances/Table.vue';
 import form from '~/services/finances/form';
 import service from '~/services/finances/index';
 import ModalForm from '@/Partials/ModalForm.vue';
+import { debounce } from '~/helpers';
 import RawForm from '~/components/Partials/finances/RawForm.vue';
+import departmentStore from '~/store/departments';
+
+const { current } = departmentStore;
 
 const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = form();
 
-const { filter, order, filterSignature } = service();
+const { filter, order, resetFilter } = service();
 
 const { criteriaOptions, criteria } = order;
 
 const SuspenseTable = useSuspense(Table);
+
+const filterSignature = ref('');
+
+watch(filter, debounce(() => {
+  // if (filter.department_id) {
+  if (current.value) {
+    filterSignature.value = Object.keys(filter).reduce((prev, curr) => {
+      if (curr === 'order') return prev; // don't fetch on re-order
+      return prev + filter[curr];
+    }, '');
+  }
+}), { deep: true }); // will work without deep because values are primary
 
 </script>
 
@@ -64,8 +81,8 @@ const SuspenseTable = useSuspense(Table);
         </div>
 
         <div class="text-center ml-5">
-          <Label>Reset</Label>
-          <Button type="secondary" class="rounded-full" @click="()=>{}">
+          <Label>сбросить</Label>
+          <Button type="secondary" class="rounded-full" @click="()=>resetFilter()">
             <RefreshIcon class="h-4 w-4 text-gray-600" />
           </Button>
         </div>

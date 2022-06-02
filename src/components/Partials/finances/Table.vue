@@ -4,6 +4,7 @@ import Link from '@/UI/Link.vue';
 import form from '~/services/finances/form';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import store from '~/store/finances/finances';
+import { filter } from '~/services/finances/index';
 
 import Table from '@/Layout/Table.vue';
 
@@ -20,7 +21,7 @@ const fields = [
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-await load();
+await load(filter);
 
 </script>
 

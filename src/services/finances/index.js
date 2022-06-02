@@ -1,10 +1,9 @@
-import { reactive, ref, watch } from 'vue';
+import { reactive } from 'vue';
 import useOrder from '~/composables/useOrder.js';
-import departmentStore from '~/store/departments';
+// import departmentStore from '~/store/departments';
 import store from '~/store/finances/finances';
-import { debounce } from '~/helpers';
 
-const { current } = departmentStore;
+// const { current } = departmentStore;
 
 const { sort } = store;
 
@@ -21,33 +20,32 @@ const pivot = {
 
 const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
 
-const { criteria } = order;
+const { criteria, reset } = order;
 
-const filter = reactive({
+export const filter = reactive({
   name: '',
   type: '',
   sum: '',
   order: criteria,
-  // department_id: current.value, // departments should be fixed in backend
+  // department_id: current, // departments should be fixed in backend
   start_date: '',
   end_date: '',
 });
 
-export default function () {
-  const filterSignature = ref('');
-
-  watch(filter, debounce(() => {
-    if (current.value) {
-      filterSignature.value = Object.keys(filter).reduce((prev, curr) => {
-        if (curr === 'order') return prev; // don't fetch on re-order
-        return prev + filter[curr];
-      }, '');
+export const resetFilter = () => {
+  Object.keys(filter).forEach((key) => {
+    if (key !== 'order' && key !== 'department_id') {
+      filter[key] = '';
     }
-  }), { deep: true }); // will work without deep because values are primary
+  });
 
+  reset();
+};
+
+export default function () {
   return {
     order,
     filter,
-    filterSignature,
+    resetFilter,
   };
 }

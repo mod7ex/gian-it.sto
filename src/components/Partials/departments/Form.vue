@@ -1,14 +1,12 @@
 <script setup>
 import Input from '@/UI/Input.vue';
-import departmentForm from '~/services/departments/form.js';
+import form from '~/services/departments/form.js';
 
-const { departmentName, atMountedDepartmentForm } = departmentForm();
+const { department, atMountedDepartmentForm } = form();
 
 await atMountedDepartmentForm();
 
-defineEmits(['close']);
-
 </script>
 <template>
-    <Input label="Название отдела" v-model="departmentName" :required="true" />
+    <Input label="Название отдела" v-model="department.name" :required="true" />
 </template>

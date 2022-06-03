@@ -12,14 +12,12 @@ import useSuspense from '~/composables/useSuspense.js';
 import Table from '@/Partials/finances/Table.vue';
 import form from '~/services/finances/form';
 import service from '~/services/finances/index';
-import ModalForm from '@/Partials/ModalForm.vue';
 import { debounce } from '~/helpers';
-import RawForm from '~/components/Partials/finances/RawForm.vue';
 import departmentStore from '~/store/departments';
 
 const { current } = departmentStore;
 
-const { setModalVisibility, saveForm, loading, errorMsg, success, ready, isModalUp, isUpdate } = form();
+const { render } = form();
 
 const { filter, order, resetFilter } = service();
 
@@ -48,7 +46,7 @@ watch(filter, debounce(() => {
           <CollectionIcon class="w-5 h-5 mr-1"/>Группы
         </Button>
 
-        <Button color="blue" @click="() => setModalVisibility(true)">
+        <Button color="blue" @click="() => render()">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>Добавить операцию
         </Button>
       </template>
@@ -87,20 +85,6 @@ watch(filter, debounce(() => {
           </Button>
         </div>
       </div>
-
-      <modal-form
-        :loading="loading"
-        :errorMsg="errorMsg"
-        :success="success"
-        :ready="ready"
-        :open="isModalUp"
-        @close="() => setModalVisibility(false)"
-        @submited="()=>saveForm()"
-      >
-        <template #title>{{ `${isUpdate ? 'Oбновляете' : 'Создайте'} финансовая сделка` }}</template>
-
-        <template #form><raw-form /></template>
-      </modal-form>
 
       <SuspenseTable :key="filterSignature"/>
 

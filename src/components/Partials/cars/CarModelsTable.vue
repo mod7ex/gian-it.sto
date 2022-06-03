@@ -1,6 +1,6 @@
 <script setup>
 import Link from '@/UI/Link.vue';
-import carModelForm from '~/services/cars/carModelForm';
+import form from '~/services/cars/carModelForm';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import store from '~/store/cars/models';
 
@@ -13,7 +13,7 @@ const fields = [
 
 const { drop } = useConfirmDialog();
 
-const { setModalVisibility } = carModelForm();
+const { render } = form();
 
 const { state, load, drop: dropCarModel } = store;
 
@@ -26,11 +26,11 @@ await load();
         :fields="fields"
         :items="state.raw"
         @delete="(id) => drop(() => dropCarModel(id))"
-        @edit="(id) => setModalVisibility(true, id)"
+        @edit="(id) => render(id)"
     >
         <!-- Body -->
         <template #td-name="{ value, item: {id} }" >
-            <Link @click="() => setModalVisibility(true, id)">{{ value }} </Link>
+            <Link @click="() => render(id)">{{ value }} </Link>
         </template>
 
         <template #td-car_mark="{ value }" >

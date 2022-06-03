@@ -64,7 +64,7 @@ const options = computed(() => props.options.map((e) => {
 
 <template>
   <div>
-    <label class="block text-sm font-medium text-gray-700">
+    <label class="block text-sm font-medium text-gray-700 text-left">
       {{ props.label }}
     </label>
 

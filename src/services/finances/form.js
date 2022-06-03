@@ -1,9 +1,11 @@
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import useApi from '~/composables/useApi.js';
 import { $finance } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import departmentStore from '~/store/departments';
 import store from '~/store/finances/finances';
+import useModalForm from '~/composables/useModalForm';
+import RawForm from '~/components/Partials/finances/RawForm.vue';
 
 const { state: departmentState } = departmentStore;
 
@@ -24,11 +26,7 @@ const finance = reactive({
 
 /* ********************* Car marks ********************* */
 
-const isModalUp = ref(false);
-
 const isUpdate = computed(() => !!finance.id);
-
-const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest();
 
 const setFormField = function (key) {
   if (key.includes('_id')) {
@@ -45,29 +43,22 @@ const setForm = (payload = {}) => {
   Object.keys(finance).forEach(setFormField, payload);
 };
 
-const setModalVisibility = (bool, id) => {
-  isModalUp.value = bool ?? false;
-
-  if (bool) reset();
-
-  setForm({ id });
-};
-
 const saveForm = async () => {
-  reset();
+  const { call, errorMsg, success } = apiRequest();
 
   await call(`/finances/${finance.id ?? ''}`, {
     method: isUpdate.value ? 'put' : 'post',
     data: finance,
   });
 
-  if (!success.value) return false;
-
-  await load();
-
-  setModalVisibility(false);
-
-  return toaster.success('финансовая сделка успешно сохранен');
+  try {
+    return { message: errorMsg.value, success: success.value };
+  } finally {
+    if (success.value) {
+      await load();
+      toaster.success('финансовая сделка успешно сохранен');
+    }
+  }
 };
 
 const atMountedFinanceForm = async () => {
@@ -80,19 +71,16 @@ const atMountedFinanceForm = async () => {
 };
 
 export default function () {
+  const { render } = useModalForm({
+    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} финансовая сделка`,
+    RawForm,
+    atSubmit: saveForm,
+    atOpen: (id) => setForm({ id }),
+  });
+
   return {
-    data,
-    saveForm,
-    responce,
-    error,
-    loading,
-    errorMsg,
-    success,
-    ready,
-    isModalUp,
-    setModalVisibility,
+    render,
     atMountedFinanceForm,
-    isUpdate,
     finance,
   };
 }

@@ -22,7 +22,7 @@ defineEmits(['close', 'submited']);
             class="w-full inline-flex justify-center  px-4 py-2 sm:col-start-2"
             :class="{ 'cursor-not-allowed opacity-60': props.loading }"
         >
-            <Spinner v-if="props.loading" />
+            <Spinner class="h-3" v-if="props.loading" />
             <span v-else>Сохранить</span>
         </Button>
 

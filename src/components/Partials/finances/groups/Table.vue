@@ -8,7 +8,7 @@ import Table from '@/Layout/Table.vue';
 
 const { state, load, drop: dropGroup } = store;
 
-const { setModalVisibility } = form();
+const { render } = form();
 
 const { drop } = useConfirmDialog();
 
@@ -26,11 +26,11 @@ await load();
         :fields="fields"
         :items="state.raw"
         @delete="(id) => drop(() => dropGroup(id))"
-        @edit="(id) => setModalVisibility(true, id)"
+        @edit="(id) => render(id)"
     >
         <!-- Body -->
         <template #td-name="{ value, item: {id} }" >
-            <Link @click="() => setModalVisibility(true, id)">{{ value }} </Link>
+            <Link @click="() => render(id)">{{ value }} </Link>
         </template>
 
         <!--
@@ -38,6 +38,7 @@ await load();
             {{ value }}
         </template>
         -->
+
         <!-- ****** -->
     </Table>
 </template>

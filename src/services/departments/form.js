@@ -1,8 +1,11 @@
-import { computed, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import useApi from '~/composables/useApi.js';
 import { $department } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/departments';
+import RawForm from '~/components/Partials/departments/Form.vue';
+
+import useModalForm from '~/composables/useModalForm';
 
 const { load } = store;
 
@@ -10,47 +13,38 @@ const toaster = useToast();
 
 const { apiRequest } = useApi();
 
-const departmentId = ref();
-const departmentName = ref();
+const department = reactive({
+  name: '',
+  id: '',
+});
 
-const isModalUp = ref(false);
-
-const isUpdate = computed(() => !!departmentId.value);
-
-const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest();
+const isUpdate = computed(() => !!department.id);
 
 const setForm = (payload = {}) => {
-  departmentName.value = payload.name;
-  departmentId.value = payload.id;
-};
-
-const setModalVisibility = (bool, id) => {
-  isModalUp.value = bool ?? false;
-
-  if (bool) reset();
-
-  setForm({ id });
+  department.id = payload.id;
+  department.name = payload.name;
 };
 
 const saveForm = async () => {
-  reset();
+  const { call, errorMsg, success } = apiRequest();
 
-  await call(`/departments/${departmentId.value ?? ''}`, {
+  await call(`/departments/${department.id ?? ''}`, {
     method: isUpdate.value ? 'put' : 'post',
-    data: { name: departmentName.value },
+    data: { name: department.name },
   });
 
-  if (!success.value) return false;
-
-  await load();
-
-  setModalVisibility(false);
-
-  return toaster.success('Отдел успешно сохранен');
+  try {
+    return { message: errorMsg.value, success: success.value };
+  } finally {
+    if (success.value) {
+      await load();
+      toaster.success('Отдел успешно сохранен');
+    }
+  }
 };
 
 const atMountedDepartmentForm = async () => {
-  const id = departmentId.value;
+  const { id } = department;
 
   let dep = {};
   if (id) dep = await $department(id);
@@ -59,19 +53,17 @@ const atMountedDepartmentForm = async () => {
 };
 
 export default function () {
+  const { render } = useModalForm({
+    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} отдела`,
+    RawForm,
+    atSubmit: saveForm,
+    atOpen: (id) => setForm({ id }),
+  });
+
   return {
-    data,
     saveForm,
-    responce,
-    error,
-    loading,
-    errorMsg,
-    success,
-    ready,
-    isModalUp,
-    departmentName,
-    setModalVisibility,
+    department,
     atMountedDepartmentForm,
-    isUpdate,
+    render,
   };
 }

@@ -1,8 +1,10 @@
-import { computed, ref, reactive } from 'vue';
+import { computed, reactive } from 'vue';
+import RawForm from '~/components/Partials/finances/groups/RawForm.vue';
 import useApi from '~/composables/useApi.js';
 import { $financeGroup } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/finances/groups';
+import useModalForm from '~/composables/useModalForm';
 
 const { load } = store;
 
@@ -15,40 +17,29 @@ const financeGroup = reactive({
   name: '',
 });
 
-const isModalUp = ref(false);
-
 const isUpdate = computed(() => !!financeGroup.id);
-
-const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest();
 
 const setForm = (payload) => {
   financeGroup.id = payload?.id;
   financeGroup.name = payload?.name;
 };
 
-const setModalVisibility = (bool, id) => {
-  isModalUp.value = bool ?? false;
-
-  if (bool) reset();
-
-  setForm({ id });
-};
-
 const saveForm = async () => {
-  reset();
+  const { call, errorMsg, success } = apiRequest();
 
   await call(`/finance-groups/${financeGroup.id ?? ''}`, {
     method: isUpdate.value ? 'put' : 'post',
     data: financeGroup,
   });
 
-  if (!success.value) return false;
-
-  await load();
-
-  setModalVisibility(false);
-
-  return toaster.success('финансовая группа успешно сохранен');
+  try {
+    return { message: errorMsg.value, success: success.value };
+  } finally {
+    if (success.value) {
+      await load();
+      toaster.success('финансовая группа успешно сохранен');
+    }
+  }
 };
 
 const atMountedFinanceGroup = async () => {
@@ -61,19 +52,16 @@ const atMountedFinanceGroup = async () => {
 };
 
 export default function () {
+  const { render } = useModalForm({
+    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} финансовая группа`,
+    RawForm,
+    atSubmit: saveForm,
+    atOpen: (id) => setForm({ id }),
+  });
+
   return {
-    data,
-    saveForm,
-    responce,
-    error,
-    loading,
-    errorMsg,
-    success,
-    ready,
-    isModalUp,
+    render,
     financeGroup,
-    setModalVisibility,
     atMountedFinanceGroup,
-    isUpdate,
   };
 }

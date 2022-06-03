@@ -115,6 +115,13 @@ if (props.icon) {
         </div>
       </slot>
 
+      <!--
+            The reason we have an if statement
+            is that we have a conflict with maska
+            inside the useModalFoem composable
+            the v-maska directive is an unknown directive
+       -->
+
       <input
         v-if="mask"
         :type="type"

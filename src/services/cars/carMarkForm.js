@@ -3,6 +3,8 @@ import useApi from '~/composables/useApi.js';
 import { $carMark } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/cars/marks';
+import useModalForm from '~/composables/useModalForm';
+import RawForm from '~/components/Partials/cars/CarMarkRawForm.vue';
 
 const { load } = store;
 
@@ -13,40 +15,29 @@ const { apiRequest } = useApi();
 const carMarkId = ref();
 const carMarkName = ref();
 
-const isModalUp = ref(false);
-
 const isUpdate = computed(() => !!carMarkId.value);
-
-const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest();
 
 const setForm = (payload = {}) => {
   carMarkName.value = payload.name;
   carMarkId.value = payload.id;
 };
 
-const setModalVisibility = (bool, id) => {
-  isModalUp.value = bool ?? false;
-
-  if (bool) reset();
-
-  setForm({ id });
-};
-
 const saveForm = async () => {
-  reset();
+  const { call, errorMsg, success } = apiRequest();
 
   await call(`/car-marks/${carMarkId.value ?? ''}`, {
     method: isUpdate.value ? 'put' : 'post',
     data: { name: carMarkName.value },
   });
 
-  if (!success.value) return false;
-
-  await load();
-
-  setModalVisibility(false);
-
-  return toaster.success('Марка автомобиля успешно сохранен');
+  try {
+    return { message: errorMsg.value, success: success.value };
+  } finally {
+    if (success.value) {
+      await load();
+      toaster.success('Марка автомобиля успешно сохранен');
+    }
+  }
 };
 
 const atMountedCarMarksForm = async () => {
@@ -59,18 +50,16 @@ const atMountedCarMarksForm = async () => {
 };
 
 export default function () {
+  const { render } = useModalForm({
+    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} марка автомобиля`,
+    RawForm,
+    atSubmit: saveForm,
+    atOpen: (id) => setForm({ id }),
+  });
+
   return {
-    data,
-    saveForm,
-    responce,
-    error,
-    loading,
-    errorMsg,
-    success,
-    ready,
-    isModalUp,
+    render,
     carMarkName,
-    setModalVisibility,
     atMountedCarMarksForm,
     isUpdate,
   };

@@ -140,6 +140,7 @@ if (props.circle) {
       break;
   }
 }
+
 </script>
 
 <template>

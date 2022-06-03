@@ -8,7 +8,7 @@ import { filter } from '~/services/finances/index';
 
 import Table from '@/Layout/Table.vue';
 
-const { setModalVisibility } = form();
+const { render } = form();
 
 const { load, state, drop: dropFinance } = store;
 
@@ -30,7 +30,7 @@ await load(filter);
         :fields="fields"
         :items="state.raw"
         @delete="(id) => drop(() => dropFinance(id))"
-        @edit="(id) => setModalVisibility(true, id)"
+        @edit="(id) => render(id)"
     >
         <!-- Header -->
         <template #th-sum="{ label }" >
@@ -39,7 +39,7 @@ await load(filter);
 
         <!-- Body -->
         <template #td-name="{ value, item: {id} }" >
-            <Link @click="() => setModalVisibility(true, id)">{{ value }} </Link>
+            <Link @click="() => render(id)">{{ value }} </Link>
         </template>
 
         <template #td-sum="{ value }" >

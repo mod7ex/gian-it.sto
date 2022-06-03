@@ -1,8 +1,10 @@
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import useApi from '~/composables/useApi.js';
 import { $carModel } from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/cars/models';
+import RawForm from '~/components/Partials/cars/carModelRawForm.vue';
+import useModalForm from '~/composables/useModalForm';
 
 const { load } = store;
 
@@ -16,11 +18,7 @@ const carModel = reactive({
   car_mark_id: undefined,
 });
 
-const isModalUp = ref(false);
-
 const isUpdate = computed(() => !!carModel.id);
-
-const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest();
 
 const setForm = (payload = {}) => {
   carModel.id = payload.id;
@@ -28,29 +26,22 @@ const setForm = (payload = {}) => {
   carModel.car_mark_id = payload.car_mark?.id;
 };
 
-const setModalVisibility = (bool, id) => {
-  isModalUp.value = bool ?? false;
-
-  if (bool) reset();
-
-  setForm({ id });
-};
-
 const saveForm = async () => {
-  reset();
+  const { call, errorMsg, success } = apiRequest();
 
   await call(`/car-models/${carModel.id ?? ''}`, {
     method: isUpdate.value ? 'put' : 'post',
     data: carModel,
   });
 
-  if (!success.value) return false;
-
-  await load();
-
-  setModalVisibility(false);
-
-  return toaster.success('Mодель автомобиля успешно сохранен');
+  try {
+    return { message: errorMsg.value, success: success.value };
+  } finally {
+    if (success.value) {
+      await load();
+      toaster.success('Mодель автомобиля успешно сохранен');
+    }
+  }
 };
 
 const atMountedCarModelsForm = async () => {
@@ -63,19 +54,16 @@ const atMountedCarModelsForm = async () => {
 };
 
 export default function carModelFormService() {
+  const { render } = useModalForm({
+    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} Модель автомобиля`,
+    RawForm,
+    atSubmit: saveForm,
+    atOpen: (id) => setForm({ id }),
+  });
+
   return {
-    data,
-    saveForm,
-    responce,
-    error,
-    loading,
-    errorMsg,
-    success,
-    ready,
-    isModalUp,
-    setModalVisibility,
+    render,
     atMountedCarModelsForm,
-    isUpdate,
     carModel,
   };
 }

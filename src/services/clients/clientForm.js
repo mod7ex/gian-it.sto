@@ -1,21 +1,20 @@
 import { reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import clientFormValidationsRules from '~/validationsRules/clientForm';
-import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
-import { $client } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
 import useAuth from '~/composables/useAuth.js';
 import { userHasPermission } from '~/lib/permissions.js';
 import departmentStore from '~/store/departments';
 import store from '~/store/clients';
+import save from '~/helpers/save';
 
 const { select } = store;
 
 const { current, setCurrent } = departmentStore;
 
-const { apiRequest } = useApi();
 const toaster = useToast();
 const { userDepartment } = useAuth();
 const hasCRUDdepartments = userHasPermission('crud departments');
@@ -51,17 +50,12 @@ const clientFields = reactive(defaultClientFields);
 
 /* ************ client form ************ */
 const saveRawClientFields = async () => {
-  const { call, data, errorMsg, success } = apiRequest(`/clients/${isEditClientPage.value ? routeInstance.params.id : ''}`, {
-    method: isEditClientPage.value ? 'put' : 'post',
-    data: clientFields,
-  });
+  const { message, success, data } = await save.client(clientFields);
 
-  await call();
+  if (success) toaster.success('Данные клиента успешно сохранены');
+  else toaster.danger(message ?? 'Что-то пошло не так, Не удалось сохранить данные клиента !');
 
-  if (success.value) toaster.success('Данные клиента успешно сохранены');
-  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, Не удалось сохранить данные клиента !');
-
-  return data.value?.client;
+  return data?.client;
 };
 
 const saveClient = async () => {
@@ -121,7 +115,7 @@ const setClientForm = async (payload) => {
 };
 
 const atMountedClientForm = async () => {
-  const client = (isEditClientPage.value && routeInstance.params.id) && await $client(routeInstance.params.id);
+  const client = (isEditClientPage.value && routeInstance.params.id) && await $.client(routeInstance.params.id);
 
   await setClientForm(client || {});
 };

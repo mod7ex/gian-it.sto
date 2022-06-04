@@ -9,7 +9,7 @@ const { router, route } = useAppRouter();
 const { rawRolePermissions, permissions, atMountedRoleForm } = roleForm();
 
 // Just for DEV ----------------------------
-const readyToUseFieldsArray = ['Сотрудники', 'Роли', 'Отделы', 'Клиенты'];
+const readyToUseFieldsArray = ['Сотрудники', 'Роли', 'Отделы', 'Клиенты', 'Финансы'];
 const readyToUseFields = computed(() => rawRolePermissions.value.filter(({ title }) => readyToUseFieldsArray.includes(title)));
 // -----------------------------------------
 

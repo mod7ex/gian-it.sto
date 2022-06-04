@@ -1,21 +1,20 @@
 import { ref, reactive } from 'vue';
 // import useVuelidate from '@vuelidate/core';
 // import carFormValidationsRules from '~/validationsRules/carForm.js';
-import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
-
-import { $car } from '~/helpers/fetch.js';
+import save from '~/helpers/save';
+import $ from '~/helpers/fetch.js';
 
 let routeInstance;
 let isEditCarPage;
 let redirectBack;
 // let v$;
 
-const { apiRequest } = useApi();
 const toaster = useToast();
 
 const carFields = reactive({
+  id: '',
   number: '',
   vin: '',
   year: '',
@@ -34,17 +33,12 @@ const theSelectedCarMark = ref();
 /* ************ Car form ************ */
 
 const saveRawcarFields = async () => {
-  const { call, data, errorMsg, success } = apiRequest(`/cars/${isEditCarPage.value ? routeInstance.params.id : ''}`, {
-    method: isEditCarPage.value ? 'put' : 'post',
-    data: carFields,
-  });
+  const { message, success, data } = await save.car(carFields);
 
-  await call();
+  if (success) toaster.success('данные автомобиля успешно сохранены');
+  else toaster.danger(message ?? 'Что-то пошло не так, Не удалось сохранить данные автомобиля !');
 
-  if (success.value) toaster.success('данные автомобиля успешно сохранены');
-  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, Не удалось сохранить данные автомобиля !');
-
-  return data.value?.car?.id;
+  return data?.car;
 };
 
 const saveCar = async () => {
@@ -54,7 +48,7 @@ const saveCar = async () => {
 
   // v$.value.$reset();
 
-  const id = await saveRawcarFields();
+  const { id } = await saveRawcarFields();
 
   if (!id) return;
 
@@ -81,7 +75,7 @@ const atMountedCarForm = async () => {
   let car = { client: { id: routeInstance.query.client_id } };
 
   if (isEditCarPage.value && routeInstance.params.id) {
-    car = await $car(routeInstance.params.id);
+    car = await $.car(routeInstance.params.id);
   }
 
   await setCarForm(car);

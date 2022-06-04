@@ -1,5 +1,5 @@
 import { computed, reactive, readonly, ref } from 'vue';
-import { $departments } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import useApi from '~/composables/useApi.js';
 import { userHasPermission } from '~/lib/permissions.js';
 import useAuth from '~/composables/useAuth.js';
@@ -30,7 +30,7 @@ const reset = () => {
 
 const load = async (payload = {}) => {
   if (hasCRUD) {
-    state.raw = await $departments(payload);
+    state.raw = await $.departments(payload);
   }
 };
 

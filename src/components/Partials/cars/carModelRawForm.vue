@@ -17,7 +17,7 @@ await (async () => {
 
 <template>
     <div>
-        <Select label="марка автомобиля" v-model="carModel.car_mark_id" :options="options" :required="true" />
         <Input label="Hазвание модели автомобиля" v-model="carModel.name" :required="true" />
+        <Select label="марка автомобиля" v-model="carModel.car_mark_id" :options="options" :required="true" />
     </div>
 </template>

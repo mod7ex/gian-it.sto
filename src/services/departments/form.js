@@ -1,6 +1,6 @@
 import { computed, reactive } from 'vue';
-import useApi from '~/composables/useApi.js';
-import { $department } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
+import save from '~/helpers/save';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/departments';
 import RawForm from '~/components/Partials/departments/Form.vue';
@@ -10,8 +10,6 @@ import useModalForm from '~/composables/useModalForm';
 const { load } = store;
 
 const toaster = useToast();
-
-const { apiRequest } = useApi();
 
 const department = reactive({
   name: '',
@@ -26,17 +24,12 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
-  const { call, errorMsg, success } = apiRequest();
-
-  await call(`/departments/${department.id ?? ''}`, {
-    method: isUpdate.value ? 'put' : 'post',
-    data: { name: department.name },
-  });
+  const { message, success } = await save.department(department);
 
   try {
-    return { message: errorMsg.value, success: success.value };
+    return { message, success };
   } finally {
-    if (success.value) {
+    if (success) {
       await load();
       toaster.success('Отдел успешно сохранен');
     }
@@ -47,7 +40,7 @@ const atMountedDepartmentForm = async () => {
   const { id } = department;
 
   let dep = {};
-  if (id) dep = await $department(id);
+  if (id) dep = await $.department(id);
 
   setForm(dep);
 };

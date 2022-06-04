@@ -1,5 +1,5 @@
 import { computed, reactive, readonly } from 'vue';
-import { $carFuels } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 
 const state = reactive({
   raw: [],
@@ -10,7 +10,7 @@ const reset = () => {
 };
 
 const load = async () => {
-  state.raw = await $carFuels();
+  state.raw = await $.fuels();
 };
 
 export default {

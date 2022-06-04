@@ -1,5 +1,5 @@
 import { computed, reactive, readonly } from 'vue';
-import { $cars } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import useApi from '~/composables/useApi.js';
 import { userHasAtLeastOnePermission } from '~/lib/permissions.js';
 
@@ -16,7 +16,7 @@ const reset = () => {
 
 const load = async (payload = {}) => {
   if (!hasPermission) return;
-  state.raw = await $cars(payload);
+  state.raw = await $.cars(payload);
 };
 
 const drop = async (id) => {

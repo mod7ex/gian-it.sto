@@ -6,12 +6,13 @@ import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useAvatar from '~/composables/useAvatar.js';
 import useToggles from '~/composables/useToggles.js';
-import { $employer } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
 import useAuth from '~/composables/useAuth.js';
 import { userHasPermission } from '~/lib/permissions.js';
 import store from '~/store/empoyees.js';
 import departmentStore from '~/store/departments';
+import save from '~/helpers/save';
 
 const { current, setCurrent } = departmentStore;
 
@@ -37,6 +38,7 @@ const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updat
 const { toggles, setToggles, bitwisedToggles } = useToggles();
 
 const defaultUserFields = {
+  id: '',
   // password fields will be automatically set if we're creating a user
   name: '',
   surname: '',
@@ -79,17 +81,14 @@ const saveRawUserFields = async () => {
     form[key] = `${userFields[key]}`;
   });
 
-  const { call, data, errorMsg, success } = apiRequest(`/users/${isEditEmployerPage.value ? routeInstance.params.id : ''}`, {
-    method: isEditEmployerPage.value ? 'put' : 'post',
-    data: { ...form, ...bitwisedToggles.value },
-  });
+  const userData = { ...form, ...bitwisedToggles.value };
 
-  await call();
+  const { message, success, data } = await save.user(userData);
 
-  if (success.value) toaster.success('Данные сотрудника успешно сохранены');
-  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, Не удалось сохранить данные сотрудника !');
+  if (success) toaster.success('Данные сотрудника успешно сохранены');
+  else toaster.danger(message ?? 'Что-то пошло не так, Не удалось сохранить данные сотрудника !');
 
-  return data.value?.user;
+  return data?.user;
 };
 
 const saveUser = async () => {
@@ -151,7 +150,7 @@ const setEmployerForm = async (payload) => {
 };
 
 const atMountedEmployerForm = async () => {
-  const employer = (isEditEmployerPage.value && routeInstance.params.id) && await $employer(routeInstance.params.id);
+  const employer = (isEditEmployerPage.value && routeInstance.params.id) && await $.user(routeInstance.params.id);
 
   await setEmployerForm(employer || {});
 };

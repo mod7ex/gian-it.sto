@@ -13,3 +13,5 @@
 
 
 ## Always ridrect comes after toast api (in order to cancel in case of edit pages)
+
+## the properties (resources) of the save proxy from `~/helper/save` are always in snake case 

@@ -1,5 +1,5 @@
 import { computed, reactive, readonly } from 'vue';
-import { $roles } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import useApi from '~/composables/useApi.js';
 
 const { apiRequest } = useApi();
@@ -13,7 +13,7 @@ const reset = () => {
 };
 
 const load = async () => {
-  state.raw = await $roles();
+  state.raw = await $.roles();
 };
 
 const drop = async (id) => {
@@ -30,7 +30,6 @@ const drop = async (id) => {
 
 export default {
   state: readonly(state),
-
   load,
   drop,
   reset,

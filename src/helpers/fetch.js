@@ -1,6 +1,7 @@
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
-import { cleanUp } from '~/helpers';
+import { cleanUp, keyToPath } from '~/helpers';
+import communicate from '~/helpers/communicate.json';
 
 const toaster = useToast();
 const { apiRequest } = useApi();
@@ -15,7 +16,42 @@ const $fetch = async (uri, fallBackErrorMsg, toast = true, config) => {
   return data.value ?? {};
 };
 
-export const $employers = async ({ active, order, department_id, name }, toast) => {
+// ****************************************************** use Proxy to generate the right request dynamically
+
+/* Ex
+ *
+ * proxy.client(id, toast)
+ * proxy.clients(params = {}, toast)
+ *
+ */
+export default new Proxy($fetch, {
+  get(target, key) {
+    const path = keyToPath(key);
+
+    const isPlural = key[key.length - 1] === 's';
+
+    const fallBackErr = communicate.fetch.error[key] ?? communicate.fetch.error._;
+
+    if (isPlural) {
+      return async function (params = {}, toast = true) {
+        const responce = await target.call({}, path, fallBackErr, toast, { params: cleanUp(params) });
+
+        return Reflect.get(responce, key) ?? [];
+      };
+    }
+
+    return async function (id, toast = true) {
+      const responce = await target.call({}, `/${path}/${id}`, fallBackErr, toast);
+
+      return Reflect.get(responce, key) ?? {};
+    };
+  },
+});
+
+// **********************************************************************************************************
+
+/*
+export const $employers = async ({ active, order, department_id, name } = {}, toast) => {
   const { users } = await $fetch('/users', 'Не удалось получить работодателей. !', toast, {
     params: cleanUp({ active, order, department_id, name }),
   });
@@ -29,7 +65,7 @@ export const $employer = async (id, toast) => {
   return user ?? {};
 };
 
-export const $rawPermissions = async (toast) => {
+export const $permissions = async (toast) => {
   const { permissions } = await $fetch('/permissions', 'Не удалось получить разрешения !', toast);
 
   return permissions ?? [];
@@ -156,3 +192,4 @@ export const $finance = async (id, toast) => {
 
   return finance ?? {};
 };
+*/

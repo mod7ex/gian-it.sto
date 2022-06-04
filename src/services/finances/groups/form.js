@@ -1,7 +1,7 @@
 import { computed, reactive } from 'vue';
 import RawForm from '~/components/Partials/finances/groups/RawForm.vue';
-import useApi from '~/composables/useApi.js';
-import { $financeGroup } from '~/helpers/fetch.js';
+import save from '~/helpers/save';
+import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/finances/groups';
 import useModalForm from '~/composables/useModalForm';
@@ -9,8 +9,6 @@ import useModalForm from '~/composables/useModalForm';
 const { load } = store;
 
 const toaster = useToast();
-
-const { apiRequest } = useApi();
 
 const financeGroup = reactive({
   id: '',
@@ -25,17 +23,12 @@ const setForm = (payload) => {
 };
 
 const saveForm = async () => {
-  const { call, errorMsg, success } = apiRequest();
-
-  await call(`/finance-groups/${financeGroup.id ?? ''}`, {
-    method: isUpdate.value ? 'put' : 'post',
-    data: financeGroup,
-  });
+  const { message, success } = await save.finance_group(financeGroup);
 
   try {
-    return { message: errorMsg.value, success: success.value };
+    return { message, success };
   } finally {
-    if (success.value) {
+    if (success) {
       await load();
       toaster.success('финансовая группа успешно сохранен');
     }
@@ -46,7 +39,7 @@ const atMountedFinanceGroup = async () => {
   const { id } = financeGroup;
 
   let fg = {};
-  if (id) fg = await $financeGroup(id);
+  if (id) fg = await $.finance_group(id);
 
   setForm(fg);
 };

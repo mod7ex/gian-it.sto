@@ -1,5 +1,5 @@
 import { computed, reactive, readonly } from 'vue';
-import { $clients } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import useApi from '~/composables/useApi.js';
 import { alphaGroupper } from '~/helpers';
 
@@ -29,7 +29,7 @@ const reset = () => {
 
 const load = async (payload) => {
   state.loading = true;
-  state.clients = await $clients(payload);
+  state.clients = await $.clients(payload);
   state.loading = false;
 };
 

@@ -5,7 +5,7 @@ import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useToggles from '~/composables/useToggles.js';
-import { $rawPermissions, $role } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 
 const { toggles: permissions, setToggles, truthyTogglesArray } = useToggles();
 
@@ -60,7 +60,7 @@ const saveRole = async () => {
 
 /* ************ Role Raw Permissions ************ */
 const fetchRawRolePermissions = async () => {
-  const arr = await $rawPermissions();
+  const arr = await $.permissions();
 
   rawRolePermissions.value = arr.sort((a, b) => b.permissions?.length - a.permissions?.length);
 };
@@ -72,7 +72,7 @@ const setRoleForm = async (payload) => {
 };
 
 const atMountedRoleForm = async () => {
-  const role = (isEditRolePage.value && routeInstance.params.id) && await $role(routeInstance.params.id);
+  const role = (isEditRolePage.value && routeInstance.params.id) && await $.role(routeInstance.params.id);
 
   await setRoleForm(role || {});
 

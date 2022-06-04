@@ -27,12 +27,18 @@ export const hyphenatedDateFormat = (strDate) => {
   return `${y}-${m}-${d}`;
 };
 
-export const cleanUp = (obj) => {
+export const cleanUp = (obj, ...fields) => {
+  fields.forEach((key) => {
+    // fields will be deleted even if there is a value
+    Reflect.deleteProperty(obj, key);
+  });
+
   Object.keys(obj).forEach((prop) => {
     if (!Reflect.get(obj, prop)) {
       Reflect.deleteProperty(obj, prop);
     }
   });
+
   return obj;
 };
 
@@ -72,3 +78,9 @@ export function sleep(ms) {
     setTimeout(resolve, ms);
   });
 }
+
+export const keyToPath = (key) => {
+  let addon = '';
+  if (key[key.length - 1] !== 's') addon = 's';
+  return `${key.replace('_', '-') + addon}`;
+};

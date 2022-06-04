@@ -1,5 +1,5 @@
 import { reactive, readonly } from 'vue';
-import { $carModels } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import useApi from '~/composables/useApi.js';
 import { userHasPermission } from '~/lib/permissions.js';
 
@@ -16,7 +16,7 @@ const reset = () => {
 
 const load = async () => {
   if (!hasCRUD) return;
-  state.raw = await $carModels();
+  state.raw = await $.car_models();
 };
 
 const drop = async (id) => {

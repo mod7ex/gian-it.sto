@@ -1,5 +1,5 @@
 import { computed, reactive, readonly } from 'vue';
-import { $cities } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 
 const state = reactive({
   raw: [],
@@ -10,7 +10,7 @@ const reset = () => {
 };
 
 const load = async (payload = {}) => {
-  state.raw = await $cities(payload);
+  state.raw = await $.cities(payload);
 };
 
 export default {

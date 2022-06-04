@@ -1,6 +1,6 @@
 import { computed, reactive } from 'vue';
-import useApi from '~/composables/useApi.js';
-import { $carModel } from '~/helpers/fetch.js';
+import save from '~/helpers/save';
+import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/cars/models';
 import RawForm from '~/components/Partials/cars/carModelRawForm.vue';
@@ -9,8 +9,6 @@ import useModalForm from '~/composables/useModalForm';
 const { load } = store;
 
 const toaster = useToast();
-
-const { apiRequest } = useApi();
 
 const carModel = reactive({
   id: undefined,
@@ -27,17 +25,12 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
-  const { call, errorMsg, success } = apiRequest();
-
-  await call(`/car-models/${carModel.id ?? ''}`, {
-    method: isUpdate.value ? 'put' : 'post',
-    data: carModel,
-  });
+  const { message, success } = await save.car_model(carModel);
 
   try {
-    return { message: errorMsg.value, success: success.value };
+    return { message, success };
   } finally {
-    if (success.value) {
+    if (success) {
       await load();
       toaster.success('Mодель автомобиля успешно сохранен');
     }
@@ -48,7 +41,7 @@ const atMountedCarModelsForm = async () => {
   const { id } = carModel;
 
   let cm = {};
-  if (id) cm = await $carModel(id);
+  if (id) cm = await $.car_model(id);
 
   setForm(cm);
 };

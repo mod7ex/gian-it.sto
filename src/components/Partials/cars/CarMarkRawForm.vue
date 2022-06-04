@@ -2,14 +2,12 @@
 import Input from '@/UI/Input.vue';
 import form from '~/services/cars/carMarkForm';
 
-const { carMarkName, atMountedCarMarksForm } = form();
+const { mark, atMountedCarMarksForm } = form();
 
 await atMountedCarMarksForm();
-
-defineEmits(['close']);
 
 </script>
 
 <template>
-    <Input label="Название маркa автомобиля" v-model="carMarkName" :required="true" />
+    <Input label="Название маркa автомобиля" v-model="mark.name" :required="true" />
 </template>

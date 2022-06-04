@@ -27,7 +27,17 @@ const apiRequest = (url, config = {}) => {
 
   // ready ==> request was sent and we recieved responce either error or success
   const ready = computed(() => !!responce.value || !!error.value);
-  const success = computed(() => !ready.value || (ready.value && !!data.value?.success));
+  const success = computed(() => {
+    if (!ready.value) return true;
+
+    if (data.value?.success) return true;
+
+    if (responce.value?.statusText === 'OK') return true;
+
+    if (Math.floor((responce.value?.status ?? 0) / 100) === 2) return true;
+
+    return false;
+  });
   // const success = computed(() => ready.value && !!data.value?.success); // is also a valid approach
   /*
     we should change templates & js files based on what is success definition here

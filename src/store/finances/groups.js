@@ -1,5 +1,5 @@
 import { reactive, readonly, computed } from 'vue';
-import { $financeGroups } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import useApi from '~/composables/useApi.js';
 
 import { userHasPermission } from '~/lib/permissions.js';
@@ -18,7 +18,7 @@ const reset = () => {
 
 const load = async () => {
   if (!hasCRUD) return;
-  state.raw = await $financeGroups();
+  state.raw = await $.finance_groups();
 };
 
 const drop = async (id) => {

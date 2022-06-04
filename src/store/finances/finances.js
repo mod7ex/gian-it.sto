@@ -1,5 +1,5 @@
 import { reactive, readonly } from 'vue';
-import { $finances } from '~/helpers/fetch.js';
+import $ from '~/helpers/fetch.js';
 import useApi from '~/composables/useApi.js';
 
 import { userHasPermission } from '~/lib/permissions.js';
@@ -18,7 +18,7 @@ const reset = () => {
 
 const load = async (payload = {}) => {
   if (!hasCRUD) return;
-  state.raw = await $finances(payload);
+  state.raw = await $.finances(payload);
 };
 
 const sort = (v) => {

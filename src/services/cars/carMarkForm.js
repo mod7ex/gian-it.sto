@@ -1,6 +1,6 @@
-import { computed, ref } from 'vue';
-import useApi from '~/composables/useApi.js';
-import { $carMark } from '~/helpers/fetch.js';
+import { computed, reactive } from 'vue';
+import save from '~/helpers/save';
+import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/cars/marks';
 import useModalForm from '~/composables/useModalForm';
@@ -10,30 +10,25 @@ const { load } = store;
 
 const toaster = useToast();
 
-const { apiRequest } = useApi();
+const mark = reactive({
+  id: '',
+  name: '',
+});
 
-const carMarkId = ref();
-const carMarkName = ref();
-
-const isUpdate = computed(() => !!carMarkId.value);
+const isUpdate = computed(() => !!mark.id);
 
 const setForm = (payload = {}) => {
-  carMarkName.value = payload.name;
-  carMarkId.value = payload.id;
+  mark.id = payload.id;
+  mark.name = payload.name;
 };
 
 const saveForm = async () => {
-  const { call, errorMsg, success } = apiRequest();
-
-  await call(`/car-marks/${carMarkId.value ?? ''}`, {
-    method: isUpdate.value ? 'put' : 'post',
-    data: { name: carMarkName.value },
-  });
+  const { message, success } = await save.car_mark(mark);
 
   try {
-    return { message: errorMsg.value, success: success.value };
+    return { message, success };
   } finally {
-    if (success.value) {
+    if (success) {
       await load();
       toaster.success('Марка автомобиля успешно сохранен');
     }
@@ -41,10 +36,10 @@ const saveForm = async () => {
 };
 
 const atMountedCarMarksForm = async () => {
-  const id = carMarkId.value;
+  const { id } = mark;
 
   let cm = {};
-  if (id) cm = await $carMark(id);
+  if (id) cm = await $.car_mark(id);
 
   setForm(cm);
 };
@@ -59,7 +54,7 @@ export default function () {
 
   return {
     render,
-    carMarkName,
+    mark,
     atMountedCarMarksForm,
     isUpdate,
   };

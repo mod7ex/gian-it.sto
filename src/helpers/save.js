@@ -1,6 +1,9 @@
 import useApi from '~/composables/useApi.js';
 import { cleanUp, keyToPath } from '~/helpers';
 import communicate from '~/helpers/communicate.json';
+import useToast from '~/composables/useToast.js';
+
+const toaster = useToast();
 
 const { apiRequest } = useApi();
 

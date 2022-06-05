@@ -1,17 +1,23 @@
 <script setup>
+import { computed } from 'vue';
+import useIntersectionObserver from '~/composables/useIntersectionObserver';
+
 const props = defineProps({
   items: {
     type: Object,
     required: true,
   },
-
   selected: {
     type: [String, Number],
     required: false,
   },
 });
 
-const emit = defineEmits(['select']);
+const emit = defineEmits(['select', 'bottomTouched']);
+
+const { pixel, container } = useIntersectionObserver(() => {
+  emit('bottomTouched');
+}, computed(() => Object.keys(props.items).length > 0));
 
 const pick = (e) => {
   const id = e.target?.id;
@@ -22,8 +28,9 @@ const pick = (e) => {
 </script>
 
 <template>
-  <nav class="h-full overflow-y-auto scroll-area" aria-label="Directory">
+  <nav class="h-full overflow-y-auto scroll-area" aria-label="Directory" :ref="(v)=>container = v">
     <div v-for="letter in Object.keys(props.items)" :key="letter" class="relative">
+
       <div class="z-10 sticky top-0 border-t border-b border-gray-200 bg-gray-50 px-6 py-1 text-sm font-medium text-gray-500">
         <h3>{{ letter }}</h3>
       </div>
@@ -34,6 +41,7 @@ const pick = (e) => {
           :key="item.id"
           :class="[`bg-${selected == item.id ? 'gray-200 ring-indigo-300 ring-inset ring-1' : 'white'}`, `hover:bg-gray-${selected == item.id ? '200' : '100'}`]"
         >
+
           <div class="relative px-6 py-5 flex items-center space-x-3 ">
             <div class="flex-shrink-0" v-if="item.image">
               <div
@@ -59,5 +67,8 @@ const pick = (e) => {
       </ul>
 
     </div>
+
+    <pixel />
+
   </nav>
 </template>

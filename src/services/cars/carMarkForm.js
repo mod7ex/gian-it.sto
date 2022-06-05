@@ -5,6 +5,7 @@ import useToast from '~/composables/useToast.js';
 import store from '~/store/cars/marks';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/cars/CarMarkRawForm.vue';
+import communicate from '~/helpers/communicate';
 
 const { load } = store;
 
@@ -30,7 +31,7 @@ const saveForm = async () => {
   } finally {
     if (success) {
       await load();
-      toaster.success('Марка автомобиля успешно сохранен');
+      toaster.success(message);
     }
   }
 };
@@ -46,7 +47,7 @@ const atMountedCarMarksForm = async () => {
 
 export default function () {
   const { render } = useModalForm({
-    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} марка автомобиля`,
+    title: communicate.modal[isUpdate.value ? 'update' : 'create'].car_mark,
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

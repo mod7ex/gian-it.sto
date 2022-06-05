@@ -15,7 +15,7 @@ const { drop } = useConfirmDialog();
 const { dropRole } = rolesService();
 const { route } = useAppRouter();
 
-const { v$, isEditRolePage, saveRole, roleTitle } = roleForm();
+const { v$, isEditRolePage, saveRole, role } = roleForm();
 
 const SuspensRolePermissions = useSuspense(RolePermissions);
 
@@ -45,10 +45,10 @@ const SuspensRolePermissions = useSuspense(RolePermissions);
       <div class="col-span-12 sm:col-span-4">
         <Input
           label="Название"
-          v-model="roleTitle"
+          v-model="role.title"
           :required="true"
-          :error="v$.roleTitle.$errors[0]?.$message"
-          @input="v$.roleTitle.$touch"
+          :error="v$.title.$errors[0]?.$message"
+          @input="v$.title.$touch"
         />
       </div>
 

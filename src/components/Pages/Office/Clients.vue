@@ -12,6 +12,10 @@ import store from '~/store/clients';
 
 const { directory, count, selected, select, state } = store;
 
+const foo = () => {
+  console.log('loading ...');
+};
+
 const { order, fetchClients } = service();
 
 const ClientsFilter = order.comp();
@@ -62,10 +66,11 @@ watch(search, debounce(fetchClients, 1500));
           <template #list>
             <StackedListWithHeadings
               class="flex-1 min-h-0 overflow-y-auto"
-              :items="directory"
-              @select="select"
               :key="order.key.value"
               :selected="state.selectedId"
+              :items="directory"
+              @select="select"
+              @bottom-touched="foo"
             />
           </template>
 

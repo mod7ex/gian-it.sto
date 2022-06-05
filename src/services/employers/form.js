@@ -83,10 +83,7 @@ const saveRawUserFields = async () => {
 
   const userData = { ...form, ...bitwisedToggles.value };
 
-  const { message, success, data } = await save.user(userData);
-
-  if (success) toaster.success('Данные сотрудника успешно сохранены');
-  else toaster.danger(message ?? 'Что-то пошло не так, Не удалось сохранить данные сотрудника !');
+  const { data } = await save.user(userData, null, true);
 
   return data?.user;
 };

@@ -6,6 +6,7 @@ import departmentStore from '~/store/departments';
 import store from '~/store/finances/finances';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/finances/RawForm.vue';
+import communicate from '~/helpers/communicate';
 
 const { state: departmentState } = departmentStore;
 
@@ -49,7 +50,7 @@ const saveForm = async () => {
   } finally {
     if (success) {
       await load();
-      toaster.success('финансовая сделка успешно сохранен');
+      toaster.success(message);
     }
   }
 };
@@ -65,7 +66,7 @@ const atMountedFinanceForm = async () => {
 
 export default function () {
   const { render } = useModalForm({
-    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} финансовая сделка`,
+    title: communicate.modal[isUpdate.value ? 'update' : 'create'].finance,
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

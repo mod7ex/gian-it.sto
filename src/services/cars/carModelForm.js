@@ -5,6 +5,7 @@ import useToast from '~/composables/useToast.js';
 import store from '~/store/cars/models';
 import RawForm from '~/components/Partials/cars/carModelRawForm.vue';
 import useModalForm from '~/composables/useModalForm';
+import communicate from '~/helpers/communicate';
 
 const { load } = store;
 
@@ -32,7 +33,7 @@ const saveForm = async () => {
   } finally {
     if (success) {
       await load();
-      toaster.success('Mодель автомобиля успешно сохранен');
+      toaster.success(message);
     }
   }
 };
@@ -48,7 +49,7 @@ const atMountedCarModelsForm = async () => {
 
 export default function carModelFormService() {
   const { render } = useModalForm({
-    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} Модель автомобиля`,
+    title: communicate.modal[isUpdate.value ? 'update' : 'create'].car_model,
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

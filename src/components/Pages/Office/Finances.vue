@@ -23,7 +23,7 @@ const { filter, order, resetFilter } = service();
 
 const { criteriaOptions, criteria } = order;
 
-const SuspenseTable = useSuspense(Table);
+const SuspenseArea = useSuspense();
 
 const filterSignature = ref('');
 
@@ -36,6 +36,10 @@ watch(filter, debounce(() => {
     }, '');
   }
 }), { deep: true }); // will work without deep because values are primary
+
+const foo = () => {
+  console.log('loading ...');
+};
 
 </script>
 
@@ -86,7 +90,9 @@ watch(filter, debounce(() => {
         </div>
       </div>
 
-      <SuspenseTable :key="filterSignature"/>
+      <suspense-area :key="filterSignature" >
+        <Table @bottom-touched="foo" />
+      </suspense-area>
 
     </OfficeLayout>
 </template>

@@ -5,6 +5,7 @@ import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/finances/groups';
 import useModalForm from '~/composables/useModalForm';
+import communicate from '~/helpers/communicate';
 
 const { load } = store;
 
@@ -30,7 +31,7 @@ const saveForm = async () => {
   } finally {
     if (success) {
       await load();
-      toaster.success('финансовая группа успешно сохранен');
+      toaster.success(message);
     }
   }
 };
@@ -46,7 +47,7 @@ const atMountedFinanceGroup = async () => {
 
 export default function () {
   const { render } = useModalForm({
-    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} финансовая группа`,
+    title: communicate.modal[isUpdate.value ? 'update' : 'create'].finance_group,
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

@@ -1,7 +1,6 @@
 import { ref, reactive } from 'vue';
 // import useVuelidate from '@vuelidate/core';
 // import carFormValidationsRules from '~/validationsRules/carForm.js';
-import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -10,8 +9,6 @@ let routeInstance;
 let isEditCarPage;
 let redirectBack;
 // let v$;
-
-const toaster = useToast();
 
 const carFields = reactive({
   id: '',
@@ -32,15 +29,6 @@ const theSelectedCarMark = ref();
 
 /* ************ Car form ************ */
 
-const saveRawcarFields = async () => {
-  const { message, success, data } = await save.car(carFields);
-
-  if (success) toaster.success('данные автомобиля успешно сохранены');
-  else toaster.danger(message ?? 'Что-то пошло не так, Не удалось сохранить данные автомобиля !');
-
-  return data?.car;
-};
-
 const saveCar = async () => {
   // const isValideForm = await v$.value.$validate();
 
@@ -48,13 +36,13 @@ const saveCar = async () => {
 
   // v$.value.$reset();
 
-  const { id } = await saveRawcarFields();
+  const { success } = await save.car(carFields, null, true);
 
-  if (!id) return;
+  if (!success) return;
 
   redirectBack();
 
-  return !!id;
+  return success;
 };
 
 const setCarField = function (key) {

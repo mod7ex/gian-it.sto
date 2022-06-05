@@ -9,6 +9,7 @@ const state = reactive({
   clients: [],
   selectedId: undefined,
   loading: false,
+  pages: 0,
 });
 
 const select = (id) => {
@@ -33,6 +34,14 @@ const load = async (payload) => {
   state.loading = false;
 };
 
+const fill = async (payload) => {
+  state.loading = true;
+  const data = await $({ key: 'clients', params: payload });
+  state.clients = state.clients.concat(data?.clients ?? []);
+  state.pages++;
+  state.loading = false;
+};
+
 const drop = async (id) => {
   const { call, errorMsg, success } = apiRequest(`clients/${id}`, { method: 'delete' });
 
@@ -54,6 +63,7 @@ export default {
   drop,
   sort,
   select,
+  fill,
 
   selectedUser,
 

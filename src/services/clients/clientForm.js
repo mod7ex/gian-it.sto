@@ -1,7 +1,6 @@
 import { reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import clientFormValidationsRules from '~/validationsRules/clientForm';
-import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
@@ -15,7 +14,6 @@ const { select } = store;
 
 const { current, setCurrent } = departmentStore;
 
-const toaster = useToast();
 const { userDepartment } = useAuth();
 const hasCRUDdepartments = userHasPermission('crud departments');
 
@@ -49,14 +47,6 @@ const defaultClientFields = {
 const clientFields = reactive(defaultClientFields);
 
 /* ************ client form ************ */
-const saveRawClientFields = async () => {
-  const { message, success, data } = await save.client(clientFields);
-
-  if (success) toaster.success('Данные клиента успешно сохранены');
-  else toaster.danger(message ?? 'Что-то пошло не так, Не удалось сохранить данные клиента !');
-
-  return data?.client;
-};
 
 const saveClient = async () => {
   const isValideForm = await v$.value.$validate();
@@ -65,15 +55,15 @@ const saveClient = async () => {
 
   v$.value.$reset();
 
-  const client = await saveRawClientFields();
+  const { data, success } = await save.client(clientFields, null, true);
 
-  if (!client?.id) return;
+  if (!success) return;
 
-  if (client?.department?.id) setCurrent(client?.department?.id);
+  if (data?.client?.department?.id) setCurrent(data?.client?.department?.id);
 
-  await previousPage(client?.id);
+  await previousPage(data?.client?.id);
 
-  return !!client?.id;
+  return success;
 };
 
 const setClientField = function (key) {

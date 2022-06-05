@@ -1,7 +1,7 @@
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import { cleanUp, keyToPath } from '~/helpers';
-import communicate from '~/helpers/communicate.json';
+import communicate from '~/helpers/communicate';
 
 const toaster = useToast();
 const { apiRequest } = useApi();
@@ -18,19 +18,19 @@ const $fetch = async (uri, fallBackErrorMsg, toast = true, config) => {
 
 // ****************************************************** use Proxy to generate the right request dynamically
 
-/* Ex
- *
- * proxy.client(id, toast)
- * proxy.clients(params = {}, toast)
- *
- */
 export default new Proxy($fetch, {
   get(target, key) {
+    /* Ex
+     *
+     * proxy.client(id, toast)
+     * proxy.clients(params = {}, toast)
+     *
+     */
     const path = keyToPath(key);
 
     const isPlural = key[key.length - 1] === 's';
 
-    const fallBackErr = communicate.fetch.error[key] ?? communicate.fetch.error._;
+    const fallBackErr = communicate.fetch.error[key];
 
     if (isPlural) {
       return async function (params = {}, toast = true) {
@@ -45,6 +45,16 @@ export default new Proxy($fetch, {
 
       return Reflect.get(responce, key) ?? {};
     };
+  },
+
+  apply(target, thisArg, args) {
+    // proxy({ toast, config, key }) // path with 's'
+    const { toast, params, key } = args[0];
+
+    const fallBackErr = communicate.fetch.error[key];
+    const path = keyToPath(key);
+
+    return target.call({}, path, fallBackErr, toast, { params: cleanUp(params) });
   },
 });
 

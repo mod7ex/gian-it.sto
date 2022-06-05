@@ -1,13 +1,13 @@
 import useApi from '~/composables/useApi.js';
 import { cleanUp, keyToPath } from '~/helpers';
-import communicate from '~/helpers/communicate.json';
+import communicate from '~/helpers/communicate';
 import useToast from '~/composables/useToast.js';
 
 const toaster = useToast();
 
 const { apiRequest } = useApi();
 
-export const save = async function (path, Id, fallBackErr) {
+export const save = async function (path, Id) {
   // path is without 's'
   const { call, errorMsg, success, data } = apiRequest();
 
@@ -24,17 +24,28 @@ export const save = async function (path, Id, fallBackErr) {
     data: cleanUp(this, 'id'),
   });
 
-  return { message: errorMsg.value ?? fallBackErr, success: success.value, data: data.value };
+  return { message: errorMsg.value, success: success.value, data: data.value };
 };
 
 export default new Proxy(save, {
   get(target, key) {
-    const fallBackErr = communicate.fetch.error[key] ?? communicate.fetch.error._;
     // the call should be as follow ==> proxy.client(data), data first then id
     const path = keyToPath(key);
-    return function (data, id) {
-      return target.call(data, path, id, fallBackErr);
-      // return target.call(arguments[0], path, arguments[1]); // issue with eslint
+    return async function (_data, id, toast = false) {
+      // eslint-disable-next-line prefer-const
+      let { success, message, data } = await target.call(_data, path, id);
+
+      if (success) {
+        message = communicate.save.success[key];
+      } else {
+        message = message ?? communicate.save.error[key];
+      }
+
+      try {
+        return { message, success, data };
+      } finally {
+        if (toast) toaster[success ? 'success' : 'danger'](message);
+      }
     };
   },
 

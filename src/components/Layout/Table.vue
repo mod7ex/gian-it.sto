@@ -27,7 +27,7 @@ const emit = defineEmits(['delete', 'edit']);
 </script>
 
 <template>
-      <Table class="mt-5">
+    <Table class="mt-5">
         <THead>
             <Tr>
                 <Th v-for="field in props.fields" :key="field.key">
@@ -69,5 +69,5 @@ const emit = defineEmits(['delete', 'edit']);
                 </Td>
             </Tr>
         </TBody>
-      </Table>
+    </Table>
 </template>

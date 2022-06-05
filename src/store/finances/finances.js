@@ -10,6 +10,7 @@ const { apiRequest } = useApi();
 
 const state = reactive({
   raw: [],
+  pages: 0,
 });
 
 const reset = () => {
@@ -19,6 +20,13 @@ const reset = () => {
 const load = async (payload = {}) => {
   if (!hasCRUD) return;
   state.raw = await $.finances(payload);
+};
+
+const fill = async (payload) => {
+  if (!hasCRUD) return;
+  const data = await $({ key: 'finances', params: payload });
+  state.raw = state.raw.concat(data?.clients ?? []);
+  state.pages++;
 };
 
 const sort = (v) => {
@@ -44,4 +52,5 @@ export default {
   drop,
   reset,
   sort,
+  fill,
 };

@@ -1,11 +1,11 @@
 import { computed, reactive } from 'vue';
-import $ from '~/helpers/fetch.js';
-import save from '~/helpers/save';
+import RawForm from '~/components/Partials/departments/Form.vue';
+import communicate from '~/helpers/communicate';
+import useModalForm from '~/composables/useModalForm';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/departments';
-import RawForm from '~/components/Partials/departments/Form.vue';
-
-import useModalForm from '~/composables/useModalForm';
+import save from '~/helpers/save';
+import $ from '~/helpers/fetch.js';
 
 const { load } = store;
 
@@ -31,7 +31,7 @@ const saveForm = async () => {
   } finally {
     if (success) {
       await load();
-      toaster.success('Отдел успешно сохранен');
+      toaster.success(message);
     }
   }
 };
@@ -47,7 +47,7 @@ const atMountedDepartmentForm = async () => {
 
 export default function () {
   const { render } = useModalForm({
-    title: `${isUpdate.value ? 'Oбновляете' : 'Создайте'} отдела`,
+    title: communicate.modal[isUpdate.value ? 'update' : 'create'].department,
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

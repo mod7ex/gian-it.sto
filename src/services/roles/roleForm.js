@@ -1,15 +1,12 @@
-import { computed, ref, shallowRef } from 'vue';
+import { computed, reactive, shallowRef } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { minLength, required, helpers } from '@vuelidate/validators';
-import useApi from '~/composables/useApi.js';
-import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import useToggles from '~/composables/useToggles.js';
 import $ from '~/helpers/fetch.js';
+import save from '~/helpers/save';
 
 const { toggles: permissions, setToggles, truthyTogglesArray } = useToggles();
-
-const toaster = useToast();
 
 let routeInstance;
 let isEditRolePage;
@@ -17,20 +14,21 @@ let redirect;
 
 const rawRolePermissions = shallowRef([]);
 
-const roleTitle = ref('');
-
-const { apiRequest } = useApi();
+const role = reactive({
+  id: '',
+  title: '',
+});
 
 /* ************ Role[Title + Permissions] (create & update) ************ */
 
-const roleTitleRules = computed(() => ({
-  roleTitle: {
+const rules = computed(() => ({
+  title: {
     required: helpers.withMessage('Укажите Название', required),
     minLength: helpers.withMessage('не менее 5 символов', minLength(5)),
   },
 }));
 
-const v$ = useVuelidate(roleTitleRules, { roleTitle }, { $lazy: true });
+const v$ = useVuelidate(rules, role, { $lazy: true });
 
 const saveRole = async () => {
   const isValideRoleName = await v$.value.$validate();
@@ -39,23 +37,11 @@ const saveRole = async () => {
 
   v$.value.$reset();
 
-  const { call, data, errorMsg, success } = apiRequest(`/roles/${isEditRolePage.value ? routeInstance.params.id : ''}`, {
-    method: isEditRolePage.value ? 'put' : 'post',
-    data: {
-      title: roleTitle.value,
-      permissions: truthyTogglesArray.value,
-    },
-  });
+  const { data, success } = await save.role({ ...role, permissions: truthyTogglesArray.value }, null, true);
 
-  await call();
+  success && !isEditRolePage.value && await redirect({ name: 'EditRole', params: { id: data?.role?.id } });
 
-  if (!success.value) return toaster.danger(errorMsg.value ?? 'Что-то пошло не так !');
-
-  toaster.success(`Роль успешно ${isEditRolePage.value ? 'обновлена' : 'создана'}`);
-
-  !isEditRolePage.value && await redirect({ name: 'EditRole', params: { id: data.value?.role?.id } });
-
-  return true;
+  return success;
 };
 
 /* ************ Role Raw Permissions ************ */
@@ -66,15 +52,16 @@ const fetchRawRolePermissions = async () => {
 };
 
 const setRoleForm = async (payload) => {
-  roleTitle.value = payload?.title;
+  role.title = payload?.title;
+  role.id = payload?.id;
 
   setToggles(payload?.permissions, true, 'name');
 };
 
 const atMountedRoleForm = async () => {
-  const role = (isEditRolePage.value && routeInstance.params.id) && await $.role(routeInstance.params.id);
+  const payload = (isEditRolePage.value && routeInstance.params.id) && await $.role(routeInstance.params.id);
 
-  await setRoleForm(role || {});
+  await setRoleForm(payload || {});
 
   await fetchRawRolePermissions();
 };
@@ -92,7 +79,7 @@ export default function roleFormService() {
     permissions,
     rawRolePermissions,
     fetchRawRolePermissions,
-    roleTitle,
+    role,
     atMountedRoleForm,
   };
 }

@@ -9,7 +9,8 @@ const state = reactive({
   clients: [],
   selectedId: undefined,
   loading: false,
-  pages: 0,
+  pages: 100,
+  page: 1,
 });
 
 const select = (id) => {
@@ -26,6 +27,8 @@ const reset = () => {
   state.clients = [];
   state.selectedId = undefined;
   state.loading = false;
+  state.pages = 100;
+  state.page = 1;
 };
 
 const load = async (payload) => {
@@ -35,10 +38,12 @@ const load = async (payload) => {
 };
 
 const fill = async (payload) => {
+  if (state.page > state.pages) return;
   state.loading = true;
-  const data = await $({ key: 'clients', params: payload });
+  const data = await $({ key: 'clients', params: { ...payload, page: state.page } });
   state.clients = state.clients.concat(data?.clients ?? []);
-  state.pages++;
+  state.pages = data?.meta?.last_page ?? 100;
+  state.page += 1;
   state.loading = false;
 };
 

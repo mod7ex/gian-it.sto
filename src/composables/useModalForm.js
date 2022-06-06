@@ -24,6 +24,8 @@ export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } =
       app = undefined;
     }
 
+    console.log(app);
+
     if (atClose) await atClose();
   };
 

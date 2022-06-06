@@ -5,7 +5,7 @@ import departmentStore from '~/store/departments';
 
 const { current } = departmentStore;
 
-const { sort, load, state } = store;
+const { sort, fill, state, reset } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'surname';
 
@@ -24,13 +24,16 @@ const fetchClients = async (name) => {
 
   order.active.value = false;
 
-  await load({ order: order.criteria.value, name, department_id: current.value });
+  await fill({ name, department_id: current.value });
 
-  order.reset();
+  order.trigger();
 };
 
 export default function () {
-  watch(current, async () => { await fetchClients(); }, { immediate: true });
+  watch(current, async () => {
+    reset();
+    await fetchClients();
+  }, { immediate: true });
 
   return {
     order,

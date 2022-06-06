@@ -19,7 +19,7 @@ const { current } = departmentStore;
 
 const { render } = form();
 
-const { filter, order, resetFilter } = service();
+const { filter, order, resetFilter, fetchFinances } = service();
 
 const { criteriaOptions, criteria } = order;
 
@@ -28,18 +28,11 @@ const SuspenseArea = useSuspense();
 const filterSignature = ref('');
 
 watch(filter, debounce(() => {
-  // if (filter.department_id) {
+  // if (filter.department_id) { // when problem fixed
   if (current.value) {
-    filterSignature.value = Object.keys(filter).reduce((prev, curr) => {
-      if (curr === 'order') return prev; // don't fetch on re-order
-      return prev + filter[curr];
-    }, '');
+    filterSignature.value = Object.keys(filter).reduce((prev, curr) => prev + filter[curr], '');
   }
 }), { deep: true }); // will work without deep because values are primary
-
-const foo = () => {
-  console.log('loading ...');
-};
 
 </script>
 
@@ -91,7 +84,7 @@ const foo = () => {
       </div>
 
       <suspense-area :key="filterSignature" >
-        <Table @bottom-touched="foo" />
+        <Table @bottom-touched="()=>fetchFinances()" />
       </suspense-area>
 
     </OfficeLayout>

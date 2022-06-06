@@ -10,11 +10,14 @@ const { apiRequest } = useApi();
 
 const state = reactive({
   raw: [],
-  pages: 0,
+  pages: 100,
+  page: 1,
 });
 
 const reset = () => {
   state.raw = [];
+  state.pages = 100;
+  state.page = 1;
 };
 
 const load = async (payload = {}) => {
@@ -23,10 +26,11 @@ const load = async (payload = {}) => {
 };
 
 const fill = async (payload) => {
-  if (!hasCRUD) return;
-  const data = await $({ key: 'finances', params: payload });
-  state.raw = state.raw.concat(data?.clients ?? []);
-  state.pages++;
+  if (state.page > state.pages) return;
+  const data = await $({ key: 'finances', params: { ...payload, page: state.page } });
+  state.raw = state.raw.concat(data?.finances ?? []);
+  state.pages = data?.meta?.last_page ?? 100;
+  state.page += 1;
 };
 
 const sort = (v) => {

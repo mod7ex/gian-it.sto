@@ -26,7 +26,7 @@ export const fetchEmployers = async (name) => {
 
   await load({ order: order.criteria.value, name, department_id: current.value });
 
-  order.reset();
+  order.trigger();
 };
 
 export default function () {

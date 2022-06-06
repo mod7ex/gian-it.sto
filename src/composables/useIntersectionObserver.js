@@ -6,7 +6,7 @@ export default function (cb, condition) {
 
   const pixel = defineComponent({
     setup() {
-      return () => h('div', { class: 'bg-blue-600 p-1', ref: (v) => { target.value = v; } });
+      return () => h('div', { class: 'bg-white p-1', ref: (v) => { target.value = v; } });
     },
   });
 

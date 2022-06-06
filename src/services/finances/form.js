@@ -8,7 +8,7 @@ import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/finances/RawForm.vue';
 import communicate from '~/helpers/communicate';
 
-const { state: departmentState } = departmentStore;
+const { current } = departmentStore;
 
 const { load } = store;
 
@@ -20,7 +20,7 @@ const finance = reactive({
   operation_type: undefined,
   sum: undefined,
   finance_group_id: undefined,
-  department_id: departmentState.current,
+  department_id: undefined,
 });
 
 /* ********************* Car marks ********************* */
@@ -29,7 +29,10 @@ const isUpdate = computed(() => !!finance.id);
 
 const setFormField = function (key) {
   if (key.includes('_id')) {
-    if (key === 'department_id') return;
+    if (key === 'department_id') {
+      finance.department_id = this.department_id ?? current.value;
+      return;
+    }
 
     finance[key] = this[key.replace('_id', '')]?.id;
     return;
@@ -60,6 +63,8 @@ const atMountedFinanceForm = async () => {
 
   let f = {};
   if (id) f = await $.finance(id);
+
+  console.log(id, f);
 
   setForm(f);
 };

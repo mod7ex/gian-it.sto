@@ -5,14 +5,15 @@ import Link from '@/UI/Link.vue';
 import form from '~/services/finances/form';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import store from '~/store/finances/finances';
-import { filter } from '~/services/finances/index';
+import service from '~/services/finances/index';
 import useIntersectionObserver from '~/composables/useIntersectionObserver';
-
 import Table from '@/Layout/Table.vue';
 
 const { render } = form();
 
-const { load, state, drop: dropFinance } = store;
+const { fetchFinances } = service();
+
+const { state, drop: dropFinance } = store;
 
 const { drop } = useConfirmDialog();
 
@@ -20,6 +21,7 @@ const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Сумма', key: 'sum' },
   { label: 'Тип операции', key: 'operation_type' },
+  { label: 'Отделение', key: 'department' },
   { label: 'Дата создания', key: 'created_at' },
 ];
 
@@ -29,7 +31,7 @@ const { pixel, container } = useIntersectionObserver(() => {
   emit('bottomTouched');
 }, computed(() => state.raw.length > 0));
 
-await load(filter);
+await fetchFinances(true);
 
 </script>
 
@@ -59,6 +61,10 @@ await load(filter);
                 <Badge :point="true" :color="(value === 'in') ? 'green' : 'red'">
                     {{ value === 'in' ? 'Приход' : 'Расход' }}
                 </Badge>
+            </template>
+
+            <template #td-department="{ value }" >
+                {{ value?.name }}
             </template>
 
             <template #td-created_at="{ value }" >

@@ -87,11 +87,11 @@ export default function order(payload, defaultCriteria, onReorderCb, defaultMod 
 
   pivot = payload;
 
-  cb = onReorderCb;
+  const trigger = () => onReorderCb((a, b) => (sort.value)(a, b) * mod.value);
 
   reset(true);
 
-  watch(key, () => cb((a, b) => (sort.value)(a, b) * mod.value));
+  watch(key, trigger);
 
   return {
     active,
@@ -105,5 +105,6 @@ export default function order(payload, defaultCriteria, onReorderCb, defaultMod 
     change,
     comp,
     criteriaOptions,
+    trigger,
   };
 }

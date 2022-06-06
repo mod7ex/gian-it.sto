@@ -12,10 +12,6 @@ import store from '~/store/clients';
 
 const { directory, count, selected, select, state } = store;
 
-const foo = () => {
-  console.log('loading ...');
-};
-
 const { order, fetchClients } = service();
 
 const ClientsFilter = order.comp();
@@ -28,7 +24,6 @@ const headingMessage = computed(() => {
 
 const search = ref('');
 
-/* 'immediate: true' <- we can't use immediate because of debounce it little slow */
 watch(search, debounce(fetchClients, 1500));
 
 </script>
@@ -70,7 +65,7 @@ watch(search, debounce(fetchClients, 1500));
               :selected="state.selectedId"
               :items="directory"
               @select="select"
-              @bottom-touched="foo"
+              @bottom-touched="() => fetchClients()"
             />
           </template>
 

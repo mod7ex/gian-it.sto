@@ -5,7 +5,7 @@ import store from '~/store/finances/finances';
 
 // const { current } = departmentStore;
 
-const { sort } = store;
+const { sort, fill, reset: resetStore } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -18,16 +18,15 @@ const pivot = {
   date: { label: 'По дате', sort: (a, b) => ((new Date(a.created_at).getTime()) - (new Date(b.created_at).getTime())) },
 };
 
-const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
+const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
-const { criteria, reset } = order;
+const { reset, trigger } = order;
 
 export const filter = reactive({
   name: '',
   type: '',
   sum: '',
-  order: criteria,
-  // department_id: current, // departments should be fixed in backend
+  // department_id: current,
   start_date: '',
   end_date: '',
 });
@@ -42,10 +41,17 @@ export const resetFilter = () => {
   reset();
 };
 
+const fetchFinances = async (bool = false) => {
+  if (bool) resetStore();
+  await fill(filter);
+  trigger();
+};
+
 export default function () {
   return {
     order,
     filter,
     resetFilter,
+    fetchFinances,
   };
 }

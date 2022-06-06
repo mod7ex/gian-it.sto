@@ -2,15 +2,15 @@ import { computed, reactive } from 'vue';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
-import departmentStore from '~/store/departments';
-import store from '~/store/finances/finances';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/finances/RawForm.vue';
 import communicate from '~/helpers/communicate';
+import service from '~/services/finances/index';
+import departmentStore from '~/store/departments';
 
 const { current } = departmentStore;
 
-const { load } = store;
+const { fetchFinances } = service();
 
 const toaster = useToast();
 
@@ -23,14 +23,13 @@ const finance = reactive({
   department_id: undefined,
 });
 
-/* ********************* Car marks ********************* */
-
 const isUpdate = computed(() => !!finance.id);
 
 const setFormField = function (key) {
   if (key.includes('_id')) {
     if (key === 'department_id') {
-      finance.department_id = this.department_id ?? current.value;
+      // we might wanna make it optional if the user doesn't have crud departments
+      finance.department_id = this.department?.id ?? current.value;
       return;
     }
 
@@ -52,7 +51,7 @@ const saveForm = async () => {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      await fetchFinances(true);
       toaster.success(message);
     }
   }
@@ -64,14 +63,12 @@ const atMountedFinanceForm = async () => {
   let f = {};
   if (id) f = await $.finance(id);
 
-  console.log(id, f);
-
   setForm(f);
 };
 
 export default function () {
   const { render } = useModalForm({
-    title: communicate.modal[isUpdate.value ? 'update' : 'create'].finance,
+    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].finance),
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

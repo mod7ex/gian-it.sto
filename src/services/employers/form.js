@@ -10,7 +10,7 @@ import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
 import useAuth from '~/composables/useAuth.js';
 import { userHasPermission } from '~/lib/permissions.js';
-import store from '~/store/empoyees.js';
+import store from '~/store/employees.js';
 import departmentStore from '~/store/departments';
 import save from '~/helpers/save';
 

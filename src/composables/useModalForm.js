@@ -4,73 +4,66 @@ import useSuspense from '~/composables/useSuspense';
 import { sleep } from '~/helpers';
 import Modal from '@/Layout/modal/Modal.vue';
 
-let app;
+// atSubmit is a function that has an object return containing the success and message result
+export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } = {}) => ({
+  render: async (...args) => {
+    let app;
 
-export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } = {}) => {
-  // atSubmit is a function that has an object return containing the success and message result
+    const suspenseArea = useSuspense();
+    const loading = ref(false);
+    const show = ref(false);
+    const message = ref();
 
-  const suspenseArea = useSuspense(RawForm);
-  const loading = ref(false);
-  const show = ref(false);
-  const message = ref();
+    const onClose = async () => {
+      show.value = false;
 
-  const onClose = async () => {
-    show.value = false;
+      await sleep(300);
 
-    await sleep(300);
+      if (app) {
+        app.unmount();
+        app = undefined;
+      }
 
-    if (app) {
-      app.unmount();
-      app = undefined;
-    }
+      if (atClose) await atClose();
+    };
 
-    console.log(app);
+    const onSubmited = async () => {
+      message.value = undefined;
 
-    if (atClose) await atClose();
-  };
+      let res = {};
 
-  const onSubmited = async () => {
-    message.value = undefined;
+      loading.value = true;
+      try {
+        res = await atSubmit();
+      } finally {
+        loading.value = false;
+      }
 
-    let res = {};
+      if (!keepAfterSubmit && res?.success) {
+        await onClose();
+        return;
+      }
 
-    loading.value = true;
-    try {
-      res = await atSubmit();
-    } finally {
-      loading.value = false;
-    }
+      message.value = res?.message;
+    };
 
-    if (!keepAfterSubmit && res?.success) {
-      await onClose();
-      return;
-    }
+    app = createApp(defineComponent({
+      setup() {
+        return () => h(
+          Modal,
+          { onClose, open: show.value, title: title.value, message: message.value }, // onOutclick: onClose
+          {
+            default: () => h(suspenseArea, {}, { default: () => h(RawForm) }),
+            actions: () => h(Actions, { onClose, onSubmited, loading: loading.value }),
+          },
+        );
+      },
+    }));
 
-    message.value = res?.message;
-  };
+    await atOpen(...args);
 
-  return {
-    render: async (...args) => {
-      app = createApp(defineComponent({
+    app.mount('#sto-modal');
 
-        setup() {
-          return () => h(
-            Modal,
-            { onClose, open: show.value, title, message: message.value }, // onOutclick: onClose
-            {
-              default: () => h(suspenseArea),
-              actions: () => h(Actions, { onClose, onSubmited, loading: loading.value }),
-            },
-          );
-        },
-
-      }));
-
-      app.mount('#sto-modal');
-
-      await atOpen(...args);
-
-      show.value = true;
-    },
-  };
-};
+    show.value = true;
+  },
+});

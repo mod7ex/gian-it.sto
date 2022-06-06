@@ -27,19 +27,20 @@ export const hyphenatedDateFormat = (strDate) => {
   return `${y}-${m}-${d}`;
 };
 
+// cleaned up shallow copy
 export const cleanUp = (obj, ...fields) => {
-  fields.forEach((key) => {
-    // fields will be deleted even if there is a value
-    Reflect.deleteProperty(obj, key);
-  });
+  const data = {};
+
+  // fields will be deleted even if there is a value (fields)
 
   Object.keys(obj).forEach((prop) => {
-    if (!Reflect.get(obj, prop)) {
-      Reflect.deleteProperty(obj, prop);
-    }
+    if (fields.includes(prop)) return;
+    const val = Reflect.get(obj, prop);
+    if (!val) return;
+    Reflect.set(data, prop, val);
   });
 
-  return obj;
+  return data;
 };
 
 export const debounce = function (fn, d = 1500) {

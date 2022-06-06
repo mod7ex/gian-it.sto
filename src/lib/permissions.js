@@ -3,6 +3,8 @@ import useAuth from '~/composables/useAuth.js';
 const { isUserLogged, user } = useAuth();
 
 const routesPermissionsMap = {
+  // copy all pages from router and add permissions
+
   Finances: 'crud finances',
 
   Storages: 'crud storages',
@@ -16,7 +18,9 @@ const routesPermissionsMap = {
   EditEmployer: 'crud users',
 
   Clients: ['read clients', 'crud clients'],
+
   Pipelines: 'crud pipelines',
+
   Departments: 'crud departments',
 
   Roles: 'crud roles',

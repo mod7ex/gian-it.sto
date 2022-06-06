@@ -1,6 +1,6 @@
 import { watch } from 'vue';
 import useOrder from '~/composables/useOrder.js';
-import store from '~/store/empoyees.js';
+import store from '~/store/employees.js';
 import departmentStore from '~/store/departments';
 
 const { current } = departmentStore;

@@ -1,8 +1,6 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
-import useApi from '~/composables/useApi.js';
-
-const { apiRequest } = useApi();
+import _$ from '~/helpers/drop';
 
 const state = reactive({
   raw: [],
@@ -16,17 +14,7 @@ const load = async () => {
   state.raw = await $.roles();
 };
 
-const drop = async (id) => {
-  const { call, errorMsg, success } = apiRequest(`roles/${id}`, { method: 'delete' });
-
-  await call();
-
-  success.value && state.raw.deleteById(id);
-
-  const deletionMsg = success.value ? 'Роль успешно удалена.' : (errorMsg.value ?? 'Не удалось удалить Роль !');
-
-  return { message: deletionMsg, success: success.value };
-};
+const drop = async (id) => _$.role(id, (v) => state.raw.deleteById(v));
 
 export default {
   state: readonly(state),

@@ -47,7 +47,7 @@ const atMountedFinanceGroup = async () => {
 
 export default function () {
   const { render } = useModalForm({
-    title: communicate.modal[isUpdate.value ? 'update' : 'create'].finance_group,
+    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].finance_group),
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

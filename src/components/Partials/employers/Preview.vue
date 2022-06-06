@@ -4,7 +4,7 @@ import Button from '@/UI/Button.vue';
 import LPreview from '@/Layout/users/Preview.vue';
 import { DescriptionListItem } from '@/UI/DescriptionList';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-import store from '~/store/empoyees';
+import store from '~/store/employees';
 
 const { drop } = useConfirmDialog();
 

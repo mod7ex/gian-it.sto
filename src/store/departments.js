@@ -1,14 +1,12 @@
 import { computed, reactive, readonly, ref } from 'vue';
 import $ from '~/helpers/fetch.js';
-import useApi from '~/composables/useApi.js';
+import _$ from '~/helpers/drop';
 import { userHasPermission } from '~/lib/permissions.js';
 import useAuth from '~/composables/useAuth.js';
 
 const { userDepartment } = useAuth();
 const LOCAL_STORAGE_DEPARTMENT = 'department';
 const hasCRUD = userHasPermission('crud departments');
-
-const { apiRequest } = useApi();
 
 const state = reactive({
   raw: [],
@@ -43,17 +41,7 @@ const remove = (id) => {
   state.raw.deleteById(id);
 };
 
-const drop = async (id) => {
-  const { call, errorMsg, success } = apiRequest(`departments/${id}`, { method: 'delete' });
-
-  await call();
-
-  success.value && remove(id);
-
-  const deletionMsg = success.value ? 'Отдел успешно удален' : (errorMsg.value ?? 'Не удалось удалить отделение !');
-
-  return { message: deletionMsg, success: success.value };
-};
+const drop = async (id) => _$.department(id, remove);
 
 const isCurrent = (id) => id === current.value;
 

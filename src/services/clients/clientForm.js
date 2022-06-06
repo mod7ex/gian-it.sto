@@ -4,8 +4,6 @@ import clientFormValidationsRules from '~/validationsRules/clientForm';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
-import useAuth from '~/composables/useAuth.js';
-import { userHasPermission } from '~/lib/permissions.js';
 import departmentStore from '~/store/departments';
 import store from '~/store/clients';
 import save from '~/helpers/save';
@@ -13,9 +11,6 @@ import save from '~/helpers/save';
 const { select } = store;
 
 const { current, setCurrent } = departmentStore;
-
-const { userDepartment } = useAuth();
-const hasCRUDdepartments = userHasPermission('crud departments');
 
 let routeInstance;
 let isEditClientPage;
@@ -68,9 +63,8 @@ const saveClient = async () => {
 
 const setClientField = function (key) {
   if (key === 'department_id') {
-    if (!hasCRUDdepartments) clientFields.department_id = userDepartment.value;
+    // if (!hasCRUDdepartments) clientFields.department_id = userDepartment.value; // not needed
     clientFields.department_id = this.department?.id ?? current.value;
-    // i the think first if statement is not needed
     return;
   }
 

@@ -18,7 +18,7 @@ const types = [
 await (async () => {
   await load();
   await atMountedFinanceForm();
-})()
+})();
 
 </script>
 
@@ -28,6 +28,8 @@ await (async () => {
         <Input label="Сумма" v-model="finance.sum" :required="true" type="number" :min="0" :step="1" />
         <Select label="Тип операции" v-model="finance.operation_type" :required="true" :options="types" />
         <Select label="Группа" v-model="finance.finance_group_id" :required="true" :options="options" />
-        <Select label="Отделение" v-model="finance.department_id" :required="true" :options="departmentOptions" />
+        <v-can ability="crud finances">
+          <Select label="Отделение" v-model="finance.department_id" :required="true" :options="departmentOptions" />
+        </v-can>
     </div>
 </template>

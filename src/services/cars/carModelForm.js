@@ -49,7 +49,7 @@ const atMountedCarModelsForm = async () => {
 
 export default function carModelFormService() {
   const { render } = useModalForm({
-    title: communicate.modal[isUpdate.value ? 'update' : 'create'].car_model,
+    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].car_model),
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

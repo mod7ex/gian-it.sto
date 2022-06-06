@@ -1,9 +1,7 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
-import useApi from '~/composables/useApi.js';
+import _$ from '~/helpers/drop';
 import { alphaGroupper } from '~/helpers';
-
-const { apiRequest } = useApi();
 
 const state = reactive({
   employees: [],
@@ -33,17 +31,9 @@ const load = async (payload) => {
   state.loading = false;
 };
 
-const drop = async (id) => {
-  const { call, errorMsg, success } = apiRequest(`users/${id}`, { method: 'delete' });
-
-  await call();
-
-  success.value && state.employees.deleteById(id) && select();
-
-  const deletionMsg = success.value ? 'Сотрудник успешно удален' : (errorMsg.value ?? 'Не удалось удалить пользователя');
-
-  return { message: deletionMsg, success: success.value };
-};
+const drop = async (id) => _$.user(id, (v) => {
+  state.employees.deleteById(v) && select();
+});
 
 const selectedUser = computed(() => (state.selectedId ? state.employees.find(({ id }) => id === state.selectedId) ?? {} : {}));
 

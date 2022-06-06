@@ -1,10 +1,9 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
-import useApi from '~/composables/useApi.js';
+import _$ from '~/helpers/drop';
 import { userHasPermission } from '~/lib/permissions.js';
 
 const hasCRUD = userHasPermission('crud car marks');
-const { apiRequest } = useApi();
 
 const state = reactive({
   raw: [],
@@ -19,17 +18,9 @@ const load = async () => {
   state.raw = await $.car_marks();
 };
 
-const drop = async (id) => {
-  const { call, errorMsg, success } = apiRequest(`car-marks/${id}`, { method: 'delete' });
-
-  await call();
-
-  success.value && state.raw.deleteById(id);
-
-  const deletionMsg = success.value ? 'Марка автомобиля успешно удален' : (errorMsg.value ?? 'Не удалось удалить Марка автомобиля !');
-
-  return { message: deletionMsg, success: success.value };
-};
+const drop = async (id) => _$.car_mark(id, (v) => {
+  state.raw.deleteById(v);
+});
 
 export default {
   state: readonly(state),

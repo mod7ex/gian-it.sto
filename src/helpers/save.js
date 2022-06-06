@@ -49,7 +49,7 @@ export default new Proxy(save, {
     };
   },
 
-  apply(target, thisArg, args) {
+  apply(target, thisArg, args) { // doesn't return the success message
     // proxy({data, id, path}) // path with 's'
     const { data, path, id } = args[0];
 

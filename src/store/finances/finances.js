@@ -1,12 +1,10 @@
 import { reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
-import useApi from '~/composables/useApi.js';
+import _$ from '~/helpers/drop';
 
 import { userHasPermission } from '~/lib/permissions.js';
 
 const hasCRUD = userHasPermission('crud finances');
-
-const { apiRequest } = useApi();
 
 const state = reactive({
   raw: [],
@@ -37,17 +35,9 @@ const sort = (v) => {
   state.raw.sort(v);
 };
 
-const drop = async (id) => {
-  const { call, errorMsg, success } = apiRequest(`finances/${id}`, { method: 'delete' });
-
-  await call();
-
-  success.value && state.raw.deleteById(id);
-
-  const deletionMsg = success.value ? 'Сотрудник успешно удален' : (errorMsg.value ?? 'Не удалось удалить пользователя');
-
-  return { message: deletionMsg, success: success.value };
-};
+const drop = async (id) => _$.finance_group(id, (v) => {
+  state.raw.deleteById(v);
+});
 
 export default {
   state: readonly(state),

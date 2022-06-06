@@ -47,7 +47,7 @@ const atMountedCarMarksForm = async () => {
 
 export default function () {
   const { render } = useModalForm({
-    title: communicate.modal[isUpdate.value ? 'update' : 'create'].car_mark,
+    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].car_mark),
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

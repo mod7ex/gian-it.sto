@@ -9,7 +9,7 @@ import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
 import EmployerPreview from '@/Partials/employers/Preview.vue';
 import employers from '~/services/employers/employers.js';
 import UEmployers from '@/Layout/users/Users.vue';
-import store from '~/store/empoyees.js';
+import store from '~/store/employees.js';
 
 const { state, count, selected, select, directory } = store;
 

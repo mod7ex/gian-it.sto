@@ -47,7 +47,7 @@ const atMountedDepartmentForm = async () => {
 
 export default function () {
   const { render } = useModalForm({
-    title: communicate.modal[isUpdate.value ? 'update' : 'create'].department,
+    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].department),
     RawForm,
     atSubmit: saveForm,
     atOpen: (id) => setForm({ id }),

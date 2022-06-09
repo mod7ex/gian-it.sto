@@ -5,13 +5,13 @@
 - npm run dev
 
 
-
-## responses or response status 
-#### ==> If any issue is encountered with server responses or response status (success, failure) in `templates`  we head to useApi composable and we just try to play with what the composable provides & the adapted success definition 
-
+## . responses or response status 
+#####  ==>  If any issue is encountered with server responses or response status (success, failure) in `templates`  we head to useApi composable and we just try to play with what the composable provides & the adapted success definition 
 `{ call, data, responce, error, loading, errorMsg, success, reset, ready }`
 
 
-## Always ridrect comes after toast api (in order to cancel in case of edit pages)
+## . Always ridrect comes after toast api (in order to cancel in case of edit pages)
 
-## the properties (resources) of the save proxy from `~/helper/save` are always in snake case 
+## . the properties (resources) of the save proxy from `~/helper/save` are always in snake case 
+
+## . the composable `useConfirmModal` it would have been a better choice to merge it (wrap) directly with the drop functions

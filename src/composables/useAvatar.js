@@ -6,9 +6,12 @@ const { apiRequest } = useApi();
 
 const toaster = useToast();
 
-const defaultEmployerAvatar = 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png';
+const defaults = {
+  avatar: 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png',
+  photo: 'https://webcolours.ca/wp-content/uploads/2020/10/webcolours-unknown.png',
+};
 
-const avatar = ref(defaultEmployerAvatar);
+const avatar = ref(defaults.avatar);
 
 const avatarFile = ref(null);
 
@@ -24,19 +27,19 @@ const log = (event) => {
   avatar.value = window.URL.createObjectURL(avatarFile.value);
 };
 
-const setAvatar = (payload) => {
+const setAvatar = (payload, key = 'avatar') => {
   avatarFile.value = null;
   if (!payload) return;
-  avatar.value = payload.avatar ?? defaultEmployerAvatar;
+  avatar.value = payload[key] ?? defaults[key];
 };
 
-const updateAvatar = async (uri) => {
-  if (!avatarFile.value) return false;
+const updateAvatar = async (uri, fieldName = 'avatar') => {
+  if (!avatarFile.value) return true;
 
   isUploadingAvatar.value = true;
 
   const form = new FormData();
-  form.append('avatar', avatarFile.value);
+  form.append(fieldName, avatarFile.value);
 
   const { call, errorMsg, success } = apiRequest(uri, {
     method: 'post',
@@ -51,7 +54,7 @@ const updateAvatar = async (uri) => {
   isUploadingAvatar.value = false;
 
   if (success.value) toaster.success('Фото успешно обновлено');
-  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось установить аватар');
+  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось сохранить фото');
 
   return success.value;
 };
@@ -65,5 +68,6 @@ export default function useAvatar() {
     log,
     setAvatar,
     updateAvatar,
+    defaults,
   };
 }

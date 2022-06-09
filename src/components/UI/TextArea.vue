@@ -54,14 +54,17 @@ const props = defineProps({
 const styles = props.classMap.concat(['shadow-sm block w-full sm:text-sm rounded-md']);
 
 if (props.error.length > 0) {
-  styles.push('pr-10 border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500')
+  styles.push('pr-10 border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500');
 } else {
-  styles.push('focus:ring-indigo-500 focus:border-indigo-500 border-gray-300')
+  styles.push('focus:ring-indigo-500 focus:border-indigo-500 border-gray-300');
 }
 
 if (props.icon) {
   styles.push('pl-10');
 }
+
+defineEmits(['blured', 'update:modelValue']);
+
 </script>
 
 <template>
@@ -87,8 +90,9 @@ if (props.icon) {
              :class="styles"
              :placeholder="props.placeholder"
              :value="props.modelValue"
-             @input="event => $emit('update:modelValue', event.target.value)"
+             @input="e => $emit('update:modelValue', e.target.value)"
             :rows="$attrs.rows"
+            @blur="e => $emit('blured')"
       ></textarea>
 
       <slot name="after">
@@ -109,7 +113,3 @@ if (props.icon) {
     </p>
   </div>
 </template>
-
-<style scoped>
-
-</style>

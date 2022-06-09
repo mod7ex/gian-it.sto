@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ref, computed, watchEffect } from 'vue';
 import useAuth, { logOut } from '~/composables/useAuth';
 
-const { token } = useAuth();
+const { token, isUserLogged } = useAuth();
 
 const instance = axios.create({
   baseURL: import.meta.env.STO_API_BASE_URI,
@@ -91,7 +91,9 @@ const apiRequest = (url, config = {}) => {
     } finally {
       loading.value = false;
 
-      if (error.value?.request && error.value.request.status === 401) logOut();
+      // this might create an error or issues later, because the only way we can know the token expired is the code 401
+      // which might happen even if the token isn't expired
+      if (error.value?.request && error.value.request.status === 401 && isUserLogged.value) logOut();
     }
   };
 

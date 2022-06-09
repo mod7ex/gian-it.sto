@@ -113,9 +113,7 @@ const saveUser = async () => {
 
   if (user?.department?.id) setCurrent(user?.department?.id);
 
-  await previousPage(user?.id);
-
-  return success;
+  success && await previousPage(user?.id);
 };
 
 const setUserField = function (key) {

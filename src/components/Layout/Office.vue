@@ -63,7 +63,7 @@ const menu = [
   // { label: 'Заказ-наряды', name: 'Orders', icon: ChipIcon },
   // { label: 'Задачи', name: 'Tasks', icon: TableIcon },
   // { label: 'Рабочие процессы', name: 'Processes', icon: PuzzleIcon },
-  // { label: 'Склад', name: 'Storages', icon: CollectionIcon },
+  { label: 'Склад', name: 'Storages', icon: CollectionIcon },
   { label: 'Клиенты', name: 'Clients', icon: UserGroupIcon },
   { label: 'Сотрудники', name: 'Employers', icon: UserGroupIcon },
   { label: 'Финансы', name: 'Finances', icon: CurrencyDollarIcon },

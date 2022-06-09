@@ -23,9 +23,9 @@ const routes = [
   { path: '/processes/1/create', component: () => import(/* webpackChunkName: "ProcessForm" */ '@/Pages/Office/ProcessForm.vue'), name: 'ProcessForm' },
 
   { path: '/storages', component: () => import(/* webpackChunkName: "Storages" */ '@/Pages/Office/Storages.vue'), name: 'Storages' },
-  { path: '/storages/create', component: () => import(/* webpackChunkName: "StoragesForm" */ '@/Pages/Office/StoragesForm.vue'), name: 'StoragesForm' },
-  { path: '/storages/1', component: () => import(/* webpackChunkName: "Storage" */ '@/Pages/Office/Storage.vue'), name: 'Storage' },
-  { path: '/storages/1/create', component: () => import(/* webpackChunkName: "StorageForm" */ '@/Pages/Office/StorageForm.vue'), name: 'StorageForm' },
+  { path: '/storages/:id', component: () => import(/* webpackChunkName: "Storage" */ '@/Pages/Office/Storage.vue'), name: 'Storage' },
+  { path: '/storages/:id/create', component: () => import(/* webpackChunkName: "StorageProductForm" */ '@/Pages/Office/StorageForm.vue'), name: 'StorageForm' },
+  { path: '/storages/:id/update/:product', component: () => import(/* webpackChunkName: "StorageProductForm" */ '@/Pages/Office/StorageForm.vue'), name: 'EditStorage' },
 
   { path: '/clients', component: () => import(/* webpackChunkName: "Clients" */ '@/Pages/Office/Clients.vue'), name: 'Clients' },
   { path: '/clients/create', component: () => import(/* webpackChunkName: "ClientForm" */ '@/Pages/Office/ClientForm.vue'), name: 'ClientForm' },
@@ -37,16 +37,15 @@ const routes = [
 
   { path: '/roles', component: () => import(/* webpackChunkName: "Roles" */ '@/Pages/Office/Roles.vue'), name: 'Roles' },
   { path: '/roles/create', component: () => import(/* webpackChunkName: "RoleForm" */ '@/Pages/Office/RoleForm.vue'), name: 'RoleForm' },
-  { path: '/roles/update/:id', component: () => import(/* webpackChunkName: "EditRole" */ '@/Pages/Office/RoleForm.vue'), name: 'EditRole' },
+  { path: '/roles/update/:id', component: () => import(/* webpackChunkName: "RoleForm" */ '@/Pages/Office/RoleForm.vue'), name: 'EditRole' },
 
   { path: '/departments', component: () => import(/* webpackChunkName: "Departments" */ '@/Pages/Office/Departments.vue'), name: 'Departments' },
 
-  { path: '/developers', component: () => import(/* webpackChunkName: "Developers" */ '@/Pages/Office/Developers.vue'), name: 'Developers' },
-  { path: '/developers/create', component: () => import(/* webpackChunkName: "DeveloperForm" */ '@/Pages/Office/DeveloperForm.vue'), name: 'DeveloperForm' },
+  { path: '/producers', component: () => import(/* webpackChunkName: "Producers" */ '~/components/Pages/Office/Producers.vue'), name: 'Producers' },
 
   { path: '/cars', component: () => import(/* webpackChunkName: "Cars" */ '@/Pages/Office/Cars.vue'), name: 'Cars' },
   { path: '/cars/create', component: () => import(/* webpackChunkName: "CarForm" */ '@/Pages/Office/CarForm.vue'), name: 'CarForm' },
-  { path: '/cars/update/:id', component: () => import(/* webpackChunkName: "EditCar" */ '@/Pages/Office/CarForm.vue'), name: 'EditCar' },
+  { path: '/cars/update/:id', component: () => import(/* webpackChunkName: "CarForm" */ '@/Pages/Office/CarForm.vue'), name: 'EditCar' },
   { path: '/car-marks', component: () => import(/* webpackChunkName: "CarMarks" */ '@/Pages/Office/CarMarks.vue'), name: 'CarMarks' },
   { path: '/car-models', component: () => import(/* webpackChunkName: "CarModels" */ '@/Pages/Office/CarModels.vue'), name: 'CarModels' },
 

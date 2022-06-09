@@ -22,7 +22,7 @@ export default new Proxy(drop, {
       let { success, message, data } = await target.call({ path, id });
 
       if (success) {
-        await onSuccess(id);
+        if (typeof onSuccess === 'function') await onSuccess(id);
         message = communicate.drop.success[key];
       } else {
         message = message ?? communicate.drop.error[key];

@@ -16,7 +16,7 @@ import Preview from '@/Partials/storage/products/Preview.vue';
 import useSuspense from '~/composables/useSuspense';
 import store from '~/store/storage/products';
 
-const { setAvailability, state, selected, current } = store;
+const { setAvailability, state, selected, current, selectedProduct } = store;
 
 const suspenseArea = useSuspense();
 
@@ -92,7 +92,7 @@ const grid = ref(true);
 
           </div>
 
-          <preview v-if="selected" />
+          <preview v-if="selected" :key="selectedProduct.id ?? 'product-preview'" />
 
         </div>
       </template>

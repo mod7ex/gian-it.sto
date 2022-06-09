@@ -57,7 +57,10 @@ const edit = async () => {
   reset();
 };
 
-onMounted(close);
+onMounted(() => {
+  close();
+  reset();
+});
 
 </script>
 

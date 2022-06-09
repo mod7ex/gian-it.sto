@@ -1,42 +1,66 @@
-import { watch } from 'vue';
+import { reactive } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 import store from '~/store/clients';
 import departmentStore from '~/store/departments';
+import useAppRouter from '~/composables/useAppRouter';
 
 const { current } = departmentStore;
 
-const { sort, fill, state, reset } = store;
+const { sort, fill, reset: resetStore } = store;
 
-const DEFAULT_ORDER_CRITERIA = 'surname';
+const DEFAULT_ORDER_CRITERIA = 'id';
 
 const pivot = {
   id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
+  name: { label: 'По имени', sort: (a, b) => (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)) },
   surname: { label: 'По фамилии', sort: (a, b) => (a.surname > b.surname ? 1 : (a.surname < b.surname ? -1 : 0)) },
   // department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
 };
 
 const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
 
+const { reset, trigger } = order;
+
+export const filter = reactive({
+  name: '',
+  search: '',
+  number: '',
+  department_id: current,
+  city_id: '',
+});
+
+export const resetFilter = () => {
+  Object.keys(filter).forEach((key) => {
+    if (key !== 'department_id') {
+      filter[key] = '';
+    }
+  });
+
+  console.log(filter);
+
+  reset();
+};
+
 /* ************ Fetch client ************ */
-
-const fetchClients = async (name) => {
-  if (state.loading || !current.value) return;
-
-  order.active.value = false;
-
-  await fill({ name, department_id: current.value });
-
-  order.trigger();
+const fetchClients = async (bool = false) => {
+  if (!filter.department_id) return;
+  if (bool) resetStore();
+  await fill(filter);
+  trigger();
 };
 
 export default function () {
-  watch(current, async () => {
-    reset();
-    await fetchClients();
-  }, { immediate: true });
+  const { redirectTo } = useAppRouter();
+
+  const edit = async (id) => {
+    await redirectTo({ name: 'EditClient', params: { id } });
+  };
 
   return {
     order,
+    filter,
     fetchClients,
+    resetFilter,
+    edit,
   };
 }

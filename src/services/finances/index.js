@@ -33,7 +33,7 @@ export const filter = reactive({
 
 export const resetFilter = () => {
   Object.keys(filter).forEach((key) => {
-    if (key !== 'order' && key !== 'department_id') {
+    if (key !== 'department_id') {
       filter[key] = '';
     }
   });

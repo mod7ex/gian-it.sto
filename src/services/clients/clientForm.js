@@ -5,10 +5,7 @@ import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
 import departmentStore from '~/store/departments';
-import store from '~/store/clients';
 import save from '~/helpers/save';
-
-const { select } = store;
 
 const { current, setCurrent } = departmentStore;
 
@@ -16,11 +13,6 @@ let routeInstance;
 let isEditClientPage;
 let redirectBack;
 let v$;
-
-const previousPage = async (id) => {
-  if (id) select(id);
-  await redirectBack();
-};
 
 const defaultClientFields = {
   id: '',
@@ -56,7 +48,7 @@ const saveClient = async () => {
 
   if (data?.client?.department?.id) setCurrent(data?.client?.department?.id);
 
-  await previousPage(data?.client?.id);
+  await redirectBack();
 
   return success;
 };
@@ -136,7 +128,6 @@ export default function () {
     v$,
     saveClient,
     atMountedClientForm,
-    previousPage,
     addItem,
   };
 }

@@ -4,9 +4,7 @@ import _$ from '~/helpers/drop';
 import { alphaGroupper } from '~/helpers';
 
 const state = reactive({
-  clients: [],
-  selectedId: undefined,
-  loading: false,
+  raw: [],
   pages: 100,
   page: 1,
 });
@@ -18,11 +16,11 @@ const select = (id) => {
 };
 
 const sort = (v) => {
-  state.clients.sort(v);
+  state.raw.sort(v);
 };
 
 const reset = (bool) => {
-  state.clients = [];
+  state.raw = [];
   if (bool) state.selectedId = undefined;
   state.loading = false;
   state.pages = 100;
@@ -31,7 +29,7 @@ const reset = (bool) => {
 
 const load = async (payload) => {
   state.loading = true;
-  state.clients = await $.clients(payload);
+  state.raw = await $.clients(payload);
   state.loading = false;
 };
 
@@ -39,17 +37,15 @@ const fill = async (payload) => {
   if (state.page > state.pages) return;
   state.loading = true;
   const data = await $({ key: 'clients', params: { ...payload, page: state.page } });
-  state.clients = state.clients.concat(data?.clients ?? []);
+  state.raw = state.raw.concat(data?.clients ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
   state.loading = false;
 };
 
 const drop = async (id) => _$.client(id, (v) => {
-  state.clients.deleteById(v) && select();
+  state.raw.deleteById(v) && select();
 });
-
-const selectedUser = computed(() => (state.selectedId ? state.clients.find(({ id }) => id === state.selectedId) ?? {} : {}));
 
 export default {
   state: readonly(state),
@@ -60,18 +56,14 @@ export default {
   select,
   fill,
 
-  selectedUser,
+  count: computed(() => state.raw.length),
 
-  count: computed(() => state.clients.length),
-
-  selected: computed(() => !!(selectedUser.value.id)),
-
-  options: computed(() => state.clients.map((item) => ({
+  options: computed(() => state.raw.map((item) => ({
     value: item.id,
     label: `${item.name} ${item.surname}`,
   }))),
 
-  directory: computed(() => alphaGroupper(state.clients, 'surname', ({ id, name, surname, avatar }) => ({
+  directory: computed(() => alphaGroupper(state.raw, 'surname', ({ id, name, surname, avatar }) => ({
     id,
     title: `${name ?? ''} ${surname ?? ''}`,
     image: `${avatar ?? ''}`,

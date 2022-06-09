@@ -1,30 +1,40 @@
 <script setup>
-import { ref, watch, computed } from 'vue';
-import { PlusCircleIcon, CogIcon } from '@heroicons/vue/outline';
+import { onMounted, ref, watch } from 'vue';
+import { PlusCircleIcon, CogIcon, RefreshIcon } from '@heroicons/vue/outline';
 import { debounce } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
-import StackedListWithHeadings from '@/UI/StackedListWithHeadings.vue';
-import ClientPreview from '@/Partials/clients/Preview.vue';
-import UClients from '@/Layout/users/Users.vue';
+import Header from '@/UI/Header.vue';
+import Select from '@/UI/Select.vue';
+import Input from '@/UI/Input.vue';
+import Label from '@/UI/Label.vue';
+import Table from '@/Partials/clients/Table.vue';
+import useSuspense from '~/composables/useSuspense.js';
 import service from '~/services/clients/clients';
-import store from '~/store/clients';
+import cityStore from '~/store/cities';
 
-const { directory, count, selected, select, state } = store;
+const { filter, order, resetFilter, fetchClients } = service();
 
-const { order, fetchClients } = service();
+const { criteriaOptions, criteria } = order;
+const { options, load } = cityStore;
 
-const ClientsFilter = order.comp();
+const SuspenseArea = useSuspense();
 
-const headingMessage = computed(() => {
-  if (count.value > 1) return `Искать среди ${count.value} клиентов`;
-  if (count.value === 1) return 'Один клиент!';
-  return 'Нет клиентов!';
+const filterSignature = ref('');
+
+const setFilterSignature = () => {
+  if (filter.department_id) {
+    filterSignature.value = Object.keys(filter).reduce((prev, curr) => prev + filter[curr], '');
+  }
+};
+
+watch(() => Reflect.deleteProperty({ ...filter }, 'department_id'), debounce(setFilterSignature), { deep: true });
+
+watch(() => filter.department_id, setFilterSignature);
+
+onMounted(async () => {
+  await load(); // cities
 });
-
-const search = ref('');
-
-watch(search, debounce(fetchClients, 1500));
 
 </script>
 
@@ -44,36 +54,41 @@ watch(search, debounce(fetchClients, 1500));
         </v-can>
       </template>
 
-      <template #content>
-        <u-clients
-          @toggle-filter="order.active.value = count > 1 && !order.active.value"
-          selectText="Выберите клиента"
-          :loading="state.loading"
-          :message="headingMessage"
-          :selected="selected"
-          v-model="search"
-        >
+      <!-- Filter -->
+      <Header>Фильтр</Header>
 
-          <template #filter>
-            <clients-filter />
-          </template>
+      <div class="flex flex-wrap gap-2 items-start">
+        <Input label="Поиск" v-model="filter.search"/>
 
-          <template #list>
-            <StackedListWithHeadings
-              class="flex-1 min-h-0 overflow-y-auto"
-              :key="order.key.value"
-              :selected="state.selectedId"
-              :items="directory"
-              @select="select"
-              @bottom-touched="() => fetchClients()"
-            />
-          </template>
+        <Input label="Имя" v-model="filter.name"/>
 
-          <template #preview>
-            <client-preview />
-          </template>
+        <Input label="Номер машины" v-model="filter.number"/>
 
-        </u-clients>
-      </template>
+        <Select
+          label="Город"
+          :options="options"
+          v-model="filter.city_id"
+          class="w-52"
+        />
+
+        <Select
+          label="Сортировать"
+          :options="criteriaOptions"
+          v-model="criteria"
+          class="w-44"
+        />
+
+        <div class="text-center ml-5">
+          <Label>сбросить</Label>
+          <Button type="secondary" class="rounded-full" @click="()=>resetFilter()">
+            <RefreshIcon class="h-4 w-4 text-gray-600" />
+          </Button>
+        </div>
+      </div>
+
+      <suspense-area :key="filterSignature" >
+        <Table @bottom-touched="()=>fetchClients()" />
+      </suspense-area>
+
     </OfficeLayout>
 </template>

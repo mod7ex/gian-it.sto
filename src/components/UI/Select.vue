@@ -74,15 +74,14 @@ const options = computed(() => props.options.map((e) => {
       @input="$emit('update:modelValue', $event.target.value)"
       @blur="$emit('blured')"
     >
+      <option :selected="!modelValue" disabled>-- выберите --</option>
       <option
         v-for="item in options"
         :value="item.value"
         :key="item.value"
         :selected="modelValue == item.value"
-      >
-        {{ item.label }}
+      >{{ item.label }}
       </option>
-      <option selected disabled>-- выберите --</option>
 
     </select>
 

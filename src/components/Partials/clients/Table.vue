@@ -17,6 +17,9 @@ const { drop } = useConfirmDialog();
 const fields = [
   { label: 'ФИО', key: 'name' },
   { label: 'Паспорт', key: 'passport' },
+  { label: 'телефон', key: 'phones' },
+  { label: 'Эл. адрес', key: 'emails' },
+  { label: 'Aвто', key: 'cars' },
 ];
 
 const emit = defineEmits(['bottomTouched']);
@@ -40,6 +43,18 @@ await fetchClients(true);
             <!-- Body -->
             <template #td-name="{ item }" >
                 <Link @click="() => edit(item.id)">{{ `${item.name} ${item.surname} ${item.middle_name ?? ''}` }} </Link>
+            </template>
+
+            <template #td-phones="{ value }" >
+                {{ value[0] }}
+            </template>
+            
+            <template #td-emails="{ value }" >
+                {{ value[0] }}
+            </template>
+            
+            <template #td-cars="{ value }" >
+                {{ value?.length }}
             </template>
             <!-- ****** -->
         </Table>

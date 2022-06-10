@@ -19,7 +19,6 @@ const fields = [
   { label: 'Паспорт', key: 'passport' },
   { label: 'телефон', key: 'phones' },
   { label: 'Эл. адрес', key: 'emails' },
-  { label: 'Aвто', key: 'cars' },
 ];
 
 const emit = defineEmits(['bottomTouched']);
@@ -46,15 +45,11 @@ await fetchClients(true);
             </template>
 
             <template #td-phones="{ value }" >
-                {{ value[0] }}
+                {{ value[0] ?? '..' }}
             </template>
             
             <template #td-emails="{ value }" >
-                {{ value[0] }}
-            </template>
-            
-            <template #td-cars="{ value }" >
-                {{ value?.length }}
+                {{ value[0] ?? '..' }}
             </template>
             <!-- ****** -->
         </Table>

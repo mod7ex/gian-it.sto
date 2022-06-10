@@ -18,7 +18,7 @@ const { dropProduct, defaults } = form();
 const { fetchProducts, redirectToForm } = service();
 
 const { pixel, container } = useIntersectionObserver(() => {
-  emit('bottomTouched');
+    emit('bottomTouched');
 }, computed(() => products.value.length > 0));
 
 const fields = [
@@ -32,7 +32,7 @@ await fetchProducts(true)
 </script>
 
 <template>
-    <div class="pt-5 px-3 lg:px-5" :ref="(v) => container = v">
+    <div class="pt-5 pb-1 px-3 lg:px-5" :ref="v => (container = v)">
 
         <div class="flex" v-if="grid">
             <ul role="list" class="w-full grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">

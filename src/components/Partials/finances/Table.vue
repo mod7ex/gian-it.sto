@@ -19,7 +19,7 @@ const { drop } = useConfirmDialog();
 
 const fields = [
   { label: 'Название', key: 'name' },
-  { label: 'Сумма', key: 'sum' },
+  { label: 'Сумма (₽)', key: 'sum' },
   { label: 'Тип операции', key: 'operation_type' },
   { label: 'Дата создания', key: 'created_at' },
 ];
@@ -53,7 +53,7 @@ await fetchFinances(true);
             </template>
 
             <template #td-sum="{ value }" >
-                <span class="font-bold" >{{ value }}</span>
+                <span class="font-bold" >{{ value }}  ₽</span>
             </template>
 
             <template #td-operation_type="{ value }" >

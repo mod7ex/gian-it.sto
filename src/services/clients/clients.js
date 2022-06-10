@@ -36,9 +36,7 @@ export const resetFilter = () => {
     }
   });
 
-  console.log(filter);
-
-  reset();
+  reset(true);
 };
 
 /* ************ Fetch client ************ */

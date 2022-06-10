@@ -129,5 +129,6 @@ export default function () {
     saveClient,
     atMountedClientForm,
     addItem,
+    redirectBack,
   };
 }

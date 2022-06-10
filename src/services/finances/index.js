@@ -38,7 +38,7 @@ export const resetFilter = () => {
     }
   });
 
-  reset();
+  reset(true);
 };
 
 const fetchFinances = async (bool = false) => {

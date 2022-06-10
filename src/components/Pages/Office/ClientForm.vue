@@ -11,7 +11,7 @@ import form from '~/services/clients/clientForm.js';
 
 const SuspensClientFormFields = useSuspense(ClientFormFields);
 
-const { isEditClientPage, saveClient } = form();
+const { isEditClientPage, saveClient, redirectBack } = form();
 
 </script>
 
@@ -19,7 +19,7 @@ const { isEditClientPage, saveClient } = form();
   <OfficeLayout :title="isEditClientPage ? 'Обновить клиента' : 'Добавление нового клиента'">
 
     <template #actions>
-      <Button type="secondary" :link="{ name: 'Clients' }" >
+      <Button type="secondary" @click="redirectBack" >
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>Вернуться
       </Button>
 

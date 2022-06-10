@@ -17,7 +17,8 @@ import Loader from '~/components/Partials/Loader.vue';
 
 /* ************ scroll-area ************ */
 /* .scroll-area::-webkit-scrollbar {
-  width: .5em;
+  width: .3em;
+  height: .3em;
 }
 
 .scroll-area::-webkit-scrollbar-track {
@@ -35,7 +36,8 @@ import Loader from '~/components/Partials/Loader.vue';
 /* ********* */
 
 ::-webkit-scrollbar {
-  width: .5em;
+  width: .3em;
+  height: .3em;
 }
 
 ::-webkit-scrollbar-track {

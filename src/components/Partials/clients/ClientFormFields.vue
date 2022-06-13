@@ -64,7 +64,8 @@ const addPhone = addItem('phones');
         </div>
 
         <div class="col-span-12 sm:col-span-4 ">
-            <Input label="Паспорт" mask="#### #######" v-model="clientFields.passport" />
+            <Input label="Паспорт" v-model="clientFields.passport" />
+            <!-- <Input label="Паспорт" mask="#### #######" v-model="clientFields.passport" /> -->
         </div>
 
         <div class="col-span-12 sm:col-span-3 ">

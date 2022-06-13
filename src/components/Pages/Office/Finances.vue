@@ -58,8 +58,8 @@ watch(filter, debounce(() => {
           <Label >Статус</Label>
 
           <ButtonGroup>
-            <Button type="secondary" group="left" class="whitespace-nowrap" @click="filter.type = 'in'">Приход</Button>
-            <Button type="secondary" group="right" class="whitespace-nowrap" @click="filter.type = 'out'">Расход</Button>
+            <Button type="secondary" group="left" class="whitespace-nowrap" :class="{'bg-green-100': filter.type === 'in'}" @click="filter.type = 'in'">Приход</Button>
+            <Button type="secondary" group="right" class="whitespace-nowrap" :class="{'bg-red-100': filter.type === 'out'}" @click="filter.type = 'out'">Расход</Button>
           </ButtonGroup>
         </div>
 

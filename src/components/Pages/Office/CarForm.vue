@@ -22,7 +22,7 @@ const { drop } = useConfirmDialog();
 </script>
 
 <template>
-  <OfficeLayout title="Создание новой задачи">
+  <OfficeLayout title="Создание нового автомобиля">
     <template #actions>
       <Button type="secondary" @click="()=>back()">
         <ArrowLeftIcon class="w-5 h-5 mr-1" />Вернуться

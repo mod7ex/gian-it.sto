@@ -3,7 +3,7 @@ import { XIcon } from '@heroicons/vue/outline';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import TextArea from '@/UI/TextArea.vue';
-import clientForm from '~/services/clients/clientForm.js';
+import service from '~/services/clients/clientForm.js';
 import Button from '@/UI/Button.vue';
 import CarsTable from '~/components/Layout/cars/CarsTable.vue';
 import departmentStore from '~/store/departments';
@@ -12,8 +12,7 @@ import cityStore from '~/store/cities';
 const { options: departmentOptions } = departmentStore;
 const { options: cityOptions, load } = cityStore;
 
-const { clientFields, v$, atMountedClientForm, addItem } = clientForm();
-
+const { clientFields, v$, atMountedClientForm, addItem } = service();
 
 await (async ()=>{
     await load();

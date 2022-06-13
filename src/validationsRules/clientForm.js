@@ -1,13 +1,11 @@
 import { computed } from 'vue';
 import { email, required, helpers } from '@vuelidate/validators';
 
-const { isArray } = Array;
-
 const isValidPhone = (num) => num.length === 16;
 
 const arrayValidator = (validator) => function (value) {
-  if (!isArray(value)) return false;
-  if (value.length === 0) return false;
+  console.log(('he'));
+  if (!Array.isArray(value) || value.length === 0) return false;
 
   if (value.active) {
     // eslint-disable-next-line no-param-reassign
@@ -24,31 +22,25 @@ const arrayValidator = (validator) => function (value) {
   }
 
   return Reflect.deleteProperty(value, 'invalide') || true;
-
-  // if (value.active) return validator(value[value.active]);
-  // return value.reduce((previousValue, currentValue) => previousValue && validator(currentValue), true);
 };
 
+const requiredArr = arrayValidator(required.$validator);
 const mails = arrayValidator(email.$validator);
 const phoned = arrayValidator(isValidPhone);
 
-export default function clientFormValidationsRules() {
+export default function () {
   return computed(() => ({
     name: { required: helpers.withMessage('Укажите имя', required) },
     surname: { required: helpers.withMessage('Укажите фамилия', required) },
 
     emails: {
       mails: helpers.withMessage('Укажите верный email', mails),
+      requiredArr: helpers.withMessage('Укажите email', requiredArr),
     },
     phones: {
-      isArray,
+      requiredArr: helpers.withMessage('Укажите телефон', requiredArr),
       phoned: helpers.withMessage('Укажите верный телефон', phoned),
     },
-
-    // email: {
-    //   required: helpers.withMessage('Укажите email', required),
-    //   email: helpers.withMessage('Укажите верный email', email),
-    // },
 
     department_id: {
       required: helpers.withMessage('Укажите отделение', required),

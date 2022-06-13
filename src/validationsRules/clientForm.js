@@ -4,10 +4,9 @@ import { email, required, helpers } from '@vuelidate/validators';
 const isValidPhone = (num) => num.length === 16;
 
 const arrayValidator = (validator) => function (value) {
-  console.log(('he'));
   if (!Array.isArray(value) || value.length === 0) return false;
 
-  if (value.active) {
+  if (value.active !== undefined) {
     // eslint-disable-next-line no-param-reassign
     value.invalide = value.active;
     return validator(value[value.active]);

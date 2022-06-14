@@ -93,15 +93,15 @@ const userRoleTitle = computed(() => {
   <div class="relative h-screen flex overflow-hidden bg-white">
     <Sidebar :open="sidebarOpen" @close="sidebarOpen = false">
       <!-- Mobile logo -->
-      <div class="flex-shrink-0 flex items-center px-4">
-        <Logo class="h-8 w-auto" />
+      <div class="flex-shrink-0 flex items-center px-4 w-32 mx-auto">
+        <Logo class="w-auto" />
       </div>
 
       <!-- Mobile Nav -->
       <div class="mt-5 flex-1 h-0 overflow-y-auto">
         <NavBar :items="menu" />
 
-        <v-can ability="crud departmentss">
+        <v-can ability="crud departments">
           <SecondNavbar :key="`mobile-${links.lenght}`" :items="links" @switch="setCurrent" title="Отделы" class="mt-8" />
         </v-can>
 
@@ -112,7 +112,7 @@ const userRoleTitle = computed(() => {
     <div class="hidden lg:flex lg:flex-shrink-0">
       <div class="flex flex-col w-64 border-r border-gray-200 pt-3 pb-4 bg-gray-100">
         <!-- Logo -->
-        <div class="flex items-center justify-center flex-shrink-0 px-6"><Logo /></div>
+        <div class="flex items-center justify-center flex-shrink-0 px-6 h-20 w-30 mx-auto mb-4"><Logo /></div>
 
         <!-- Sidebar -->
         <div class="h-0 flex-1 flex flex-col overflow-y-auto" id="sidebar-holder">
@@ -131,7 +131,7 @@ const userRoleTitle = computed(() => {
           </div>
 
           <!-- Navigation -->
-          <NavBar :items="menu" class="px-3 mt-6" />
+          <NavBar :items="menu" class="px-3 my-4" />
 
           <v-can ability="crud departments">
             <SecondNavbar :key="`descktop-${links.lenght}`" :items="links" @switch="setCurrent" title="Отделы" class="mt-8 px-3" />

@@ -41,7 +41,7 @@ await fetchClients(true);
         >
             <!-- Body -->
             <template #td-name="{ item }" >
-                <Link @click="() => edit(item.id)">{{ `${item.name} ${item.surname} ${item.middle_name ?? ''}` }} </Link>
+                <Link @click="() => edit(item.id)">{{ `${item.surname} ${item.name} ${item.middle_name ?? ''}` }} </Link>
             </template>
 
             <template #td-phones="{ value }" >

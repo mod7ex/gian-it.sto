@@ -15,7 +15,7 @@ const colors = ['indigo', 'blue', 'red', 'yellow', 'green', 'purple', 'gray'];
 </script>
 
 <template>
-  <div>
+  <div class="px-2">
     <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
       {{ props.title }}
     </h3>

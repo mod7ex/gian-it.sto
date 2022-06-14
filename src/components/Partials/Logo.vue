@@ -1,11 +1,3 @@
-<script setup>
-
-</script>
-
 <template>
-  <img src="../../assets/logo.png" alt="">
+  <img src="../../assets/logo.png" alt="logo" class="w-full h-full">
 </template>
-
-<style scoped>
-
-</style>

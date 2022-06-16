@@ -41,7 +41,7 @@ const updateRawFields = async () => {
 
   await call();
 
-  if (success.value) toaster.success('Your data was updated successfully');
+  if (success.value) toaster.success('Ваши данные успешно обновлены');
   else toaster.danger(errorMsg.value ?? 'Undefined (network?) error');
 
   return data.value?.user;

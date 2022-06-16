@@ -45,11 +45,11 @@ await fetchClients(true);
             </template>
 
             <template #td-phones="{ value }" >
-                {{ value[0] ?? '..' }}
+                {{ value[0] ?? '_' }}
             </template>
             
             <template #td-emails="{ value }" >
-                {{ value[0] ?? '..' }}
+                {{ value[0] ?? '_' }}
             </template>
             <!-- ****** -->
         </Table>

@@ -38,9 +38,11 @@ watch(filter, debounce(() => {
   <OfficeLayout title="Задачи">
 
     <template #actions>
-      <Button color="blue" link="/tasks/create">
-        <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
-      </Button>
+      <v-can ability="create tasks">
+        <Button color="blue" :link="{ name: 'TaskCreate' }">
+          <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
+        </Button>
+      </v-can>
     </template>
 
     <Header>Фильтр</Header>

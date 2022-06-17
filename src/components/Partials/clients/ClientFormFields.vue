@@ -107,7 +107,7 @@ const addPhone = addItem('phones');
 
         <div class="col-span-12 sm:col-span-12">
             <div class="flex flex-row gap-4 flex-wrap items-center">
-                <div v-for="(email, i) in clientFields.emails" class="flex items-center" :key="`emails-${i}`">
+                <div v-for="(e, i) in clientFields.emails" class="flex items-center" :key="`emails-${i}`">
                     <Input
                         :label="`Почта ${i + 1}`"
                         type="email"

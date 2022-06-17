@@ -14,7 +14,7 @@ const routes = [
 
   { path: '/tasks', component: () => import(/* webpackChunkName: "Tasks" */ '@/Pages/Office/Tasks.vue'), name: 'Tasks' },
   { path: '/tasks/:id', component: () => import(/* webpackChunkName: "Task" */ '@/Pages/Office/Task.vue'), name: 'Task' },
-  { path: '/tasks/:id/edit', component: () => import(/* webpackChunkName: "TaskEdit" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskEdit' },
+  { path: '/tasks/update/:id', component: () => import(/* webpackChunkName: "TaskEdit" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskEdit' },
   { path: '/tasks/create', component: () => import(/* webpackChunkName: "TaskCreate" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskCreate' },
 
   { path: '/processes', component: () => import(/* webpackChunkName: "Processes" */ '@/Pages/Office/Processes.vue'), name: 'Processes' },

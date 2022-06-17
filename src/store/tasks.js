@@ -2,9 +2,9 @@ import { reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
 
-import { userHasPermission } from '~/lib/permissions.js';
+import { userHasAtLeastOnePermission } from '~/lib/permissions.js';
 
-const hasCRUD = userHasPermission('crud finances');
+const hasREAD = userHasAtLeastOnePermission(['read tasks', 'read department tasks', 'read own tasks']);
 
 const state = reactive({
   raw: [],
@@ -19,14 +19,15 @@ const reset = () => {
 };
 
 const load = async (payload = {}) => {
-  if (!hasCRUD) return;
-  state.raw = await $.finances(payload);
+  if (!hasREAD) return;
+  state.raw = await $.tasks(payload);
 };
 
-const fill = async (payload) => {
+const fill = async (payload = {}) => {
+  if (!hasREAD) return;
   if (state.page > state.pages) return;
-  const data = await $({ key: 'finances', params: { ...payload, page: state.page } });
-  state.raw = state.raw.concat(data?.finances ?? []);
+  const data = await $({ key: 'tasks', params: { ...payload, page: state.page } });
+  state.raw = state.raw.concat(data?.tasks ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
 };
@@ -35,7 +36,7 @@ const sort = (v) => {
   state.raw.sort(v);
 };
 
-const drop = async (id) => _$.finance(id, (v) => {
+const drop = async (id) => _$.task(id, (v) => {
   state.raw.deleteById(v);
 });
 

@@ -9,7 +9,7 @@ const routesPermissionsMap = {
 
   Storages: 'crud storages',
 
-  Tasks: ['read tasks', 'crud tasks'],
+  Tasks: ['read tasks', 'read department tasks', 'read own tasks'],
 
   TaskCreateForm: 'create tasks',
 

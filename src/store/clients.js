@@ -9,42 +9,31 @@ const state = reactive({
   page: 1,
 });
 
-const select = (id) => {
-  // eslint-disable-next-line no-param-reassign
-  id = Number(id);
-  state.selectedId = Number.isNaN(id) ? undefined : id;
-};
-
 const sort = (v) => {
   state.raw.sort(v);
 };
 
-const reset = (bool) => {
+const reset = () => {
   state.raw = [];
-  if (bool) state.selectedId = undefined;
-  state.loading = false;
   state.pages = 100;
   state.page = 1;
 };
 
 const load = async (payload) => {
-  state.loading = true;
   state.raw = await $.clients(payload);
   state.loading = false;
 };
 
 const fill = async (payload) => {
   if (state.page > state.pages) return;
-  state.loading = true;
   const data = await $({ key: 'clients', params: { ...payload, page: state.page } });
   state.raw = state.raw.concat(data?.clients ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
-  state.loading = false;
 };
 
 const drop = async (id) => _$.client(id, (v) => {
-  state.raw.deleteById(v) && select();
+  state.raw.deleteById(v);
 });
 
 export default {
@@ -53,7 +42,6 @@ export default {
   load,
   drop,
   sort,
-  select,
   fill,
 
   count: computed(() => state.raw.length),

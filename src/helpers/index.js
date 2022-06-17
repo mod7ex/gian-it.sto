@@ -80,8 +80,25 @@ export function sleep(ms) {
   });
 }
 
-export const keyToPath = (key) => {
-  let addon = '';
-  if (key[key.length - 1] !== 's') addon = 's';
-  return `${key.replace('_', '-') + addon}`;
+// ***********************************************************
+export function isPlural(word = '') {
+  if (word.includes('/')) {
+    // eslint-disable-next-line no-param-reassign
+    [word] = word.split('/');
+  }
+
+  return word[word.length - 1] === 's';
+}
+
+export const extract = (key = '') => {
+  if (key.includes('/')) return { path: key, ressource: key.split('/')[0] };
+  const path = `${key.replace('_', '-') + (isPlural(key) ? '' : 's')}`;
+  return { path, ressource: path };
 };
+
+// ***********************************************************
+
+// all keys even none-enumerable
+export const objectSignature = (target) => Object.getOwnPropertyNames(target).reduce((prev, currKey) => prev + target[currKey], '');
+
+// export const objectSignature = (target) => Object.keys(target).reduce((prev, currKey) => prev + target[currKey], '');

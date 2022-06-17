@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import { PlusCircleIcon, CogIcon, RefreshIcon } from '@heroicons/vue/outline';
-import { debounce } from '~/helpers';
+import { debounce, objectSignature } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Header from '@/UI/Header.vue';
@@ -24,12 +24,11 @@ const filterSignature = ref('');
 
 const setFilterSignature = () => {
   if (filter.department_id) {
-    filterSignature.value = Object.keys(filter).reduce((prev, curr) => prev + filter[curr], '');
+    filterSignature.value = objectSignature(filter);
   }
 };
 
 watch(() => Reflect.deleteProperty({ ...filter }, 'department_id'), debounce(setFilterSignature), { deep: true });
-
 watch(() => filter.department_id, setFilterSignature);
 
 onMounted(async () => {

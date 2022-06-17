@@ -1,13 +1,5 @@
 <script setup>
 import Layout from '@/Layout/Work.vue';
-import {
-  PlusCircleIcon,
-  DotsHorizontalIcon,
-  PencilIcon,
-  XIcon,
-} from '@heroicons/vue/outline';
-import {MenuButton} from '@headlessui/vue';
-import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
 import Header from '@/UI/Header.vue';
@@ -17,8 +9,7 @@ import Link from '@/UI/Link.vue';
 import Select from '@/UI/Select.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Badge from '@/UI/Badge.vue';
-import Dropdown from '@/UI/Dropdown.vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
+import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
 
 const tasks = [
   {
@@ -175,7 +166,3 @@ const tasks = [
     </Table>
   </Layout>
 </template>
-
-<style scoped>
-
-</style>

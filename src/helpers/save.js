@@ -1,5 +1,5 @@
 import useApi from '~/composables/useApi.js';
-import { cleanUp, keyToPath } from '~/helpers';
+import { cleanUp, extract } from '~/helpers';
 import communicate from '~/helpers/communicate';
 import useToast from '~/composables/useToast.js';
 
@@ -30,15 +30,15 @@ export const save = async function (path, Id) {
 export default new Proxy(save, {
   get(target, key) {
     // the call should be as follow ==> proxy.client(data), data first then id
-    const path = keyToPath(key);
+    const { path, ressource } = extract(key);
     return async function (_data, id, toast = false) {
       // eslint-disable-next-line prefer-const
       let { success, message, data } = await target.call(_data, path, id);
 
       if (success) {
-        message = communicate.save.success[key];
+        message = communicate.save.success[ressource];
       } else {
-        message = message ?? communicate.save.error[key];
+        message = message ?? communicate.save.error[ressource];
       }
 
       try {

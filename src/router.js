@@ -13,9 +13,9 @@ const routes = [
   { path: '/orders/create', component: () => import(/* webpackChunkName: "OrderForm" */ '@/Pages/Office/OrderForm.vue'), name: 'OrderForm' },
 
   { path: '/tasks', component: () => import(/* webpackChunkName: "Tasks" */ '@/Pages/Office/Tasks.vue'), name: 'Tasks' },
-  { path: '/tasks/1', component: () => import(/* webpackChunkName: "Task" */ '@/Pages/Office/Task.vue'), name: 'Task' },
-  { path: '/tasks/1/edit', component: () => import(/* webpackChunkName: "TaskEditForm" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskEditForm' },
-  { path: '/tasks/create', component: () => import(/* webpackChunkName: "TaskCreateForm" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskCreateForm' },
+  { path: '/tasks/:id', component: () => import(/* webpackChunkName: "Task" */ '@/Pages/Office/Task.vue'), name: 'Task' },
+  { path: '/tasks/:id/edit', component: () => import(/* webpackChunkName: "TaskEdit" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskEdit' },
+  { path: '/tasks/create', component: () => import(/* webpackChunkName: "TaskCreate" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskCreate' },
 
   { path: '/processes', component: () => import(/* webpackChunkName: "Processes" */ '@/Pages/Office/Processes.vue'), name: 'Processes' },
   { path: '/processes/create', component: () => import(/* webpackChunkName: "ProcessesForm" */ '@/Pages/Office/ProcessesForm.vue'), name: 'ProcessesForm' },

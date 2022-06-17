@@ -12,7 +12,7 @@ import useSuspense from '~/composables/useSuspense.js';
 import Table from '@/Partials/finances/Table.vue';
 import form from '~/services/finances/form';
 import service from '~/services/finances/index';
-import { debounce } from '~/helpers';
+import { debounce, objectSignature } from '~/helpers';
 import departmentStore from '~/store/departments';
 
 const { current } = departmentStore;
@@ -30,7 +30,7 @@ const filterSignature = ref('');
 watch(filter, debounce(() => {
   // if (filter.department_id) { // when problem fixed
   if (current.value) {
-    filterSignature.value = Object.keys(filter).reduce((prev, curr) => prev + filter[curr], '');
+    filterSignature.value = objectSignature(filter);
   }
 }), { deep: true }); // will work without deep because values are primary
 

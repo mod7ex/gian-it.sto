@@ -1,6 +1,6 @@
 import useApi from '~/composables/useApi.js';
 import communicate from '~/helpers/communicate';
-import { keyToPath } from '~/helpers';
+import { extract } from '~/helpers';
 
 const { apiRequest } = useApi();
 
@@ -15,7 +15,7 @@ const drop = async function () {
 export default new Proxy(drop, {
   get(target, key) {
     // the call should be as follow ==> proxy.client(id)
-    const path = keyToPath(key);
+    const { path, ressource } = extract(key);
 
     return async function (id, onSuccess) {
       // eslint-disable-next-line prefer-const
@@ -23,9 +23,9 @@ export default new Proxy(drop, {
 
       if (success) {
         if (typeof onSuccess === 'function') await onSuccess(id);
-        message = communicate.drop.success[key];
+        message = communicate.drop.success[ressource];
       } else {
-        message = message ?? communicate.drop.error[key];
+        message = message ?? communicate.drop.error[ressource];
       }
 
       return { message, success, data };

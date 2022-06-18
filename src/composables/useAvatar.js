@@ -1,8 +1,6 @@
 import { computed, ref } from 'vue';
-import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
-
-const { apiRequest } = useApi();
+import { upload } from '~/helpers/save';
 
 const toaster = useToast();
 
@@ -41,25 +39,17 @@ const updateAvatar = async (uri, fieldName = 'avatar') => {
   const form = new FormData();
   form.append(fieldName, avatarFile.value);
 
-  const { call, errorMsg, success } = apiRequest(uri, {
-    method: 'post',
-    data: form,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  await call();
+  const { success, message } = await upload(uri, form);
 
   isUploadingAvatar.value = false;
 
-  if (success.value) toaster.success('Фото успешно обновлено');
-  else toaster.danger(errorMsg.value ?? 'Что-то пошло не так, не удалось сохранить фото');
+  if (success) toaster.success('Фото успешно обновлено');
+  else toaster.danger(message ?? 'Что-то пошло не так, не удалось сохранить фото');
 
-  return success.value;
+  return success;
 };
 
-export default function useAvatar() {
+export default function () {
   return {
     avatar,
     avatarFile,

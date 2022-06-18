@@ -104,6 +104,8 @@ watch(filter, debounce(() => {
       </div>
     </div>
 
+    <!-- <router-link :to="{name: 'Task', params: {id: 25}}" >go</router-link> -->
+
     <!-- Table -->
     <suspense-area :key="filterSignature" >
       <Table @bottom-touched="()=>fetchTasks()" />

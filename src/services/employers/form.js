@@ -146,7 +146,6 @@ const setEmployerForm = async (payload) => {
 
 const atMountedEmployerForm = async () => {
   const employer = (isEditEmployerPage.value && routeInstance.params.id) && await $.user(routeInstance.params.id);
-
   await setEmployerForm(employer || {});
 };
 

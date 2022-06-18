@@ -1,55 +1,89 @@
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
-import save from '~/helpers/save';
+import save, { upload } from '~/helpers/save';
+import useAuth from '~/composables/useAuth';
+import useToast from '~/composables/useToast.js';
+
+const toaster = useToast();
+
+const { user } = useAuth();
 
 let routeInstance;
 let isEditPage;
 let redirect;
+let files;
 
-const fields = reactive({
+const defaultFields = {
+  id: '',
   name: '',
   description: '',
   order_id: undefined,
-  user_id: undefined,
+  user_id: user.value.id,
   deadline_at: '',
-
-  status: '',
   position: 0,
-  start_at: '',
-  end_at: '',
-
-  pipelines: [],
+  status: '',
   checkboxes: [''],
+
+  // start_at: '',
+  // end_at: '',
+
+  // pipelines: [],
   temp_file_ids: [],
-});
+};
+
+const fields = reactive(defaultFields);
 
 /* ************ task form ************ */
 
 const saveTask = async () => {
-  const { data } = await save.task(fields, null, true);
+  const fileSet = new FormData();
+  files.value.forEach((file, i) => {
+    fileSet.set(`file-${i}`, file);
+  });
 
-  redirect({ name: 'Task', params: { id: data?.task?.id } });
+  const { message: msg, success: suc } = await upload('temp/files', fileSet);
+
+  if (suc) toaster.success('Файлы успешно загружены');
+  else toaster.danger(msg ?? 'Что-то пошло не так, не удалось загрузить файлы');
+
+  const { data, success } = await save.task(fields, null, true);
+
+  success && redirect({ name: 'Task', params: { id: data?.task?.id } });
 };
 
-//   *********************************  Form
+// **********************************************************************  Form
 const setField = function (key) {
-  fields[key] = this[key] ?? '';
+  if (key.includes('_id')) {
+    if (key === 'user_id') return;
+    if (key === 'temp_file_ids') return;
+
+    fields[key] = this[key.replace('_id', '')]?.id;
+    return;
+  }
+
+  fields[key] = this[key] ?? defaultFields[key];
 };
 
 const setForm = async (payload) => {
-  Object.keys(fields).forEach(setField, payload);
+  Object.keys(fields).forEach(setField, payload ?? {});
 
-  if (!fields.born_at) return;
+  if (!fields.deadline_at) return;
 
-  fields.born_at = hyphenatedDateFormat(fields.born_at);
+  fields.deadline_at = hyphenatedDateFormat(fields.deadline_at);
 };
 
 const atMounted = async () => {
-  const task = (isEditPage.value && routeInstance.params.id) && await $.task(routeInstance.params.id);
+  let task = {};
 
-  await setForm(task || {});
+  if (isEditPage.value && routeInstance.params.id) task = await $.task(routeInstance.params.id);
+
+  await setForm(task);
+};
+
+const log = (e) => {
+  files.value = e.target.files;
 };
 
 export default function () {
@@ -57,10 +91,13 @@ export default function () {
 
   [routeInstance, isEditPage, redirect] = [route, isThePage, redirectTo];
 
+  files = ref([]);
+
   return {
     fields,
     isEditPage,
     saveTask,
     atMounted,
+    log,
   };
 }

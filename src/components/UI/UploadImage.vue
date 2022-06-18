@@ -52,7 +52,7 @@ const id = Math.random().toString();
         <div v-if="props.loader" class="absolute border-2 mr-1 border-blue-400 borderTopColorTransparent border-solid rounded-full animate-spin w-8 h-8" ></div>
 
         <input
-          @change="(event) => $emit('selected', event)"
+          @change="(e) => $emit('selected', e)"
           :id="id"
           type="file"
           :disabled="props.loader"

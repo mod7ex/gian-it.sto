@@ -1,4 +1,4 @@
-import { defineComponent, h, Suspense, onErrorCaptured, ref } from 'vue';
+import { defineComponent, h, Suspense, onErrorCaptured, ref, computed } from 'vue';
 import { ExclamationIcon } from '@heroicons/vue/outline';
 import Spinner from '@/UI/Spinner.vue';
 
@@ -13,7 +13,7 @@ const defaultFallback = (text) => h(
 const errorFallback = (text) => h(
   wrapper,
   { class: 'text-red-600' },
-  [h(ExclamationIcon, { class: 'h-5 w-5' }), text],
+  [h(ExclamationIcon, { class: 'h-5 w-5 mx-2' }), text],
 );
 
 export default function useSuspense(Comp, FallbackComp) {
@@ -31,12 +31,14 @@ export default function useSuspense(Comp, FallbackComp) {
     },
 
     setup({ loadingMsg, errorMsg }, { slots }) {
-      const isThereError = ref(false);
+      const errorMessage = ref();
 
       onErrorCaptured((e) => {
         console.log(e);
-        isThereError.value = true;
+        errorMessage.value = e.message || errorMsg;
       });
+
+      const isThereError = computed(() => !!errorMessage.value);
 
       const Fallback = FallbackComp ?? defaultFallback(loadingMsg);
 
@@ -45,7 +47,7 @@ export default function useSuspense(Comp, FallbackComp) {
         {},
         {
           default: () => (Comp ? h(Comp) : slots.default()),
-          fallback: () => (!isThereError.value ? Fallback : errorFallback(errorMsg)),
+          fallback: () => (!isThereError.value ? Fallback : errorFallback(errorMessage.value)),
         },
       );
     },

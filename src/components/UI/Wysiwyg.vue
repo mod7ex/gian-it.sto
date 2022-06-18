@@ -1,6 +1,8 @@
 <script setup>
+/* for docs  https://vueup.github.io/vue-quill */
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   label: {
@@ -12,13 +14,29 @@ const props = defineProps({
     type: String,
   },
 });
+
+const data = ref('');
+
+watch(() => props.modelValue, (v) => {
+  data.value = v;
+}, { immediate: true });
+
 </script>
 
 <template>
-  <label class="block text-sm font-medium text-gray-700 mb-1" v-if="props.label.length > 0">
-    {{ props.label }}
-  </label>
-  <QuillEditor theme="snow" toolbar="minimal" style="height: 200px" />
+  <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" v-if="props.label.length > 0">
+        {{ props.label }}
+      </label>
+      <quill-editor
+        v-model:content="data"
+        contentType="html"
+        @textChange="(e) => $emit('update:modelValue', data)"
+        theme="snow"
+        toolbar="minimal"
+        style="height: 200px"
+        />
+  </div>
 </template>
 
 <style>

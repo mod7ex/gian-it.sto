@@ -1,4 +1,7 @@
 <script setup>
+import { ref } from 'vue';
+import Badge from '@/UI/Badge.vue';
+
 defineProps({
   title: {
     type: String,
@@ -11,6 +14,17 @@ defineProps({
 });
 
 const id = Math.floor(Math.random() * 100).toString();
+
+const emit = defineEmits(['selected']);
+
+const files = ref([]);
+
+const handler = (e) => {
+  files.value = [...e.target.files].map(({ name }) => name);
+  console.log(files);
+  emit('selected', e);
+};
+
 </script>
 
 <template>
@@ -23,7 +37,17 @@ const id = Math.floor(Math.random() * 100).toString();
       <span>{{ title }}</span>
       <p class="py-3">Загрузить файлы или перетащите</p>
 
-      <input :id="id" type="file" class="sr-only" :multiple="multiple" />
+      <div class="pb-3" v-if="!!files.length">
+        <Badge color="green" :point="true" v-for="c in files" :key="c">{{ c }}</Badge>
+      </div>
+
+      <input
+        :id="id"
+        type="file"
+        class="sr-only"
+        :multiple="multiple"
+        @change="handler"
+      />
 
       <p class="text-xs text-gray-500">формат любой</p>
   </label>

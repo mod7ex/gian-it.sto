@@ -7,6 +7,21 @@ const toaster = useToast();
 
 const { apiRequest } = useApi();
 
+export const upload = async function (path, files) {
+  const { call, errorMsg, success, data } = apiRequest();
+
+  await call(path, {
+    method: 'post',
+    data: files,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  // message is error message
+  return { message: errorMsg.value, success: success.value, data: data.value };
+};
+
 export const save = async function (path, Id) {
   // path is without 's'
   const { call, errorMsg, success, data } = apiRequest();

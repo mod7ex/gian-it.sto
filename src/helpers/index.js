@@ -88,11 +88,11 @@ export function isPlural(word = '') {
   return word[word.length - 1] === 's';
 }
 
-export const extract = (key = '') => {
-  if (key.includes('/')) return { path: key, ressource: key.split('/')[0] };
-  const path = `${key.replace('_', '-') + (isPlural(key) ? '' : 's')}`;
-  return { path, ressource: path };
-};
+const ressourceFromKey = (key) => (key.includes('/') ? key.split('/')[0] : key);
+
+const keyToPath = (key) => (key.includes('/') ? key : `${key.replace('_', '-') + (isPlural(key) ? '' : 's')}`);
+
+export const extract = (key = '') => ({ path: keyToPath(key), ressource: ressourceFromKey(key) });
 
 // ***********************************************************
 

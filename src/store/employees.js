@@ -45,6 +45,7 @@ export default {
   sort,
   select,
   selectedUser,
+  options: computed(() => state.employees.map(({ id: value, name, surname }) => ({ label: `${name} ${surname}`, value }))),
   count: computed(() => state.employees.length),
   selected: computed(() => !!(selectedUser.value.id)),
   directory: computed(() => alphaGroupper(state.employees, 'surname', ({ id, name, surname, office_position: op, avatar }) => ({

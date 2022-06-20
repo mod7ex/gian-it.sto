@@ -7,6 +7,12 @@ import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/tasks/form';
 import { maybeRun } from '~/helpers';
+import userStore from '~/store/employees';
+import departmentStore from '~/store/departments';
+
+const { current } = departmentStore();
+
+const { load, options } = userStore();
 
 const { fields, atMounted, log } = service();
 
@@ -19,7 +25,15 @@ const statusOptions = [
   { value: 'done', label: 'Сделанный' },
 ];
 
-// await atMounted();
+const fill = async () => {
+  await load({ department_id: current.value });
+};
+
+
+await (async () => {
+    await fill()
+    await atMounted();
+})();
 
 </script>
 
@@ -35,7 +49,7 @@ const statusOptions = [
 
         <div class="col-span-12 sm:col-span-3">
             <!-- <Select label="Исполнитель" :options="[{label: 'Не выбрано'}]" v-model="fields.user_id" /> -->
-            <Select label="Исполнитель" :options="[{label: 'Не выбрано'}]" />
+            <Select label="Исполнитель" :options="options" />
         </div>
 
         <div class="col-span-12 sm:col-span-3">

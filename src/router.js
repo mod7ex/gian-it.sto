@@ -20,6 +20,7 @@ const routes = [
   { path: '/processes', component: () => import(/* webpackChunkName: "Processes" */ '@/Pages/Office/Processes.vue'), name: 'Processes' },
   { path: '/processes/:id', component: () => import(/* webpackChunkName: "Process" */ '@/Pages/Office/Process.vue'), name: 'Process' },
   { path: '/processes/:id/create', component: () => import(/* webpackChunkName: "ProcessTaskForm" */ '@/Pages/Office/ProcessForm.vue'), name: 'ProcessTaskForm' },
+  { path: '/processes/:id/update/:task', component: () => import(/* webpackChunkName: "ProcessTaskForm" */ '@/Pages/Office/ProcessForm.vue'), name: 'ProcessTaskEdit' },
 
   { path: '/why', component: () => import(/* webpackChunkName: "Why" */ '@/Pages/Office/Why.vue'), name: 'Why' },
   { path: '/why/create', component: () => import(/* webpackChunkName: "WhyForm" */ '@/Pages/Office/WhyForm.vue'), name: 'WhyForm' },

@@ -14,4 +14,6 @@
 
 ## . the properties (resources) of the save proxy from `~/helper/save` are always in snake case 
 
-## . the composable `useConfirmModal` it would have been a better choice to merge it (wrap) directly with the drop functions
+## . the composable `useConfirmModal` it would have been a better choice to merge it (wrap)directly with the drop functions
+
+## . Logic for all services should be similar to `diagnostic-card-form.js` service & some composables

@@ -7,7 +7,7 @@ export default function useAppRouter(pageName = '_') {
   const isThePage = computed(() => route?.name === pageName);
 
   const redirectTo = async (to = '/') => {
-    if (!to || to === {}) return;
+    if (!to || !to?.name) return;
     await router.push(to); // we can handle navigation failure here
   };
 

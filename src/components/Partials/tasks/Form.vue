@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
 import Upload from '@/UI/Upload.vue';
@@ -10,9 +10,9 @@ import { maybeRun } from '~/helpers';
 import userStore from '~/store/employees';
 import departmentStore from '~/store/departments';
 
-const { current } = departmentStore();
+const { current } = departmentStore;
 
-const { load, options } = userStore();
+const { load, options } = userStore;
 
 const { fields, atMounted, log } = service();
 
@@ -25,15 +25,11 @@ const statusOptions = [
   { value: 'done', label: 'Сделанный' },
 ];
 
-const fill = async () => {
+watch(current, async () => {
   await load({ department_id: current.value });
-};
+}, { setImmediate: true });
 
-
-await (async () => {
-    await fill()
-    await atMounted();
-})();
+await atMounted();
 
 </script>
 

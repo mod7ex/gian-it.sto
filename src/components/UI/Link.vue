@@ -13,7 +13,3 @@ const props = defineProps({
     <slot></slot>
   </router-link>
 </template>
-
-<style scoped>
-
-</style>

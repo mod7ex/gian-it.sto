@@ -24,6 +24,7 @@ module.exports = {
     'no-nested-ternary': 'off',
     'func-names': 'off',
     'no-plusplus': 'off',
+    'no-param-reassign': 'off',
     camelcase: 'off',
     // 'no-console': 'off',
   },

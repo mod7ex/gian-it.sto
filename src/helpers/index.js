@@ -90,7 +90,16 @@ export function isPlural(word = '') {
 
 const ressourceFromKey = (key) => (key.includes('/') ? key.split('/')[0] : key);
 
-const keyToPath = (key) => (key.includes('/') ? key : `${key.replace('_', '-') + (isPlural(key) ? '' : 's')}`);
+const plurify = (exp) => {
+  if (isPlural(exp)) return exp;
+  if (exp[exp.length - 1] === 'y') {
+    // eslint-disable-next-line no-return-assign
+    return (exp += '$_').replace('y$_', 'ies');
+  }
+  return `${exp}s`;
+};
+
+const keyToPath = (key) => (key.includes('/') ? key : plurify(`${key.replace('_', '-')}`));
 
 export const extract = (key = '') => ({ path: keyToPath(key), ressource: ressourceFromKey(key) });
 

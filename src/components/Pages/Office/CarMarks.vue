@@ -4,9 +4,9 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import CarMarksTable from '~/components/Partials/cars/CarMarksTable.vue';
-import carMarkForm from '~/services/cars/carMarkForm';
+import service from '~/services/cars/carMarkForm';
 
-const { render } = carMarkForm();
+const { render } = service();
 
 const SuspensCarMarksTable = useSuspense(CarMarksTable);
 

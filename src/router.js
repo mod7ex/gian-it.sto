@@ -18,9 +18,15 @@ const routes = [
   { path: '/tasks/create', component: () => import(/* webpackChunkName: "TaskCreate" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskCreate' },
 
   { path: '/processes', component: () => import(/* webpackChunkName: "Processes" */ '@/Pages/Office/Processes.vue'), name: 'Processes' },
-  { path: '/processes/create', component: () => import(/* webpackChunkName: "ProcessesForm" */ '@/Pages/Office/ProcessesForm.vue'), name: 'ProcessesForm' },
-  { path: '/processes/1', component: () => import(/* webpackChunkName: "Process" */ '@/Pages/Office/Process.vue'), name: 'Process' },
-  { path: '/processes/1/create', component: () => import(/* webpackChunkName: "ProcessForm" */ '@/Pages/Office/ProcessForm.vue'), name: 'ProcessForm' },
+  { path: '/processes/:id', component: () => import(/* webpackChunkName: "Process" */ '@/Pages/Office/Process.vue'), name: 'Process' },
+  { path: '/processes/:id/create', component: () => import(/* webpackChunkName: "ProcessTaskForm" */ '@/Pages/Office/ProcessForm.vue'), name: 'ProcessTaskForm' },
+
+  { path: '/why', component: () => import(/* webpackChunkName: "Why" */ '@/Pages/Office/Why.vue'), name: 'Why' },
+  { path: '/why/create', component: () => import(/* webpackChunkName: "WhyForm" */ '@/Pages/Office/WhyForm.vue'), name: 'WhyForm' },
+
+  { path: '/diagnostic-card', component: () => import(/* webpackChunkName: "DiagnosticCard" */ '@/Pages/Office/DiagnosticCard.vue'), name: 'DiagnosticCard' },
+  { path: '/diagnostic-card/create', component: () => import(/* webpackChunkName: "DiagnosticCardForm" */ '@/Pages/Office/DiagnosticCardForm.vue'), name: 'DiagnosticCardForm' },
+  { path: '/diagnostic-card/update/:id', component: () => import(/* webpackChunkName: "DiagnosticCardForm" */ '@/Pages/Office/DiagnosticCardForm.vue'), name: 'DiagnosticCardEdit' },
 
   { path: '/storages', component: () => import(/* webpackChunkName: "Storages" */ '@/Pages/Office/Storages.vue'), name: 'Storages' },
   { path: '/storages/:id', component: () => import(/* webpackChunkName: "Storage" */ '@/Pages/Office/Storage.vue'), name: 'Storage' },
@@ -49,9 +55,6 @@ const routes = [
   { path: '/car-marks', component: () => import(/* webpackChunkName: "CarMarks" */ '@/Pages/Office/CarMarks.vue'), name: 'CarMarks' },
   { path: '/car-models', component: () => import(/* webpackChunkName: "CarModels" */ '@/Pages/Office/CarModels.vue'), name: 'CarModels' },
 
-  { path: '/why', component: () => import(/* webpackChunkName: "Why" */ '@/Pages/Office/Why.vue'), name: 'Why' },
-  { path: '/why/create', component: () => import(/* webpackChunkName: "WhyForm" */ '@/Pages/Office/WhyForm.vue'), name: 'WhyForm' },
-
   { path: '/finances', component: () => import(/* webpackChunkName: "Finances" */ '@/Pages/Office/Finances.vue'), name: 'Finances' },
   { path: '/finances-groups', component: () => import(/* webpackChunkName: "FinanceGroups" */ '@/Pages/Office/FinanceGroups.vue'), name: 'FinanceGroups' },
 
@@ -59,9 +62,6 @@ const routes = [
 
   { path: '/pipelines', component: () => import(/* webpackChunkName: "Pipelines" */ '@/Pages/Office/Pipelines.vue'), name: 'Pipelines' },
   { path: '/pipelines/create', component: () => import(/* webpackChunkName: "PipelineForm" */ '@/Pages/Office/PipelineForm.vue'), name: 'PipelineForm' },
-
-  { path: '/diagnostic-card', component: () => import(/* webpackChunkName: "DiagnosticCard" */ '@/Pages/Office/DiagnosticCard.vue'), name: 'DiagnosticCard' },
-  { path: '/diagnostic-card/create', component: () => import(/* webpackChunkName: "DiagnosticCardForm" */ '@/Pages/Office/DiagnosticCardForm.vue'), name: 'DiagnosticCardForm' },
 
   { path: '/profile', component: () => import(/* webpackChunkName: "Profile" */ '@/Pages/Office/Profile.vue'), name: 'Profile' },
 

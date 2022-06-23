@@ -19,7 +19,10 @@ export default () => effectScope().run(() => {
   }
 
   const setField = function (key) {
-    if (key.includes('_and_')) question[key] = this[key] ?? [{}];
+    if (key === 'answers_and_recommendations') {
+      question[key] = this.map_answers ?? [{}];
+      return;
+    }
     question[key] = this[key] ?? '';
   };
 
@@ -37,11 +40,9 @@ export default () => effectScope().run(() => {
     }
   };
 
-  const dropQuestion = async (id) => {
-    const { success, message } = await drop(id);
-
-    isUpdate.value && success && back();
-
+  const dropQuestion = async () => {
+    const { success, message } = await drop(route.params.id);
+    success && back();
     return { success, message };
   };
 

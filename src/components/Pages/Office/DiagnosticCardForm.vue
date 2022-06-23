@@ -3,13 +3,13 @@ import { CheckIcon, ArrowLeftIcon, XIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import service from '~/services/processes/diagnostic-card-form';
-import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useSuspense from '~/composables/useSuspense';
 import Form from '@/Partials/processes/DiagnosticCardForm.vue';
-
-const SuspenseArea = useSuspense(Form);
+import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 const { drop } = useConfirmDialog();
+
+const SuspenseArea = useSuspense(Form);
 
 const { saveForm, isUpdate, dropQuestion } = service();
 
@@ -29,7 +29,7 @@ const { saveForm, isUpdate, dropQuestion } = service();
       <Button
         color="red"
         v-if="isUpdate"
-        @click="() => drop(() => dropQuestion(route.params.id), 'продолжить удаление!', 'Удалить ?')"
+        @click="() => drop(dropQuestion)"
       >
         <XIcon class="w-5 h-5 mr-1"/>Удалить
       </Button>

@@ -23,7 +23,7 @@ await atMounted();
         <div class="col-span-12 sm:col-span-12">
             <div v-for="(item,i) in question.answers_and_recommendations" :key="'ques-'+i" class="py-5 border-t border-dashed border-gray-400">
                 <Input label="Ответ" v-model="question.answers_and_recommendations[i].answer" />
-                <TextArea label="Рекомендация" class="mt-2" v-model="question.answers_and_recommendations[i].recommendation" />
+                <TextArea label="Рекомендация" class="mt-2" v-model="question.answers_and_recommendations[i].recommendations" />
             </div>
 
             <Button class="mt-2" @click="add">Добавить</Button>

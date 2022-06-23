@@ -3,12 +3,15 @@ import Link from '@/UI/Link.vue';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/processes/diagnostic-card';
 import useAppRouter from '~/composables/useAppRouter';
+import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
-const { state, load, drop } = store;
+const { drop } = useConfirmDialog();
+
+const { state, load, drop: dropQuestion } = store;
 const { redirectTo } = useAppRouter();
 
 const fields = [
-  { label: 'Название', key: 'name' },
+  { label: 'Название', key: 'question' },
   { label: 'Дата создания', key: 'created_at' },
 ];
 
@@ -24,11 +27,11 @@ await load();
     <Table
         :fields="fields"
         :items="state.raw"
-        @delete="drop"
+        @delete="(id)=>drop(()=>dropQuestion(id))"
         @edit="edit"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id} }" >
+        <template #td-question="{ value, item: {id} }" >
             <Link @click="() => edit(id)"> {{ value }} </Link>
         </template>
 

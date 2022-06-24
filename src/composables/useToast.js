@@ -1,4 +1,4 @@
-import { h, createApp, ref, defineComponent, computed, watch, Transition } from 'vue';
+import { h, createApp, ref, defineComponent, computed, watch, TransitionGroup } from 'vue';
 import { CheckIcon, ExclamationIcon, InformationCircleIcon } from '@heroicons/vue/outline';
 import Toast from '@/UI/Toast.vue';
 
@@ -19,21 +19,14 @@ const ToastsComponent = defineComponent({
         'aria-live': 'assertive',
         class: 'fixed inset-0 flex items-start px-4 py-6 pointer-events-none sm:p-6 z-50',
       },
-      [h(
-        'div',
-        { class: 'w-full flex flex-col items-center space-y-4' },
-
+      [
+        h(TransitionGroup, {
+          name: 'toasts-list',
+          tag: 'div',
+          class: 'w-full flex flex-col items-center space-y-4',
+        },
         // we could've used toastsList directly
-        list.value.map(([key, props]) => h(Transition, {
-          name: 'toast',
-          enterFromclass: 'opacity-0',
-          enterActiveclass: 'ease-out duration-300 transition-all',
-          enterToclass: 'opacity-100',
-          leaveActiveclass: 'transition-all ease-in duration-300',
-          leaveFromclass: 'opacity-100',
-          leavetoclass: 'opacity-0',
-        }, () => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),
-      ),
+        list.value.map(([key, props]) => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),
       ]);
   },
 });

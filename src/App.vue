@@ -15,6 +15,26 @@ import Loader from '~/components/Partials/Loader.vue';
 @tailwind components;
 @tailwind utilities;
 
+/* ************ Toasts transition group ************ */
+.toasts-list-move, /* apply transition to moving elements */
+.toasts-list-enter-active,
+.toasts-list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.toasts-list-enter-from,
+.toasts-list-leave-to {
+  opacity: 0;
+  transform: translateX(200px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.toasts-list-leave-active {
+  position: absolute;
+}
+/* ************ ************ ************ ************ */
+
 /* ************ scroll-area ************ */
 /* .scroll-area::-webkit-scrollbar {
   width: .3em;
@@ -33,7 +53,7 @@ import Loader from '~/components/Partials/Loader.vue';
   background-color: #2563EB;
 } */
 
-/* ********* */
+/* ************ ************ ************ ************ */
 
 ::-webkit-scrollbar {
   width: .3em;

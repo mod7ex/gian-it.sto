@@ -1,6 +1,10 @@
 import { useRouter, useRoute } from 'vue-router';
 import { computed } from 'vue';
 
+/*
+  Always should be used inside a scope 'component scope'
+*/
+
 export default function useAppRouter(pageName = '_') {
   const [router, route] = [useRouter(), useRoute()];
 

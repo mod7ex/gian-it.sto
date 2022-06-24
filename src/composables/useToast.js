@@ -34,7 +34,6 @@ const ToastsComponent = defineComponent({
           leavetoclass: 'opacity-0',
         }, () => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),
       ),
-
       ]);
   },
 });
@@ -69,4 +68,4 @@ const danger = (_text, _title) => create(_text, _title, 'red', ExclamationIcon, 
 const warn = (_text, _title = 'Предупреждение!') => create(_text, _title, 'yellow', ExclamationIcon, false);
 const info = (_text, _title = 'Info!') => create(_text, _title, 'gray', InformationCircleIcon);
 
-export default function useToast() { return { success, info, primary, danger, warn }; }
+export default function () { return { success, info, primary, danger, warn }; }

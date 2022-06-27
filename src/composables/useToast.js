@@ -12,18 +12,20 @@ const closeToast = (toastKey) => { toastsList.value.delete(toastKey); };
 
 const ToastsComponent = defineComponent({
   setup() {
-    const list = computed(() => Array.from(toastsList.value.entries()));
+    const list = computed(() => Array.from(toastsList.value.entries()).filter(([key]) => key !== '_'));
 
     return () => h('div',
       {
         'aria-live': 'assertive',
         class: 'fixed inset-0 flex items-start px-4 py-6 pointer-events-none sm:p-6 z-50',
+        // class: 'fixed inset-0 flex items-start px-4 py-6 pointer-events-none sm:p-6 z-50 bg-red-300',
       },
       [
         h(TransitionGroup, {
           name: 'toasts-list',
           tag: 'div',
           class: 'w-full flex flex-col items-center space-y-4',
+          // class: 'w-full flex flex-col items-center space-y-4 bg-blue-600',
         },
         // we could've used toastsList directly
         list.value.map(([key, props]) => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),
@@ -31,26 +33,32 @@ const ToastsComponent = defineComponent({
   },
 });
 
-const newToastApp = () => createApp(ToastsComponent);
-
 watch(isEmptyToastsList, (v) => {
   if (v) {
     if (!ToastsApp) return;
-    ToastsApp.unmount();
-    ToastsApp = undefined;
+    setTimeout(() => {
+      ToastsApp.unmount();
+      ToastsApp = undefined;
+    }, 500);
     return;
   }
 
-  ToastsApp = newToastApp();
+  ToastsApp = createApp(ToastsComponent);
   ToastsApp.mount('#sto-toasts');
 });
 
 const create = (text, title, color, icon, bool = true) => {
   const key = Date.now().toString();
 
-  toastsList.value.set(key, { color, icon, text, title });
+  if (isEmptyToastsList.value) toastsList.value.set('_', 'just so that the app mount up');
 
-  setTimeout(() => { toastsList.value.delete(key); }, import.meta.env.STO_TOAST_TTL);
+  setTimeout(() => {
+    toastsList.value.set(key, { color, icon, text, title });
+
+    closeToast('_');
+
+    setTimeout(() => { closeToast(key); }, import.meta.env.STO_TOAST_TTL);
+  }, 100);
 
   return bool;
 };

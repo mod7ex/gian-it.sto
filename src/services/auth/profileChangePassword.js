@@ -9,6 +9,8 @@ const form = reactive({});
 const { rules } = refreshPasswordValidationsRules(form);
 const v$ = useVuelidate(rules, form, { $lazy: true });
 
+
+
 const isModalUp = ref(false);
 const setModalVisibility = (bool) => {
   isModalUp.value = bool ?? !isModalUp.value;

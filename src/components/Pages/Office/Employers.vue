@@ -15,8 +15,6 @@ const { state, count, selected, select, directory } = store;
 
 const { order, fetchEmployers } = employers();
 
-
-
 const EmployersFilter = order.comp();
 
 const headingMessage = computed(() => {

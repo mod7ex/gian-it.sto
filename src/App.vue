@@ -24,8 +24,8 @@ import Loader from '~/components/Partials/Loader.vue';
 
 .toasts-list-enter-from,
 .toasts-list-leave-to {
-  opacity: 0;
-  transform: translateX(200px);
+  /* opacity: 0; */
+  transform: translateY(-200px);
 }
 
 /* ensure leaving items are taken out of layout flow so that moving

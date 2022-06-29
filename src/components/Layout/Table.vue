@@ -38,7 +38,7 @@ defineEmits(['delete', 'edit']);
             </Tr>
         </THead>
         <TBody>
-            <Tr v-for="(item, i) in props.items" :key="i" :class="(i&1) ? 'bg-white' : 'bg-gray-100'">
+            <Tr v-for="(item, i) in props.items" :key="'tr-'+i" :class="(i&1) ? 'bg-white' : 'bg-gray-100'">
 
                 <Td v-for="field in props.fields" :key="`${field.key}-${i}`">
                     <slot

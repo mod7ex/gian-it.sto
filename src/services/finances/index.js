@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, onScopeDispose } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 // import departmentStore from '~/store/departments';
 import store from '~/store/finances/finances';
@@ -18,40 +18,47 @@ const pivot = {
   date: { label: 'По дате', sort: (a, b) => ((new Date(a.created_at).getTime()) - (new Date(b.created_at).getTime())) },
 };
 
-const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
-
-const { reset, trigger } = order;
-
-export const filter = reactive({
-  name: '',
-  type: '',
-  sum: '',
-  // department_id: current,
-  start_date: '',
-  end_date: '',
-});
-
-export const resetFilter = () => {
-  Object.keys(filter).forEach((key) => {
-    if (key !== 'department_id') {
-      filter[key] = '';
-    }
-  });
-
-  reset(true);
-};
-
-const fetchFinances = async (bool = false) => {
-  if (bool) resetStore();
-  await fill(filter);
-  trigger();
-};
+let filter;
 
 export default function () {
+  if (!filter) {
+    filter = reactive({
+      name: '',
+      type: '',
+      sum: '',
+      // department_id: current,
+      start_date: '',
+      end_date: '',
+    });
+  }
+
+  const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
+
+  const { reset, trigger } = order;
+
+  const resetFilter = () => {
+    Object.keys(filter).forEach((key) => {
+      if (key !== 'department_id') {
+        filter[key] = '';
+      }
+    });
+
+    reset(true);
+  };
+
+  const fetchFinances = async (bool = false) => {
+    if (bool) resetStore();
+    await fill(filter);
+    trigger();
+  };
+
   return {
     order,
     filter,
     resetFilter,
     fetchFinances,
+    cleanUp: () => onScopeDispose(() => {
+      filter = undefined;
+    }),
   };
 }

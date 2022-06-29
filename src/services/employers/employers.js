@@ -15,21 +15,21 @@ const pivot = {
   // department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
 };
 
-export const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
-
-/* ************ Fetch employer ************ */
-
-export const fetchEmployers = async (name) => {
-  if (state.loading || !current.value) return;
-
-  order.active.value = false;
-
-  await load({ order: order.criteria.value, name, department_id: current.value });
-
-  order.trigger();
-};
-
 export default function () {
+  const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
+
+  /* ************ Fetch employer ************ */
+
+  const fetchEmployers = async (name) => {
+    if (state.loading || !current.value) return;
+
+    order.active.value = false;
+
+    await load({ order: order.criteria.value, name, department_id: current.value });
+
+    order.trigger();
+  };
+
   watch(current, async () => { await fetchEmployers(); }, { immediate: true });
 
   return {

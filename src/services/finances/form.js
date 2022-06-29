@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
@@ -10,20 +10,9 @@ import departmentStore from '~/store/departments';
 
 const { current } = departmentStore;
 
-const { fetchFinances } = service();
-
 const toaster = useToast();
 
-const finance = reactive({
-  id: undefined,
-  name: undefined,
-  operation_type: undefined,
-  sum: undefined,
-  finance_group_id: undefined,
-  department_id: undefined,
-});
-
-const isUpdate = computed(() => !!finance.id);
+let finance;
 
 const setFormField = function (key) {
   if (key.includes('_id')) {
@@ -44,19 +33,6 @@ const setForm = (payload = {}) => {
   Object.keys(finance).forEach(setFormField, payload);
 };
 
-const saveForm = async () => {
-  const { message, success } = await save.finance(finance);
-
-  try {
-    return { message, success };
-  } finally {
-    if (success) {
-      await fetchFinances(true);
-      toaster.success(message);
-    }
-  }
-};
-
 const atMountedFinanceForm = async () => {
   const { id } = finance;
 
@@ -67,15 +43,54 @@ const atMountedFinanceForm = async () => {
 };
 
 export default function () {
-  const { render } = useModalForm({
-    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].finance),
-    RawForm,
-    atSubmit: saveForm,
-    atOpen: (id) => setForm({ id }),
-  });
+  const { fetchFinances } = service();
+
+  const saveForm = async () => {
+    const { message, success } = await save.finance(finance);
+
+    try {
+      return { message, success };
+    } finally {
+      if (success) {
+        await fetchFinances(true);
+        toaster.success(message);
+      }
+    }
+  };
+
+  const modalUp = (...args) => {
+    const scope = effectScope();
+
+    scope.run(() => {
+      const isUpdate = computed(() => !!finance.id);
+
+      const { render } = useModalForm({
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].finance),
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          finance = reactive({
+            id: id ?? '',
+            name: '',
+            operation_type: '',
+            sum: '',
+            finance_group_id: '',
+            department_id: '',
+          });
+        },
+      });
+
+      render(...args);
+
+      onScopeDispose(() => {
+        finance = undefined;
+      });
+    });
+  };
 
   return {
-    render,
+    render: modalUp,
     atMountedFinanceForm,
     finance,
   };

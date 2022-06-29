@@ -19,7 +19,7 @@ const { current } = departmentStore;
 
 const { render } = form();
 
-const { filter, order, resetFilter, fetchFinances } = service();
+const { filter, order, resetFilter, fetchFinances, cleanUp } = service();
 
 const { criteriaOptions, criteria } = order;
 
@@ -33,6 +33,8 @@ watch(filter, debounce(() => {
     filterSignature.value = objectSignature(filter);
   }
 }), { deep: true }); // will work without deep because values are primary
+
+cleanUp();
 
 </script>
 

@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import RawForm from '~/components/Partials/finances/groups/RawForm.vue';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -11,12 +11,7 @@ const { load } = store;
 
 const toaster = useToast();
 
-const financeGroup = reactive({
-  id: '',
-  name: '',
-});
-
-const isUpdate = computed(() => !!financeGroup.id);
+let financeGroup;
 
 const setForm = (payload) => {
   financeGroup.id = payload?.id;
@@ -39,22 +34,42 @@ const saveForm = async () => {
 const atMountedFinanceGroup = async () => {
   const { id } = financeGroup;
 
-  let fg = {};
-  if (id) fg = await $.finance_group(id);
-
-  setForm(fg);
+  if (id) {
+    const fg = await $.finance_group(id);
+    setForm(fg);
+  }
 };
 
 export default function () {
-  const { render } = useModalForm({
-    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].finance_group),
-    RawForm,
-    atSubmit: saveForm,
-    atOpen: (id) => setForm({ id }),
-  });
+  const modalUp = (...args) => {
+    const scope = effectScope();
+
+    scope.run(() => {
+      const isUpdate = computed(() => !!financeGroup.id);
+
+      const { render } = useModalForm({
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].finance_group),
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          financeGroup = reactive({
+            id: id ?? '',
+            name: '',
+          });
+        },
+      });
+
+      render(...args);
+
+      onScopeDispose(() => {
+        financeGroup = undefined;
+      });
+    });
+  };
 
   return {
-    render,
+    render: modalUp,
     financeGroup,
     atMountedFinanceGroup,
   };

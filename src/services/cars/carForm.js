@@ -1,4 +1,4 @@
-import { ref, reactive } from 'vue';
+import { ref, reactive, onScopeDispose } from 'vue';
 // import useVuelidate from '@vuelidate/core';
 // import carFormValidationsRules from '~/validationsRules/carForm.js';
 import useAppRouter from '~/composables/useAppRouter.js';
@@ -10,22 +10,8 @@ let isEditCarPage;
 let redirectBack;
 // let v$;
 
-const carFields = reactive({
-  id: '',
-  number: '',
-  vin: '',
-  year: '',
-  The: '',
-  body: '',
-  color: '',
-  notes: '',
-  fuel_id: '',
-  engine_volume_id: '',
-  client_id: '',
-  car_model_id: '',
-});
-
-const theSelectedCarMark = ref();
+let carFields;
+let theSelectedCarMark;
 
 /* ************ Car form ************ */
 
@@ -70,13 +56,40 @@ const atMountedCarForm = async () => {
 };
 
 export default function () {
-  const { route, isThePage, back } = useAppRouter('EditCar');
+  if (!carFields) {
+    const { route, isThePage, back } = useAppRouter('EditCar');
 
-  [routeInstance, isEditCarPage, redirectBack] = [route, isThePage, back];
+    [routeInstance, isEditCarPage, redirectBack] = [route, isThePage, back];
+
+    carFields = reactive({
+      id: '',
+      number: '',
+      vin: '',
+      year: '',
+      The: '',
+      body: '',
+      color: '',
+      notes: '',
+      fuel_id: '',
+      engine_volume_id: '',
+      client_id: '',
+      car_model_id: '',
+    });
+
+    theSelectedCarMark = ref();
+  }
 
   // const { rules } = carFormValidationsRules(carFields, isEditCarPage.value);
 
   // v$ = useVuelidate(rules, carFields, { $lazy: true });
+
+  onScopeDispose(() => {
+    routeInstance = undefined;
+    isEditCarPage = undefined;
+    redirectBack = undefined;
+    carFields = undefined;
+    theSelectedCarMark = undefined;
+  });
 
   return {
     carFields,

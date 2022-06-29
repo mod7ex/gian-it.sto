@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, onScopeDispose } from 'vue';
 import useToast from '~/composables/useToast.js';
 import { upload } from '~/helpers/save';
 
@@ -9,16 +9,11 @@ const defaults = {
   photo: 'https://webcolours.ca/wp-content/uploads/2020/10/webcolours-unknown.png',
 };
 
-const avatar = ref(defaults.avatar);
+let avatar;
 
-const avatarFile = ref(null);
+let avatarFile;
 
-const isUploadingAvatar = ref(false);
-
-const isValideAvatarFileSize = computed(() => {
-  if (!avatarFile.value) return true;
-  return avatarFile.value.size < import.meta.env.STO_AVATAR_MAX_SIZE;
-});
+let isUploadingAvatar;
 
 const log = (event) => {
   [avatarFile.value] = event.target.files;
@@ -50,6 +45,23 @@ const updateAvatar = async (uri, fieldName = 'avatar') => {
 };
 
 export default function () {
+  avatar = ref(defaults.avatar);
+
+  avatarFile = ref(null);
+
+  isUploadingAvatar = ref(false);
+
+  const isValideAvatarFileSize = computed(() => {
+    if (!avatarFile.value) return true;
+    return avatarFile.value.size < import.meta.env.STO_AVATAR_MAX_SIZE;
+  });
+
+  onScopeDispose(() => {
+    avatar = undefined;
+    avatarFile = undefined;
+    isUploadingAvatar = undefined;
+  });
+
   return {
     avatar,
     avatarFile,

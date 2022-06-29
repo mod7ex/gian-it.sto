@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import RawForm from '~/components/Partials/departments/Form.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
@@ -11,12 +11,7 @@ const { load } = store;
 
 const toaster = useToast();
 
-const department = reactive({
-  name: '',
-  id: '',
-});
-
-const isUpdate = computed(() => !!department.id);
+let department;
 
 const setForm = (payload = {}) => {
   department.id = payload.id;
@@ -39,24 +34,44 @@ const saveForm = async () => {
 const atMountedDepartmentForm = async () => {
   const { id } = department;
 
-  let dep = {};
-  if (id) dep = await $.department(id);
-
-  setForm(dep);
+  if (id) {
+    const dep = await $.department(id);
+    setForm(dep || {});
+  }
 };
 
 export default function () {
-  const { render } = useModalForm({
-    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].department),
-    RawForm,
-    atSubmit: saveForm,
-    atOpen: (id) => setForm({ id }),
-  });
+  const modalUp = (...args) => {
+    const scope = effectScope();
+
+    scope.run(() => {
+      const isUpdate = computed(() => !!department.id);
+
+      const { render } = useModalForm({
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].department),
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          department = reactive({
+            id: id ?? '',
+            name: '',
+          });
+        },
+      });
+
+      render(...args);
+
+      onScopeDispose(() => {
+        department = undefined;
+      });
+    });
+  };
 
   return {
     saveForm,
     department,
     atMountedDepartmentForm,
-    render,
+    render: modalUp,
   };
 }

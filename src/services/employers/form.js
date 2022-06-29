@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, onScopeDispose } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import employerFormValidationsRules from '~/validationsRules/employerForm.js';
 import useApi from '~/composables/useApi.js';
@@ -19,23 +19,9 @@ const { current, setCurrent } = departmentStore;
 const { select } = store;
 
 const { userDepartment } = useAuth();
-
-const hasCRUDdepartments = userHasPermission('crud departments');
-
-let routeInstance;
-let isEditEmployerPage;
-let redirectBack;
-let v$;
-
-const previousPage = async (id) => {
-  if (id) select(id);
-  await redirectBack();
-};
-
 const { apiRequest } = useApi();
 const toaster = useToast();
-const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar } = useAvatar();
-const { toggles, setToggles, bitwisedToggles } = useToggles();
+const hasCRUDdepartments = userHasPermission('crud departments');
 
 const defaultUserFields = {
   id: '',
@@ -52,9 +38,9 @@ const defaultUserFields = {
   department_id: '',
 };
 
-const userFields = reactive(defaultUserFields);
+let userFields;
+let v$;
 
-/* ************ User form ************ */
 const updatePassword = async (id) => {
   const { call, errorMsg, success } = apiRequest(`/users/${id}/password`, {
     method: 'put',
@@ -72,50 +58,6 @@ const updatePassword = async (id) => {
   return success.value;
 };
 
-const saveRawUserFields = async () => {
-  const form = {};
-
-  Object.keys(userFields).forEach((key) => {
-    // won't count password in case we're editing the user, password is updated siparatly (down)
-    if (isEditEmployerPage.value && key.substr(0, 8) === 'password') return;
-    form[key] = `${userFields[key]}`;
-  });
-
-  const userData = { ...form, ...bitwisedToggles.value };
-
-  const { data } = await save.user(userData, null, true);
-
-  return data?.user;
-};
-
-const saveUser = async () => {
-  let isValideForm = await v$.value.$validate();
-
-  isValideForm &&= isValideAvatarFileSize.value;
-
-  if (!isValideForm) return;
-
-  v$.value.$reset();
-
-  let success;
-
-  // ********* Form request
-  const user = await saveRawUserFields();
-  success = !!user;
-
-  if (!success) return;
-
-  // ********* Avatar request
-  success = await updateAvatar(`/users/${user?.id}/avatar`);
-
-  // ********* Password update request
-  if (isEditEmployerPage.value && userFields.password) { success = await updatePassword(user?.id); }
-
-  if (user?.department?.id) setCurrent(user?.department?.id);
-
-  success && await previousPage(user?.id);
-};
-
 const setUserField = function (key) {
   if (key === 'department_id') {
     if (!hasCRUDdepartments) userFields.department_id = userDepartment.value;
@@ -131,39 +73,94 @@ const setUserField = function (key) {
   userFields[key] = this[key] ?? '';
 };
 
-const setEmployerForm = async (payload) => {
-  setAvatar(payload);
-
-  Object.keys(userFields).forEach(setUserField, payload);
-
-  const { is_about_visible, is_born_at_visible, is_active } = payload;
-  setToggles({ is_about_visible, is_born_at_visible, is_active });
-
-  if (!userFields.born_at) return;
-
-  userFields.born_at = hyphenatedDateFormat(userFields.born_at);
-};
-
-const atMountedEmployerForm = async () => {
-  const employer = (isEditEmployerPage.value && routeInstance.params.id) && await $.user(routeInstance.params.id);
-  await setEmployerForm(employer || {});
-};
-
 export default function () {
+  if (!userFields) userFields = reactive({ ...defaultUserFields });
+
+  const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar } = useAvatar();
+  const { toggles, setToggles, bitwisedToggles } = useToggles();
   const { route, isThePage, back } = useAppRouter('EditEmployer');
+  const { rules } = employerFormValidationsRules(userFields, isThePage.value);
+  if (!v$) v$ = useVuelidate(rules, userFields, { $lazy: true });
 
-  [routeInstance, isEditEmployerPage, redirectBack] = [route, isThePage, back];
+  const previousPage = async (id) => {
+    if (id) select(id);
+    back();
+  };
 
-  const { rules } = employerFormValidationsRules(userFields, isEditEmployerPage.value);
+  const saveRawUserFields = async () => {
+    const form = {};
 
-  v$ = useVuelidate(rules, userFields, { $lazy: true });
+    Object.keys(userFields).forEach((key) => {
+      // won't count password in case we're editing the user, password is updated siparatly (down)
+      if (isThePage.value && key.substr(0, 8) === 'password') return;
+      form[key] = `${userFields[key]}`;
+    });
+
+    const userData = { ...form, ...bitwisedToggles.value };
+
+    const { data } = await save.user(userData, null, true);
+
+    return data?.user;
+  };
+
+  const saveUser = async () => {
+    console.log(userFields);
+    let isValideForm = await v$.value.$validate();
+
+    isValideForm &&= isValideAvatarFileSize.value;
+
+    if (!isValideForm) return;
+
+    v$.value.$reset();
+
+    let success;
+
+    // ********* Form request
+    const user = await saveRawUserFields();
+    success = !!user;
+
+    if (!success) return;
+
+    // ********* Avatar request
+    success = await updateAvatar(`/users/${user?.id}/avatar`);
+
+    // ********* Password update request
+    if (isThePage.value && userFields.password) { success = await updatePassword(user?.id); }
+
+    if (user?.department?.id) setCurrent(user?.department?.id);
+
+    success && await previousPage(user?.id);
+  };
+
+  const setEmployerForm = async (payload) => {
+    setAvatar(payload);
+
+    Object.keys(userFields).forEach(setUserField, payload);
+
+    const { is_about_visible, is_born_at_visible, is_active } = payload;
+    setToggles({ is_about_visible, is_born_at_visible, is_active });
+
+    if (!userFields.born_at) return;
+
+    userFields.born_at = hyphenatedDateFormat(userFields.born_at);
+  };
+
+  const atMountedEmployerForm = async () => {
+    const employer = (isThePage.value && route.params.id) && await $.user(route.params.id);
+    await setEmployerForm(employer || {});
+  };
+
+  onScopeDispose(() => {
+    userFields = undefined;
+    v$ = undefined;
+  });
 
   return {
     isValideAvatarFileSize,
     log,
     avatar,
     userFields,
-    isEditEmployerPage,
+    isEditEmployerPage: isThePage,
     v$,
     saveUser,
     toggles,

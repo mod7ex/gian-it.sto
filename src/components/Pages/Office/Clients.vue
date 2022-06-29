@@ -13,7 +13,7 @@ import useSuspense from '~/composables/useSuspense.js';
 import service from '~/services/clients/clients';
 import cityStore from '~/store/cities';
 
-const { filter, order, resetFilter, fetchClients } = service();
+const { filter, order, resetFilter, fetchClients, cleanUp } = service();
 
 const { criteriaOptions, criteria } = order;
 const { options, load } = cityStore;
@@ -33,6 +33,8 @@ watch(() => filter.department_id, setFilterSignature);
 
 onMounted(async () => {
   await load(); // cities
+
+  cleanUp();
 });
 
 </script>

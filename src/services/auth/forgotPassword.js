@@ -29,7 +29,7 @@ const refreshPassword = async () => {
   await call();
 };
 
-export default function useForgotPassword() {
+export default function () {
   return {
     refreshPassword,
     v$,

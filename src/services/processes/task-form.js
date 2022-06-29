@@ -93,7 +93,7 @@ export default function () {
 
   files = ref([]);
 
-  fields = reactive(defaultFields);
+  fields = reactive({ ...defaultFields });
 
   onScopeDispose(() => {
     files = undefined;

@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue';
+import { computed, reactive, onScopeDispose, effectScope } from 'vue';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
@@ -11,12 +11,7 @@ const { load } = store;
 
 const toaster = useToast();
 
-const mark = reactive({
-  id: '',
-  name: '',
-});
-
-const isUpdate = computed(() => !!mark.id);
+let mark;
 
 const setForm = (payload = {}) => {
   mark.id = payload.id;
@@ -39,24 +34,43 @@ const saveForm = async () => {
 const atMountedCarMarksForm = async () => {
   const { id } = mark;
 
-  let cm = {};
-  if (id) cm = await $.car_mark(id);
-
-  setForm(cm);
+  if (id) {
+    const cm = await $.car_mark(id);
+    setForm(cm);
+  }
 };
 
 export default function () {
-  const { render } = useModalForm({
-    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].car_mark),
-    RawForm,
-    atSubmit: saveForm,
-    atOpen: (id) => setForm({ id }),
-  });
+  const modalUp = (...args) => {
+    const scope = effectScope();
+
+    scope.run(() => {
+      const isUpdate = computed(() => !!mark.id);
+
+      const { render } = useModalForm({
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].car_mark),
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          mark = reactive({
+            id: id ?? '',
+            name: '',
+          });
+        },
+      });
+
+      render(...args);
+
+      onScopeDispose(() => {
+        mark = undefined;
+      });
+    });
+  };
 
   return {
-    render,
+    render: modalUp,
     mark,
     atMountedCarMarksForm,
-    isUpdate,
   };
 }

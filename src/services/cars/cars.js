@@ -1,3 +1,4 @@
+import { onScopeDispose } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import store from '~/store/cars/cars';
 
@@ -25,6 +26,12 @@ export default function () {
   const { redirectTo, isThePage, back } = useAppRouter('EditCar');
 
   [redirect, isEditCarPage, redirectBack] = [redirectTo, isThePage, back];
+
+  onScopeDispose(() => {
+    redirect = undefined;
+    isEditCarPage = undefined;
+    redirectBack = undefined;
+  });
 
   return {
     movetoEditCarPage,

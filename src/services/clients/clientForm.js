@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { onScopeDispose, reactive } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import clientFormValidationsRules from '~/validationsRules/clientForm';
 import useAppRouter from '~/composables/useAppRouter.js';
@@ -31,7 +31,7 @@ const defaultClientFields = {
   cars: [],
 };
 
-const clientFields = reactive(defaultClientFields);
+let clientFields;
 
 /* ************ client form ************ */
 
@@ -82,7 +82,7 @@ const setClientField = function (key) {
   clientFields[key] = this[key] ?? '';
 };
 
-const setClientForm = async (payload) => {
+const setForm = async (payload) => {
   Object.keys(clientFields).forEach(setClientField, payload);
 
   if (!clientFields.born_at) return;
@@ -91,9 +91,13 @@ const setClientForm = async (payload) => {
 };
 
 const atMountedClientForm = async () => {
-  const client = (isEditClientPage.value && routeInstance.params.id) && await $.client(routeInstance.params.id);
+  let client = {};
 
-  await setClientForm(client || {});
+  if (isEditClientPage.value && routeInstance.params.id) {
+    client = await $.client(routeInstance.params.id);
+  }
+
+  await setForm(client || {});
 };
 
 const addItem = (item) => () => {
@@ -114,6 +118,10 @@ const addItem = (item) => () => {
 };
 
 export default function () {
+  if (!clientFields) {
+    clientFields = reactive(defaultClientFields);
+  }
+
   const { route, isThePage, back } = useAppRouter('EditClient');
 
   [routeInstance, isEditClientPage, redirectBack] = [route, isThePage, back];
@@ -121,6 +129,14 @@ export default function () {
   const rules = clientFormValidationsRules();
 
   v$ = useVuelidate(rules, clientFields, { $lazy: true });
+
+  onScopeDispose(() => {
+    clientFields = undefined;
+    routeInstance = undefined;
+    isEditClientPage = undefined;
+    redirectBack = undefined;
+    v$ = undefined;
+  });
 
   return {
     clientFields,

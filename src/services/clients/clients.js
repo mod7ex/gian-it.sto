@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, effectScope, onScopeDispose } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 import store from '~/store/clients';
 import departmentStore from '~/store/departments';
@@ -17,38 +17,41 @@ const pivot = {
   // department: { label: 'По отделам', sort: (a, b) => (a.department?.id - b.department?.id) },
 };
 
-const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
+let filter;
 
-const { reset, trigger } = order;
-
-export const filter = reactive({
-  name: '',
-  search: '',
-  number: '',
-  department_id: current,
-  city_id: '',
-});
-
-export const resetFilter = () => {
-  Object.keys(filter).forEach((key) => {
-    if (key !== 'department_id') {
-      filter[key] = '';
-    }
-  });
-
-  reset(true);
-};
-
-/* ************ Fetch client ************ */
-const fetchClients = async (bool = false) => {
-  if (!filter.department_id) return;
-  if (bool) resetStore();
-  await fill(filter);
-  trigger();
-};
-
-export default function () {
+export default () => effectScope().run(() => {
   const { redirectTo } = useAppRouter();
+  const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
+
+  const { reset, trigger } = order;
+
+  const resetFilter = () => {
+    Object.keys(filter).forEach((key) => {
+      if (key !== 'department_id') {
+        filter[key] = '';
+      }
+    });
+
+    reset(true);
+  };
+
+  /* ************ Fetch client ************ */
+  const fetchClients = async (bool = false) => {
+    if (!filter.department_id) return;
+    if (bool) resetStore();
+    await fill(filter);
+    trigger();
+  };
+
+  if (!filter) {
+    filter = reactive({
+      name: '',
+      search: '',
+      number: '',
+      department_id: current,
+      city_id: '',
+    });
+  }
 
   const edit = async (id) => {
     await redirectTo({ name: 'EditClient', params: { id } });
@@ -60,5 +63,8 @@ export default function () {
     fetchClients,
     resetFilter,
     edit,
+    cleanUp: () => onScopeDispose(() => {
+      filter = undefined;
+    }),
   };
-}
+});

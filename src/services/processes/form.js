@@ -7,71 +7,78 @@ import useToast from '~/composables/useToast.js';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/processes/RawForm.vue';
 
+const toaster = useToast();
+
+const { load } = store;
+
 let process;
 
-export default () => effectScope().run(() => {
-  const { load } = store;
+const setField = function (key) {
+  if (key.includes('_id')) {
+    process[key] = this[key.replace('_id', '')]?.id;
+    return;
+  }
+  process[key] = this[key] ?? '';
+};
 
-  const toaster = useToast();
+const setForm = (payload = {}) => {
+  Object.keys(process).forEach(setField, payload);
+};
 
-  const isUpdate = computed(() => !!process?.id);
+const saveForm = async () => {
+  const { message, success } = await save.process_category(process);
 
-  const setField = function (key) {
-    if (key.includes('_id')) {
-      process[key] = this[key.replace('_id', '')]?.id;
-      return;
+  try {
+    return { message, success };
+  } finally {
+    if (success) {
+      await load();
+      toaster.success(message);
     }
-    process[key] = this[key] ?? '';
-  };
+  }
+};
 
-  const setForm = (payload = {}) => {
-    Object.getOwnPropertyNames(process).forEach(setField, payload);
-  };
+const atMounted = async () => {
+  const { id } = process;
 
-  const saveForm = async () => {
-    const { message, success } = await save.process_category(process);
+  if (id) {
+    const cm = await $.process_category(id);
+    setForm(cm);
+  }
+};
 
-    try {
-      return { message, success };
-    } finally {
-      if (success) {
-        await load();
-        toaster.success(message);
-      }
-    }
-  };
+export default () => {
+  const modalUp = (...args) => {
+    const scope = effectScope();
 
-  const atMounted = async () => {
-    const { id } = process;
+    scope.run(() => {
+      const isUpdate = computed(() => !!process?.id);
 
-    if (id) {
-      const cm = await $.process_category(id);
-      setForm(cm);
-    }
-  };
-
-  const { render } = useModalForm({
-    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].process_category),
-    RawForm,
-    atSubmit: saveForm,
-    atOpen: (id) => {
-      process = reactive({
-        id: '',
-        name: '',
-        appeal_reason_id: '',
+      const { render } = useModalForm({
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].process_category),
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          process = reactive({
+            id: id ?? '',
+            name: '',
+            appeal_reason_id: '',
+          });
+        },
       });
-      setForm({ id });
-    },
-  });
 
-  onScopeDispose(() => {
-    process = undefined;
-  });
+      render(...args);
+
+      onScopeDispose(() => {
+        process = undefined;
+      });
+    });
+  };
 
   return {
-    render,
+    render: modalUp,
     process,
     atMounted,
-    isUpdate,
   };
-});
+};

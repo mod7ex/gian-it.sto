@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
@@ -11,12 +11,7 @@ const { load } = store;
 
 const toaster = useToast();
 
-const why = reactive({
-  id: '',
-  name: '',
-});
-
-const isUpdate = computed(() => !!why.id);
+let why;
 
 const setForm = (payload = {}) => {
   why.id = payload.id;
@@ -39,24 +34,43 @@ const saveForm = async () => {
 const atMounted = async () => {
   const { id } = why;
 
-  let cm = {};
-  if (id) cm = await $.appeal_reason(id);
-
-  setForm(cm);
+  if (id) {
+    const cm = await $.appeal_reason(id);
+    setForm(cm || {});
+  }
 };
 
 export default function () {
-  const { render } = useModalForm({
-    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].appeal_reason),
-    RawForm,
-    atSubmit: saveForm,
-    atOpen: (id) => setForm({ id }),
-  });
+  const modalUp = (...args) => {
+    const scope = effectScope();
+
+    scope.run(() => {
+      const isUpdate = computed(() => !!why.id);
+
+      const { render } = useModalForm({
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].appeal_reason),
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          why = reactive({
+            id: id ?? '',
+            name: '',
+          });
+        },
+      });
+
+      render(...args);
+
+      onScopeDispose(() => {
+        why = undefined;
+      });
+    });
+  };
 
   return {
-    render,
+    render: modalUp,
     why,
     atMounted,
-    isUpdate,
   };
 }

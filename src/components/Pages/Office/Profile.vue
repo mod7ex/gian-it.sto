@@ -9,11 +9,11 @@ import Toggle from '@/UI/Toggle.vue';
 import EditUser from '@/Layout/users/EditUser.vue';
 import ProfilePasswordModal from '@/Partials/ProfileChangePasswordModal.vue';
 import profileChangePasswordHandler from '~/services/auth/profileChangePassword.js';
-import officeProfile from '~/services/officeProfile.js';
+import service from '~/services/officeProfile.js';
 
 const { setModalVisibility } = profileChangePasswordHandler();
 
-const { v$, avatar, isUploadingAvatar, toggles, log, form, save, isValideAvatarFileSize, isBusy } = officeProfile();
+const { v$, avatar, isUploadingAvatar, toggles, log, form, save, isValideAvatarFileSize, isBusy } = service();
 
 </script>
 

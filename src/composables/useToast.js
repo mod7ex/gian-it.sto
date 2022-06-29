@@ -2,6 +2,11 @@ import { h, createApp, ref, defineComponent, computed, watch, TransitionGroup } 
 import { CheckIcon, ExclamationIcon, InformationCircleIcon } from '@heroicons/vue/outline';
 import Toast from '@/UI/Toast.vue';
 
+/**
+ *  This composable shouldn't be inside a scope
+ *
+ */
+
 let ToastsApp;
 
 const toastsList = ref(new Map()); // Map works well with frequent deletion and adding
@@ -27,8 +32,8 @@ const ToastsComponent = defineComponent({
           class: 'w-full flex flex-col items-center space-y-4',
           // class: 'w-full flex flex-col items-center space-y-4 bg-blue-600',
         },
-        // we could've used toastsList directly
-        list.value.map(([key, props]) => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),
+          // we could've used toastsList directly
+          list.value.map(([key, props]) => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),
       ]);
   },
 });

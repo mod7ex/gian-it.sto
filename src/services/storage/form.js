@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import RawForm from '~/components/Partials/storage/RawForm.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
@@ -7,17 +7,7 @@ import store from '~/store/storage';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 
-const { load } = store;
-
-const toaster = useToast();
-
-const storage = reactive({
-  id: '',
-  name: '',
-  city_id: '',
-});
-
-const isUpdate = computed(() => !!storage.id);
+let storage;
 
 const setForm = (payload = {}) => {
   storage.id = payload.id;
@@ -25,40 +15,64 @@ const setForm = (payload = {}) => {
   storage.city_id = payload.city?.id;
 };
 
-const saveForm = async () => {
-  const { message, success } = await save.storage(storage);
-
-  try {
-    return { message, success };
-  } finally {
-    if (success) {
-      await load();
-      toaster.success(message);
-    }
-  }
-};
-
 const atMountedStorageForm = async () => {
   const { id } = storage;
 
-  let item = {};
-  if (id) item = await $.storage(id);
-
-  setForm(item);
+  if (id) {
+    const item = await $.storage(id);
+    setForm(item ?? {});
+  }
 };
 
 export default function () {
-  const { render } = useModalForm({
-    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].storage),
-    RawForm,
-    atSubmit: saveForm,
-    atOpen: (id) => setForm({ id }),
-  });
+  const modalUp = (...args) => {
+    const scope = effectScope(true);
+
+    scope.run(() => {
+      const { load } = store;
+
+      const toaster = useToast();
+
+      const isUpdate = computed(() => !!storage?.id);
+
+      const saveForm = async () => {
+        const { message, success } = await save.storage(storage);
+
+        try {
+          return { message, success };
+        } finally {
+          if (success) {
+            await load();
+            toaster.success(message);
+          }
+        }
+      };
+
+      const { render } = useModalForm({
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].storage),
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          storage = reactive({
+            id: id ?? '',
+            name: '',
+            city_id: '',
+          });
+        },
+      });
+
+      render(...args);
+
+      onScopeDispose(() => {
+        storage = undefined;
+      });
+    });
+  };
 
   return {
-    saveForm,
     storage,
     atMountedStorageForm,
-    render,
+    render: modalUp,
   };
 }

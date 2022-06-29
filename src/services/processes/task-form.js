@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue';
+import { reactive, ref, onScopeDispose } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
@@ -13,7 +13,6 @@ const { user } = useAuth();
 let routeInstance;
 let isEditPage;
 let redirect;
-let files;
 
 const defaultFields = {
   id: '',
@@ -30,18 +29,19 @@ const defaultFields = {
   // end_at: '',
 
   // pipelines: [],
-// temp_file_ids: [],
+  // temp_file_ids: [],
 };
 
-const fields = reactive(defaultFields);
+let files;
+let fields;
 
 /* ************ task form ************ */
 
 const saveTask = async () => {
-//   const fileSet = new FormData();
-//   files.value.forEach((file, i) => {
-//     fileSet.set(`file-${i}`, file);
-//   });
+  //   const fileSet = new FormData();
+  //   files.value.forEach((file, i) => {
+  //     fileSet.set(`file-${i}`, file);
+  //   });
 
   //   const { message: msg, success: suc } = await upload('temp/files', fileSet);
 
@@ -50,7 +50,7 @@ const saveTask = async () => {
 
   const { data, success } = await save.process_task(fields, null, true);
 
-//   success && redirect({ name: 'Task', params: { id: data?.task?.id } });
+  //   success && redirect({ name: 'Task', params: { id: data?.task?.id } });
 };
 
 // **********************************************************************  Form
@@ -66,8 +66,8 @@ const setField = function (key) {
   fields[key] = this[key] ?? defaultFields[key];
 };
 
-const setForm = async (payload) => {
-  Object.keys(fields).forEach(setField, payload ?? {});
+const setForm = async (payload = {}) => {
+  Object.keys(fields).forEach(setField, payload);
 
   if (!fields.deadline_at) return;
 
@@ -92,6 +92,13 @@ export default function () {
   [routeInstance, isEditPage, redirect] = [route, isThePage, redirectTo];
 
   files = ref([]);
+
+  fields = reactive(defaultFields);
+
+  onScopeDispose(() => {
+    files = undefined;
+    fields = undefined;
+  });
 
   return {
     fields,

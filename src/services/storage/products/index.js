@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, effectScope, onScopeDispose } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 import store from '~/store/storage/products';
 import useAppRouter from '~/composables/useAppRouter';
@@ -12,17 +12,21 @@ const pivot = {
   name: { label: 'По имени', sort: (a, b) => (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)) },
 };
 
-const filter = reactive({
-  name: '',
-  sku: '',
-  producer_id: '',
-});
+let filter;
 
-const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
+export default () => effectScope().run(() => {
+  if (!filter) {
+    filter = reactive({
+      name: '',
+      sku: '',
+      producer_id: '',
+    });
+  }
 
-const { trigger } = order;
+  const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
-export default function () {
+  const { trigger } = order;
+
   const { route, redirectTo } = useAppRouter();
 
   const fetchProducts = async (bool = false) => {
@@ -39,10 +43,14 @@ export default function () {
     await redirectTo({ name: 'EditStorage', params: { product: id } });
   };
 
+  onScopeDispose(() => {
+    filter = undefined;
+  });
+
   return {
     order,
     filter,
     fetchProducts,
     redirectToForm,
   };
-}
+});

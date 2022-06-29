@@ -1,7 +1,9 @@
-import { ref, computed } from 'vue';
+import { ref, computed, effectScope, onScopeDispose } from 'vue';
 
-export default function useToggles(fields) {
-  const toggles = ref({});
+let toggles;
+
+export default () => effectScope().run((fields) => {
+  if (!toggles) toggles = ref({});
 
   const setToggles = (v, bool, field) => {
     toggles.value = {}; // reset à 0
@@ -9,7 +11,7 @@ export default function useToggles(fields) {
     if (!v) return;
 
     if (Array.isArray(v)) {
-    // in case of array setup we need a boolan for sure & field in case array is populated with objects
+      // in case of array setup we need a boolan for sure & field in case array is populated with objects
       v.forEach((item) => {
         toggles.value[field ? item[field] : item] = bool;
       });
@@ -36,10 +38,14 @@ export default function useToggles(fields) {
 
   const truthyTogglesArray = computed(() => Object.keys(toggles.value).filter((key) => toggles.value[key]));
 
+  onScopeDispose(() => {
+    toggles = undefined;
+  });
+
   return {
     toggles,
     setToggles,
     truthyTogglesArray,
     bitwisedToggles,
   };
-}
+});

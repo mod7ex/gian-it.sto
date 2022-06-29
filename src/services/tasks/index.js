@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, effectScope, onScopeDispose } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 // import departmentStore from '~/store/departments';
 import store from '~/store/tasks';
@@ -6,8 +6,6 @@ import useConfirmDialog from '~/composables/useConfirmDialog';
 import useAppRouter from '~/composables/useAppRouter';
 
 // const { current } = departmentStore;
-
-const { sort, fill, reset: resetStore, drop: dropTask } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -20,36 +18,42 @@ const pivot = {
   // date: { label: 'По дате', sort: (a, b) => ((new Date(a.created_at).getTime()) - (new Date(b.created_at).getTime())) },
 };
 
-const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
+let filter;
 
-const { reset, trigger } = order;
+export default () => effectScope().run(() => {
+  const { sort, fill, reset: resetStore, drop: dropTask } = store;
 
-export const filter = reactive({
-  name: '',
-  status: '',
-  user_id: '',
-  order_id: '',
-  pipeline_id: '',
-  // department_id: current,
-});
+  const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
-export const resetFilter = () => {
-  Object.keys(filter).forEach((key) => {
-    if (key !== 'department_id') {
-      filter[key] = '';
-    }
-  });
+  const { reset, trigger } = order;
 
-  reset(true);
-};
+  if (!filter) {
+    filter = reactive({
+      name: '',
+      status: '',
+      user_id: '',
+      order_id: '',
+      pipeline_id: '',
+      // department_id: current,
+    });
+  }
 
-const fetchTasks = async (bool = false) => {
-  if (bool) resetStore();
-  await fill(filter);
-  trigger();
-};
+  const resetFilter = () => {
+    Object.keys(filter).forEach((key) => {
+      if (key !== 'department_id') {
+        filter[key] = '';
+      }
+    });
 
-export default function () {
+    reset(true);
+  };
+
+  const fetchTasks = async (bool = false) => {
+    if (bool) resetStore();
+    await fill(filter);
+    trigger();
+  };
+
   const { drop } = useConfirmDialog();
   const { redirectTo } = useAppRouter();
 
@@ -59,6 +63,10 @@ export default function () {
     await redirectTo({ name: 'TaskEdit', params: { id } });
   };
 
+  onScopeDispose(() => {
+    filter = undefined;
+  });
+
   return {
     order,
     filter,
@@ -67,4 +75,4 @@ export default function () {
     resetFilter,
     fetchTasks,
   };
-}
+});

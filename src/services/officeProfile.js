@@ -1,4 +1,4 @@
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, effectScope } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useApi from '~/composables/useApi.js';
 import useAuth from '~/composables/useAuth.js';
@@ -7,88 +7,87 @@ import useAvatar from '~/composables/useAvatar.js';
 import officeProfileRules from '~/validationsRules/officeProfile.js';
 import useToggles from '~/composables/useToggles.js';
 
-const toaster = useToast();
+export default () => effectScope().run(() => {
+  const toaster = useToast();
 
-const { apiRequest } = useApi();
-const { rules } = officeProfileRules();
-const { user, setUser } = useAuth();
-const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar } = useAvatar();
+  const { apiRequest } = useApi();
+  const { rules } = officeProfileRules();
+  const { user, setUser } = useAuth();
+  const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar } = useAvatar();
 
-const { toggles, setToggles, bitwisedToggles } = useToggles();
+  const { toggles, setToggles, bitwisedToggles } = useToggles();
 
-const form = reactive({
-  name: user.value.name,
-  email: user.value.email,
+  const form = reactive({
+    name: user.value.name,
+    email: user.value.email,
 
-  surname: user.value.surname,
-  middle_name: user.value.middle_name,
-  phone: user.value.phone,
-  about: user.value.about,
-  born_at: user.value.born_at,
-  office_position: user.value.office_position,
-});
-
-const v$ = useVuelidate(rules, form, { $lazy: true });
-
-const updateRawFields = async () => {
-  const { call, data, errorMsg, success } = apiRequest('/profile', {
-    method: 'put',
-    data: {
-      ...form,
-      ...bitwisedToggles.value,
-    },
+    surname: user.value.surname,
+    middle_name: user.value.middle_name,
+    phone: user.value.phone,
+    about: user.value.about,
+    born_at: user.value.born_at,
+    office_position: user.value.office_position,
   });
 
-  await call();
+  const v$ = useVuelidate(rules, form, { $lazy: true });
 
-  if (success.value) toaster.success('Ваши данные успешно обновлены');
-  else toaster.danger(errorMsg.value ?? 'Undefined (network?) error');
+  const updateRawFields = async () => {
+    const { call, data, errorMsg, success } = apiRequest('/profile', {
+      method: 'put',
+      data: {
+        ...form,
+        ...bitwisedToggles.value,
+      },
+    });
 
-  return data.value?.user;
-};
+    await call();
 
-const reset = async () => {
-  setAvatar(user.value);
+    if (success.value) toaster.success('Ваши данные успешно обновлены');
+    else toaster.danger(errorMsg.value ?? 'Undefined (network?) error');
 
-  Object.keys(form).forEach((key) => {
-    form[key] = user.value[key] ?? '';
-  });
+    return data.value?.user;
+  };
 
-  // eslint-disable-next-line camelcase
-  const { is_about_visible, is_born_at_visible, is_active } = user.value;
-  setToggles({ is_about_visible, is_born_at_visible, is_active });
+  const reset = async () => {
+    setAvatar(user.value);
 
-  if (!form.born_at) return;
+    Object.keys(form).forEach((key) => {
+      form[key] = user.value[key] ?? '';
+    });
 
-  const [d, m, y] = form.born_at.split('.');
-  form.born_at = `${y}-${m}-${d}`;
-};
+    const { is_about_visible, is_born_at_visible, is_active } = user.value;
+    setToggles({ is_about_visible, is_born_at_visible, is_active });
 
-const isBusy = ref(false);
+    if (!form.born_at) return;
 
-const save = async () => {
-  let isValideForm = await v$.value.$validate();
+    const [d, m, y] = form.born_at.split('.');
+    form.born_at = `${y}-${m}-${d}`;
+  };
 
-  isValideForm &&= isValideAvatarFileSize.value;
+  const isBusy = ref(false);
 
-  if (!isValideForm) return;
+  const save = async () => {
+    let isValideForm = await v$.value.$validate();
 
-  v$.value.$reset();
+    isValideForm &&= isValideAvatarFileSize.value;
 
-  isBusy.value = true;
+    if (!isValideForm) return;
 
-  await updateAvatar('profile/avatar');
+    v$.value.$reset();
 
-  const maybeUser = await updateRawFields();
+    isBusy.value = true;
 
-  setUser(maybeUser);
+    await updateAvatar('profile/avatar');
 
-  await reset();
+    const maybeUser = await updateRawFields();
 
-  isBusy.value = false;
-};
+    setUser(maybeUser);
 
-export default function officeProfile() {
+    await reset();
+
+    isBusy.value = false;
+  };
+
   onMounted(async () => {
     await reset();
   });
@@ -104,4 +103,4 @@ export default function officeProfile() {
     isValideAvatarFileSize,
     isBusy,
   };
-}
+});

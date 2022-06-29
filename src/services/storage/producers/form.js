@@ -1,4 +1,4 @@
-import { computed, reactive } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import RawForm from '~/components/Partials/storage/producers/RawForm.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
@@ -11,12 +11,7 @@ const { load } = store;
 
 const toaster = useToast();
 
-const producer = reactive({
-  id: '',
-  name: '',
-});
-
-const isUpdate = computed(() => !!producer.id);
+let producer;
 
 const setForm = (payload = {}) => {
   producer.id = payload.id;
@@ -46,17 +41,37 @@ const atMountedProducerForm = async () => {
 };
 
 export default function () {
-  const { render } = useModalForm({
-    title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].producer),
-    RawForm,
-    atSubmit: saveForm,
-    atOpen: (id) => setForm({ id }),
-  });
+  const modalUp = (...args) => {
+    const scope = effectScope(true);
+
+    scope.run(() => {
+      const isUpdate = computed(() => !!producer.id);
+
+      const { render } = useModalForm({
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].producer),
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          producer = reactive({
+            id: id ?? '',
+            name: '',
+          });
+        },
+      });
+
+      render(...args);
+
+      onScopeDispose(() => {
+        producer = undefined;
+      });
+    });
+  };
 
   return {
     saveForm,
     producer,
     atMountedProducerForm,
-    render,
+    render: modalUp,
   };
 }

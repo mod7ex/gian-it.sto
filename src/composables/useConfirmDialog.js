@@ -15,10 +15,8 @@ const DEFAULTS = {
 
 const spinner = h('div', { class: 'my-5 flex justify-center' }, [h(Spinner)]);
 
-const scope = effectScope(true);
-
 const handler = (...args) => {
-  scope.active = true;
+  const scope = effectScope(true);
 
   scope.run(() => {
     let proceed_function;

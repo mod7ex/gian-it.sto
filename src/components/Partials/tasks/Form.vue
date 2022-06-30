@@ -27,7 +27,7 @@ const statusOptions = [
 
 watch(current, async () => {
   await load({ department_id: current.value });
-}, { setImmediate: true });
+}, { immediate: true });
 
 await atMounted();
 
@@ -44,7 +44,6 @@ await atMounted();
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-            <!-- <Select label="Исполнитель" :options="[{label: 'Не выбрано'}]" v-model="fields.user_id" /> -->
             <Select label="Исполнитель" :options="options" />
         </div>
 
@@ -76,6 +75,6 @@ await atMounted();
             <Button size="xs" class="mt-4" @click="fields.checkboxes.push('')">Добавить</Button>
         </div>
 
-        <div class="col-span-12 sm:col-span-12"><Upload @selected="log" /></div>
+        <div class="col-span-12 sm:col-span-12"><Upload :multiple="true" @selected="log" /></div>
     </div>
 </template>

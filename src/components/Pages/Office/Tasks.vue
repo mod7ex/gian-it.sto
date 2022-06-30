@@ -30,7 +30,7 @@ watch(filter, debounce(() => {
   if (current.value) {
     filterSignature.value = objectSignature(filter);
   }
-}), { deep: true });
+}));
 
 </script>
 

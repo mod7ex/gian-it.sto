@@ -1,9 +1,5 @@
 <script setup>
-import {
-  CheckIcon,
-  ArrowLeftIcon,
-  XIcon,
-} from '@heroicons/vue/outline';
+import { CheckIcon, ArrowLeftIcon, XIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Form from '@/Partials/tasks/Form.vue';

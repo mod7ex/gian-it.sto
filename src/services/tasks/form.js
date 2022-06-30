@@ -24,28 +24,40 @@ const defaultFields = {
 };
 
 let fields;
+let files;
 
 export default () => effectScope().run(() => {
   const toaster = useToast();
 
   const { route, isThePage, redirectTo } = useAppRouter('TaskEdit');
 
-  if (!fields) fields = reactive(defaultFields);
-
-  const files = ref([]);
+  if (!fields) {
+    fields = reactive(defaultFields);
+    files = ref();
+  }
 
   /* ************ task form ************ */
 
   const saveTask = async () => {
-    const fileSet = new FormData();
-    files.value.forEach((file, i) => {
-      fileSet.set(`file-${i}`, file);
-    });
+    const len = files.value.length;
+    if (len) {
+      const fileSet = new FormData();
 
-    const { message: msg, success: suc } = await upload('temp/files', fileSet);
+      for (let i = 0; i < len; i++) {
+        fileSet.append('files[]', files.value[0]);
+      }
 
-    if (suc) toaster.success('Файлы успешно загружены');
-    else toaster.danger(msg ?? 'Что-то пошло не так, не удалось загрузить файлы');
+      const { message: msg, success: suc, data } = await upload('temp/files', fileSet);
+
+      if (suc) toaster.success('Файлы успешно загружены');
+      else toaster.danger(msg ?? 'Что-то пошло не так, не удалось загрузить файлы');
+
+      if (suc) fields.temp_file_ids = data?.files?.map(({ id }) => id);
+      else {
+        // eslint-disable-next-line no-void
+        return void (0);
+      }
+    }
 
     const { data, success } = await save.task(fields, null, true);
 
@@ -88,6 +100,7 @@ export default () => effectScope().run(() => {
 
   onScopeDispose(() => {
     fields = undefined;
+    files = undefined;
   });
 
   return {

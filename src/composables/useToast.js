@@ -32,8 +32,8 @@ const ToastsComponent = defineComponent({
           class: 'w-full flex flex-col items-center space-y-4',
           // class: 'w-full flex flex-col items-center space-y-4 bg-blue-600',
         },
-          // we could've used toastsList directly
-          list.value.map(([key, props]) => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),
+          () => list.value.map(([key, props]) => h(Toast, { ...props, key, onClose: () => closeToast(key) }))),
+        // we could've used toastsList directly
       ]);
   },
 });

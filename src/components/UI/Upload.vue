@@ -21,7 +21,6 @@ const files = ref([]);
 
 const handler = (e) => {
   files.value = [...e.target.files].map(({ name }) => name);
-  console.log(files);
   emit('selected', e);
 };
 

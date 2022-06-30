@@ -19,7 +19,7 @@ const defaultFields = {
   // start_at: '',
   // end_at: '',
 
-  // pipelines: [],
+  pipelines: [],
   temp_file_ids: [],
 };
 
@@ -39,7 +39,7 @@ export default () => effectScope().run(() => {
   /* ************ task form ************ */
 
   const saveTask = async () => {
-    const len = files.value.length;
+    const len = files.value?.length ?? 0;
     if (len) {
       const fileSet = new FormData();
 

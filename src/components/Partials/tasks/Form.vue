@@ -48,7 +48,7 @@ await atMounted();
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-            <Select label="Заказ наряд" :options="[{label: 'Не выбрано'}]" v-model="fields.order_id" />
+            <Select label="Заказ наряд" :options="[{label: 'Не выбрано', value: 0}]" v-model="fields.order_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-3">

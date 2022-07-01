@@ -26,6 +26,7 @@ module.exports = {
     'no-plusplus': 'off',
     'no-param-reassign': 'off',
     camelcase: 'off',
+    // indent: ['error', 3],
     // 'no-console': 'off',
   },
   globals: {

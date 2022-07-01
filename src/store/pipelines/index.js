@@ -1,6 +1,6 @@
 import { reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
-import $ from '~/helpers/drop';
+import _$ from '~/helpers/drop';
 
 const state = reactive({
   raw: [],
@@ -11,7 +11,7 @@ const reset = () => {
 };
 
 const load = async (type = 'task') => {
-  state.raw = await $.pipelines({type});
+  state.raw = await $.pipelines({ type });
 };
 
 const drop = async (id) => _$.pipeline(id, (v) => {

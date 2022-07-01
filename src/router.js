@@ -68,6 +68,9 @@ const routes = [
 
   { path: '/elements', component: () => import(/* webpackChunkName: "ElementsPage" */ '@/Pages/Office/Elements.vue'), name: 'ElementsPage' },
 
+  { path: '/pipelines', component: () => import(/* webpackChunkName: "Funnels" */ '@/Pages/Office/Pipelines.vue'), name: 'Funnels' },
+  { path: '/pipelines/:id', component: () => import(/* webpackChunkName: "Stages" */ '@/Pages/Office/Stages.vue'), name: 'Stages' },
+
   { path: '/w/tasks', component: () => import(/* webpackChunkName: "WorkerTasks" */ '@/Pages/Work/Tasks.vue'), name: 'WorkerTasks' },
   { path: '/w/tasks/1', component: () => import(/* webpackChunkName: "WorkerTask" */ '@/Pages/Work/Task.vue'), name: 'WorkerTask' },
   { path: '/w/profile', component: () => import(/* webpackChunkName: "WorkerProfile" */ '@/Pages/Work/Profile.vue'), name: 'WorkerProfile' },

@@ -19,12 +19,33 @@ const defaultFields = {
   // start_at: '',
   // end_at: '',
 
-  pipelines: [],
+  pipelines: { pipeline_id: '', stage_id: '' },
   temp_file_ids: [],
 };
 
 let fields;
 let files;
+
+// **********************************************************************  Form
+const setField = function (key) {
+  if (key.includes('_id')) {
+    if (key === 'user_id') return;
+    if (key === 'temp_file_ids') return;
+
+    fields[key] = this[key.replace('_id', '')]?.id;
+    return;
+  }
+
+  fields[key] = this[key] ?? defaultFields[key];
+};
+
+const setForm = async (payload) => {
+  Object.keys(fields).forEach(setField, payload ?? {});
+
+  if (!fields.deadline_at) return;
+
+  fields.deadline_at = hyphenatedDateFormat(fields.deadline_at);
+};
 
 export default () => effectScope().run(() => {
   const toaster = useToast();
@@ -62,27 +83,6 @@ export default () => effectScope().run(() => {
     const { data, success } = await save.task(fields, null, true);
 
     success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
-  };
-
-  // **********************************************************************  Form
-  const setField = function (key) {
-    if (key.includes('_id')) {
-      if (key === 'user_id') return;
-      if (key === 'temp_file_ids') return;
-
-      fields[key] = this[key.replace('_id', '')]?.id;
-      return;
-    }
-
-    fields[key] = this[key] ?? defaultFields[key];
-  };
-
-  const setForm = async (payload) => {
-    Object.keys(fields).forEach(setField, payload ?? {});
-
-    if (!fields.deadline_at) return;
-
-    fields.deadline_at = hyphenatedDateFormat(fields.deadline_at);
   };
 
   const atMounted = async () => {

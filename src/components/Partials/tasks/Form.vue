@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch } from 'vue';
+import { computed, version, watch } from 'vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
 import Upload from '@/UI/Upload.vue';
@@ -9,8 +9,14 @@ import service from '~/services/tasks/form';
 import { maybeRun } from '~/helpers';
 import userStore from '~/store/employees';
 import departmentStore from '~/store/departments';
+import pipelineStore from '~/store/pipelines';
+import stagesStore from '~/store/pipelines/stages';
 
 const { current } = departmentStore;
+
+const { load: loadFunnels, options: pipelinesOptions } = pipelineStore;
+
+const { load: loadStages, options: stagesOptions } = stagesStore;
 
 const { load, options } = userStore;
 
@@ -29,7 +35,15 @@ watch(current, async () => {
   await load({ department_id: current.value });
 }, { immediate: true });
 
-await atMounted();
+watch(() => fields.pipelines.pipeline_id, async (v) => {
+  await loadStages(v);
+});
+
+await (async ()=>{
+    await load();
+    await loadFunnels();
+    await atMounted();
+})();
 
 </script>
 
@@ -57,6 +71,14 @@ await atMounted();
 
         <div class="col-span-12 sm:col-span-3">
             <Select label="Статус" :options="statusOptions" v-model="fields.status" />
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+            <Select label="Воронка" :options="pipelinesOptions" v-model="fields.pipelines.pipeline_id" />
+        </div>
+
+        <div class="col-span-12 sm:col-span-3">
+            <Select label="Cтупень" :options="stagesOptions" v-model="fields.pipelines.stage_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-12">

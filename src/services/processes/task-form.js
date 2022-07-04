@@ -28,8 +28,8 @@ const defaultFields = {
   // start_at: '',
   // end_at: '',
 
-  // pipelines: [],
-  // temp_file_ids: [],
+  pipelines: { pipeline_id: '', stage_id: '' },
+  temp_file_ids: [],
 };
 
 let files;

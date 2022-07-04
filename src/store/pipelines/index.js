@@ -1,4 +1,4 @@
-import { reactive, readonly } from 'vue';
+import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
 
@@ -20,6 +20,7 @@ const drop = async (id) => _$.pipeline(id, (v) => {
 
 export default {
   state: readonly(state),
+  options: computed(() => state.raw.map(({ id, name }) => ({ label: name, value: id }))),
 
   load,
   reset,

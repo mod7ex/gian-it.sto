@@ -49,7 +49,7 @@ export default function () {
       };
 
       const { render } = useModalForm({
-        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].pipelines),
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].pipeline),
         RawForm,
         atSubmit: saveForm,
         atClose: () => scope.stop(),

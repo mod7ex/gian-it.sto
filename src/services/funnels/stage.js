@@ -50,7 +50,7 @@ const modalUp = (...args) => {
     const isUpdate = computed(() => !!stage?.id);
 
     const { render } = useModalForm({
-      title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].stages),
+      title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].stage),
       RawForm,
       atSubmit: () => saveForm(pipeline_id),
       atClose: () => scope.stop(),

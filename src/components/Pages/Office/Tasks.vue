@@ -1,6 +1,6 @@
 <script setup>
 import { PlusCircleIcon, RefreshIcon } from '@heroicons/vue/outline';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { debounce, objectSignature } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
@@ -12,10 +12,11 @@ import Select from '@/UI/Select.vue';
 import service from '~/services/tasks';
 import Table from '@/Partials/tasks/Table.vue';
 import useSuspense from '~/composables/useSuspense.js';
-
 import departmentStore from '~/store/departments';
+import pipelineStore from '~/store//pipelines';
 
 const { current } = departmentStore;
+const { options, load: loadFunnels } = pipelineStore;
 
 const SuspenseArea = useSuspense();
 
@@ -31,6 +32,8 @@ watch(filter, debounce(() => {
     filterSignature.value = objectSignature(filter);
   }
 }));
+
+onMounted(async () => { await loadFunnels(); });
 
 </script>
 
@@ -48,8 +51,10 @@ watch(filter, debounce(() => {
     <Header>Фильтр</Header>
 
     <!-- Filter -->
-    <div class="flex flex-wrap gap-2 items-start">
-      <Input label="Название" v-model="filter.name"/>
+    <div class="flex flex-wrap gap-1 items-start">
+      <div class="w-48">
+        <Input label="Название"  v-model="filter.name"/>
+      </div>
 
       <div>
         <Label class="mb-1">Статус</Label>
@@ -81,7 +86,7 @@ watch(filter, debounce(() => {
       <div>
         <Select
           label="Воронка"
-          :options="[{label: 'Не выбрано', value: null}]"
+          :options="options"
           v-model="filter.pipeline_id"
           class="w-44"
         />
@@ -96,7 +101,7 @@ watch(filter, debounce(() => {
         />
       </div>
 
-      <div class="text-center ml-5">
+      <div class="text-center ml-3">
         <Label>сбросить</Label>
         <Button type="secondary" class="rounded-full" @click="()=>resetFilter()">
           <RefreshIcon class="h-4 w-4 text-gray-600" />

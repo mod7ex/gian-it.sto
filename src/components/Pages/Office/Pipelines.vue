@@ -16,7 +16,7 @@ const SuspenseTable = useSuspense(Table);
     <OfficeLayout title="Все воронки">
       <template #actions>
         <Button type="secondary" :link="{ name: 'Orders' }">
-        <ArrowLeftIcon class="w-5 h-5 mr-1"/>К заказ нарядам
+          <ArrowLeftIcon class="w-5 h-5 mr-1"/>К заказ нарядам
         </Button>
 
         <Button color="blue" @click="() => render()">

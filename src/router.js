@@ -61,15 +61,14 @@ const routes = [
 
   { path: '/settings', component: () => import(/* webpackChunkName: "Settings" */ '@/Pages/Office/Settings.vue'), name: 'Settings' },
 
-  { path: '/pipelines', component: () => import(/* webpackChunkName: "Pipelines" */ '@/Pages/Office/Pipelines.vue'), name: 'Pipelines' },
-  { path: '/pipelines/create', component: () => import(/* webpackChunkName: "PipelineForm" */ '@/Pages/Office/PipelineForm.vue'), name: 'PipelineForm' },
+  // { path: '/pipelines', component: () => import(/* webpackChunkName: "Pipelines" */ '@/Pages/Office/Pipelines.vue'), name: 'Pipelines' },
+  // { path: '/pipelines/create', component: () => import(/* webpackChunkName: "PipelineForm" */ '@/Pages/Office/PipelineForm.vue'), name: 'PipelineForm' },
+  { path: '/pipelines', component: () => import(/* webpackChunkName: "Funnels" */ '@/Pages/Office/Pipelines.vue'), name: 'Funnels' },
+  { path: '/pipelines/:id', component: () => import(/* webpackChunkName: "Stages" */ '@/Pages/Office/Stages.vue'), name: 'Stages' },
 
   { path: '/profile', component: () => import(/* webpackChunkName: "Profile" */ '@/Pages/Office/Profile.vue'), name: 'Profile' },
 
   { path: '/elements', component: () => import(/* webpackChunkName: "ElementsPage" */ '@/Pages/Office/Elements.vue'), name: 'ElementsPage' },
-
-  { path: '/pipelines', component: () => import(/* webpackChunkName: "Funnels" */ '@/Pages/Office/Pipelines.vue'), name: 'Funnels' },
-  { path: '/pipelines/:id', component: () => import(/* webpackChunkName: "Stages" */ '@/Pages/Office/Stages.vue'), name: 'Stages' },
 
   { path: '/w/tasks', component: () => import(/* webpackChunkName: "WorkerTasks" */ '@/Pages/Work/Tasks.vue'), name: 'WorkerTasks' },
   { path: '/w/tasks/1', component: () => import(/* webpackChunkName: "WorkerTask" */ '@/Pages/Work/Task.vue'), name: 'WorkerTask' },

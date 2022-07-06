@@ -1,4 +1,5 @@
 import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
@@ -7,12 +8,14 @@ import RawForm from '~/components/Partials/finances/RawForm.vue';
 import communicate from '~/helpers/communicate';
 import service from '~/services/finances/index';
 import departmentStore from '~/store/departments';
+import formRules from '~/validationsRules/finance';
 
 const { current } = departmentStore;
 
 const toaster = useToast();
 
 let finance;
+let v$;
 
 const setFormField = function (key) {
   if (key.includes('_id')) {
@@ -46,6 +49,12 @@ export default function () {
   const { fetchFinances } = service();
 
   const saveForm = async () => {
+    const isValideForm = await v$.value.$validate();
+
+    if (!isValideForm) return;
+
+    v$.value.$reset();
+
     const { message, success } = await save.finance(finance);
 
     try {
@@ -78,6 +87,8 @@ export default function () {
             finance_group_id: '',
             department_id: '',
           });
+
+          v$ = useVuelidate(formRules(), finance, { $lazy: true });
         },
       });
 
@@ -85,6 +96,7 @@ export default function () {
 
       onScopeDispose(() => {
         finance = undefined;
+        v$ = undefined;
       });
     });
   };
@@ -93,5 +105,6 @@ export default function () {
     render: modalUp,
     atMountedFinanceForm,
     finance,
+    v$,
   };
 }

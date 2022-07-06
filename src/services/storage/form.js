@@ -1,4 +1,5 @@
 import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import RawForm from '~/components/Partials/storage/RawForm.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
@@ -6,8 +7,14 @@ import useToast from '~/composables/useToast.js';
 import store from '~/store/storage';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
+import formRules from '~/validationsRules/storage';
+
+const { load } = store;
+
+const toaster = useToast();
 
 let storage;
+let v$;
 
 const setForm = (payload = {}) => {
   storage.id = payload.id;
@@ -24,29 +31,31 @@ const atMountedStorageForm = async () => {
   }
 };
 
+const saveForm = async () => {
+  const isValideForm = await v$.value.$validate();
+
+  if (!isValideForm) return;
+
+  v$.value.$reset();
+
+  const { message, success } = await save.storage(storage);
+
+  try {
+    return { message, success };
+  } finally {
+    if (success) {
+      await load();
+      toaster.success(message);
+    }
+  }
+};
+
 export default function () {
   const modalUp = (...args) => {
     const scope = effectScope(true);
 
     scope.run(() => {
-      const { load } = store;
-
-      const toaster = useToast();
-
       const isUpdate = computed(() => !!storage?.id);
-
-      const saveForm = async () => {
-        const { message, success } = await save.storage(storage);
-
-        try {
-          return { message, success };
-        } finally {
-          if (success) {
-            await load();
-            toaster.success(message);
-          }
-        }
-      };
 
       const { render } = useModalForm({
         title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].storage),
@@ -59,6 +68,7 @@ export default function () {
             name: '',
             city_id: '',
           });
+          v$ = useVuelidate(formRules(), storage, { $lazy: true });
         },
       });
 
@@ -74,5 +84,6 @@ export default function () {
     storage,
     atMountedStorageForm,
     render: modalUp,
+    v$,
   };
 }

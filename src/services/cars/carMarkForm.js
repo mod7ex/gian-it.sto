@@ -1,4 +1,5 @@
 import { computed, reactive, onScopeDispose, effectScope } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import useToast from '~/composables/useToast.js';
@@ -6,12 +7,14 @@ import store from '~/store/cars/marks';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/cars/CarMarkRawForm.vue';
 import communicate from '~/helpers/communicate';
+import formRules from '~/validationsRules/carModel';
 
 const { load } = store;
 
 const toaster = useToast();
 
 let mark;
+let v$;
 
 const setForm = (payload = {}) => {
   mark.id = payload.id;
@@ -19,6 +22,12 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
+  const isValideForm = await v$.value.$validate();
+
+  if (!isValideForm) return;
+
+  v$.value.$reset();
+
   const { message, success } = await save.car_mark(mark);
 
   try {
@@ -57,6 +66,8 @@ export default function () {
             id: id ?? '',
             name: '',
           });
+
+          v$ = useVuelidate(formRules(), mark, { $lazy: true });
         },
       });
 
@@ -64,6 +75,7 @@ export default function () {
 
       onScopeDispose(() => {
         mark = undefined;
+        v$ = undefined;
       });
     });
   };
@@ -72,5 +84,6 @@ export default function () {
     render: modalUp,
     mark,
     atMountedCarMarksForm,
+    v$,
   };
 }

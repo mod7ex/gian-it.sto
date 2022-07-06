@@ -17,3 +17,5 @@
 ## . the composable `useConfirmModal` it would have been a better choice to merge it (wrap)directly with the drop functions
 
 ## . Logic for all services should be similar to `diagnostic-card-form.js` service & some composables
+
+## . A global `saveFormHandler` might have been defined, it takes the `v$` and handels validation once

@@ -2,7 +2,7 @@
 import Input from '@/UI/Input.vue';
 import form from '~/services/storage/producers/form';
 
-const { producer, atMountedProducerForm } = form();
+const { producer, atMountedProducerForm, v$ } = form();
 
 await atMountedProducerForm();
 
@@ -10,6 +10,12 @@ await atMountedProducerForm();
 
 <template>
     <div>
-        <Input label="Название" v-model="producer.name" :required="true" />
+        <Input
+            label="Название"
+            v-model="producer.name"
+            :required="true"
+            :error="v$.name.$errors[0]?.$message"
+            @blured="v$.name.$touch"
+        />
     </div>
 </template>

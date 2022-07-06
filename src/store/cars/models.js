@@ -26,7 +26,7 @@ const getMarkModels = (markId) => {
   if (markId) {
     return state.raw.filter(({ car_mark }) => car_mark?.id === Number(markId));
   }
-  return state.raw;
+  return state.raw; // might change later maybe we shouldn't show models excepr if user has selected a mark
 };
 
 export default {

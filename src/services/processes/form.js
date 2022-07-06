@@ -1,4 +1,5 @@
 import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import store from '~/store/processes';
@@ -6,11 +7,13 @@ import communicate from '~/helpers/communicate';
 import useToast from '~/composables/useToast.js';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/processes/RawForm.vue';
+import formRules from '~/validationsRules/process';
 
 const toaster = useToast();
 
 const { load } = store;
 
+let v$;
 let process;
 
 const setField = function (key) {
@@ -26,6 +29,12 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
+  const isValideForm = await v$.value.$validate();
+
+  if (!isValideForm) return;
+
+  v$.value.$reset();
+
   const { message, success } = await save.process_category(process);
 
   try {
@@ -65,6 +74,8 @@ export default () => {
             name: '',
             appeal_reason_id: '',
           });
+
+          v$ = useVuelidate(formRules(), process, { $lazy: true });
         },
       });
 
@@ -80,5 +91,6 @@ export default () => {
     render: modalUp,
     process,
     atMounted,
+    v$,
   };
 };

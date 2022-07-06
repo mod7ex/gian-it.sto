@@ -16,7 +16,7 @@ const { options: engineOptions, load: loadEngines } = engineStore;
 const { options: fuelOptions, load: loadFuels } = fuelStore;
 const { options: clientOptions, load: loadClients } = clientStore;
 
-const { atMountedCarForm, carFields, theSelectedCarMark } = form();
+const { atMountedCarForm, carFields, theSelectedCarMark, v$ } = form();
 
 const extractor = ({ id, name }) => ({ value: id, label: name });
 const modelOptions = computed(() => getMarkModels(theSelectedCarMark.value).map(extractor));
@@ -30,12 +30,21 @@ await (async () => {
   await atMountedCarForm();
 })();
 
+console.log(v$.value)
+
 </script>
 
 <template>
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-4">
-            <Select label="Владелец" :options="clientOptions" v-model="carFields.client_id" />
+            <Select
+                label="Владелец"
+                :options="clientOptions"
+                v-model="carFields.client_id"
+                :required="true"
+                :error="v$.client_id.$errors[0]?.$message"
+                @blured="v$.client_id.$touch"
+            />
         </div>
 
         <div class="col-span-12 sm:col-span-4">
@@ -55,7 +64,14 @@ await (async () => {
         </div>
 
         <div class="col-span-12 sm:col-span-4">
-            <Select label="Модель" :options="modelOptions" v-model="carFields.car_model_id" />
+            <Select
+                label="Модель"
+                :options="modelOptions"
+                v-model="carFields.car_model_id"
+                :required="true"
+                :error="v$.car_model_id.$errors[0]?.$message"
+                @blured="v$.car_model_id.$touch"
+            />
         </div>
 
         <div class="col-span-12 sm:col-span-3">

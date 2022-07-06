@@ -1,6 +1,6 @@
 import { ref, reactive, onScopeDispose } from 'vue';
-// import useVuelidate from '@vuelidate/core';
-// import carFormValidationsRules from '~/validationsRules/carForm.js';
+import useVuelidate from '@vuelidate/core';
+import formRules from '~/validationsRules/carForm.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -8,7 +8,7 @@ import $ from '~/helpers/fetch.js';
 let routeInstance;
 let isEditCarPage;
 let redirectBack;
-// let v$;
+let v$;
 
 let carFields;
 let theSelectedCarMark;
@@ -16,11 +16,11 @@ let theSelectedCarMark;
 /* ************ Car form ************ */
 
 const saveCar = async () => {
-  // const isValideForm = await v$.value.$validate();
+  const isValideForm = await v$.value.$validate();
 
-  // if (!isValideForm) return;
+  if (!isValideForm) return;
 
-  // v$.value.$reset();
+  v$.value.$reset();
 
   const { success } = await save.car(carFields, null, true);
 
@@ -77,11 +77,9 @@ export default function () {
     });
 
     theSelectedCarMark = ref();
+
+    v$ = useVuelidate(formRules(), carFields, { $lazy: true });
   }
-
-  // const { rules } = carFormValidationsRules(carFields, isEditCarPage.value);
-
-  // v$ = useVuelidate(rules, carFields, { $lazy: true });
 
   onScopeDispose(() => {
     routeInstance = undefined;
@@ -89,6 +87,7 @@ export default function () {
     redirectBack = undefined;
     carFields = undefined;
     theSelectedCarMark = undefined;
+    v$ = undefined;
   });
 
   return {
@@ -98,5 +97,6 @@ export default function () {
     setCarForm,
     atMountedCarForm,
     theSelectedCarMark,
+    v$,
   };
 }

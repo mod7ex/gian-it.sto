@@ -1,4 +1,5 @@
 import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import RawForm from '~/components/Partials/funnels/RawForm.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
@@ -6,8 +7,14 @@ import useToast from '~/composables/useToast.js';
 import store from '~/store/pipelines';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
+import formRules from '~/validationsRules/funnel';
+
+const { load } = store;
+
+const toaster = useToast();
 
 let pipeline;
+let v$;
 
 const setForm = (payload = {}) => {
   pipeline.id = payload.id;
@@ -24,29 +31,31 @@ const atMounted = async () => {
   }
 };
 
+const saveForm = async () => {
+  const isValideForm = await v$.value.$validate();
+
+  if (!isValideForm) return;
+
+  v$.value.$reset();
+
+  const { message, success } = await save.pipeline(pipeline);
+
+  try {
+    return { message, success };
+  } finally {
+    if (success) {
+      await load();
+      toaster.success(message);
+    }
+  }
+};
+
 export default function () {
   const modalUp = (...args) => {
     const scope = effectScope(true);
 
     scope.run(() => {
-      const { load } = store;
-
-      const toaster = useToast();
-
       const isUpdate = computed(() => !!pipeline?.id);
-
-      const saveForm = async () => {
-        const { message, success } = await save.pipeline(pipeline);
-
-        try {
-          return { message, success };
-        } finally {
-          if (success) {
-            await load();
-            toaster.success(message);
-          }
-        }
-      };
 
       const { render } = useModalForm({
         title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].pipeline),
@@ -59,6 +68,8 @@ export default function () {
             name: '',
             type: '',
           });
+
+          v$ = useVuelidate(formRules(), pipeline, { $lazy: true });
         },
       });
 
@@ -66,6 +77,7 @@ export default function () {
 
       onScopeDispose(() => {
         pipeline = undefined;
+        v$ = undefined;
       });
     });
   };
@@ -74,5 +86,6 @@ export default function () {
     pipeline,
     atMounted,
     render: modalUp,
+    v$,
   };
 }

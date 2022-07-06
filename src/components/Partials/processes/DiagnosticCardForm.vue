@@ -4,7 +4,7 @@ import Input from '@/UI/Input.vue';
 import TextArea from '@/UI/TextArea.vue';
 import service from '~/services/processes/diagnostic-card-form';
 
-const { question, atMounted } = service();
+const { question, atMounted, v$ } = service();
 
 const add = () => {
   question.answers_and_recommendations.push({});
@@ -17,7 +17,13 @@ await atMounted();
 <template>
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-12">
-            <Input label="Вопрос" v-model="question.question"/>
+            <Input 
+                label="Вопрос" 
+                v-model="question.question"
+                :required="true"
+                :error="v$.question.$errors[0]?.$message"
+                @blured="v$.question.$touch"
+            />
         </div>
 
         <div class="col-span-12 sm:col-span-12">

@@ -6,7 +6,7 @@ import cityStore from '~/store/cities';
 
 const { options, load } = cityStore;
 
-const { storage, atMountedStorageForm } = form();
+const { storage, atMountedStorageForm, v$ } = form();
 
 await (async () => {
   await load();
@@ -17,7 +17,21 @@ await (async () => {
 
 <template>
     <div>
-        <Input label="Название процесса" v-model="storage.name" :required="true" />
-        <Select label="Город" v-model="storage.city_id" :required="true" :options="options" />
+        <Input
+          label="Название процесса"
+          v-model="storage.name"
+          :required="true"
+          :error="v$.name.$errors[0]?.$message"
+          @blured="v$.name.$touch"
+          class="mb-3"
+        />
+        <Select 
+          label="Город"
+          v-model="storage.city_id" 
+          :required="true" 
+          :options="options" 
+          :error="v$.city_id.$errors[0]?.$message"
+          @blured="v$.city_id.$touch"
+        />
     </div>
 </template>

@@ -1,6 +1,6 @@
 import { reactive, onScopeDispose } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import employerFormValidationsRules from '~/validationsRules/employerForm.js';
+import validationRules from '~/validationsRules/employerForm.js';
 import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast.js';
 import useAppRouter from '~/composables/useAppRouter.js';
@@ -74,12 +74,12 @@ const setUserField = function (key) {
 };
 
 export default function () {
-  if (!userFields) userFields = reactive({ ...defaultUserFields });
-
   const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar } = useAvatar();
   const { toggles, setToggles, bitwisedToggles } = useToggles();
   const { route, isThePage, back } = useAppRouter('EditEmployer');
-  const { rules } = employerFormValidationsRules(userFields, isThePage.value);
+
+  if (!userFields) userFields = reactive({ ...defaultUserFields });
+  const { rules } = validationRules(userFields, isThePage.value);
   if (!v$) v$ = useVuelidate(rules, userFields, { $lazy: true });
 
   const previousPage = async (id) => {

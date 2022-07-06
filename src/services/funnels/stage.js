@@ -1,4 +1,5 @@
 import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import RawForm from '~/components/Partials/funnels/stages/RawForm.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
@@ -6,6 +7,7 @@ import useToast from '~/composables/useToast.js';
 import store from '~/store/pipelines/stages';
 import _$ from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
+import formRules from '~/validationsRules/stage';
 
 const { load } = store;
 
@@ -13,6 +15,7 @@ const toaster = useToast();
 
 let stage;
 let pipeline_id;
+let v$;
 
 const setForm = (payload = {}) => {
   stage.id = payload.id;
@@ -22,6 +25,12 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
+  const isValideForm = await v$.value.$validate();
+
+  if (!isValideForm) return;
+
+  v$.value.$reset();
+
   const { message, success } = await _$.stage(stage);
 
   try {
@@ -61,6 +70,8 @@ const modalUp = (...args) => {
           color: '',
           pipeline_id,
         });
+
+        v$ = useVuelidate(formRules(), stage, { $lazy: true });
       },
     });
 
@@ -68,6 +79,7 @@ const modalUp = (...args) => {
 
     onScopeDispose(() => {
       stage = undefined;
+      v$ = undefined;
     });
   });
 };
@@ -79,5 +91,6 @@ export default function (v) {
     stage,
     atMounted,
     render: modalUp,
+    v$,
   };
 }

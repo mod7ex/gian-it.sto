@@ -1,4 +1,5 @@
 import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import RawForm from '~/components/Partials/storage/producers/RawForm.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
@@ -6,12 +7,14 @@ import useToast from '~/composables/useToast.js';
 import store from '~/store/storage/producers';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
+import formRules from '~/validationsRules/carModel';
 
 const { load } = store;
 
 const toaster = useToast();
 
 let producer;
+let v$;
 
 const setForm = (payload = {}) => {
   producer.id = payload.id;
@@ -19,6 +22,12 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
+  const isValideForm = await v$.value.$validate();
+
+  if (!isValideForm) return;
+
+  v$.value.$reset();
+
   const { message, success } = await save.producer(producer);
 
   try {
@@ -57,6 +66,8 @@ export default function () {
             id: id ?? '',
             name: '',
           });
+
+          v$ = useVuelidate(formRules(), producer, { $lazy: true });
         },
       });
 
@@ -73,5 +84,6 @@ export default function () {
     producer,
     atMountedProducerForm,
     render: modalUp,
+    v$,
   };
 }

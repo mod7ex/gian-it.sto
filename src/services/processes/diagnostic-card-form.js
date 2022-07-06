@@ -1,10 +1,13 @@
 import { reactive, effectScope, onScopeDispose } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import store from '~/store/processes/diagnostic-card';
 import useAppRouter from '~/composables/useAppRouter';
+import formRules from '~/validationsRules/process';
 
 let question;
+let v$;
 
 export default () => effectScope().run(() => {
   const { drop } = store;
@@ -16,6 +19,8 @@ export default () => effectScope().run(() => {
       question: '',
       answers_and_recommendations: [{}],
     });
+
+    v$ = useVuelidate(formRules(), question, { $lazy: true });
   }
 
   const setField = function (key) {
@@ -31,6 +36,12 @@ export default () => effectScope().run(() => {
   };
 
   const saveForm = async () => {
+    const isValideForm = await v$.value.$validate();
+
+    if (!isValideForm) return;
+
+    v$.value.$reset();
+
     const { success } = await save.map_question(question, undefined, true);
 
     try {
@@ -66,5 +77,6 @@ export default () => effectScope().run(() => {
     isUpdate,
     saveForm,
     dropQuestion,
+    v$,
   };
 });

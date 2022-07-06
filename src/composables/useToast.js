@@ -62,7 +62,7 @@ const create = (text, title, color, icon, bool = true) => {
 
     closeToast('_');
 
-    setTimeout(() => { closeToast(key); }, import.meta.env.STO_TOAST_TTL);
+    setTimeout(() => { closeToast(key); }, import.meta.env.VITE_TOAST_TTL);
   }, 100);
 
   return bool;

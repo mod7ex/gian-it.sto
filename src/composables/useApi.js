@@ -5,8 +5,8 @@ import useAuth, { logOut } from '~/composables/useAuth';
 const { token, isUserLogged } = useAuth();
 
 const instance = axios.create({
-  baseURL: import.meta.env.STO_API_BASE_URI,
-  timeout: import.meta.env.STO_API_TIMEOUT,
+  baseURL: import.meta.env.VITE_API_BASE_URI,
+  timeout: import.meta.env.VITE_API_TIMEOUT,
 });
 
 // for test token TTL

@@ -53,7 +53,7 @@ export default function () {
 
   const isValideAvatarFileSize = computed(() => {
     if (!avatarFile.value) return true;
-    return avatarFile.value.size < import.meta.env.STO_AVATAR_MAX_SIZE;
+    return avatarFile.value.size < import.meta.env.VITE_AVATAR_MAX_SIZE;
   });
 
   onScopeDispose(() => {

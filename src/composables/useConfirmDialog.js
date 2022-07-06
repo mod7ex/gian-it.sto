@@ -81,7 +81,7 @@ const handler = (...args) => {
       ConfirmDialogApp = newConfirmDialogApp();
       ConfirmDialogApp.mount('#sto-confirm');
 
-      timer = setTimeout(close, import.meta.env.STO_CONFIRM_DIALOG_TTL);
+      timer = setTimeout(close, import.meta.env.VITE_CONFIRM_DIALOG_TTL);
     };
 
     icon.value = TrashIcon;

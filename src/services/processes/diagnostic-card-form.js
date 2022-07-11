@@ -5,6 +5,9 @@ import $ from '~/helpers/fetch.js';
 import store from '~/store/processes/diagnostic-card';
 import useAppRouter from '~/composables/useAppRouter';
 import formRules from '~/validationsRules/process';
+import departmentStore from '~/store/departments';
+
+const { current } = departmentStore;
 
 let question;
 let v$;
@@ -17,6 +20,7 @@ export default () => effectScope().run(() => {
     question = reactive({
       id: '',
       question: '',
+      department_id: current,
       answers_and_recommendations: [{}],
     });
 

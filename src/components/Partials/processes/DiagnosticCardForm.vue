@@ -10,15 +10,15 @@ const add = () => {
   question.answers_and_recommendations.push({});
 };
 
-await atMounted();
+// await atMounted();
 
 </script>
 
 <template>
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-12">
-            <Input 
-                label="Вопрос" 
+            <Input
+                label="Вопрос"
                 v-model="question.question"
                 :required="true"
                 :error="v$.question.$errors[0]?.$message"

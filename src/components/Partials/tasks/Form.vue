@@ -1,5 +1,5 @@
 <script setup>
-import { computed, version, watch } from 'vue';
+import { computed, watch } from 'vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
 import Upload from '@/UI/Upload.vue';
@@ -39,11 +39,7 @@ watch(() => fields.pipelines.pipeline_id, async (v) => {
   await loadStages(v);
 });
 
-await (async ()=>{
-    await load();
-    await loadFunnels();
-    await atMounted();
-})();
+await Promise.all([load(), loadFunnels(), atMounted()]);
 
 </script>
 

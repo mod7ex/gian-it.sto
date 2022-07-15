@@ -12,9 +12,9 @@ const { rules } = loginValidationsRules();
 export default function loginHandler() {
   const { router } = useAppRouter();
 
-  const form = reactive({
-    email: '',
-    password: '',
+  const form = reactive({ // defaults
+    email: 'admin@admin.ru',
+    password: 'password',
   });
 
   const v$ = useVuelidate(rules, form, { $lazy: true });

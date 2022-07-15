@@ -7,7 +7,7 @@ import EmployerFormFields from '~/components/Partials/employers/EmployerFormFiel
 
 import useSuspense from '~/composables/useSuspense.js';
 
-const SuspensEmployerFormFields = useSuspense(EmployerFormFields);
+const SuspenseArea = useSuspense(EmployerFormFields);
 
 const { saveUser, isEditEmployerPage, previousPage } = form();
 </script>
@@ -24,6 +24,6 @@ const { saveUser, isEditEmployerPage, previousPage } = form();
       </Button>
     </template>
 
-    <SuspensEmployerFormFields />
+    <suspense-area />
   </OfficeLayout>
 </template>

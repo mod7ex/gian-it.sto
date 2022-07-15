@@ -63,7 +63,7 @@ if (props.position === 'center') {
             <MenuItem v-slot="{ active }" v-for="item in child" :key="item.label">
                 <button
                     v-if="item.click"
-                    :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'w-full text-left block px-4 py-2 text-sm']"
+                    :class="[active ? 'bg-red-100 text-gray-900' : 'text-gray-700', 'w-full text-left block px-4 py-2 text-sm']"
                     @click="item.click"
                 >
                   <span class="flex">
@@ -86,7 +86,3 @@ if (props.position === 'center') {
     </transition>
   </Menu>
 </template>
-
-<style scoped>
-
-</style>

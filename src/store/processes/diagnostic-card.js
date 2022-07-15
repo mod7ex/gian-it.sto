@@ -4,6 +4,7 @@ import _$ from '~/helpers/drop';
 
 const state = reactive({
   raw: [],
+  preview: undefined,
 });
 
 const reset = () => {

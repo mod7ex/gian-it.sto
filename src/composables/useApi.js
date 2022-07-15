@@ -100,7 +100,7 @@ const apiRequest = (url, config = {}) => {
   return { call, data, responce, error, loading, errorMsg, success, reset, ready };
 };
 
-export default function useApi() {
+export default function () {
   return {
     apiRequest, axiosInstance: instance,
   };

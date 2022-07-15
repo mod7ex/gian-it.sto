@@ -3,9 +3,9 @@ import Button from '@/UI/Button.vue';
 import Input from '@/UI/Input.vue';
 import DialogModal from '@/UI/DialogModal.vue';
 import Spinner from '@/UI/Spinner.vue';
-import changePasswordModalHandler from '~/services/auth/profileChangePassword.js';
+import service from '~/services/auth/profileChangePassword.js';
 
-const { v$, changeProfilePassword, data, loading, errorMsg, success, ready, isModalUp, form } = changePasswordModalHandler();
+const { v$, changeProfilePassword, loading, errorMsg, success, ready, isModalUp, form } = service();
 
 defineEmits(['close']);
 
@@ -15,7 +15,6 @@ defineEmits(['close']);
   <template v-slot:dialog-inner>
     <div class="mt-6 mb-6">
 
-      <p v-if="ready && success" class="text-green-700 text-sm text-center mb-6">{{ data?.message ?? 'Пароль обновлён' }}</p>
       <p v-if="ready && !success" class="text-red-500 text-sm text-center mb-6"> {{ errorMsg ?? 'Undefined (network?) error' }} </p>
 
       <form class="space-y-6">

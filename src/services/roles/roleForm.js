@@ -63,9 +63,9 @@ export default () => effectScope().run(() => {
 
     v$.value.$reset();
 
-    const { data, success } = await save.role({ ...role, permissions: truthyTogglesArray.value }, null, true);
+    const { success } = await save.role({ ...role, permissions: truthyTogglesArray.value }, null, true);
 
-    success && !isThePage.value && await redirectTo({ name: 'EditRole', params: { id: data?.role?.id } });
+    success && await redirectTo({ name: 'Roles' });
 
     return success;
   };

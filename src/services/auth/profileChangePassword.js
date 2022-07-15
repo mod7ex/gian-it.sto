@@ -1,45 +1,60 @@
-import { reactive, ref } from 'vue';
+import { reactive, ref, effectScope, onScopeDispose } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import refreshPasswordValidationsRules from '~/validationsRules/refreshPassword.js';
+import validationRUles from '~/validationsRules/refreshPassword.js';
 import useApi from '~/composables/useApi.js';
+import useToast from '~/composables/useToast';
+
+const toaster = useToast();
 
 const { apiRequest } = useApi();
 
-const form = reactive({});
-const { rules } = refreshPasswordValidationsRules(form);
-const v$ = useVuelidate(rules, form, { $lazy: true });
+let form;
+let v$;
+let isModalUp;
 
-const isModalUp = ref(false);
 const setModalVisibility = (bool) => {
   isModalUp.value = bool ?? !isModalUp.value;
   v$.value.$reset();
-  form.password = null;
-  form.confirmPassword = null;
 };
 
-const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest('profile/password', {
-  method: 'put',
-  data: form,
-});
+export default () => effectScope().run(() => {
+  const { rules } = validationRUles(form);
 
-const changeProfilePassword = async () => {
-  reset();
+  if (!form) {
+    isModalUp = ref(false);
+    form = reactive({});
+    v$ = useVuelidate(rules, form, { $lazy: true });
+  }
 
-  v$.value.$touch();
+  const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest('profile/password', {
+    method: 'put',
+    data: form,
+  });
 
-  if (v$.value.$invalid) return;
+  const changeProfilePassword = async () => {
+    reset();
 
-  v$.value.$reset();
+    v$.value.$touch();
 
-  await call();
+    if (v$.value.$invalid) return;
 
-  if (!success.value) return;
+    v$.value.$reset();
 
-  form.password = null;
-  form.confirmPassword = null;
-};
+    await call();
 
-export default function profileChangePasswordHandler() {
+    if (!success.value) return;
+
+    setModalVisibility();
+
+    toaster.success(data.value?.message ?? 'Пароль успешно изменен');
+  };
+
+  onScopeDispose(() => {
+    form = undefined;
+    v$ = undefined;
+    isModalUp = undefined;
+  });
+
   return {
     v$,
     changeProfilePassword,
@@ -54,4 +69,4 @@ export default function profileChangePasswordHandler() {
     setModalVisibility,
     form,
   };
-}
+});

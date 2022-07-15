@@ -10,8 +10,10 @@ import {
   CurrencyDollarIcon,
   CollectionIcon,
   MenuAlt1Icon,
-  CogIcon,
   OfficeBuildingIcon,
+  LogoutIcon,
+  UserIcon,
+  TicketIcon,
 } from '@heroicons/vue/outline';
 import { SearchIcon, SelectorIcon } from '@heroicons/vue/solid';
 import Avatar from '@/UI/Avatar.vue';
@@ -56,7 +58,11 @@ setTitle(props.title);
 
 const sidebarOpen = ref(false);
 
-const userMenu = [[{ label: 'Профиль', name: 'Profile' }], [{ label: 'Выход', name: 'Login', click: () => logOut(router) }]];
+const userMenu = [
+  [{ label: 'Профиль', name: 'Profile', icon: UserIcon }],
+  [{ label: 'Работа', name: 'WorkerProfile', icon: TicketIcon }],
+  [{ label: 'Выход', name: 'Login', click: () => logOut(router), icon: LogoutIcon }],
+];
 
 const menu = [
   // { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon },

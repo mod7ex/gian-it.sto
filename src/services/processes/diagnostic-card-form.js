@@ -1,4 +1,4 @@
-import { reactive, effectScope, onScopeDispose } from 'vue';
+import { reactive, effectScope } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -8,36 +8,46 @@ import formRules from '~/validationsRules/process';
 import departmentStore from '~/store/departments';
 
 const { current } = departmentStore;
+const { drop } = store;
 
 let question;
 let v$;
 
+const clearMemory = () => {
+  question = undefined;
+  v$ = undefined;
+};
+
+const setField = function (key) { // function should be reviewed
+  if (key === 'answers_and_recommendations') {
+    question[key] = this.map_answers ?? [{}];
+    return;
+  }
+  question[key] = this[key] ?? '';
+};
+
+const setForm = (payload = {}) => {
+  Object.getOwnPropertyNames(question).forEach(setField, payload);
+};
+
 export default () => effectScope().run(() => {
-  const { drop } = store;
   const { back, isThePage: isUpdate, route } = useAppRouter('DiagnosticCardEdit');
 
   if (!question) {
     question = reactive({
       id: '',
-      question: '',
       department_id: current,
-      answers_and_recommendations: [{}],
+
+      name: '',
+      options: [''],
+
+      params: [{ options: [''] }], // {title: '', options: ['lorum ipsom']}
+      comment: { title: '', content: '' },
+      note: '',
     });
 
     v$ = useVuelidate(formRules(), question, { $lazy: true });
   }
-
-  const setField = function (key) {
-    if (key === 'answers_and_recommendations') {
-      question[key] = this.map_answers ?? [{}];
-      return;
-    }
-    question[key] = this[key] ?? '';
-  };
-
-  const setForm = (payload = {}) => {
-    Object.getOwnPropertyNames(question).forEach(setField, payload);
-  };
 
   const saveForm = async () => {
     const isValideForm = await v$.value.$validate();
@@ -71,10 +81,6 @@ export default () => effectScope().run(() => {
     }
   };
 
-  onScopeDispose(() => {
-    question = undefined;
-  });
-
   return {
     question,
     atMounted,
@@ -82,5 +88,6 @@ export default () => effectScope().run(() => {
     saveForm,
     dropQuestion,
     v$,
+    clearMemory,
   };
 });

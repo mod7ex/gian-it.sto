@@ -13,7 +13,8 @@ import {
   PlusCircleIcon,
   ChipIcon,
 } from '@heroicons/vue/outline';
-import {ref} from 'vue';
+import { ref } from 'vue';
+import { MenuButton } from '@headlessui/vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
@@ -33,9 +34,8 @@ import Select from '@/UI/Select.vue';
 import Comments from '@/Partials/Comments.vue';
 import Dropdown from '@/UI/Dropdown.vue';
 import DescriptionLists from '@/Examples/DescriptionLists.vue';
-import {MenuButton} from '@headlessui/vue';
-import {Table, THead, TBody, Tr, Td, Th} from '@/UI/Table';
-import {DescriptionList, DescriptionListItems, DescriptionListItem} from '@/UI/DescriptionList';
+import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
+import { DescriptionList, DescriptionListItems, DescriptionListItem } from '@/UI/DescriptionList';
 
 const editor = 'Текст задачи';
 

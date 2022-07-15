@@ -1,33 +1,25 @@
 <script setup>
 import { ref } from 'vue';
-import {
-  ChipIcon,
-  CollectionIcon, CurrencyDollarIcon,
-  PresentationChartLineIcon,
-  PuzzleIcon,
-  TableIcon,
-  UserGroupIcon,
-  MenuIcon,
-  XIcon,
-} from '@heroicons/vue/outline';
+import { MenuIcon, XIcon } from '@heroicons/vue/outline';
 import { setTitle } from '~/lib/meta.js';
 import Logo from '@/Partials/Logo.vue';
 import Button from '@/UI/Button.vue';
 
+import useAppRouter from '~/composables/useAppRouter';
+
 const props = defineProps({
-  title: {
-    type: String,
-    required: false,
-  },
+  title: { type: String, required: false },
 });
+
+const { isCurrentFullPath } = useAppRouter();
 
 setTitle(props.title);
 
 const menu = [
-  { label: 'Профиль', href: '/w/profile', current: false },
-  { label: 'Задачи', href: '/w/tasks', current: false },
-  { label: 'Рабочее время', href: '/w/times', current: false },
-];
+  { label: 'Профиль', href: { name: 'WorkerProfile' } },
+  { label: 'Задачи', href: { name: 'WorkerTasks' } },
+  { label: 'Рабочее время', href: { name: 'WorkerTimes' } },
+].map(({ label, href }) => ({ label, href, current: isCurrentFullPath({ name: href.name }) }));
 
 const isShowMenu = ref(false);
 </script>
@@ -39,11 +31,18 @@ const isShowMenu = ref(false);
         <div class="flex justify-between h-16">
           <div class="flex px-2 lg:px-0">
             <div class="flex-shrink-0 flex items-center">
-              <Logo class="h-8 w-auto" />
+              <router-link class="h-14 w-auto" :to="{ name: 'Dashboard' }"><Logo /></router-link>
             </div>
 
             <nav aria-label="Global" class="hidden lg:ml-6 lg:flex lg:items-center lg:space-x-4">
-              <router-link v-for="(item,i) in menu" :key="i" :to="item.href" :class="['px-3 py-2 text-gray-900 text-sm', {'font-medium': item.current}]">
+              <router-link
+                v-for="(item,i) in menu"
+                :key="i"
+                :to="item.href"
+                class="px-3 py-2 text-gray-900 text-sm"
+                :class="{'font-medium': item.current}"
+
+              >
                 {{ item.label }}
               </router-link>
             </nav>
@@ -51,7 +50,7 @@ const isShowMenu = ref(false);
 
           <div class="flex items-center lg:hidden">
             <!-- Mobile menu button -->
-            <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" aria-expanded="false" @click="isShowMenu = true">
+            <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" aria-expanded="false" @click="isShowMenu = !isShowMenu">
               <MenuIcon class="block h-6 w-6" />
             </button>
           </div>
@@ -64,10 +63,10 @@ const isShowMenu = ref(false);
               <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white divide-y divide-gray-200">
                 <div class="pt-3 pb-2">
                   <div class="flex items-center justify-between px-4">
-                    <div>
-                      <Logo class="h-8 w-auto" />
+                    <div class="flex-shrink-0 flex items-center">
+                      <router-link class="h-14 w-auto" :to="{ name: 'Dashboard' }"><Logo /></router-link>
                     </div>
-                    <div class="-mr-2">
+                    <div class="mr-2">
                       <button type="button" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" @click="isShowMenu = false">
                         <XIcon class="w-6 h-6" />
                       </button>
@@ -82,9 +81,7 @@ const isShowMenu = ref(false);
                       {{ item.label }}
                     </router-link>
 
-                    <Button color="blue" link="/w/change">
-                      Завершить смену
-                    </Button>
+                    <Button color="blue" :link="{ name: 'ChangeWorker' }">Завершить смену</Button>
                   </div>
                 </div>
               </div>
@@ -95,7 +92,7 @@ const isShowMenu = ref(false);
             <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
               <slot name="actions"></slot>
 
-              <Button type="secondary" link="/w/change">
+              <Button type="secondary" :link="{ name: 'ChangeWorker' }">
                 Завершить смену
               </Button>
             </div>
@@ -111,7 +108,3 @@ const isShowMenu = ref(false);
     </main>
   </div>
 </template>
-
-<style scoped>
-
-</style>

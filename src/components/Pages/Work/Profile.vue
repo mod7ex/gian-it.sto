@@ -1,6 +1,5 @@
 <script setup>
 import { CheckIcon } from '@heroicons/vue/outline';
-import ProfilePasswordModal from '@/Partials/ProfileChangePasswordModal.vue';
 import profileChangePasswordHandler from '~/services/auth/profileChangePassword.js';
 import ProfileFields from '@/Partials/work/profile.vue';
 import useSuspense from '~/composables/useSuspense.js';
@@ -10,7 +9,7 @@ import Button from '@/UI/Button.vue';
 import Card from '@/UI/Card.vue';
 
 const { save, isBusy } = service();
-const { setModalVisibility } = profileChangePasswordHandler();
+const { render } = profileChangePasswordHandler();
 
 const SuspenseArea = useSuspense(ProfileFields);
 
@@ -18,7 +17,6 @@ const SuspenseArea = useSuspense(ProfileFields);
 
 <template>
     <Layout title="Личные данные">
-      <profile-password-modal @close="setModalVisibility(false)" />
 
       <template #actions>
 
@@ -27,7 +25,7 @@ const SuspenseArea = useSuspense(ProfileFields);
           <CheckIcon v-else class="w-5 h-5 mr-1"/>Сохранить
         </Button>
 
-        <Button color="blue" @click.prevent="setModalVisibility(true)">Сменить пароль</Button>
+        <Button color="blue" @click.prevent="render">Сменить пароль</Button>
 
       </template>
 

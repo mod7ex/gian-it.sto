@@ -1,72 +1,63 @@
-import { reactive, ref, effectScope, onScopeDispose } from 'vue';
+import { reactive, effectScope, onScopeDispose } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import validationRUles from '~/validationsRules/refreshPassword.js';
-import useApi from '~/composables/useApi.js';
 import useToast from '~/composables/useToast';
+import useModalForm from '~/composables/useModalForm';
+import RawForm from '~/components/Partials/PasswordChangeRawForm.vue';
+import { rootSave } from '~/helpers/save';
 
 const toaster = useToast();
 
-const { apiRequest } = useApi();
-
 let form;
 let v$;
-let isModalUp;
 
-const setModalVisibility = (bool) => {
-  isModalUp.value = bool ?? !isModalUp.value;
+const saveForm = async () => {
+  v$.value.$touch();
+
+  if (v$.value.$invalid) return;
+
   v$.value.$reset();
+
+  const { message, success } = await rootSave('profile/password', form, 'PUT');
+
+  try {
+    return { message, success };
+  } finally {
+    if (success) toaster.success(message ?? 'Пароль успешно обновлен');
+  }
 };
 
-export default () => effectScope().run(() => {
-  const { rules } = validationRUles(form);
+export default function () {
+  const modalUp = (...args) => {
+    const scope = effectScope();
 
-  if (!form) {
-    isModalUp = ref(false);
-    form = reactive({});
-    v$ = useVuelidate(rules, form, { $lazy: true });
-  }
+    scope.run(() => {
+      const { render } = useModalForm({
+        title: 'Изменить пароль',
+        RawForm,
+        atSubmit: saveForm,
+        atClose: () => scope.stop(),
+        atOpen: () => {
+          form = reactive({});
+          const rules = validationRUles(form);
 
-  const { call, data, responce, error, loading, errorMsg, success, reset, ready } = apiRequest('profile/password', {
-    method: 'put',
-    data: form,
-  });
+          v$ = useVuelidate(rules, form, { $lazy: true });
+        },
+      });
 
-  const changeProfilePassword = async () => {
-    reset();
+      render(...args);
 
-    v$.value.$touch();
-
-    if (v$.value.$invalid) return;
-
-    v$.value.$reset();
-
-    await call();
-
-    if (!success.value) return;
-
-    setModalVisibility();
-
-    toaster.success(data.value?.message ?? 'Пароль успешно изменен');
+      onScopeDispose(() => {
+        form = undefined;
+        v$ = undefined;
+      });
+    });
   };
-
-  onScopeDispose(() => {
-    form = undefined;
-    v$ = undefined;
-    isModalUp = undefined;
-  });
 
   return {
+    saveForm,
+    render: modalUp,
     v$,
-    changeProfilePassword,
-    data,
-    responce,
-    error,
-    loading,
-    errorMsg,
-    success,
-    ready,
-    isModalUp,
-    setModalVisibility,
     form,
   };
-});
+}

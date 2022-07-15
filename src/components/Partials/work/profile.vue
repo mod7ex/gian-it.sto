@@ -61,9 +61,3 @@ const { v$, avatar, isUploadingAvatar, toggles, log, form, isValideAvatarFileSiz
       </template>
   </edit-user>
 </template>
-
-<style scoped>
-.borderTopColorTransparent {
-  border-top-color: transparent;
-}
-</style>

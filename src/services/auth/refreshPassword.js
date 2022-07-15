@@ -33,7 +33,7 @@ const save = async () => {
   await call();
 };
 
-export default function useRefreshPassword() {
+export default function () {
   return {
     save,
     form,

@@ -1,7 +1,7 @@
 /*
  * https://stackoverflow.com/questions/72130179/how-to-handle-promises-when-using-call-bind-apply-with-javascript-functions
  *
- * both ways works
+ * both ways work
  *
  * function might be used to protect methods that require permission
  */

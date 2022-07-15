@@ -22,24 +22,25 @@ export const upload = async function (path, files) {
   return { message: errorMsg.value, success: success.value, data: data.value };
 };
 
-export const save = async function (path, Id) {
+export const rootSave = async (path, payload, method) => {
   // path is without 's'
   const { call, errorMsg, success, data } = apiRequest();
 
   /*
-  *
-  * in case of updating we can passe id either in data or as a stand alone argument
-  *
-  */
+    *
+    * in case of updating we can passe id either in data or as a stand alone argument
+    *
+    */
 
-  const id = this?.id ?? Id;
-
-  await call(`/${path}/${id ?? ''}`, {
-    method: id ? 'put' : 'post',
-    data: cleanUp(this, 'id'),
-  });
+  await call(path, { method, data: payload });
 
   return { message: errorMsg.value, success: success.value, data: data.value };
+};
+
+export const save = async function (path, Id) {
+  const id = this?.id ?? Id;
+
+  return rootSave(`/${path}/${id ?? ''}`, cleanUp(this, 'id'), id ? 'put' : 'post');
 };
 
 export default new Proxy(save, {

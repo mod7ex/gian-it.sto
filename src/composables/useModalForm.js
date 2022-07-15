@@ -1,4 +1,4 @@
-import { defineComponent, h, createApp, ref } from 'vue';
+import { defineComponent, h, createApp, ref, isRef } from 'vue';
 import Actions from '@/Layout/modal/FormActions.vue';
 import useSuspense from '~/composables/useSuspense';
 import { sleep } from '~/helpers';
@@ -51,7 +51,7 @@ export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } =
       setup() {
         return () => h(
           Modal,
-          { onClose, open: show.value, title: title.value, message: message.value }, // onOutclick: onClose
+          { onClose, open: show.value, title: isRef(title) ? title.value : title, message: message.value }, // onOutclick: onClose
           {
             default: () => h(suspenseArea, {}, { default: () => h(RawForm) }),
             actions: () => h(Actions, { onClose, onSubmited, loading: loading.value }),

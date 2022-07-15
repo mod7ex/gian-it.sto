@@ -7,11 +7,10 @@ import TextArea from '@/UI/TextArea.vue';
 import UploadImage from '@/UI/UploadImage.vue';
 import Toggle from '@/UI/Toggle.vue';
 import EditUser from '@/Layout/users/EditUser.vue';
-import ProfilePasswordModal from '@/Partials/ProfileChangePasswordModal.vue';
 import profileChangePasswordHandler from '~/services/auth/profileChangePassword.js';
 import service from '~/services/officeProfile.js';
 
-const { setModalVisibility } = profileChangePasswordHandler();
+const { render } = profileChangePasswordHandler();
 
 const { v$, avatar, isUploadingAvatar, toggles, log, form, save, isValideAvatarFileSize, isBusy } = service();
 
@@ -20,15 +19,13 @@ const { v$, avatar, isUploadingAvatar, toggles, log, form, save, isValideAvatarF
 <template>
     <OfficeLayout title="Личные данные">
 
-      <profile-password-modal @close="setModalVisibility(false)" />
-
       <template #actions>
         <Button color="green" @click.prevent="save" :disabled="isBusy" :class="{ 'cursor-not-allowed': isBusy, 'opacity-60': isBusy }">
           <div v-if="isBusy" class="border-2 mr-1 border-blue-400 borderTopColorTransparent border-solid rounded-full animate-spin w-5 h-5 "></div>
           <CheckIcon v-else class="w-5 h-5 mr-1"/>Сохранить
         </Button>
 
-        <Button color="blue" @click.prevent="setModalVisibility(true)">Сменить пароль</Button>
+        <Button color="blue" @click.prevent="render">Сменить пароль</Button>
       </template>
 
       <edit-user>

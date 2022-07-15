@@ -7,9 +7,9 @@ import useAvatar from '~/composables/useAvatar.js';
 import officeProfileRules from '~/validationsRules/officeProfile.js';
 import useToggles from '~/composables/useToggles.js';
 
-export default () => effectScope().run(() => {
-  const toaster = useToast();
+const toaster = useToast();
 
+export default () => effectScope().run(() => {
   const { apiRequest } = useApi();
   const { rules } = officeProfileRules();
   const { user, setUser } = useAuth();

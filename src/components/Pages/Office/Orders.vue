@@ -1,10 +1,6 @@
 <script setup>
-import {
-  PlusCircleIcon,
-  ViewBoardsIcon,
-} from '@heroicons/vue/outline';
+import { PlusCircleIcon, ViewBoardsIcon } from '@heroicons/vue/outline';
 import { ref } from 'vue';
-// import { useToast } from 'vue-toastification';
 import Draggable from 'vuedraggable';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
@@ -13,8 +9,6 @@ import Link from '@/UI/Link.vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import Header from '@/UI/Header.vue';
-
-// const toast = useToast();
 
 const columns = ref([
   {
@@ -84,38 +78,21 @@ const columns = ref([
   },
 ]);
 
-// const colors = [
-//   'bg-gray-100',
-//   'bg-red-100',
-//   'bg-green-100',
-//   'bg-blue-100',
-//   'bg-purple-100',
-//   'bg-yellow-100',
-//   'bg-indigo-100',
-// ];
-
-// const log = (evt) => {
-//   toast.success('Сохранено');
-// };
 </script>
 
 <template>
   <OfficeLayout title="Заказ-наряды">
     <template #actions>
       <Button type="secondary" link="/pipelines">
-        <ViewBoardsIcon class="w-5 h-5 mr-1"/>
-        Воронка
+        <ViewBoardsIcon class="w-5 h-5 mr-1"/>Воронка
       </Button>
 
       <Button color="blue" link="/orders/create">
-        <PlusCircleIcon class="w-5 h-5 mr-1"/>
-        Создать
+        <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
       </Button>
     </template>
 
-    <Header>
-      Фильтр
-    </Header>
+    <Header>Фильтр</Header>
 
     <!-- Filter -->
     <div class="flex flex-wrap gap-2 items-end">
@@ -125,16 +102,18 @@ const columns = ref([
       <Input label="Дата до" type="date" />
 
       <div>
-        <Select label="Исполнитель"
-                :options="[{label: 'Не выбрано', value: null}]"
-                class="w-44"
+        <Select
+          label="Исполнитель"
+          :options="[{label: 'Не выбрано', value: null}]"
+          class="w-44"
         />
       </div>
 
       <div>
-        <Select label="Тип"
-                :options="[{label: 'Не выбрано', value: null}]"
-                class="w-44"
+        <Select
+          label="Тип"
+          :options="[{label: 'Не выбрано', value: null}]"
+          class="w-44"
         />
       </div>
     </div>
@@ -148,12 +127,13 @@ const columns = ref([
         >
           <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ column.title }}</p>
 
-          <Draggable item-key="id"
-                     :list="column.orders"
-                     group="orders"
-                     ghost-class="ghost"
-                     class="tasks-container"
-                     @end="log"
+          <Draggable
+            item-key="id"
+            :list="column.orders"
+            group="orders"
+            ghost-class="ghost"
+            class="tasks-container"
+            @end="log"
           >
             <template #item="{element}">
               <div class="task"

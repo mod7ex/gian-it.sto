@@ -11,6 +11,7 @@ const routes = [
 
   { path: '/orders', component: () => import(/* webpackChunkName: "Orders" */ '@/Pages/Office/Orders.vue'), name: 'Orders' },
   { path: '/orders/create', component: () => import(/* webpackChunkName: "OrderForm" */ '@/Pages/Office/OrderForm.vue'), name: 'OrderForm' },
+  { path: '/orders/update/:id', component: () => import(/* webpackChunkName: "OrderForm" */ '@/Pages/Office/OrderForm.vue'), name: 'OrderEdit' },
 
   { path: '/tasks', component: () => import(/* webpackChunkName: "Tasks" */ '@/Pages/Office/Tasks.vue'), name: 'Tasks' },
   { path: '/tasks/:id', component: () => import(/* webpackChunkName: "Task" */ '@/Pages/Office/Task.vue'), name: 'Task' },

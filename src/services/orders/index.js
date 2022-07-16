@@ -5,38 +5,44 @@ import { hyphenatedDateFormat } from '~/helpers';
 import save, { upload } from '~/helpers/save';
 import useToast from '~/composables/useToast.js';
 
-const defaultFields = {
-  id: '',
-  name: '',
-  description: '',
-  order_id: undefined,
-  user_id: 3,
-  deadline_at: '',
-  position: 0,
-  status: '',
-  checkboxes: [''],
+import departmentStore from '~/store/departments';
 
-  // start_at: '',
-  // end_at: '',
+const { current } = departmentStore;
 
-  pipelines: { pipeline_id: '', stage_id: '' },
-  temp_file_ids: [],
-};
+const toaster = useToast();
 
 let fields;
 let files;
 
+const defaults = {
+  id: 100,
+
+  user_id: '',
+  client_id: '',
+  car_id: '',
+
+  appeal_reason_id: '',
+  process_id: '',
+  pipeline_id: '',
+
+  checkboxes: [''],
+
+  department_id: current,
+
+  comment: '',
+
+  temp_file_ids: [],
+};
+
 // **********************************************************************  Form
+
 const setField = function (key) {
   if (key.includes('_id')) {
-    if (key === 'user_id') return;
-    if (key === 'temp_file_ids') return;
-
     fields[key] = this[key.replace('_id', '')]?.id;
     return;
   }
 
-  fields[key] = this[key] ?? defaultFields[key];
+  fields[key] = this[key] ?? defaults[key];
 };
 
 const setForm = async (payload) => {
@@ -52,25 +58,21 @@ const log = (e) => {
 };
 
 export default () => effectScope().run(() => {
-  const toaster = useToast();
-
-  const { route, isThePage, redirectTo } = useAppRouter('TaskEdit');
+  const { route, isThePage, redirectTo } = useAppRouter('OrderEdit');
 
   if (!fields) {
-    fields = reactive(defaultFields);
+    fields = reactive(defaults); // make a deep compy of defaults
     files = ref();
   }
 
-  /* ************ task form ************ */
+  /* ************ Order form ************ */
 
-  const saveTask = async () => {
+  const saveOrder = async () => {
     const len = files.value?.length ?? 0;
     if (len) {
       const fileSet = new FormData();
 
-      for (let i = 0; i < len; i++) {
-        fileSet.append('files[]', files.value[0]);
-      }
+      for (let i = 0; i < len; i++) fileSet.append('files[]', files.value[0]);
 
       const { message: msg, success: suc, data } = await upload('temp/files', fileSet);
 
@@ -84,17 +86,17 @@ export default () => effectScope().run(() => {
       }
     }
 
-    const { data, success } = await save.task(fields, null, true);
+    const { success } = await save.order(fields, null, true);
 
-    success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+    success && redirectTo({ name: 'Orders' });
   };
 
   const atMounted = async () => {
     const { id } = route.params;
     if (isThePage.value && id) {
-      let task = {};
-      task = await $.task(route.params.id);
-      await setForm(task);
+      let order = {};
+      order = await $.order(route.params.id);
+      await setForm(order);
     }
   };
 
@@ -106,8 +108,9 @@ export default () => effectScope().run(() => {
   return {
     fields,
     isEditPage: isThePage,
-    saveTask,
+    saveOrder,
     atMounted,
     log,
+    current,
   };
 });

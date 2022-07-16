@@ -1,9 +1,29 @@
 <script setup>
+import { QuestionMarkCircleIcon } from '@heroicons/vue/outline';
+import { ref } from 'vue';
 import Button from '@/UI/Button.vue';
 import TextArea from '@/UI/TextArea.vue';
-import {
-  QuestionMarkCircleIcon,
-} from '@heroicons/vue/outline';
+import useAuth from '~/composables/useAuth.js';
+import store from '~/store/comments';
+
+const { load, save, state } = store;
+
+const { user } = useAuth();
+
+const props = defineProps({ model: String, id: String });
+console.log(props.model);
+
+const emit = defineEmits(['comment']);
+
+const content = ref('');
+
+const submitComment = async (description) => {
+  await save(props.model, props.id, description);
+  emit('comment', description);
+};
+
+// await load(props.model, props.id)
+
 const comments = [
   {
     id: 1,
@@ -30,17 +50,13 @@ const comments = [
       'Expedita consequatur sit ea voluptas quo ipsam recusandae. Ab sint et voluptatem repudiandae voluptatem et eveniet. Nihil quas consequatur autem. Perferendis rerum et.',
   },
 ];
-const user = {
-  name: 'Whitney Francis',
-  email: 'whitney@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80',
-};
+
 </script>
 
 <template>
   <section aria-labelledby="notes-title">
     <div class="bg-white shadow sm:rounded-lg sm:overflow-hidden">
+
       <div class="divide-y divide-gray-200">
         <div class="px-4 py-5 sm:px-6">
           <h2 id="notes-title" class="text-lg font-medium text-gray-900">Комментарии / Заметки</h2>
@@ -68,37 +84,32 @@ const user = {
           </ul>
         </div>
       </div>
+
+      <!-- form -->
       <div class="bg-gray-50 px-4 py-6 sm:px-6">
         <div class="flex space-x-3">
           <div class="flex-shrink-0">
-            <img class="h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
+            <img class="h-10 w-10 rounded-full" :src="user.avatar" alt="" />
           </div>
           <div class="min-w-0 flex-1">
             <form action="#">
               <div>
                 <label for="comment" class="sr-only">Комментарий</label>
-                <TextArea placeholder="Текст вашего комментария..." rows="3" />
+                <TextArea placeholder="Текст вашего комментария..." rows="3" v-model="content" />
               </div>
               <div class="mt-3 flex items-center justify-between">
-                    <span class="group inline-flex items-start text-sm space-x-2 text-gray-500 hover:text-gray-900">
-                      <QuestionMarkCircleIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+                <span class="group inline-flex items-start text-sm space-x-2 text-gray-500 hover:text-gray-900">
+                  <QuestionMarkCircleIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
 
-                      <span>
-                        Только текст, HTML запрещён
-                      </span>
-                    </span>
-                <Button color="blue">
-                  Отправить
-                </Button>
+                  <span>Только текст, HTML запрещён</span>
+                </span>
+                <Button color="blue" @click="() => submitComment(content)">Отправить</Button>
               </div>
             </form>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 </template>
-
-<style scoped>
-
-</style>

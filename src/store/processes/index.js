@@ -26,8 +26,5 @@ export default {
   reset,
   load,
   drop,
-  // options: computed(() => state.raw.map(({ id, name }) => ({
-  //   value: id,
-  //   label: name,
-  // }))),
+  options: computed(() => state.raw.map(({ id, name }) => ({ label: name, value: id }))),
 };

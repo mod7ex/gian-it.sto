@@ -52,6 +52,6 @@ export default new Proxy($fetch, {
     const { path, ressource } = extract(key);
     const fallBackErr = communicate.fetch.error[ressource];
 
-    return target.call({}, path, fallBackErr, toast, { params: cleanUp(params) });
+    return target.call({}, path, fallBackErr, toast ?? true, { params: cleanUp(params) });
   },
 });

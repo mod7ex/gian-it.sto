@@ -1,6 +1,9 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import $save from '~/helpers/save';
+import useToast from '~/composables/useToast';
+
+const toaster = useToast();
 
 const state = reactive({
   raw: [],
@@ -34,7 +37,8 @@ const fill = async (model, id) => {
 
 const save = async (model, id, description) => {
   const key = `comments/${model}/${id}`;
-  await $save[key]({ description });
+  const { success } = await $save[key]({ description });
+  !success && toaster.danger('Не удалось сохранить комментарий');
 };
 
 export default {

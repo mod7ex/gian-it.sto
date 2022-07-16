@@ -1,70 +1,61 @@
 <script setup>
-import {ref} from 'vue';
+import { ref } from 'vue';
 
-const props = defineProps({
+const emit = defineEmits(['update:modelValue']);
+
+defineProps({
   modelValue: {
-    type: Object,
-    required: true,
+    type: Number,
+    required: false,
   },
+
+  tabs: Array,
 });
 
-const items = ref(props.modelValue);
-const update = (index) => {
-  for (const key in items.value) {
-    items.value[key].current = false;
-  }
+const current = ref(0);
 
-  if(items.value[index] && items.value[index].current !== undefined) {
-    items.value[index].current = true;
-  }
+const pick = (i) => { emit('update:modelValue', current.value = i); };
 
-  return items.value;
-};
 </script>
 
 <template>
   <div>
     <div class="sm:hidden">
       <label for="tabs" class="sr-only">Выберите пункт</label>
-      <select class="block mt-4 w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md" @change="$emit('update:modelValue', update($event.target.value))">
-        <option v-for="(tab, index) in items"
-                :key="tab.label"
-                :selected="tab.current"
-                :value="index"
+      <select
+        class="block mt-4 w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+      >
+        <option
+          v-for="(tab, i) in tabs"
+          :key="`option-tab-${i}`"
+          :selected="i == current"
+          :value="i"
+          @select="() => pick(i)"
         >
-          {{ tab.label }}
+          {{ tab }}
         </option>
       </select>
     </div>
 
     <div class="hidden sm:block">
-      <div class="border-b border-gray-200">
+      <div class="border-b-2 border-gray-200">
         <nav class="-mb-px flex space-x-6" aria-label="Tabs">
-          <div v-for="(tab, index) in items" :key="tab.label" class="flex">
-            <router-link
-              v-if="tab.href && tab.href !== '#'"
-              :to="tab.href"
-              :aria-current="tab.current ? 'page' : undefined"
-              :class="[tab.current ? 'cursor-pointer border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'cursor-pointer whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm']"
-            >
-              {{ tab.label }}
-            </router-link>
+          <div v-for="(tab, i) in tabs" :key="`tab-${i}`" class="flex">
 
             <button
-              v-else
-              @click="$emit('update:modelValue', update(index))"
-              :aria-current="tab.current ? 'page' : undefined"
-              :class="[tab.current ? 'cursor-pointer border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300', 'cursor-pointer whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm']"
+              @click="() => pick(i)"
+              :aria-current="i == current ? 'page' : undefined"
+              :class="[i == current ?
+                  'cursor-pointer border-blue-500 text-blue-600' :
+                  'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                  'border-b-2 cursor-pointer whitespace-nowrap py-4 px-1 font-medium text-sm']"
             >
-              {{ tab.label }}
+              {{ tab }}
             </button>
+
           </div>
         </nav>
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

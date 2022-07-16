@@ -56,27 +56,13 @@ const columns = ref([
       },
     ],
   },
-  {
-    title: 'Слесарный цех',
-    color: 'gray',
-    orders: [],
-  },
-  {
-    title: 'Турбинный цех',
-    color: 'gray',
-    orders: [],
-  },
-  {
-    title: 'Проверка',
-    color: 'gray',
-    orders: [],
-  },
-  {
-    title: 'Завешено',
-    color: 'green',
-    orders: [],
-  },
+  { title: 'Слесарный цех', color: 'gray', orders: [] },
+  { title: 'Турбинный цех', color: 'gray', orders: [] },
+  { title: 'Проверка', color: 'gray', orders: [] },
+  { title: 'Завешено', color: 'green', orders: [] },
 ]);
+
+const log = () => {};
 
 </script>
 

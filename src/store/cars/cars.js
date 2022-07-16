@@ -30,4 +30,5 @@ export default {
   load,
   drop,
   cars: computed(() => state.raw.map(extractor)),
+  options: computed(() => state.raw.map(({ id, vin }) => ({ label: vin, value: id }))),
 };

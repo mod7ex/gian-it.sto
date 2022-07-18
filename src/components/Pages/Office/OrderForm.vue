@@ -7,7 +7,7 @@ import Tabs from '@/UI/Tabs.vue';
 import useSuspense from '~/composables/useSuspense';
 import service from '~/services/orders';
 
-const { fields } = service();
+const { fields, isEditPage } = service();
 
 const suspenseArea = useSuspense();
 
@@ -35,11 +35,11 @@ const labels = tabs.map(({ label }) => label);
     <template #actions>
       <div class="mr-2 text-lg">Сумма: <span class="font-bold">100 000 ₽</span></div>
 
-      <Button type="secondary" link="/orders">
+      <Button type="secondary" :link="{ name: 'Orders' }">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>К заказ-нарядам
       </Button>
 
-      <Button color="red">
+      <Button color="red" v-if="isEditPage">
         <XIcon class="w-5 h-5 mr-1"/>Удалить
       </Button>
     </template>
@@ -48,9 +48,17 @@ const labels = tabs.map(({ label }) => label);
       <Tabs v-model="current" :tabs="labels" class="px-3 sm:px-4 lg:px-5" />
     </template>
 
-    <suspense-area>
-    <!-- <suspense-area :key="`suspense-${current}`"> -->
+<!--
+    <p>TODO: get rid of re-rendring</p>
+
+    <suspense-area :key="`suspense-${current}`">
       <component :is="tabs[current].component" v-bind="tabs[current].props" />
+    </suspense-area>
+-->
+
+    <!-- ISSUE : solved using the v-show directive  -->
+    <suspense-area>
+      <component v-for="(item, i) in tabs" :key="item.label" :is="item.component" v-bind="item.props" v-show="i === current" />
     </suspense-area>
 
   </OfficeLayout>

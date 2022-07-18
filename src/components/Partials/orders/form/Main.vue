@@ -24,7 +24,7 @@ const { load: loadAppealReasons, options: appealReasonOptions } = appealReasonSt
 const { load: loadProcesses, options: processOptions } = processStore;
 const { load: loadPipelines, options: pipelineOptions } = pipelineStore;
 
-const { fields, atMounted, saveOrder, current, log } = service();
+const { fields, atMounted, saveOrder, current, log, isEditPage } = service();
 
 const removeItem = maybeRun((i) => fields.checkboxes.splice(i, 1), computed(() => fields.checkboxes.length > 1));
 
@@ -51,7 +51,7 @@ await Promise.all([loadAppealReasons(), loadProcesses(), loadPipelines(), atMoun
       </div>
 
       <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-3" v-if="isEditPage">
           <Input label="Номер заказ-наряда" :disabled="true" />
         </div>
 

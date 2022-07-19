@@ -1,12 +1,26 @@
 <script setup>
 import Loader from '~/components/Partials/Loader.vue';
 
+// import Order from '@/templates/Order.vue';
+// import Completion from '@/templates/Completion.vue';
+// import Reception from '@/templates/Reception.vue';
+
 </script>
 
 <template>
 
   <Loader />
   <router-view />
+
+<!--
+
+<Order />
+<hr><hr><hr>
+<Completion />
+<hr><hr><hr>
+<Reception />
+
+-->
 
 </template>
 

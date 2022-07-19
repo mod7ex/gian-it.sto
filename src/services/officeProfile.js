@@ -1,4 +1,4 @@
-import { ref, reactive, onMounted, effectScope } from 'vue';
+import { ref, reactive, onMounted, effectScope, onScopeDispose } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import useApi from '~/composables/useApi.js';
 import useAuth from '~/composables/useAuth.js';
@@ -9,6 +9,9 @@ import useToggles from '~/composables/useToggles.js';
 
 const toaster = useToast();
 
+let form;
+let v$;
+
 export default () => effectScope().run(() => {
   const { apiRequest } = useApi();
   const { rules } = officeProfileRules();
@@ -17,19 +20,21 @@ export default () => effectScope().run(() => {
 
   const { toggles, setToggles, bitwisedToggles } = useToggles();
 
-  const form = reactive({
-    name: user.value.name,
-    email: user.value.email,
+  if (!form) {
+    form = reactive({
+      name: user.value.name,
+      email: user.value.email,
 
-    surname: user.value.surname,
-    middle_name: user.value.middle_name,
-    phone: user.value.phone,
-    about: user.value.about,
-    born_at: user.value.born_at,
-    office_position: user.value.office_position,
-  });
+      surname: user.value.surname,
+      middle_name: user.value.middle_name,
+      phone: user.value.phone,
+      about: user.value.about,
+      born_at: user.value.born_at,
+      office_position: user.value.office_position,
+    });
 
-  const v$ = useVuelidate(rules, form, { $lazy: true });
+    v$ = useVuelidate(rules, form, { $lazy: true });
+  }
 
   const updateRawFields = async () => {
     const { call, data, errorMsg, success } = apiRequest('/profile', {
@@ -90,6 +95,11 @@ export default () => effectScope().run(() => {
 
   onMounted(async () => {
     await reset();
+  });
+
+  onScopeDispose(() => {
+    form = undefined;
+    v$ = undefined;
   });
 
   return {

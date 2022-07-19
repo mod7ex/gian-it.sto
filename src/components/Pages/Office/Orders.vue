@@ -68,6 +68,7 @@ const log = () => {};
 
 <template>
   <OfficeLayout title="Заказ-наряды">
+
     <template #actions>
       <Button type="secondary" link="/pipelines">
         <ViewBoardsIcon class="w-5 h-5 mr-1"/>Воронка

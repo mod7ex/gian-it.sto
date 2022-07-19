@@ -20,7 +20,7 @@ const tabs = [
   { label: 'Склад', component: defineAsyncComponent(() => import('@/Partials/orders/form/Storages.vue')) },
   { label: 'Работы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Works.vue')) },
   { label: 'Диагностическая карта', component: defineAsyncComponent(() => import('@/Partials/orders/form/DiagnosticCards.vue')) },
-  { label: 'Комментарии', component: defineAsyncComponent(() => import('@/Partials/Comments.vue')), props: { model: 'order', id: fields?.id } },
+  { label: 'Комментарии', component: defineAsyncComponent(() => import('@/Partials/Comments.vue')), props: { model: 'order', id: `${fields?.id ?? ''}` } },
 ];
 
 const current = ref(0);

@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { MenuButton } from '@headlessui/vue';
+
 import {
   UserGroupIcon,
   PuzzleIcon,

@@ -56,7 +56,7 @@ const labels = tabs.map(({ label }) => label);
     </suspense-area>
 -->
 
-    <!-- ISSUE : solved using the v-show directive  -->
+    <!-- ISSUE : solved using the v-show directive ,but there might still a small issue !  -->
     <suspense-area>
       <component v-for="(item, i) in tabs" :key="item.label" :is="item.component" v-bind="item.props" v-show="i === current" />
     </suspense-area>

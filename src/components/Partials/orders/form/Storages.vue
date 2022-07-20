@@ -20,8 +20,8 @@ import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
         <Tr>
           <Th>Наименование</Th>
           <Th>Дата добавления</Th>
-          <Th>Базовая цена</Th>
-          <Th>Текущая цена</Th>
+          <Th>Цена закупки</Th>
+          <Th>Цена продажи</Th>
           <Th>Комментарий</Th>
           <Th>Статус</Th>
         </Tr>

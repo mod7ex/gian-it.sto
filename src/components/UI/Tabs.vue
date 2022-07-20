@@ -24,13 +24,13 @@ const pick = (i) => { emit('update:modelValue', current.value = i); };
       <label for="tabs" class="sr-only">Выберите пункт</label>
       <select
         class="block mt-4 w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+        @change="($e) => pick($e.target.value)"
       >
         <option
           v-for="(tab, i) in tabs"
           :key="`option-tab-${i}`"
           :selected="i == current"
           :value="i"
-          @select="() => pick(i)"
         >
           {{ tab }}
         </option>

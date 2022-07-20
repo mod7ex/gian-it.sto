@@ -11,7 +11,6 @@ const { load, save, state } = store;
 const { user } = useAuth();
 
 const props = defineProps({ model: String, id: String });
-console.log(props.model);
 
 const emit = defineEmits(['comment']);
 

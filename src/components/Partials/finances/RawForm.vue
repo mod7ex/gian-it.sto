@@ -15,10 +15,7 @@ const types = [
   { label: 'Расход', value: 'out' },
 ];
 
-await (async () => {
-  await load();
-  await atMountedFinanceForm();
-})();
+await Promise.all([load(), atMountedFinanceForm()]);
 
 </script>
 

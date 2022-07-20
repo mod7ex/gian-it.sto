@@ -1,6 +1,6 @@
 <script setup>
 import { defineAsyncComponent, ref } from 'vue';
-import { DocumentTextIcon } from '@heroicons/vue/outline';
+import { DocumentTextIcon, EyeIcon, TrashIcon } from '@heroicons/vue/outline';
 import Button from '@/UI/Button.vue';
 import Link from '@/UI/Link.vue';
 import VDocs from '@/Layout/modal/Docs.vue';
@@ -69,15 +69,19 @@ const fields = [
           <!-- Body -->
 
           <template #td-id="{ item }" >
-            <Badge :point="true" color="blue" class="text-sm">{{ docs[item].id }}</Badge>
+            <span class="max-w-md w-full inline-block"><Badge :point="true" color="blue" class="text-sm">{{ docs[item].id }}</Badge></span>
           </template>
 
           <template #td-view="{ item }" >
-            <Link @click="toVisualize = item">Посмотреть</Link>
+            <Link @click="toVisualize = item">
+              <EyeIcon class="text-blue-600 h-6 hover:text-blue-900" />
+            </Link>
           </template>
 
           <template #td-drop="{ item }" >
-            <Link @click="() => handleDocToggle(item, true)">Удалить</Link>
+            <Link @click="() => handleDocToggle(item, true)">
+              <TrashIcon class="text-blue-600 h-6 hover:text-blue-900" />
+            </Link>
           </template>
 
           <!-- ****** -->

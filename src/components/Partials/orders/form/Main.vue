@@ -31,7 +31,7 @@ const removeItem = maybeRun((i) => fields.checkboxes.splice(i, 1), computed(() =
 const reset = async (department_id) => {
   // eslint-disable-next-line no-multi-assign
   fields.user_id = (fields.client_id = (fields.car_id = ''));
-  await Promise.all([loadUsers({ department_id }), loadClients({ department_id })]);
+  // await Promise.all([loadUsers({ department_id }), loadClients({ department_id })]); // just for test
   resetCars();
 };
 

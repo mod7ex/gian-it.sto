@@ -12,6 +12,7 @@ export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } =
     const loading = ref(false);
     const show = ref(false);
     const message = ref();
+    const SuspenseArea = useSuspense();
 
     const onClose = async () => {
       show.value = false;
@@ -52,7 +53,7 @@ export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } =
           Modal,
           { onClose, open: show.value, title: isRef(title) ? title.value : title, message: message.value }, // onOutclick: onClose
           {
-            default: () => h(useSuspense(), {}, { default: () => (show.value ? h(RawForm) : null) }),
+            default: () => h(SuspenseArea, {}, { default: () => (show.value ? h(RawForm) : null) }),
             actions: () => h(Actions, { onClose, onSubmited, loading: loading.value }),
           },
         );

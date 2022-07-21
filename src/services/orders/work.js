@@ -1,5 +1,5 @@
 import { computed, reactive, effectScope, onScopeDispose, ref } from 'vue';
-import RawForm from '@/Partials/orders/form/Raw/Payment.vue';
+import RawForm from '@/Partials/orders/form/Raw/Work.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
 
@@ -9,19 +9,18 @@ import useModalForm from '~/composables/useModalForm';
 
 // const toaster = useToast();
 
-let invoice;
-let payments;
+let work;
+let works;
 
 const setForm = (payload = {}) => {
-  invoice.id = payload?.id;
-  invoice.client_id = payload?.client?.id;
-  invoice.payment_method = payload?.payment_method;
-  invoice.comment = payload?.comment;
+  work.id = payload?.id;
+  work.client_id = payload?.client?.id;
+  work.payment_method = payload?.payment_method;
+  work.comment = payload?.comment;
 };
 
 const saveForm = async () => {
-  payments.value.push(invoice);
-  console.log(invoice);
+  works.value.push(work);
   return { message: 'shit', success: true };
 
   // const { message, success } = await save.department(department);
@@ -37,7 +36,7 @@ const saveForm = async () => {
 };
 
 const atMounted = async () => {
-  const { id } = invoice;
+  const { id } = work;
 
   if (id) {
     // const dep = await $.department(id);
@@ -50,36 +49,33 @@ export default function () {
     const scope = effectScope();
 
     scope.run(() => {
-      const isUpdate = computed(() => !!invoice.id);
+      const isUpdate = computed(() => !!work.id);
 
       const { render } = useModalForm({
-        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].invoice),
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].work),
         RawForm,
         atSubmit: saveForm,
         atClose: () => scope.stop(),
         atOpen: (id) => {
-          payments = ref([]);
+          works = ref([]);
 
-          invoice = reactive({
+          work = reactive({
             id: id ?? '',
-            client_id: '',
-            payment_method: '',
-            comment: '',
           });
         },
       });
 
       render(...args);
 
-      // onScopeDispose(() => { invoice = undefined; });
+      // onScopeDispose(() => { work = undefined; });
     });
   };
 
   return {
     saveForm,
-    invoice,
+    work,
     atMounted,
     render: modalUp,
-    payments,
+    works,
   };
 }

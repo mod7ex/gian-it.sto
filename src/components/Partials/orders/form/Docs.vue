@@ -48,13 +48,13 @@ const fields = [
         </Button>
       </div>
 
-      <Teleport to="#sto-modal">
+      <Teleport to="#sto-modal-teleport">
         <v-docs :open="isUp" @close="isUp = false" @outclick="isUp = false" >
           <v-doc v-for="(doc,i) in docs" :key="doc.id" :label="doc.id" @toggled="() => handleDocToggle(i)" :selected="selectedDocs.indexOf(i) !== -1" />
         </v-docs>
       </Teleport>
 
-      <Teleport to="#sto-modal">
+      <Teleport to="#sto-modal-teleport">
         <doc-preview :open="toVisualize != null" @close="toVisualize = null" >
           <!-- undefined is included (:) -->
           <component  :is="docs[toVisualize].component" class="max-h-screen" />
@@ -86,6 +86,5 @@ const fields = [
 
           <!-- ****** -->
       </Table>
-
   </div>
 </template>

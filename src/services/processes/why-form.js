@@ -7,7 +7,7 @@ import store from '~/store/processes/why';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/processes/WhyForm.vue';
 import communicate from '~/helpers/communicate';
-import formRules from '~/validationsRules/process';
+import { whyRules } from '~/validationsRules/process';
 
 const { load } = store;
 
@@ -67,7 +67,7 @@ export default function () {
             name: '',
           });
 
-          v$ = useVuelidate(formRules(), why, { $lazy: true });
+          v$ = useVuelidate(whyRules(), why, { $lazy: true });
         },
       });
 

@@ -37,7 +37,7 @@ const { render } = form();
         </template>
 
         <template #td-color="{ value }" >
-            <div class="w-5 h-5" :style="{background: value}"></div>
+            <div class="w-9 h-9 border shadow-sm rounded-full" :style="{background: value}"></div>
         </template>
 
         <template #td-created_at="{ value }" >

@@ -16,10 +16,10 @@ defineEmits(['close']);
   <Transition name="docs-modal">
       <div
         v-if="props.open"
-        class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50"
+        class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50 overflow-y-scroll"
       >
 
-        <div class="bg-white rounded-md p-3 shadow-2xl">
+        <div class="bg-white rounded-md p-3 mt-12 shadow-2xl">
           <div class="p-11 doc-conatiner">
             <slot></slot>
           </div>

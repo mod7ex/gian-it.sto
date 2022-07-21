@@ -5,5 +5,11 @@
       "~/*": ["./src/*"],
       "@/*": ["./src/components/*"]
     }
+  },
+
+  "vueCompilerOptions": {
+    "experimentalDisableTemplateSupport": true
   }
 }
+
+ 

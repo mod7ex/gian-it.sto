@@ -8,3 +8,9 @@ export default function () {
     appeal_reason_id: { required: helpers.withMessage('Выберите причину обращения', required) },
   }));
 }
+
+export function whyRules() {
+  return computed(() => ({
+    name: { required: helpers.withMessage('Укажите вопрос', required) },
+  }));
+}

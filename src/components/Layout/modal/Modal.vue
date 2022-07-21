@@ -25,11 +25,12 @@ defineEmits(['outclick']);
   <Transition name="modal">
       <div
         v-if="props.open"
-        class="absolute p-9 bg-gray-800 inset-0 flex justify-center items-center bg-opacity-75 z-50"
+        class="absolute p-9 bg-gray-800 inset-0 flex justify-center items-center bg-opacity-75 z-50 overflow-y-scroll"
         @click.self="$emit('outclick')"
       >
 
-      <div class="bg-white rounded-md p-7 shadow-2xl max-w-sm w-full">
+      <div class="bg-white rounded-md p-7 pb-9 m-3 mt-96 sm:mt-3 shadow-2xl">
+      <!-- <div class="bg-white rounded-md p-7 shadow-2xl max-w-sm w-full"> -->
         <slot name="icon"></slot>
 
         <div>

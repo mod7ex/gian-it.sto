@@ -22,15 +22,18 @@ const fields = [
     <div>
       <div class="mb-5">
         <Button color="blue" @click="() => render()">
-          <CurrencyDollarIcon class="w-5 h-5 mr-1"/>Добавить работу
+          <CurrencyDollarIcon class="w-5 h-5 mr-1"/>Добавить оплату
         </Button>
       </div>
 
+      {{ payments }}
+
+      <!-- Confirm if there is an id otherwise don't confirm -->
       <Table
         :fields="fields"
         :items="payments"
-        @delete="(id) => drop(() => dropDepartment(id))"
-        @edit="(id) => render(id)"
+        @delete="(id) => drop(() => void(id))"
+        @edit="(id) => void(id)"
       >
           <!-- Body -->
 

@@ -4,14 +4,29 @@ import _$ from '~/helpers/drop';
 
 const state = reactive({
   raw: [],
+  order_funnel: {},
 });
 
 const reset = () => {
   state.raw = [];
 };
 
-const load = async (type = 'task') => {
-  state.raw = await $.pipelines({ type });
+const load_orders_funnel = async () => {
+  if (state.order_funnel.id) return state.order_funnel.id;
+
+  // We suppose that there is only one funnel for orders
+  const pipelines = await $.pipelines({ type: 'order' });
+
+  const theFunnel = pipelines[0];
+
+  if (theFunnel) {
+    state.order_funnel = theFunnel;
+    return theFunnel.id;
+  }
+};
+
+const load = async (payload = {}) => {
+  state.raw = await $.pipelines(payload);
 };
 
 const drop = async (id) => _$.pipeline(id, (v) => {
@@ -20,8 +35,12 @@ const drop = async (id) => _$.pipeline(id, (v) => {
 
 export default {
   state: readonly(state),
+
   options: computed(() => state.raw.map(({ id, name }) => ({ label: name, value: id }))),
 
+  orderFunnelOption: computed(() => [{ value: state.order_funnel?.id, label: state.order_funnel?.name }]),
+
+  load_orders_funnel,
   load,
   reset,
   drop,

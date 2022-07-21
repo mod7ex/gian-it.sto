@@ -1,45 +1,44 @@
 <script setup>
 import { CheckIcon } from '@heroicons/vue/outline';
-import { computed, watch } from 'vue';
+import { computed, watch, onMounted } from 'vue';
 import Button from '@/UI/Button.vue';
 import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
 import TextArea from '@/UI/TextArea.vue';
 import Select from '@/UI/Select.vue';
-import service from '~/services/orders';
-
+import service from '~/services/orders/form';
 import userStore from '~/store/employees';
 import clientStore from '~/store/clients';
 import carStore from '~/store/cars/cars';
 import appealReasonStore from '~/store/processes/why';
 import processStore from '~/store/processes/index';
 import pipelineStore from '~/store/pipelines';
-
+import stagesStore from '~/store/pipelines/stages';
 import { maybeRun } from '~/helpers';
-
 const { load: loadUsers, options: userOptions } = userStore;
 const { load: loadClients, options: clientOptions } = clientStore;
 const { load: loadCars, options: carOptions, reset: resetCars } = carStore;
 const { load: loadAppealReasons, options: appealReasonOptions } = appealReasonStore;
 const { load: loadProcesses, options: processOptions } = processStore;
-const { load: loadPipelines, options: pipelineOptions } = pipelineStore;
+const { orderFunnelOption } = pipelineStore;
+const { load_orders_stages, options: stagesOptions } = stagesStore;
 
 const { fields, atMounted, saveOrder, current, log, isEditPage } = service();
 
 const removeItem = maybeRun((i) => fields.checkboxes.splice(i, 1), computed(() => fields.checkboxes.length > 1));
 
-const reset = async (department_id) => {
-  // eslint-disable-next-line no-multi-assign
-  fields.user_id = (fields.client_id = (fields.car_id = ''));
-  // await Promise.all([loadUsers({ department_id }), loadClients({ department_id })]); // just for test
-  resetCars();
-};
-
-watch(current, reset, { immediate: true });
+onMounted(resetCars);
 
 watch(() => fields.client_id, (client_id) => loadCars({ client_id }));
 
-await Promise.all([loadAppealReasons(), loadProcesses(), loadPipelines(), atMounted()]);
+await Promise.all([
+    atMounted(),
+    loadAppealReasons(),
+    loadProcesses(),
+    load_orders_stages(),
+    loadUsers({ department_id: current.value }),
+    loadClients({ department_id: current.value })
+]);
 
 </script>
 
@@ -64,7 +63,7 @@ await Promise.all([loadAppealReasons(), loadProcesses(), loadPipelines(), atMoun
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-          <Select label="Автомобиль" :options="carOptions" v-model="fields.car_id" />
+          <Select label="Автомобиль" :options="carOptions" v-model="fields.car_id" :disabled="!fields.client_id" />
         </div>
 <!--
         <div class="col-span-12 sm:col-span-3">
@@ -79,8 +78,12 @@ await Promise.all([loadAppealReasons(), loadProcesses(), loadPipelines(), atMoun
           <Select label="Процесс" :options="processOptions" v-model="fields.process_id" />
         </div>
 
+        <div class="col-span-12 sm:col-span-4">
+          <Select label="Воронка" :options="orderFunnelOption" v-model="fields.pipeline_id" disabled  />
+        </div>
+
         <div class="col-span-12 sm:col-span-3">
-          <Select label="Воронка" :options="pipelineOptions" v-model="fields.pipeline_id" />
+          <Select label="Этап воронки" :options="stagesOptions" v-model="fields.stage_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-12">

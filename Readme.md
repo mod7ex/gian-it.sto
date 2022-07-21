@@ -19,3 +19,5 @@
 ## . Logic for all services should be similar to `diagnostic-card-form.js` service & some composables
 
 ## . A global `saveFormHandler` might have been defined, it takes the `v$` and handels validation once
+
+## . A store class or controller class (OOP) could have been created to avoid repetition

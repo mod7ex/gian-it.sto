@@ -5,7 +5,10 @@ import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Tabs from '@/UI/Tabs.vue';
 import useSuspense from '~/composables/useSuspense';
-import service from '~/services/orders';
+import service from '~/services/orders/form';
+import departmentStore from '~/store/departments';
+
+const { current: department } = departmentStore;
 
 const { fields, isEditPage } = service();
 
@@ -57,7 +60,7 @@ const labels = tabs.map(({ label }) => label);
 -->
 
     <!-- ISSUE : solved using the v-show directive ,but there might still a small issue !  -->
-    <suspense-area>
+    <suspense-area :key="`order-${department}`">
       <component v-for="(item, i) in tabs" :key="item.label" :is="item.component" v-bind="item.props" v-show="i === current" />
     </suspense-area>
 

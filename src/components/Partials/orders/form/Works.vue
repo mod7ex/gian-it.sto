@@ -9,7 +9,7 @@ import service from '~/services/orders/work';
 
 const { drop } = useConfirmDialog();
 
-const { render } = service();
+const { render, works } = service();
 
 const fields = [
   { label: 'Название', key: 'id' },

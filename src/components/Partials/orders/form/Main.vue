@@ -32,12 +32,12 @@ onMounted(resetCars);
 watch(() => fields.client_id, (client_id) => loadCars({ client_id }));
 
 await Promise.all([
-    atMounted(),
-    loadAppealReasons(),
-    loadProcesses(),
-    load_orders_stages(),
-    loadUsers({ department_id: current.value }),
-    loadClients({ department_id: current.value })
+  loadAppealReasons(),
+  loadProcesses(),
+  load_orders_stages(),
+  loadUsers({ department_id: current.value }),
+  loadClients({ department_id: current.value }),
+  atMounted()
 ]);
 
 </script>

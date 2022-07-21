@@ -1,7 +1,6 @@
-import { reactive, ref, effectScope, onScopeDispose } from 'vue';
+import { reactive, ref, effectScope, onScopeDispose, computed } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
-import { hyphenatedDateFormat } from '~/helpers';
 import save, { upload } from '~/helpers/save';
 import useToast from '~/composables/useToast.js';
 import pipelineStore from '~/store/pipelines';
@@ -20,14 +19,16 @@ const defaults = {
   id: '',
 
   user_id: '',
+
   client_id: '',
+
   car_id: '',
 
   appeal_reason_id: '',
 
   process_id: '',
 
-  pipeline_id: orderFunnelOption.value[0].value,
+  pipeline_id: computed(() => orderFunnelOption.value[0].value),
 
   checkboxes: [''],
 
@@ -43,7 +44,9 @@ const defaults = {
 const setField = function (key) {
   if (key.includes('_id')) {
     if (['pipeline_id', 'department_id'].includes(key)) return;
+
     fields[key] = this[key.replace('_id', '')]?.id;
+
     return;
   }
 
@@ -52,10 +55,6 @@ const setField = function (key) {
 
 const setForm = async (payload) => {
   Object.keys(fields).forEach(setField, payload ?? {});
-
-  if (!fields.deadline_at) return;
-
-  fields.deadline_at = hyphenatedDateFormat(fields.deadline_at);
 };
 
 const log = (e) => {
@@ -66,7 +65,7 @@ export default () => effectScope().run(() => {
   const { route, isThePage, redirectTo } = useAppRouter('OrderEdit');
 
   if (!fields) {
-    fields = reactive(defaults); // make a deep compy of defaults
+    fields = reactive(defaults); // make a deep copy of defaults
     files = ref();
   }
 
@@ -99,14 +98,13 @@ export default () => effectScope().run(() => {
   const atMounted = async () => {
     const { id } = route.params;
     if (isThePage.value && id) {
-      let order = {};
-      order = await $.order(route.params.id);
+      const order = await $.order(route.params.id);
       await setForm(order);
 
       return;
     }
 
-    await setForm({});
+    await setForm(defaults);
   };
 
   onScopeDispose(() => {

@@ -1,82 +1,48 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Draggable from 'vuedraggable';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import service from '~/services/orders';
 import store from '~/store/orders';
+import stageStore from '~/store/pipelines/stages';
 import departmentStore from '~/store/departments';
+import {defaults} from '~/composables/useAvatar'
 
 const { load, state } = store;
 const { current } = departmentStore;
-const { atMounted, stages } = service();
+const { state: stageState, load_orders_stages } = stageStore;
 
-/*
-stages
-{
-    "id": 25,
-    "name": "Контроль качества",
-    "color": "#ffffff",
-}
-*/
 
-await Promise.all([atMounted(), load({ department_id: current.value })]);
+const columns = computed(() => {
+  const kanban = state.raw.reduce((payload, curr) => {
+    const { id, color, name } = curr.stage;
 
-// const cols = state.raw.reduce((prev, curr) => {
+    if (id in payload) payload[id].orders.push(curr);
+    else {
+      payload[id] = {
+        orders: [curr],
+        name,
+        color,
+      };
+    }
 
-// }, [])
+    return payload;
+  }, {});
 
-const columns = ref([
-  {
-    title: 'Новые',
-    color: 'gray',
-    orders: [
-      {
-        id: 1,
-        title: 'Заказ наряд #00001',
-        date: '14.09.2021',
-        type: 'Тип заказ-наряда',
-        color: 'red',
-        user: {
-          name: 'Иванов Иван',
-          role: 'Турбинный цех',
-          image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        },
-        count_tasks: 2,
-      },
-      {
-        id: 1,
-        title: 'Заказ наряд #00002',
-        date: '14.09.2021',
-        type: 'Тип заказ-наряда',
-        color: 'blue',
-        user: {
-          name: 'Иванов Иван',
-          role: 'Турбинный цех',
-          image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        },
-        count_tasks: 8,
-      },
-      {
-        id: 1,
-        title: 'Заказ наряд #00003',
-        date: '14.09.2021',
-        type: 'Тип заказ-наряда',
-        color: 'purple',
-        user: {
-          name: 'Иванов Иван',
-          role: 'Турбинный цех',
-          image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-        },
-        count_tasks: 5,
-      },
-    ],
-  },
-  { title: 'Слесарный цех', color: 'gray', orders: [] },
-  { title: 'Турбинный цех', color: 'gray', orders: [] },
-  { title: 'Проверка', color: 'gray', orders: [] },
-  { title: 'Завешено', color: 'green', orders: [] },
-]);
+  stageState.raw.forEach(({ id, color, name }) => {
+    if (id in kanban) return;
+    kanban[id] = {
+      orders: [],
+      name,
+      color,
+    };
+  });
+
+  return kanban;
+});
+
+await Promise.all([load({ department_id: current.value }), load_orders_stages()]);
 
 const log = () => {};
 
@@ -84,57 +50,59 @@ const log = () => {};
 
 <template>
     <div class="flex justify-left">
-      <div class="flex overflow-x-auto">
+      <div class="flex flex-wrap items-stretch">
         <div
-          v-for="column in columns"
-          :key="column.title"
-          :class="[`bg-${column.color}-100`, 'tasks']"
+          v-for="[id, {orders, name, color}] in Object.entries(columns)"
+          :key="id"
+          class="rounded-lg p-3 mr-4 mb-4 tasks"
+          :style="{background: color}"
         >
-          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ column.title }}</p>
+          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ name }}</p>
 
           <Draggable
             item-key="id"
-            :list="column.orders"
+            :list="orders"
             group="orders"
             ghost-class="ghost"
             class="tasks-container"
             @end="log"
           >
             <template #item="{element}">
-              <div class="task"
-                   :key="element.id"
-              >
+              <div class="task bg-white shadow rounded px-3 pt-3 my-2 pb-5 border" :key="element.id" >
                 <div class="flex justify-between">
+
                   <div>
-                    <Link class="font-semibold font-sans tracking-wide text-sm">
-                      {{ element.title }}
+                    <Link class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'OrderEdit', params: {id: element.id} }" >
+                      Заказ-наряды #{{ element.id }}
                     </Link>
 
                     <div class="text-xs">
-                      <Link>
-                        Задач: {{ element.count_tasks }}
-                      </Link>
+                      <Link>Задач: {{ /* 'element.count_tasks' */ 0 }}</Link>
                     </div>
                   </div>
 
-                  <div v-if="element.user" class="flex flex-col items-end">
+                  <div class="flex flex-col items-end">
                     <Link>
                       <img
                         class="w-8 h-8 rounded-full ml-3"
-                        :src="element.user.image"
-                        alt=""
-                        :title="element.user.name"
+                        :src="element.user?.avatar ?? defaults.avatar"
+                        :title="`${element.user?.name} ${element.user?.surname}`"
                       >
                     </Link>
                   </div>
+
                 </div>
+
                 <div class="flex mt-4 justify-between items-center">
-                  <span class="text-sm text-gray-600">{{ element.date }}</span>
-                  <Badge :color="element.color" :point="true" v-if="element.type">{{ element.type }}</Badge>
+                  <span class="text-sm text-gray-600">{{ element.created_at.split(' ')[0] }}</span>
+                  <!-- <Badge color="blue" :point="true" v-if="element.type">{{ 'element.type' }}</Badge> -->
+                  <Badge color="blue" :point="true" >{{ 'element.type' }}</Badge>
                 </div>
+
               </div>
             </template>
           </Draggable>
+
         </div>
       </div>
     </div>
@@ -146,12 +114,10 @@ const log = () => {};
 }
 
 .task {
-  @apply bg-white shadow rounded px-3 pt-3 my-2 pb-5 border border-white;
   min-width: 260px;
 }
 
-.tasks {
-  @apply rounded-lg p-3 rounded mr-4;
+.tasks { 
   min-width: 290px;
 }
 

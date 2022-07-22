@@ -17,7 +17,7 @@ const setKanBanStages = async () => {
 };
 
 const atMounted = async () => {
-  await setKanBanStages();
+  // await setKanBanStages();
 };
 
 export default () => effectScope().run(() => {

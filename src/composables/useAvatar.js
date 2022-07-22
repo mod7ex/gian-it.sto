@@ -4,7 +4,7 @@ import { upload } from '~/helpers/save';
 
 const toaster = useToast();
 
-const defaults = {
+export const defaults = {
   avatar: 'https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png',
   photo: 'https://webcolours.ca/wp-content/uploads/2020/10/webcolours-unknown.png',
 };

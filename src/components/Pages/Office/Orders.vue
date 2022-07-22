@@ -7,7 +7,9 @@ import Select from '@/UI/Select.vue';
 import Header from '@/UI/Header.vue';
 import KanBan from '~/components/Partials/orders/items/KanBan.vue';
 import useSuspense from '~/composables/useSuspense';
+import departmentStore from '~/store/departments';
 
+const { current } = departmentStore;
 const SuspenseArea = useSuspense(KanBan);
 
 </script>
@@ -51,7 +53,7 @@ const SuspenseArea = useSuspense(KanBan);
       </div>
     </div>
 
-    <suspense-area />
+    <suspense-area :key="`orders-${current}`" />
 
   </OfficeLayout>
 </template>

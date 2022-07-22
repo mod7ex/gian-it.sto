@@ -109,3 +109,5 @@ export const extract = (key = '') => ({ path: keyToPath(key), ressource: ressour
 export const objectSignature = (target) => Object.getOwnPropertyNames(target).reduce((prev, currKey) => prev + target[currKey], '');
 
 // export const objectSignature = (target) => Object.keys(target).reduce((prev, currKey) => prev + target[currKey], '');
+
+export const deepCopyObj = (target) => JSON.parse(JSON.stringify(target));

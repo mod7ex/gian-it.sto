@@ -65,7 +65,10 @@ export default () => effectScope().run(() => {
   const { route, isThePage, redirectTo } = useAppRouter('OrderEdit');
 
   if (!fields) {
-    fields = reactive(defaults); // make a deep copy of defaults
+    // Trying to make a deep copy of defaults, ISSUE : doesn't work for checkboxes
+    fields = reactive(defaults);
+    fields.checkboxes = [''];
+    fields.temp_file_ids = [];
     files = ref();
   }
 

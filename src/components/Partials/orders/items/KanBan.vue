@@ -7,14 +7,17 @@ import service from '~/services/orders';
 import store from '~/store/orders';
 import stageStore from '~/store/pipelines/stages';
 import departmentStore from '~/store/departments';
-import {defaults} from '~/composables/useAvatar'
+import { defaults } from '~/composables/useAvatar';
+
+import save from '~/helpers/save'
 
 const { load, state } = store;
 const { current } = departmentStore;
 const { state: stageState, load_orders_stages } = stageStore;
 
+let columns;
 
-const columns = computed(() => {
+const getKanBanPayload = () => {
   const kanban = state.raw.reduce((payload, curr) => {
     const { id, color, name } = curr.stage;
 
@@ -40,11 +43,18 @@ const columns = computed(() => {
   });
 
   return kanban;
-});
+};
 
-await Promise.all([load({ department_id: current.value }), load_orders_stages()]);
+await Promise.all([load({ department_id: current.value }), load_orders_stages()]).then(() => {
+  columns = ref(getKanBanPayload())
+})
 
-const log = () => {};
+const log = async (e) => {
+  const { item: {id: orderId}, newIndex, oldIndex, to: { id: stage_id } } = e;
+
+  const {message, success} = await save({data: { stage_id }, path: `orders/${orderId}/pipelines/${stageState.pipeline}/stage`})
+  console.log(message, success)
+};
 
 </script>
 
@@ -52,23 +62,24 @@ const log = () => {};
     <div class="flex justify-left">
       <div class="flex flex-wrap items-stretch">
         <div
-          v-for="[id, {orders, name, color}] in Object.entries(columns)"
+          v-for="[id, {name, color}] in Object.entries(columns)"
           :key="id"
           class="rounded-lg p-3 mr-4 mb-4 tasks"
           :style="{background: color}"
         >
-          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ name }}</p>
+          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ id }} {{ name }}</p>
 
           <Draggable
             item-key="id"
-            :list="orders"
+            v-model="columns[id].orders"
             group="orders"
             ghost-class="ghost"
             class="tasks-container"
+            :id="id"
             @end="log"
           >
             <template #item="{element}">
-              <div class="task bg-white shadow rounded px-3 pt-3 my-2 pb-5 border" :key="element.id" >
+              <div class="task bg-white shadow rounded px-3 pt-3 my-2 pb-5 border" :key="element.id" :id="element.id" >
                 <div class="flex justify-between">
 
                   <div>
@@ -117,7 +128,7 @@ const log = () => {};
   min-width: 260px;
 }
 
-.tasks { 
+.tasks {
   min-width: 290px;
 }
 

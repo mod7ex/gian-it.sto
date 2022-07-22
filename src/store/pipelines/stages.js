@@ -7,6 +7,7 @@ const { load_orders_funnel } = store;
 
 const state = reactive({
   raw: [],
+  pipeline: undefined,
 });
 
 const reset = () => { state.raw = []; };
@@ -16,6 +17,7 @@ const load_orders_stages = async () => {
 
   if (!pipeline_id) return;
 
+  state.pipeline = pipeline_id;
   state.raw = await $.stages({ pipeline_id });
 };
 

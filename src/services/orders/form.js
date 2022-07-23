@@ -1,14 +1,17 @@
-import { reactive, ref, effectScope, onScopeDispose, computed } from 'vue';
+import { reactive, ref, effectScope, computed } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import save, { upload } from '~/helpers/save';
+import { deepCopyObj } from '~/helpers';
+import communicate from '~/helpers/communicate';
 import useToast from '~/composables/useToast.js';
 import pipelineStore from '~/store/pipelines';
+import orderStore from '~/store/orders';
 import departmentStore from '~/store/departments';
 
 const { orderFunnelOption } = pipelineStore;
-
 const { current } = departmentStore;
+const { drop } = orderStore;
 
 const toaster = useToast();
 
@@ -22,21 +25,26 @@ const defaults = {
 
   client_id: '',
 
+  stage_id: '',
+
   car_id: '',
 
   appeal_reason_id: '',
 
   process_id: '',
 
-  pipeline_id: computed(() => orderFunnelOption.value[0].value),
-
-  checkboxes: [''],
-
-  department_id: current,
-
   comment: '',
 
-  temp_file_ids: [],
+};
+
+const refDefaults = {
+  pipeline_id: computed(() => orderFunnelOption.value[0].value),
+  department_id: current,
+};
+
+const clearMemory = () => {
+  fields = undefined;
+  files = undefined;
 };
 
 // **********************************************************************  Form
@@ -49,6 +57,9 @@ const setField = function (key) {
 
     return;
   }
+
+  if (key === 'checkboxes') { fields[key] = ['']; return; }
+  if (key === 'temp_file_ids') { fields[key] = []; return; }
 
   fields[key] = this[key] ?? defaults[key];
 };
@@ -66,9 +77,8 @@ export default () => effectScope().run(() => {
 
   if (!fields) {
     // Trying to make a deep copy of defaults, ISSUE : doesn't work for checkboxes
-    fields = reactive(defaults);
-    fields.checkboxes = [''];
-    fields.temp_file_ids = [];
+    fields = reactive({ ...deepCopyObj(defaults), ...refDefaults, ...{ checkboxes: [''], temp_file_ids: [] } });
+
     files = ref();
   }
 
@@ -110,10 +120,19 @@ export default () => effectScope().run(() => {
     await setForm(defaults);
   };
 
-  onScopeDispose(() => {
-    fields = undefined;
-    files = undefined;
-  });
+  const dropOrder = async () => {
+    const { success, message } = await drop(route.params.id);
+
+    success && redirectTo({ name: 'Orders' });
+
+    const msg = message ?? communicate.drop[success ? 'success' : 'error'];
+
+    try {
+      return { success, message: msg };
+    } finally {
+      toaster[success ? 'success' : 'danger'](msg);
+    }
+  };
 
   return {
     fields,
@@ -122,5 +141,7 @@ export default () => effectScope().run(() => {
     atMounted,
     log,
     current,
+    clearMemory,
+    dropOrder,
   };
 });

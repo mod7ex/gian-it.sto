@@ -1,73 +1,26 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
 import Draggable from 'vuedraggable';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import service from '~/services/orders';
-import store from '~/store/orders';
-import stageStore from '~/store/pipelines/stages';
-import departmentStore from '~/store/departments';
 import { defaults } from '~/composables/useAvatar';
+import { generateShapedIdfromId } from '~/helpers';
 
-import save from '~/helpers/save'
+const { columns, log, atMounted } = service();
 
-const { load, state } = store;
-const { current } = departmentStore;
-const { state: stageState, load_orders_stages } = stageStore;
-
-let columns;
-
-const getKanBanPayload = () => {
-  const kanban = state.raw.reduce((payload, curr) => {
-    const { id, color, name } = curr.stage;
-
-    if (id in payload) payload[id].orders.push(curr);
-    else {
-      payload[id] = {
-        orders: [curr],
-        name,
-        color,
-      };
-    }
-
-    return payload;
-  }, {});
-
-  stageState.raw.forEach(({ id, color, name }) => {
-    if (id in kanban) return;
-    kanban[id] = {
-      orders: [],
-      name,
-      color,
-    };
-  });
-
-  return kanban;
-};
-
-await Promise.all([load({ department_id: current.value }), load_orders_stages()]).then(() => {
-  columns = ref(getKanBanPayload())
-})
-
-const log = async (e) => {
-  const { item: {id: orderId}, newIndex, oldIndex, to: { id: stage_id } } = e;
-
-  const {message, success} = await save({data: { stage_id }, path: `orders/${orderId}/pipelines/${stageState.pipeline}/stage`})
-  console.log(message, success)
-};
+await atMounted();
 
 </script>
 
 <template>
-    <div class="flex justify-left">
-      <div class="flex flex-wrap items-stretch">
+      <div class="grid grid-cols-12 grid-rows-6 sm:grid-rows-4 xl:grid-rows-3 gap-2">
         <div
           v-for="[id, {name, color}] in Object.entries(columns)"
           :key="id"
-          class="rounded-lg p-3 mr-4 mb-4 tasks"
+          class="rounded-lg p-3 col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3"
           :style="{background: color}"
         >
-          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ id }} {{ name }}</p>
+          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ name }}</p>
 
           <Draggable
             item-key="id"
@@ -79,12 +32,12 @@ const log = async (e) => {
             @end="log"
           >
             <template #item="{element}">
-              <div class="task bg-white shadow rounded px-3 pt-3 my-2 pb-5 border" :key="element.id" :id="element.id" >
+              <div class="bg-white shadow rounded px-3 pt-3 my-2 pb-5 border w-full" :key="element.id" :id="element.id" >
                 <div class="flex justify-between">
 
                   <div>
                     <Link class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'OrderEdit', params: {id: element.id} }" >
-                      Заказ-наряды #{{ element.id }}
+                      Заказ-наряды #{{ generateShapedIdfromId(element.id) }}
                     </Link>
 
                     <div class="text-xs">
@@ -116,20 +69,11 @@ const log = async (e) => {
 
         </div>
       </div>
-    </div>
 </template>
 
 <style scoped>
 .ghost {
   opacity: 0.5;
-}
-
-.task {
-  min-width: 260px;
-}
-
-.tasks {
-  min-width: 290px;
 }
 
 .tasks-container {

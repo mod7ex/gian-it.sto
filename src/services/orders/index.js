@@ -1,36 +1,91 @@
-import { effectScope, onScopeDispose, ref } from 'vue';
-import $ from '~/helpers/fetch';
+import { effectScope, onScopeDispose, ref, reactive, computed } from 'vue';
+import store from '~/store/orders';
+import stageStore from '~/store/pipelines/stages';
+import departmentStore from '~/store/departments';
+import save from '~/helpers/save';
+import { objectSignature } from '~/helpers';
+import useToast from '~/composables/useToast';
 
-// use store of pipines and stages and orders
+const toaster = useToast();
+const { load, state } = store;
+const { current } = departmentStore;
+const { state: stageState, load_orders_stages } = stageStore;
 
-let stages;
+let columns;
 
-const setKanBanStages = async () => {
-  const pipelines = await $.pipelines({ type: 'order' });
+const filter = reactive({
+  type: '',
+  user_id: '',
+  created_after: '',
+  created_before: '',
+});
 
-  // We suppose that there is only one funnel for orders
-  const pipeline_id = pipelines[0]?.id;
+const getKanBanPayload = () => {
+  const kanban = state.raw.reduce((payload, curr) => {
+    if (curr.stage) {
+      const { id, color, name } = curr.stage;
 
-  if (!pipeline_id) return;
+      if (id in payload) payload[id].orders.push(curr);
+      else {
+        payload[id] = {
+          orders: [curr],
+          name,
+          color,
+        };
+      }
+    }
 
-  stages.value = await $.stages({ pipeline_id });
+    return payload;
+  }, {});
+
+  stageState.raw.forEach(({ id, color, name }) => {
+    if (id in kanban) return;
+    kanban[id] = {
+      orders: [],
+      name,
+      color,
+    };
+  });
+
+  return kanban;
+};
+
+const fillColumns = () => {
+  columns.value = getKanBanPayload();
+};
+
+const log = async (e) => {
+  const { item: { id: orderId }, to: { id: stage_id } } = e;
+
+  const { message, success } = await save({ data: { stage_id }, path: `orders/${orderId}/pipelines/${stageState.pipeline}/stage` });
+
+  if (!success) {
+    fillColumns();
+    return toaster.danger(message ?? 'Что-то пошло не так');
+  }
+
+  return toaster.success('Стадия заказа успешно обновлена');
 };
 
 const atMounted = async () => {
-  // await setKanBanStages();
+  await Promise.all([load({ department_id: current.value }), load_orders_stages()]).then(fillColumns);
 };
 
 export default () => effectScope().run(() => {
-  if (!stages) {
-    stages = ref([]);
+  if (!columns) {
+    columns = ref({});
   }
 
   onScopeDispose(() => {
-    stages = undefined;
+    columns = undefined;
   });
 
   return {
     atMounted,
-    stages,
+    columns,
+    filter,
+    log,
+    current,
+    sig: computed(() => objectSignature(filter)),
   };
 });

@@ -96,5 +96,3 @@ const options = computed(() => props.options.map((e) => {
 
   </div>
 </template>
-
-<style scoped></style>

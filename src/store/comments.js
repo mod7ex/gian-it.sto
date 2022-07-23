@@ -39,6 +39,7 @@ const save = async (model, id, description) => {
   const key = `comments/${model}/${id}`;
   const { success } = await $save[key]({ description });
   !success && toaster.danger('Не удалось сохранить комментарий');
+  return success;
 };
 
 export default {
@@ -50,4 +51,5 @@ export default {
   save,
 
   count: computed(() => state.raw.length),
+
 };

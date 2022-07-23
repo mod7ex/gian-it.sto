@@ -1,54 +1,49 @@
 <script setup>
 import { QuestionMarkCircleIcon } from '@heroicons/vue/outline';
-import { ref } from 'vue';
+import { ref, unref, computed } from 'vue';
 import Button from '@/UI/Button.vue';
 import TextArea from '@/UI/TextArea.vue';
-import useAuth from '~/composables/useAuth.js';
 import store from '~/store/comments';
+import { defaults } from '~/composables/useAvatar';
+import useAuth from '~/composables/useAuth';
+import { sto_parse_DMY_T, timeSince } from '~/helpers';
 
 const { load, save, state } = store;
 
 const { user } = useAuth();
 
-const props = defineProps({ model: String, id: String });
+// Id might be a string or ref<string>
+const props = defineProps({ model: String, id: [String, Object] });
 
 const emit = defineEmits(['comment']);
 
 const content = ref('');
 
-const submitComment = async (description) => {
-  await save(props.model, props.id, description);
-  emit('comment', description);
+const getComments = async () => {
+  await load(props.model, unref(props.id));
 };
 
-// await load(props.model, props.id)
+const submitComment = async (description) => {
+  if (!unref(props.id)) return;
+  const success = await save(props.model, unref(props.id), description);
+  if (success) {
+    content.value = '';
+    emit('comment', description);
+    await getComments();
+  }
+};
 
-const comments = [
-  {
-    id: 1,
-    name: 'Leslie Alexander',
-    date: '4 дня назад',
-    imageId: '1494790108377-be9c29b29330',
-    body:
-      'Ducimus quas delectus ad maxime totam doloribus reiciendis ex. Tempore dolorem maiores. Similique voluptatibus tempore non ut.',
-  },
-  {
-    id: 2,
-    name: 'Michael Foster',
-    date: '4 дня назад',
-    imageId: '1519244703995-f4e0f30006d5',
-    body:
-      'Et ut autem. Voluptatem eum dolores sint necessitatibus quos. Quis eum qui dolorem accusantium voluptas voluptatem ipsum. Quo facere iusto quia accusamus veniam id explicabo et aut.',
-  },
-  {
-    id: 3,
-    name: 'Dries Vincent',
-    date: '4 дня назад',
-    imageId: '1506794778202-cad84cf45f1d',
-    body:
-      'Expedita consequatur sit ea voluptas quo ipsam recusandae. Ab sint et voluptatem repudiandae voluptatem et eveniet. Nihil quas consequatur autem. Perferendis rerum et.',
-  },
-];
+const hasCommented = computed(() => {
+  for (let i = 0; i < state.raw.length; i++) {
+    if (user.value.id == state.raw[i]?.user?.id) {
+      return true;
+    }
+  }
+
+  return false;
+});
+
+await getComments();
 
 </script>
 
@@ -62,21 +57,23 @@ const comments = [
         </div>
         <div class="px-4 py-6 sm:px-6">
           <ul role="list" class="space-y-8">
-            <li v-for="comment in comments" :key="comment.id">
+            <li v-for="comment in state.raw" :key="comment.id">
               <div class="flex space-x-3">
                 <div class="flex-shrink-0">
-                  <img class="h-10 w-10 rounded-full" :src="`https://images.unsplash.com/photo-${comment.imageId}?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80`" alt="" />
+                  <img class="h-10 w-10 rounded-full" :src="comment.user.avatar ?? defaults.avatar" />
                 </div>
                 <div>
+
                   <div class="text-sm">
-                    <a href="#" class="font-medium text-gray-900">{{ comment.name }}</a>
+                    <router-link class="font-medium text-gray-900" :to="{ name: 'EditEmployer', params: { id: comment.user.id } }">{{ comment.user.name }} {{ comment.user.surname }}</router-link>
                   </div>
-                  <div class="mt-1 text-sm text-gray-700">
-                    <p>{{ comment.body }}</p>
-                  </div>
+
+                  <div class="mt-1 text-sm text-gray-700"> <p>{{ comment.description }}</p> </div>
+
                   <div class="mt-2 text-sm space-x-2">
-                    <span class="text-gray-500 font-medium">{{ comment.date }}</span>
+                    <span class="text-gray-500 font-medium">{{ timeSince(sto_parse_DMY_T(comment.created_at)) }}</span>
                   </div>
+
                 </div>
               </div>
             </li>
@@ -84,8 +81,7 @@ const comments = [
         </div>
       </div>
 
-      <!-- form -->
-      <div class="bg-gray-50 px-4 py-6 sm:px-6">
+      <div class="bg-gray-50 px-4 py-6 sm:px-6" v-if="!hasCommented">
         <div class="flex space-x-3">
           <div class="flex-shrink-0">
             <img class="h-10 w-10 rounded-full" :src="user.avatar" alt="" />

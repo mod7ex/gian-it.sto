@@ -31,12 +31,14 @@ export const cleanUp = (obj, ...fields) => {
 
   // fields will be deleted even if there is a value (fields)
 
-  Object.keys(obj).forEach((prop) => {
-    if (fields.includes(prop)) return;
-    const val = Reflect.get(obj, prop);
-    if (!val) return;
-    Reflect.set(data, prop, val);
-  });
+  if (obj) {
+    Object.keys(obj).forEach((prop) => {
+      if (fields.includes(prop)) return;
+      const val = Reflect.get(obj, prop);
+      if (!val) return;
+      Reflect.set(data, prop, val);
+    });
+  }
 
   return data;
 };
@@ -111,3 +113,48 @@ export const objectSignature = (target) => Object.getOwnPropertyNames(target).re
 // export const objectSignature = (target) => Object.keys(target).reduce((prev, currKey) => prev + target[currKey], '');
 
 export const deepCopyObj = (target) => JSON.parse(JSON.stringify(target));
+
+export const generateShapedIdfromId = (id) => {
+  id = `${id}`;
+
+  while (id.length < import.meta.env.VITE_MAX_ORDERS_COUNT_DIGITS) {
+    id = `0${id}`;
+  }
+
+  return id;
+};
+
+export const sto_parse_DMY_T = (payload = '') => {
+  const [date, time] = payload.split(' ');
+
+  const [d, mo, y] = date.split('.');
+  const [h, mi] = time.split(':');
+  return new Date(y, mo - 1, d, h, mi);
+};
+
+export const timeSince = (date) => {
+  const seconds = Math.abs(Math.floor((new Date() - date) / 1000)); // A small issue of Timezone
+
+  let interval = seconds / 31536000;
+
+  if (interval > 1) {
+    return `${Math.floor(interval)} года назад`;
+  }
+  interval = seconds / 2592000;
+  if (interval > 1) {
+    return `${Math.floor(interval)} месяца назад`;
+  }
+  interval = seconds / 86400;
+  if (interval > 1) {
+    return `${Math.floor(interval)} дня назад`;
+  }
+  interval = seconds / 3600;
+  if (interval > 1) {
+    return `${Math.floor(interval)} часа назад`;
+  }
+  interval = seconds / 60;
+  if (interval > 1) {
+    return `${Math.floor(interval)} минуты назад`;
+  }
+  return `${Math.floor(seconds)} секунды назад`;
+};

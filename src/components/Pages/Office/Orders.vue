@@ -1,16 +1,25 @@
 <script setup>
 import { PlusCircleIcon, ViewBoardsIcon } from '@heroicons/vue/outline';
+import { watch, ref } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
-import Input from '@/UI/Input.vue';
-import Select from '@/UI/Select.vue';
 import Header from '@/UI/Header.vue';
 import KanBan from '~/components/Partials/orders/items/KanBan.vue';
 import useSuspense from '~/composables/useSuspense';
+import VFilter from '~/components/Partials/orders/items/Filter.vue';
 import departmentStore from '~/store/departments';
+import service from '~/services/orders';
+import { debounce } from '~/helpers';
+
+const { sig } = service();
+
+const key = ref('random');
+
+watch(sig, debounce(() => { key.value = Date.now(); }));
 
 const { current } = departmentStore;
-const SuspenseArea = useSuspense(KanBan);
+
+const SuspenseArea = useSuspense();
 
 </script>
 
@@ -29,31 +38,11 @@ const SuspenseArea = useSuspense(KanBan);
 
     <Header>Фильтр</Header>
 
-    <!-- Filter -->
-    <div class="flex flex-wrap gap-2 items-end">
-      <Input label="Название"/>
+    <v-filter />
 
-      <Input label="Дата от" type="date" />
-      <Input label="Дата до" type="date" />
-
-      <div>
-        <Select
-          label="Исполнитель"
-          :options="[{label: 'Не выбрано', value: null}]"
-          class="w-44"
-        />
-      </div>
-
-      <div>
-        <Select
-          label="Тип"
-          :options="[{label: 'Не выбрано', value: null}]"
-          class="w-44"
-        />
-      </div>
-    </div>
-
-    <suspense-area :key="`orders-${current}`" />
+    <suspense-area :key="`orders-${current}-${key}`" >
+      <kan-ban />
+    </suspense-area>
 
   </OfficeLayout>
 </template>

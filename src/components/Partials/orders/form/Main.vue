@@ -1,6 +1,6 @@
 <script setup>
 import { CheckIcon } from '@heroicons/vue/outline';
-import { computed, watch, onMounted } from 'vue';
+import { computed, watch, onMounted, ref } from 'vue';
 import Button from '@/UI/Button.vue';
 import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
@@ -14,7 +14,8 @@ import appealReasonStore from '~/store/processes/why';
 import processStore from '~/store/processes/index';
 import pipelineStore from '~/store/pipelines';
 import stagesStore from '~/store/pipelines/stages';
-import { maybeRun } from '~/helpers';
+import { maybeRun, generateShapedIdfromId } from '~/helpers';
+
 const { load: loadUsers, options: userOptions } = userStore;
 const { load: loadClients, options: clientOptions } = clientStore;
 const { load: loadCars, options: carOptions, reset: resetCars } = carStore;
@@ -32,13 +33,15 @@ onMounted(resetCars);
 watch(() => fields.client_id, (client_id) => loadCars({ client_id }));
 
 await Promise.all([
+  load_orders_stages(),
   loadAppealReasons(),
   loadProcesses(),
-  load_orders_stages(),
+  atMounted(),
   loadUsers({ department_id: current.value }),
   loadClients({ department_id: current.value }),
-  atMounted()
 ]);
+
+const ID = ref(`#${generateShapedIdfromId(fields.id)}`);
 
 </script>
 
@@ -51,7 +54,7 @@ await Promise.all([
 
       <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-3" v-if="isEditPage">
-          <Input label="Номер заказ-наряда" :disabled="true" />
+          <Input label="Номер заказ-наряда" disabled v-model="ID" />
         </div>
 
         <div class="col-span-12 sm:col-span-3">

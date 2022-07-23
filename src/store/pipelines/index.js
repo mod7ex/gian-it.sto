@@ -5,6 +5,7 @@ import _$ from '~/helpers/drop';
 const state = reactive({
   raw: [],
   order_funnel: {},
+  types: {},
 });
 
 const reset = () => {
@@ -29,6 +30,10 @@ const load = async (payload = {}) => {
   state.raw = await $.pipelines(payload);
 };
 
+const loadTypes = async () => {
+  state.types = (await $({ toast: true, key: 'pipelines/get-types' })).types;
+};
+
 const drop = async (id) => _$.pipeline(id, (v) => {
   state.raw.deleteById(v);
 });
@@ -37,6 +42,7 @@ export default {
   state: readonly(state),
 
   options: computed(() => state.raw.map(({ id, name }) => ({ label: name, value: id }))),
+  typesOptions: computed(() => Object.entries(state.types).map(([value, label]) => ({ value, label }))),
 
   orderFunnelOption: computed(() => [{ value: state.order_funnel?.id, label: state.order_funnel?.name }]),
 
@@ -44,4 +50,5 @@ export default {
   load,
   reset,
   drop,
+  loadTypes,
 };

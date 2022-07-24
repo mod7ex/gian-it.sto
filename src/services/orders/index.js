@@ -1,5 +1,5 @@
 import { effectScope, onScopeDispose, ref, reactive, computed } from 'vue';
-import store from '~/store/orders';
+import store from '~/store/orders/orders';
 import stageStore from '~/store/pipelines/stages';
 import departmentStore from '~/store/departments';
 import save from '~/helpers/save';

@@ -1,6 +1,6 @@
 <script setup>
 import { DocumentIcon } from '@heroicons/vue/solid';
-import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/outline';
+import { PlusCircleIcon, MinusCircleIcon, TrashIcon } from '@heroicons/vue/outline';
 import Badge from '@/UI/Badge.vue';
 
 defineProps({
@@ -8,7 +8,7 @@ defineProps({
   selected: Boolean,
 });
 
-defineEmits(['toggled']);
+defineEmits(['toggled', 'dropped']);
 
 </script>
 
@@ -20,8 +20,9 @@ defineEmits(['toggled']);
 
     <Badge :point="true" color="blue">{{ label }}</Badge>
 
-    <span class="p-2 flex-grow">
-      <component :is="selected ? MinusCircleIcon : PlusCircleIcon" :class="['w-5 h-5 ml-auto cursor-pointer', `text-${selected ? 'red' : 'green'}-700`]" @click="$emit('toggled')" />
+    <span class="p-2 flex-grow flex items-center justify-end">
+      <TrashIcon @click="$emit('dropped')" class="w-5 h-5 text-red-600 cursor-pointer mr-6" />
+      <component :is="selected ? MinusCircleIcon : PlusCircleIcon" :class="['w-5 h-5 cursor-pointer', `text-${selected ? 'red' : 'green'}-700`]" @click="$emit('toggled')" />
     </span>
   </div>
 </template>

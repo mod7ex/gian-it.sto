@@ -158,3 +158,12 @@ export const timeSince = (date) => {
   }
   return `${Math.floor(seconds)} секунды назад`;
 };
+
+export const getFileContent = (file, cb, onFail) => {
+  const reader = new FileReader();
+  reader.readAsText(file, 'UTF-8');
+
+  reader.onload = () => cb(reader.result);
+
+  reader.onerror = onFail;
+};

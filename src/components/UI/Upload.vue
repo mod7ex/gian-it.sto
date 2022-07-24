@@ -11,6 +11,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  accept: {
+    type: String,
+    default: '*',
+  },
 });
 
 const id = Math.floor(Math.random() * 100).toString();
@@ -34,7 +38,9 @@ const handler = (e) => {
       </svg>
 
       <span>{{ title }}</span>
-      <p class="py-3">Загрузить файлы или перетащите</p>
+      <p class="py-3">
+        <slot name="heading">Загрузить файлы или перетащите</slot>
+      </p>
 
       <div class="pb-3" v-if="!!files.length">
         <Badge color="green" :point="true" v-for="c in files" :key="c">{{ c }}</Badge>
@@ -46,9 +52,12 @@ const handler = (e) => {
         class="sr-only"
         :multiple="multiple"
         @change="handler"
+        :accept="accept"
       />
 
-      <p class="text-xs text-gray-500">формат любой</p>
+      <p class="text-xs text-gray-500">
+        <slot name="format">формат любой</slot>
+      </p>
   </label>
 
 </template>

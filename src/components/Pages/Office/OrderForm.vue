@@ -19,10 +19,11 @@ const suspenseArea = useSuspense();
 
 const tabs = [
   // Order matters
-  { label: 'Форма', component: defineAsyncComponent(() => import('@/Partials/orders/form/Main.vue')) },
+
+  { label: 'Документы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Docs.vue')) },
   { label: 'Задачи', component: defineAsyncComponent(() => import('@/Partials/orders/form/Tasks.vue')) },
   { label: 'Оплаты', component: defineAsyncComponent(() => import('@/Partials/orders/form/Payment.vue')) },
-  { label: 'Документы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Docs.vue')) },
+  { label: 'Форма', component: defineAsyncComponent(() => import('@/Partials/orders/form/Main.vue')) },
   { label: 'Склад', component: defineAsyncComponent(() => import('@/Partials/orders/form/Storages.vue')) },
   { label: 'Работы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Works.vue')) },
   { label: 'Диагностическая карта', component: defineAsyncComponent(() => import('@/Partials/orders/form/DiagnosticCards.vue')) },

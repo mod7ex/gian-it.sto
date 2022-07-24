@@ -33,6 +33,7 @@ const submitComment = async (description) => {
   }
 };
 
+/*
 const hasCommented = computed(() => {
   for (let i = 0; i < state.raw.length; i++) {
     if (user.value.id == state.raw[i]?.user?.id) {
@@ -42,6 +43,7 @@ const hasCommented = computed(() => {
 
   return false;
 });
+*/
 
 await getComments();
 
@@ -81,7 +83,8 @@ await getComments();
         </div>
       </div>
 
-      <div class="bg-gray-50 px-4 py-6 sm:px-6" v-if="!hasCommented">
+      <div class="bg-gray-50 px-4 py-6 sm:px-6">
+      <!-- <div class="bg-gray-50 px-4 py-6 sm:px-6" v-if="!hasCommented"> -->
         <div class="flex space-x-3">
           <div class="flex-shrink-0">
             <img class="h-10 w-10 rounded-full" :src="user.avatar" alt="" />

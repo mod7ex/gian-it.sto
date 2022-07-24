@@ -6,7 +6,7 @@ import { deepCopyObj } from '~/helpers';
 import communicate from '~/helpers/communicate';
 import useToast from '~/composables/useToast.js';
 import pipelineStore from '~/store/pipelines';
-import orderStore from '~/store/orders';
+import orderStore from '~/store/orders/orders';
 import departmentStore from '~/store/departments';
 
 const { orderFunnelOption } = pipelineStore;

@@ -11,7 +11,7 @@ const reset = () => {
 };
 
 const load = async (payload) => {
-  state.raw = (await $({ key: `orders/department/${payload.department_id}` })).orders;
+  state.raw = await $.products_requests(payload);
 };
 
 const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));
@@ -21,9 +21,4 @@ export default {
   load,
   drop,
   reset,
-
-  // options: computed(() => state.raw.map(({ id, title }) => ({
-  //   value: id,
-  //   label: title,
-  // }))),
 };

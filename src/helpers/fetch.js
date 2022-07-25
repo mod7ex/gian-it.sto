@@ -54,4 +54,5 @@ export default new Proxy($fetch, {
 
     return target.call({}, path, fallBackErr, toast ?? true, { params: cleanUp(params) });
   },
+
 });

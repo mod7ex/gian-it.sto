@@ -12,17 +12,6 @@ const selecteTemplate = (i) => {
   state.selectedTemplates.push(i);
 };
 
-const handleDocToggle = (i, locally) => {
-  const index = state.selectedTemplates.indexOf(i);
-
-  if (index !== -1 || locally) {
-    state.selectedTemplates.splice(index, 1);
-    return;
-  }
-
-  state.selectedTemplates.push(i);
-};
-
 const reset = () => {
   state.raw = [];
   state.templates = [];
@@ -48,7 +37,6 @@ export default {
   dropTemplate,
   reset,
   selecteTemplate,
-  handleDocToggle,
 
   // options: computed(() => state.raw.map(({ id, title }) => ({
   //   value: id,

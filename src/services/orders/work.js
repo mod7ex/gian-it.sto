@@ -1,16 +1,18 @@
-import { computed, reactive, effectScope, onScopeDispose, ref } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import RawForm from '@/Partials/orders/form/Raw/Work.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
+import useToast from '~/composables/useToast.js';
+import save from '~/helpers/save';
+import $ from '~/helpers/fetch.js';
+import store from '~/store/orders/work';
+import useAppRouter from '~/composables/useAppRouter';
 
-// import useToast from '~/composables/useToast.js';
-// import save from '~/helpers/save';
-// import $ from '~/helpers/fetch.js';
+const toaster = useToast();
 
-// const toaster = useToast();
+const { load } = store;
 
 let work;
-let works;
 
 const setForm = (payload = {}) => {
   work.id = payload?.id;
@@ -19,32 +21,31 @@ const setForm = (payload = {}) => {
   work.comment = payload?.comment;
 };
 
-const saveForm = async () => {
-  works.value.push(work);
-  return { message: 'shit', success: true };
+const saveForm = async (order_id) => {
+  const { message, success } = await save.work(work);
 
-  // const { message, success } = await save.department(department);
-
-  // try {
-  //   return { message, success };
-  // } finally {
-  //   if (success) {
-  //     await load();
-  //     toaster.success(message);
-  //   }
-  // }
+  try {
+    return { message, success };
+  } finally {
+    if (success) {
+      await load({ order_id });
+      toaster.success(message);
+    }
+  }
 };
 
 const atMounted = async () => {
   const { id } = work;
 
   if (id) {
-    // const dep = await $.department(id);
-    // setForm(dep || {});
+    const dep = await $.work(id);
+    setForm(dep || {});
   }
 };
 
 export default function () {
+  const { route } = useAppRouter();
+
   const modalUp = (...args) => {
     const scope = effectScope();
 
@@ -54,20 +55,23 @@ export default function () {
       const { render } = useModalForm({
         title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].work),
         RawForm,
-        atSubmit: saveForm,
+        atSubmit: () => saveForm(route.params.id),
         atClose: () => scope.stop(),
         atOpen: (id) => {
-          works = ref([]);
-
           work = reactive({
             id: id ?? '',
+            name: '',
+            order_id: route.params.id,
+            comments: '',
+            sum: '',
+            time: '',
           });
         },
       });
 
       render(...args);
 
-      // onScopeDispose(() => { work = undefined; });
+      onScopeDispose(() => { work = undefined; });
     });
   };
 
@@ -76,6 +80,5 @@ export default function () {
     work,
     atMounted,
     render: modalUp,
-    works,
   };
 }

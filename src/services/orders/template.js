@@ -6,8 +6,11 @@ import useToast from '~/composables/useToast.js';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch';
 import { getFileContent } from '~/helpers';
+import store from '~/store/orders/documents';
 
 const toaster = useToast();
+
+const { loadTemplates } = store;
 
 let template;
 
@@ -24,6 +27,7 @@ const saveForm = async () => {
   } finally {
     if (success) {
       toaster.success(message);
+      await loadTemplates();
     }
   }
 };

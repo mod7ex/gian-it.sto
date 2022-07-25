@@ -1,8 +1,11 @@
 <script setup>
 import { CogIcon } from '@heroicons/vue/outline';
 import Button from '@/UI/Button.vue';
+import service from '~/services/orders/storage-requests.js';
 import Badge from '@/UI/Badge.vue';
 import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
+
+const { render } = service();
 
 </script>
 
@@ -10,7 +13,7 @@ import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
     <div>
 
       <div class="mb-5">
-        <Button color="blue">
+        <Button color="blue" @click="() => render()">
           <CogIcon class="w-5 h-5 mr-1"/>Добавить запчасть
         </Button>
       </div>
@@ -73,5 +76,6 @@ import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
         </Tr>
         </TBody>
       </Table>
+
     </div>
 </template>

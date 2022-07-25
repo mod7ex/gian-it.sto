@@ -1,19 +1,13 @@
 <script setup>
 import { ChipIcon } from '@heroicons/vue/outline';
 import Button from '@/UI/Button.vue';
-import Link from '@/UI/Link.vue';
-import Badge from '@/UI/Badge.vue';
-import Table from '@/Layout/Table.vue';
-import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import service from '~/services/orders/work';
+import Table from '@/Partials/orders/items/Works.vue';
+import useSuspense from '~/composables/useSuspense';
 
-const { drop } = useConfirmDialog();
+const SuspenseArea = useSuspense(Table);
 
-const { render, works } = service();
-
-const fields = [
-  { label: 'Название', key: 'id' },
-];
+const { render } = service();
 
 </script>
 
@@ -25,28 +19,7 @@ const fields = [
         </Button>
       </div>
 
-      <Table
-        :fields="fields"
-        :items="works"
-        @delete="(id) => drop(() => void(id))"
-        @edit="(id) => void(id)"
-      >
-          <!-- Body -->
+      <suspense-area />
 
-          <template #td-id="{ item }" >
-            <Badge :point="true" color="blue" class="text-sm">{{ docs[item].id }}</Badge>
-          </template>
-<!--
-          <template #td-view="{ item }" >
-            <Link @click="toVisualize = item">Посмотреть</Link>
-          </template>
-
-          <template #td-drop="{ item }" >
-            <Link @click="() => handleDocToggle(item, true)">Удалить</Link>
-          </template>
--->
-
-          <!-- ****** -->
-      </Table>
     </div>
 </template>

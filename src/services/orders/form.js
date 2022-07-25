@@ -103,9 +103,9 @@ export default () => effectScope().run(() => {
       }
     }
 
-    const { success } = await save.order(fields, null, true);
+    const { success, data } = await save.order(fields, null, true);
 
-    success && redirectTo({ name: 'Orders' });
+    success && redirectTo({ name: 'OrderEdit', params: { id: data.order?.id } });
   };
 
   const atMounted = async () => {

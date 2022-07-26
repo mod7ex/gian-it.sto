@@ -1,11 +1,11 @@
 import { reactive, effectScope, onScopeDispose } from 'vue';
 import useOrder from '~/composables/useOrder.js';
-// import departmentStore from '~/store/departments';
+import departmentStore from '~/store/departments';
 import store from '~/store/tasks';
 import useConfirmDialog from '~/composables/useConfirmDialog';
 import useAppRouter from '~/composables/useAppRouter';
 
-// const { current } = departmentStore;
+const { current } = departmentStore;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -31,10 +31,11 @@ export default () => effectScope().run(() => {
     filter = reactive({
       name: '',
       status: '',
-      user_id: '',
+      author_id: '',
+      // user_id: '',
       order_id: '',
       pipeline_id: '',
-      // department_id: current,
+      department_id: current,
     });
   }
 
@@ -57,7 +58,16 @@ export default () => effectScope().run(() => {
   const { drop } = useConfirmDialog();
   const { redirectTo } = useAppRouter();
 
-  const removeTask = (v) => drop(() => dropTask(v));
+  const removeTask = (v, redirige = false) => {
+    drop(async () => {
+      const { success, message } = await dropTask(v);
+      try {
+        return { success, message };
+      } finally {
+        success && redirige && await redirectTo({ name: 'Tasks' });
+      }
+    });
+  };
 
   const edit = async (id) => {
     await redirectTo({ name: 'TaskEdit', params: { id } });
@@ -74,5 +84,6 @@ export default () => effectScope().run(() => {
     edit,
     resetFilter,
     fetchTasks,
+    current,
   };
 });

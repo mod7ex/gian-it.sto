@@ -7,7 +7,7 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 const { drop } = useConfirmDialog();
 
-const { render, payments } = service();
+const { render } = service();
 
 const fields = [
   { label: 'Плательщик', key: 'client_id' },
@@ -26,12 +26,10 @@ const fields = [
         </Button>
       </div>
 
-      {{ payments }}
-
       <!-- Confirm if there is an id otherwise don't confirm -->
       <Table
         :fields="fields"
-        :items="payments"
+        :items="[]"
         @delete="(id) => drop(() => void(id))"
         @edit="(id) => void(id)"
       >
@@ -39,11 +37,11 @@ const fields = [
 
           <template #td-client="{ item }" > {{ item }} </template>
 
-          <template #td-payment_method="{ item }" > {{ { item } }} </template>
+          <template #td-payment_method="{ value }" > {{ { value } }} </template>
 
-          <template #td-comment="{ item }" > {{ item }} </template>
+          <template #td-comment="{ value }" > {{ value }} </template>
 
-          <template #td-created_at="{ item }" > {{ item }} </template>
+          <template #td-created_at="{ value }" > {{ value }} </template>
 
           <!-- ****** -->
       </Table>

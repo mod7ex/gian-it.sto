@@ -13,12 +13,6 @@ const { atMounted, work } = service();
 
 /*
 
-id: id ?? '',
-name: '',
-comments: '',
-sum: '',
-time: '',
-
 Вид работы (наименование работы)
 Количество
 Исполнитель (кто делал сотрудник)
@@ -35,12 +29,12 @@ await Promise.all([atMounted(), load({department_id: current.value})]);
 </script>
 
 <template>
-    <div class="grid grid-cols-12">
+    <div>
         <Input
           label="Вид работы"
           :required="true"
           v-model="work.name"
-          class="m-3 sm:col-span-6 col-span-12"
+          class="sm:col-span-6 col-span-12"
         />
 
         <Input
@@ -48,49 +42,29 @@ await Promise.all([atMounted(), load({department_id: current.value})]);
           type="number"
           :required="true"
           v-model="work.sum"
-          class="m-3 sm:col-span-6 col-span-12"
+          class="sm:col-span-6 col-span-12"
         />
 
         <Select
           label="Исполнитель"
           :options="options"
           :required="true"
-          class="m-3 sm:col-span-6 col-span-12"
+          class="sm:col-span-6 col-span-12"
         />
 
         <Input
-          label="Kоличество требуемого времени (часы)"
+          label="Время"
           type="number"
           :required="true"
-          class="m-3 sm:col-span-6 col-span-12"
-        />
-
-        <Input
-          label="Цена"
-          type="number"
-          :required="true"
-          class="m-3 sm:col-span-6 col-span-12"
-        />
-
-        <Input
-          label="Сумма"
-          type="number"
-          :required="true"
-          class="m-3 sm:col-span-6 col-span-12"
-        />
-
-        <Select
-          label="Субподряд"
-          :options="[]"
-          :required="true"
-          class="m-3 sm:col-span-6 col-span-12"
+          v-model="work.time"
+          class="sm:col-span-6 col-span-12"
         />
 
         <TextArea
           label="Материалы"
           :required="true"
           v-model="work.comments"
-          class="m-3 sm:col-span-6 col-span-12"
+          class="sm:col-span-6 col-span-12"
         />
 
     </div>

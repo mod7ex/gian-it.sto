@@ -15,11 +15,9 @@ const state = reactive({
 const current = ref();
 
 const setCurrent = (id) => {
-  if (hasCRUD) {
-    const curr = id ?? localStorage.getItem(LOCAL_STORAGE_DEPARTMENT) ?? userDepartment.value;
-    current.value = Number(curr);
-    localStorage.setItem(LOCAL_STORAGE_DEPARTMENT, `${curr}`);
-  }
+  const curr = id ?? localStorage.getItem(LOCAL_STORAGE_DEPARTMENT) ?? userDepartment.value;
+  current.value = Number(curr);
+  localStorage.setItem(LOCAL_STORAGE_DEPARTMENT, `${curr}`);
 };
 
 const reset = () => {

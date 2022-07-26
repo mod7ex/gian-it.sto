@@ -48,21 +48,31 @@ const apiRequest = (url, config = {}) => {
     if (!error.value) return null;
 
     if (error.value.response) {
+      /*
       if (__STO_DEV__) {
         return error.value.response?.data?.message ?? 'Что-то пошло не так с ответом !';
       }
       return 'Что-то пошло не так с ответом !';
+      */
+      return error.value.response?.data?.message ?? 'Что-то пошло не так с ответом !';
     } if (error.value.request) {
+      /*
       if (__STO_DEV__) {
         return error.value.request?.message ?? 'Что-то пошло не так с запросом !';
       }
       return 'Что-то пошло не так с запросом !';
+      */
+      return error.value.request?.message ?? 'Что-то пошло не так с запросом !';
     }
 
+    /*
     if (__STO_DEV__) {
       return error.value.message;
     }
     return 'Что-то пошло не так !';
+    */
+
+    return error.value.message;
   });
 
   const reset = () => {
@@ -84,10 +94,14 @@ const apiRequest = (url, config = {}) => {
       data.value = result.data;
     } catch (e) {
       error.value = e;
+      /*
       if (__STO_DEV__) {
         console.log('Error; ', e);
         console.log('Error message; ', errorMsg.value);
       }
+      */
+      console.log('Error; ', e);
+      console.log('Error message; ', errorMsg.value);
     } finally {
       loading.value = false;
 

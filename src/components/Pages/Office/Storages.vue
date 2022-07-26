@@ -1,5 +1,5 @@
 <script setup>
-import { PlusCircleIcon, CogIcon } from '@heroicons/vue/outline';
+import { PlusCircleIcon, CogIcon, BellIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense';
@@ -15,6 +15,8 @@ const SuspenseTable = useSuspense(Table);
 <template>
     <OfficeLayout title="Все склады">
       <template #actions>
+        <BellIcon class="h-9 mr-1 border p-1 rounded-full shadow-md"/>
+
         <Button type="secondary" :link="{ name: 'Producers' }">
           <CogIcon class="w-5 h-5 mr-1"/>Производители
         </Button>

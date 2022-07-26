@@ -10,7 +10,6 @@ import useModalForm from '~/composables/useModalForm';
 // const toaster = useToast();
 
 let invoice;
-let payments;
 
 const setForm = (payload = {}) => {
   invoice.id = payload?.id;
@@ -20,7 +19,6 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
-  payments.value.push(invoice);
   console.log(invoice);
   return { message: 'shit', success: true };
 
@@ -58,8 +56,6 @@ export default function () {
         atSubmit: saveForm,
         atClose: () => scope.stop(),
         atOpen: (id) => {
-          payments = ref([]);
-
           invoice = reactive({
             id: id ?? '',
             client_id: '',
@@ -80,6 +76,5 @@ export default function () {
     invoice,
     atMounted,
     render: modalUp,
-    payments,
   };
 }

@@ -1,6 +1,6 @@
 <script setup>
 import { PlusCircleIcon, RefreshIcon } from '@heroicons/vue/outline';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { debounce, objectSignature } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
@@ -12,28 +12,40 @@ import Select from '@/UI/Select.vue';
 import service from '~/services/tasks';
 import Table from '@/Partials/tasks/Table.vue';
 import useSuspense from '~/composables/useSuspense.js';
-import departmentStore from '~/store/departments';
-import pipelineStore from '~/store//pipelines';
-
-const { current } = departmentStore;
-const { options, load: loadFunnels } = pipelineStore;
+import pipelineStore from '~/store/pipelines';
+import userStore from '~/store/employees';
+import orderStore from '~/store/orders/orders';
 
 const SuspenseArea = useSuspense();
 
-const { order, filter, resetFilter, fetchTasks } = service();
+const { order, filter, resetFilter, fetchTasks, current } = service();
 
 const { criteriaOptions, criteria } = order;
+
+const { options, load: loadFunnels } = pipelineStore;
+const { options: userOptions, load: loadUsers } = userStore;
+const { options: orderOptions, load: loadOrders } = orderStore;
+
+const fillDep = async (department_id) => {
+  if (!department_id) return;
+  await Promise.all([
+    loadFunnels({ type: 'task' }),
+    loadUsers({ department_id }),
+    loadOrders({ department_id }),
+  ]);
+};
 
 const filterSignature = ref('');
 
 watch(filter, debounce(() => {
-  // if (filter.department_id) {
-  if (current.value) {
+  console.log(filter);
+  if (filter.department_id) {
+  // if (current.value) {
     filterSignature.value = objectSignature(filter);
   }
 }));
 
-onMounted(async () => { await loadFunnels(); });
+watch(current, fillDep, { immediate: true });
 
 </script>
 
@@ -60,16 +72,26 @@ onMounted(async () => { await loadFunnels(); });
         <Label class="mb-1">Статус</Label>
 
         <ButtonGroup>
-          <Button type="secondary" @click="filter.status = 'op'" :class="{'bg-gray-300': filter.type === 'op'}" group="left" class="whitespace-nowrap">В работе</Button>
-          <Button type="secondary" @click="filter.status = 'op'" :class="{'bg-gray-300': filter.type === 'op'}" group="right" class="whitespace-nowrap">Закрытые</Button>
+          <Button
+            type="secondary"
+            @click="filter.status = 'process'"
+            group="left"
+            :class="['whitespace-nowrap', filter.status === 'process' ? 'bg-green-100' : '']"
+          >В работе</Button>
+          <Button
+            type="secondary"
+            @click="filter.status = 'done'"
+            group="right"
+            :class="['whitespace-nowrap', filter.status === 'done' ? 'bg-indigo-100' : '']"
+          >Закрытые</Button>
         </ButtonGroup>
       </div>
 
       <div>
         <Select
           label="Исполнитель"
-          :options="[{label: 'Не выбрано', value: null}]"
-          v-model="filter.user_id"
+          :options="userOptions"
+          v-model="filter.author_id"
           class="w-44"
         />
       </div>
@@ -77,7 +99,7 @@ onMounted(async () => { await loadFunnels(); });
       <div>
         <Select
           label="Заказ-наряд"
-          :options="[{label: 'Не выбрано', value: null}]"
+          :options="orderOptions"
           v-model="filter.order_id"
           class="w-44"
         />
@@ -110,7 +132,7 @@ onMounted(async () => { await loadFunnels(); });
     </div>
 
     <!-- Table -->
-    <suspense-area :key="filterSignature" >
+    <suspense-area :key="`tab-${filterSignature}`" >
       <Table @bottom-touched="()=>fetchTasks()" />
     </suspense-area>
 

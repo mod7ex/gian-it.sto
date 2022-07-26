@@ -5,21 +5,24 @@ import { hyphenatedDateFormat } from '~/helpers';
 import save, { upload } from '~/helpers/save';
 import useToast from '~/composables/useToast.js';
 
-const defaultFields = {
+const defaults = {
   id: '',
   name: '',
   description: '',
   order_id: undefined,
-  user_id: 3,
+  user_id: '',
   deadline_at: '',
   position: 0,
   status: '',
-  checkboxes: [''],
 
-  // start_at: '',
-  // end_at: '',
+  files: '',
 
-  pipelines: { pipeline_id: '', stage_id: '' },
+  checkboxes: [{ description: '' }],
+
+  start_at: '',
+  end_at: '',
+
+  pipelines: [{}],
   temp_file_ids: [],
 };
 
@@ -29,22 +32,32 @@ let files;
 // **********************************************************************  Form
 const setField = function (key) {
   if (key.includes('_id')) {
-    if (key === 'user_id') return;
     if (key === 'temp_file_ids') return;
 
     fields[key] = this[key.replace('_id', '')]?.id;
     return;
   }
 
-  fields[key] = this[key] ?? defaultFields[key];
+  if (key === 'pipelines') {
+    fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage: { id: stage_id } }) => ({ pipeline_id, stage_id })) ?? [{}];
+    return;
+  }
+
+  if (key === 'checkboxes') {
+    fields.checkboxes = this.checkboxes ?? defaults.checkboxes;
+    return;
+  }
+
+  if (['end_at', 'start_at', 'deadline_at'].includes(key)) {
+    fields[key] = hyphenatedDateFormat(this[key]);
+    return;
+  }
+
+  fields[key] = this[key] ?? defaults[key];
 };
 
 const setForm = async (payload) => {
   Object.keys(fields).forEach(setField, payload ?? {});
-
-  if (!fields.deadline_at) return;
-
-  fields.deadline_at = hyphenatedDateFormat(fields.deadline_at);
 };
 
 const log = (e) => {
@@ -57,13 +70,15 @@ export default () => effectScope().run(() => {
   const { route, isThePage, redirectTo } = useAppRouter('TaskEdit');
 
   if (!fields) {
-    fields = reactive(defaultFields);
+    fields = reactive(defaults);
     files = ref();
   }
 
   /* ************ task form ************ */
 
   const saveTask = async () => {
+    console.log(fields);
+
     const len = files.value?.length ?? 0;
     if (len) {
       const fileSet = new FormData();
@@ -86,12 +101,13 @@ export default () => effectScope().run(() => {
 
     const { data, success } = await save.task(fields, null, true);
 
-    success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+    // success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
   };
 
   const atMounted = async () => {
+    if (!isThePage.value) return;
     const { id } = route.params;
-    if (isThePage.value && id) {
+    if (id) {
       let task = {};
       task = await $.task(route.params.id);
       await setForm(task);
@@ -101,6 +117,10 @@ export default () => effectScope().run(() => {
   onScopeDispose(() => {
     fields = undefined;
     files = undefined;
+
+    defaults.checkboxes = [{ description: '' }];
+    defaults.pipelines = [{}];
+    defaults.temp_file_ids = [];
   });
 
   return {

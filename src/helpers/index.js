@@ -21,8 +21,16 @@ export const maybeRunSync = (cb, allow, ctx = window) => async function (...args
 };
 
 export const hyphenatedDateFormat = (strDate) => {
-  const [d, m, y] = strDate.split('.');
-  return `${y}-${m}-${d}`;
+  if (typeof strDate === 'string') {
+    const [d, m, y] = strDate.split('.');
+    return `${y}-${m}-${d}`;
+  }
+
+  if (strDate instanceof Date) {
+    return strDate.toISOString().split('T')[0];
+  }
+
+  return strDate;
 };
 
 // cleaned up shallow copy
@@ -35,7 +43,7 @@ export const cleanUp = (obj, ...fields) => {
     Object.keys(obj).forEach((prop) => {
       if (fields.includes(prop)) return;
       const val = Reflect.get(obj, prop);
-      if (!val) return;
+      if (val == null) return; // null & undefined -> stop
       Reflect.set(data, prop, val);
     });
   }
@@ -108,7 +116,7 @@ export const extract = (key = '') => ({ path: keyToPath(key), ressource: ressour
 // ***********************************************************
 
 // all keys even none-enumerable
-export const objectSignature = (target) => Object.getOwnPropertyNames(target).reduce((prev, currKey) => prev + target[currKey], '');
+export const objectSignature = (target, exceptions = []) => Object.getOwnPropertyNames(target).reduce((prev, currKey) => prev + (exceptions.includes(currKey) ? '' : target[currKey]), '');
 
 // export const objectSignature = (target) => Object.keys(target).reduce((prev, currKey) => prev + target[currKey], '');
 
@@ -166,4 +174,11 @@ export const getFileContent = (file, cb, onFail) => {
   reader.onload = () => cb(reader.result);
 
   reader.onerror = onFail;
+};
+
+export const tasksColorMap = {
+  wait: { color: 'yellow', label: 'Ожидает' },
+  process: { color: 'green', label: 'В работе' },
+  pause: { color: 'red', label: 'В паузе' },
+  done: { color: 'indigo', label: 'Завершена' },
 };

@@ -12,7 +12,8 @@ const reset = () => {
 };
 
 const load = async (payload) => {
-  state.raw = (await $({ key: `orders/department/${payload.department_id}` })).orders ?? [];
+  const key = `orders${payload.department_id ? `/department/${payload.department_id}` : ''}`;
+  state.raw = (await $({ key })).orders ?? [];
 };
 
 const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));

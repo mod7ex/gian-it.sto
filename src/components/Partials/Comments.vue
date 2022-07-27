@@ -7,6 +7,7 @@ import store from '~/store/comments';
 import { defaults } from '~/composables/useAvatar';
 import useAuth from '~/composables/useAuth';
 import { sto_parse_DMY_T, timeSince } from '~/helpers';
+import Avatar from '@/UI/Avatar.vue';
 
 const { load, save, state } = store;
 
@@ -20,7 +21,7 @@ const emit = defineEmits(['comment']);
 const content = ref('');
 
 const getComments = async () => {
-  await load(props.model, unref(props.id));
+  if(props.model && props.id) await load(props.model, unref(props.id));
 };
 
 const submitComment = async (description) => {
@@ -33,6 +34,7 @@ const submitComment = async (description) => {
   }
 };
 
+// REMOVE NOT : we may want to restrict later
 /*
 const hasCommented = computed(() => {
   for (let i = 0; i < state.raw.length; i++) {
@@ -62,7 +64,8 @@ await getComments();
             <li v-for="comment in state.raw" :key="comment.id">
               <div class="flex space-x-3">
                 <div class="flex-shrink-0">
-                  <img class="h-10 w-10 rounded-full" :src="comment.user.avatar ?? defaults.avatar" />
+                  <!-- <img class="h-10 w-10 rounded-full" :src="comment.user.avatar ?? defaults.avatar" /> -->
+                  <Avatar :image="comment.user.avatar" />
                 </div>
                 <div>
 
@@ -87,7 +90,8 @@ await getComments();
       <!-- <div class="bg-gray-50 px-4 py-6 sm:px-6" v-if="!hasCommented"> -->
         <div class="flex space-x-3">
           <div class="flex-shrink-0">
-            <img class="h-10 w-10 rounded-full" :src="user.avatar" alt="" />
+            <!-- <img class="h-10 w-10 rounded-full" :src="user.avatar" alt="" /> -->
+            <Avatar :image="user.avatar" />
           </div>
           <div class="min-w-0 flex-1">
             <form action="#">

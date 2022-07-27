@@ -20,6 +20,8 @@ const pivot = {
 
 let filter;
 
+const clearMemo = () => { filter = undefined; };
+
 export default () => effectScope().run(() => {
   const { sort, fill, reset: resetStore, drop: dropTask } = store;
 
@@ -50,6 +52,7 @@ export default () => effectScope().run(() => {
   };
 
   const fetchTasks = async (bool = false) => {
+    if (!filter.department_id) return;
     if (bool) resetStore();
     await fill(filter);
     trigger();
@@ -73,9 +76,7 @@ export default () => effectScope().run(() => {
     await redirectTo({ name: 'TaskEdit', params: { id } });
   };
 
-  onScopeDispose(() => {
-    filter = undefined;
-  });
+  // onScopeDispose(() => { filter = undefined; }); // not here
 
   return {
     order,
@@ -85,5 +86,6 @@ export default () => effectScope().run(() => {
     resetFilter,
     fetchTasks,
     current,
+    clearMemo,
   };
 });

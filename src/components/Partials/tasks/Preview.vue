@@ -8,36 +8,52 @@ import Card from '@/UI/Card.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Checkbox from '@/UI/Checkbox.vue';
 import Badge from '@/UI/Badge.vue';
-import Link from '@/UI/Link.vue';
 import Comments from '@/Partials/Comments.vue';
-import service from '~/services/tasks/task';
+import useAppRouter from '~/composables/useAppRouter.js';
+import { tasksColorMap, debounce } from '~/helpers';
+import $ from '~/helpers/fetch.js';
+import save from '~/helpers/save';
+import useToast from '~/composables/useToast';
 
-const { atMounted, task } = service();
+const toaster = useToast();
 
-// await atMounted();
+const { route, back } = useAppRouter();
 
-const tasks = ref([
-  {
-    id: 1,
-    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit mollitia quasi reprehenderit tempore voluptates! Culpa cumque delectus deleniti dicta dolor ea eos eum facere',
-    checked: true,
-  },
-  {
-    id: 2,
-    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. facere',
-    checked: false,
-  },
-  {
-    id: 3,
-    text: 'Culpa cumque delectus deleniti dicta dolor ea eos eum facere harum incidunt ipsam magni molestias natus odit, pariatur quidem reiciendis repellendus, unde vero voluptatum. Aliquid cupiditate distinctio enim et magnam numquam odit rerum sunt totam, vitae',
-    checked: false,
-  },
-  {
-    id: 4,
-    text: 'Lorem ipsum dolor sit amet',
-    checked: false,
-  },
-]);
+const task = ref({});
+
+const atMounted = async () => {
+  const { id } = route.params;
+
+  task.value = await $.task(id);
+
+  console.log(task.value);
+
+  if (!task.value.id) back();
+};
+
+const checkBox = debounce(async (_id, is_checked, i) => {
+  const { success, message } = await save({ path: `tasks/checkboxes/${_id}/status`, data: { is_checked } });
+  if (!success) {
+    toaster.danger(message ?? 'Не удалось изменить статус флажка');
+    task.value.checkboxes[i].is_checked = !is_checked;
+  }
+});
+
+// ********** Fix : Rate limiter not needed in fact debouncer is needed
+/*
+const last = ref(Date.now());
+
+const notify = async () => {
+  const now = Date.now();
+  if (now - last.value > 5000) { // 5 seconds
+    last.value = now;
+    await checkBox()
+  }
+};
+*/
+
+await atMounted();
+
 </script>
 
 <template>
@@ -46,65 +62,70 @@ const tasks = ref([
         <template #header>
             <div class="flex gap-3 flex-wrap justify-between items-center">
                 <Avatar
-                    title="Иван Шариков"
-                    subtitle="Менеджер"
-                    image="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    :title="`${task.author.name} ${task.author.surname}`"
+                    :subtitle="task.author.office_position"
+                    :image="task.author.avatar"
                 />
 
                 <div class="text-right">
-                    <div class="text-sm flex items-center">
+                    <div class="text-sm flex items-center mb-3">
                         <ClockIcon class="w-4 h-4 mr-1"/>
                         <span class="mr-1">Крайний срок:</span>
-                        <span class="text-gray-500">17.07.2022 17:30</span>
+                        <span class="text-gray-500">{{ task.deadline_at }}</span>
                     </div>
 
-                    <Badge :point="true" color="yellow">Выполняется</Badge>
+                    <Badge :point="true" :color="tasksColorMap[task.status].color">{{ tasksColorMap[task.status].label }}</Badge>
                 </div>
             </div>
         </template>
 
-        <template #footer>
+        <template #footer v-if="task.files?.length">
             <h2 class="font-bold">Прикреплённые файлы</h2>
             <ul class="mt-2">
                 <li
-                    class="p-3 text-sm border rounded my-2"
-                    v-for="file in task.files ?? [
-                        {name: 'Название файла 1.docx'},
-                        {name: 'Название файла 2.pptx'},
-                        {name: 'Название файла 3.txt'}
-                    ]"
+                    class="p-3 text-sm border rounded my-2 flex items-center font-medium text-blue-600 hover:text-blue-500"
+                    v-for="file in task.files"
                     :key="file.name"
                 >
-                    <Link class="flex items-center">
-                        <PaperClipIcon class="w-4 h-4 mr-1"/>
-                        <span>{{ file.name }}</span>
-                    </Link>
+                    <PaperClipIcon class="w-4 h-4 mr-1"/>
+                    <a :href="file.url" target="_blank" >{{ file.name }}</a>
                 </li>
             </ul>
         </template>
 
         <div>
             <h2 class="font-bold">Текст задачи</h2>
-            <p>{{ task.description ?? 'lorem ipsum' }}</p>
+            <p v-html="task.description" />
         </div>
 
         <div class="mt-4">
             <h2 class="font-bold">Чек лист</h2>
             <ul>
                 <li
-                    v-for="item in task.checkboxes ?? []"
+                    v-for="(item, i) in task.checkboxes ?? []"
                     :key="item.id"
-                    :class="['py-2', {'line-through': item.checked}]"
+                    :class="['py-2', {'line-through': item.is_checked}]"
                 >
-                    <Checkbox :label="item.text" v-model="item.checked" />
+                    <!-- <Checkbox
+                        :label="item.description"
+                        v-model="item.is_checked"
+                        :key="`${item.id}-${item.is_checked ? 'yup' : 'down'}`"
+                        @click="() => checkBox(item.id, !item.is_checked, i)"
+                    /> -->
+
+                    <Checkbox
+                        :label="item.description"
+                        v-model="item.is_checked"
+                        @clicked="() => checkBox(item.id, !item.is_checked, i)"
+                    />
                 </li>
             </ul>
             <span class="mt-4 text-sm text-gray-400" v-if="task?.checkboxes?.length">
-                Выполнено: {{ task?.checkboxes?.filter(e => e.checked).length }} из {{ task?.checkboxes?.length }}
+                Выполнено: {{ task?.checkboxes?.filter(e => e.is_checked).length }} из {{ task?.checkboxes?.length }}
             </span>
         </div>
     </Card>
 
-    <Comments class="mt-2" />
+    <Comments model="task" :id="route.params.id" class="mt-2" />
 </div>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
 import { PlusCircleIcon, RefreshIcon } from '@heroicons/vue/outline';
-import { ref, watch } from 'vue';
+import { onScopeDispose, ref, watch } from 'vue';
 import { debounce, objectSignature } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
@@ -18,7 +18,7 @@ import orderStore from '~/store/orders/orders';
 
 const SuspenseArea = useSuspense();
 
-const { order, filter, resetFilter, fetchTasks, current } = service();
+const { order, filter, resetFilter, fetchTasks, current, clearMemo } = service();
 
 const { criteriaOptions, criteria } = order;
 
@@ -38,14 +38,15 @@ const fillDep = async (department_id) => {
 const filterSignature = ref('');
 
 watch(filter, debounce(() => {
-  console.log(filter);
   if (filter.department_id) {
-  // if (current.value) {
-    filterSignature.value = objectSignature(filter);
+    // if (current.value) {
+    filterSignature.value = objectSignature(filter, ['department_id']);
   }
 }));
 
 watch(current, fillDep, { immediate: true });
+
+onScopeDispose(clearMemo);
 
 </script>
 
@@ -132,7 +133,7 @@ watch(current, fillDep, { immediate: true });
     </div>
 
     <!-- Table -->
-    <suspense-area :key="`tab-${filterSignature}`" >
+    <suspense-area :key="`tab-${filterSignature}-${current}`" >
       <Table @bottom-touched="()=>fetchTasks()" />
     </suspense-area>
 

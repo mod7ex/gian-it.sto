@@ -12,7 +12,7 @@ const defaults = {
   order_id: undefined,
   user_id: '',
   deadline_at: '',
-  position: 0,
+  position: '',
   status: '',
 
   files: '',

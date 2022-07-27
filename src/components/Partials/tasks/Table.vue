@@ -5,7 +5,7 @@ import Avatar from '@/UI/Avatar.vue';
 import store from '~/store/tasks';
 import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
-import { generateShapedIdfromId } from '~/helpers'
+import { generateShapedIdfromId, tasksColorMap } from '~/helpers'
 
 const { fetchTasks, removeTask, edit } = service();
 
@@ -21,13 +21,6 @@ const fields = [
 const { state } = store;
 
 await fetchTasks(true);
-
-const colorMap = {
-    wait : { color: 'yellow', label: 'Ожидает' },
-    process : { color: 'green', label: 'В работе' },
-    pause : { color: 'red', label: 'В паузе' },
-    done : { color: 'indigo', label: 'Завершена' },
-}
 
 </script>
 
@@ -52,7 +45,7 @@ const colorMap = {
         </template>
 
         <template #td-status="{ value }" >
-            <Badge :point="true" :color="colorMap[value].color">{{ colorMap[value].label }}</Badge>
+            <Badge :point="true" :color="tasksColorMap[value].color">{{ tasksColorMap[value].label }}</Badge>
         </template>
 
         <template #td-created_at="{ value }" >

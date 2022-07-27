@@ -6,13 +6,14 @@ import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/tasks/form';
-import { maybeRun } from '~/helpers';
+import { maybeRun, tasksColorMap } from '~/helpers';
 import userStore from '~/store/employees';
 import departmentStore from '~/store/departments';
 import pipelineStore from '~/store/pipelines';
 import stagesStore from '~/store/pipelines/stages';
 import orderStore from '~/store/orders/orders';
 import Badge from '@/UI/Badge.vue';
+import proxiedSelect from '@/StoSelect';
 
 const { current } = departmentStore;
 const { load, options } = userStore;
@@ -24,12 +25,7 @@ const { fields, atMounted, log, isEditPage } = service();
 
 const removeItem = maybeRun((i) => fields.checkboxes.splice(i, 1), computed(() => fields.checkboxes.length > 1));
 
-const statusOptions = [
-  { value: 'wait', label: 'Ожидание' },
-  { value: 'process', label: 'Обработка' },
-  { value: 'pause', label: 'Приостановлено' },
-  { value: 'done', label: 'Сделанный' },
-];
+const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
 await Promise.all([
     loadOrders({ department_id: current.value ?? '' }),
@@ -38,31 +34,7 @@ await Promise.all([
     atMounted()
 ]);
 
-const StagesSelection = defineComponent({
-
-  props: {
-    index: Number,
-    modelValue: [Number, String],
-    pipeline_id: [Number, String],
-  },
-
-  emits: ['update:modelValue'],
-
-  setup(props, { emit }) {
-    return () => h(
-      Select,
-      {
-        options: state.raw.find(({id}) => id == props.pipeline_id)?.stages.map(({ id, name }) => ({ label: name, value: id })),
-        class: 'mr-3 pipeline w-full',
-        label: `Этап Воронка ${props.index + 1}`,
-        modelValue: fields.pipelines[props.index].stage_id,
-        disabled: !props.pipeline_id,
-        'onUpdate:modelValue': (v) => emit('update:modelValue', v),
-      },
-    );
-  },
-
-});
+const StagesSelection = proxiedSelect(state, fields);
 
 </script>
 
@@ -106,7 +78,7 @@ const StagesSelection = defineComponent({
             <ul>
                 <li v-for="(p, i) in fields.pipelines" :key="'input-'+i" class="flex items-center">
                     <Select class="mr-3 pipeline w-full" :label="`Воронка ${i + 1}`" :options="pipelinesOptions" v-model="fields.pipelines[i].pipeline_id" />
-                    <StagesSelection :index="i" :pipeline_id="fields.pipelines[i].pipeline_id" v-model="fields.pipelines[i].stage_id" /> 
+                    <StagesSelection :index="i" :pipeline_id="fields.pipelines[i].pipeline_id" v-model="fields.pipelines[i].stage_id" />
                     <!-- <Select class="mr-3" :label="`Этап Воронка ${i + 1}`" :options="state.raw" v-model="fields.pipelines[i].stage_id" :disabled="!fields.pipelines[i].pipeline_id" /> -->
                     <Button color="red" size="sm" @click="fields.pipelines.splice(1, i)">Удалить</Button>
                 </li>
@@ -132,7 +104,7 @@ const StagesSelection = defineComponent({
                     <Button color="red" size="sm" @click="removeItem(i)">Удалить</Button>
                 </li>
             </ul>
-            <Button size="xs" class="mt-4" @click="fields.checkboxes.push({description: ''})">Добавить</Button>
+            <Button size="xs" class="mt-4" @click="fields.checkboxes.push({ description: '' })">Добавить</Button>
         </div>
 
         <hr class="col-span-12" />
@@ -148,7 +120,6 @@ const StagesSelection = defineComponent({
         </div>
     </div>
 </template>
-
 
 <style scoped>
 .pipeline {

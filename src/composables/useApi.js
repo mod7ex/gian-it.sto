@@ -107,7 +107,7 @@ const apiRequest = (url, config = {}) => {
 
       // this might create an error or issues later, because the only way we can know the token expired is the code 401
       // which might happen even if the token isn't expired
-      if (error.value?.request && error.value.request.status === 401 && isUserLogged.value) logOut();
+      // if (error.value?.request && error.value.request.status === 401 && isUserLogged.value) logOut();
     }
   };
 

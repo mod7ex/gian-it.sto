@@ -57,7 +57,7 @@ await fetchTasks(true);
         </template>
 
         <template #td-order="{ value }" >
-            <Link :href="{name: 'OrderEdit', params: {id: value.id}}" >#{{ generateShapedIdfromId(value.id) }}</Link>
+            <Link :href="{name: 'OrderEdit', params: {id: value?.id ?? 0}}" >#{{ generateShapedIdfromId(value?.id) }}</Link>
         </template>
         <!-- ****** -->
     </Table>

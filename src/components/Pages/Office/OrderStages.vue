@@ -3,20 +3,20 @@ import { PlusCircleIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense';
-import Table from '@/Partials/funnels/Table.vue';
-import form from '~/services/funnels';
+import Table from '@/Partials/orders/items/Stages.vue';
+import service from '~/services/orders/stages';
 
-const { render } = form();
+const { render } = service();
 
 const SuspenseTable = useSuspense(Table);
 
 </script>
 
 <template>
-    <OfficeLayout title="Все воронки">
+    <OfficeLayout title="Этапы заказа">
       <template #actions>
-        <Button type="secondary" :link="{ name: 'Tasks' }">
-          <ArrowLeftIcon class="w-5 h-5 mr-1"/>К заказ нарядам
+        <Button type="secondary" :link="{ name: 'Orders' }">
+          <ArrowLeftIcon class="w-5 h-5 mr-1"/>К заказам
         </Button>
 
         <Button color="blue" @click="() => render()">
@@ -24,7 +24,7 @@ const SuspenseTable = useSuspense(Table);
         </Button>
       </template>
 
-      <suspense-table loadingMsg="получение воронок..." />
+      <suspense-table loadingMsg="получение этапов..." />
 
     </OfficeLayout>
 </template>

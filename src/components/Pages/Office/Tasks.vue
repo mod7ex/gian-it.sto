@@ -1,5 +1,5 @@
 <script setup>
-import { PlusCircleIcon, RefreshIcon } from '@heroicons/vue/outline';
+import { PlusCircleIcon, RefreshIcon, ViewBoardsIcon } from '@heroicons/vue/outline';
 import { onScopeDispose, ref, watch } from 'vue';
 import { debounce, objectSignature } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -54,6 +54,10 @@ onScopeDispose(clearMemo);
   <OfficeLayout title="Задачи">
 
     <template #actions>
+      <Button type="secondary" :link="{ name: 'Funnels' }">
+        <ViewBoardsIcon class="w-5 h-5 mr-1"/>Воронка
+      </Button>
+
       <v-can ability="create tasks">
         <Button color="blue" :link="{ name: 'TaskCreate' }">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать

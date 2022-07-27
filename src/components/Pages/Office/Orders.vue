@@ -4,7 +4,7 @@ import { watch, ref } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Header from '@/UI/Header.vue';
-import KanBan from '~/components/Partials/orders/items/KanBan.vue';
+// import KanBan from '~/components/Partials/orders/items/KanBan.vue';
 import useSuspense from '~/composables/useSuspense';
 import VFilter from '~/components/Partials/orders/items/Filter.vue';
 import departmentStore from '~/store/departments';
@@ -27,13 +27,15 @@ const SuspenseArea = useSuspense();
   <OfficeLayout title="Заказ-наряды">
 
     <template #actions>
-      <Button type="secondary" link="/pipelines">
-        <ViewBoardsIcon class="w-5 h-5 mr-1"/>Воронка
+      <Button type="secondary" :link="{ name: 'OrderStages' }">
+        <ViewBoardsIcon class="w-5 h-5 mr-1"/>Этапы
       </Button>
 
-      <Button color="blue" link="/orders/create">
-        <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
-      </Button>
+      <!--
+        <Button color="blue" :link="{ name: 'OrderForm' }">
+          <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
+        </Button>
+      -->
     </template>
 
     <Header>Фильтр</Header>
@@ -41,7 +43,7 @@ const SuspenseArea = useSuspense();
     <v-filter />
 
     <suspense-area :key="`orders-${current}-${key}`" >
-      <kan-ban />
+      <!-- <kan-ban /> -->
     </suspense-area>
 
   </OfficeLayout>

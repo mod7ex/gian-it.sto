@@ -4,17 +4,17 @@ import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/orders';
 import userStore from '~/store/employees';
-import pipelineStore from '~/store/pipelines/index';
+// import pipelineStore from '~/store/pipelines/index';
 
 const { options, load } = userStore;
 
-const { typesOptions, loadTypes } = pipelineStore;
+// const { typesOptions, loadTypes } = pipelineStore;
 
 const { filter, current } = service();
 
 watch(current, (department_id) => { load({ department_id }); }, { immediate: true });
 
-onMounted(loadTypes);
+// onMounted(loadTypes);
 
 </script>
 
@@ -35,7 +35,8 @@ onMounted(loadTypes);
         />
       </div>
 
-      <div>
+    <!--
+        <div>
         <Select
           label="Тип"
           v-model="filter.type"
@@ -43,5 +44,6 @@ onMounted(loadTypes);
           class="w-44"
         />
       </div>
+    -->
     </div>
 </template>

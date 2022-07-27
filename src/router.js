@@ -13,6 +13,8 @@ const routes = [
   { path: '/orders/create', component: () => import(/* webpackChunkName: "OrderForm" */ '@/Pages/Office/OrderForm.vue'), name: 'OrderForm' },
   { path: '/orders/update/:id', component: () => import(/* webpackChunkName: "OrderForm" */ '@/Pages/Office/OrderForm.vue'), name: 'OrderEdit' },
 
+  { path: '/order-stages', component: () => import(/* webpackChunkName: "OrderStages" */ '@/Pages/Office/OrderStages.vue'), name: 'OrderStages' },
+
   { path: '/tasks', component: () => import(/* webpackChunkName: "Tasks" */ '@/Pages/Office/Tasks.vue'), name: 'Tasks' },
   { path: '/tasks/:id', component: () => import(/* webpackChunkName: "Task" */ '@/Pages/Office/Task.vue'), name: 'Task' },
   { path: '/tasks/update/:id', component: () => import(/* webpackChunkName: "TaskEdit" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskEdit' },
@@ -62,8 +64,6 @@ const routes = [
 
   { path: '/settings', component: () => import(/* webpackChunkName: "Settings" */ '@/Pages/Office/Settings.vue'), name: 'Settings' },
 
-  // { path: '/pipelines', component: () => import(/* webpackChunkName: "Pipelines" */ '@/Pages/Office/Pipelines.vue'), name: 'Pipelines' },
-  // { path: '/pipelines/create', component: () => import(/* webpackChunkName: "PipelineForm" */ '@/Pages/Office/PipelineForm.vue'), name: 'PipelineForm' },
   { path: '/pipelines', component: () => import(/* webpackChunkName: "Funnels" */ '@/Pages/Office/Pipelines.vue'), name: 'Funnels' },
   { path: '/pipelines/:id', component: () => import(/* webpackChunkName: "Stages" */ '@/Pages/Office/Stages.vue'), name: 'Stages' },
 

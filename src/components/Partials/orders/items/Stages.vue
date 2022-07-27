@@ -1,12 +1,17 @@
 <script setup>
 import Link from '@/UI/Link.vue';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-import store from '~/store/pipelines/index';
+import store from '~/store/orders/stages';
 import Table from '@/Layout/Table.vue';
-import form from '~/services/funnels';
+import form from '~/services/orders/stages';
+
+const { state, load, drop: dropStage } = store;
+
+await load();
 
 const fields = [
   { label: 'Название', key: 'name' },
+  { label: 'Цвет', key: 'color' },
   { label: 'Дата создания', key: 'created_at' },
 ];
 
@@ -14,22 +19,22 @@ const { drop } = useConfirmDialog();
 
 const { render } = form();
 
-const { state, load, drop: dropFunnel } = store;
-
-await load();
-
 </script>
 
 <template>
     <Table
         :fields="fields"
         :items="state.raw"
-        @delete="(id) => drop(() => dropFunnel(id))"
+        @delete="(id) => drop(() => dropStage(id))"
         @edit="(id) => render(id)"
     >
         <!-- Body -->
         <template #td-name="{ value, item: {id} }" >
-            <Link :href="{name: 'Stages', params: { id }}" >{{ value }}</Link>
+            <Link @click="() => render(id)">{{ value }}</Link>
+        </template>
+
+        <template #td-color="{ value }" >
+            <div class="w-9 h-9 border shadow-sm rounded-full" :style="{background: value}"></div>
         </template>
 
         <template #td-created_at="{ value }" >

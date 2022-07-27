@@ -53,7 +53,7 @@ if (props.error.length > 0) {
 } else {
   styles.push('border-gray-300 focus:ring-indigo-500 focus:border-indigo-500');
 }
-const options = computed(() => props.options.map((e) => {
+const options = computed(() => props.options?.map((e) => {
   if (e instanceof Object) {
     return e;
   }

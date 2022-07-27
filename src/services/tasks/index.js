@@ -1,9 +1,10 @@
-import { reactive, effectScope, onScopeDispose } from 'vue';
+import { reactive, effectScope } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 import departmentStore from '~/store/departments';
 import store from '~/store/tasks';
 import useConfirmDialog from '~/composables/useConfirmDialog';
 import useAppRouter from '~/composables/useAppRouter';
+import { cleanUp } from '~/helpers';
 
 const { current } = departmentStore;
 
@@ -54,7 +55,7 @@ export default () => effectScope().run(() => {
   const fetchTasks = async (bool = false) => {
     if (!filter.department_id) return;
     if (bool) resetStore();
-    await fill(filter);
+    await fill(cleanUp(filter));
     trigger();
   };
 
@@ -67,7 +68,7 @@ export default () => effectScope().run(() => {
       try {
         return { success, message };
       } finally {
-        success && redirige && await redirectTo({ name: 'Tasks' });
+        // success && redirige && await redirectTo({ name: 'Tasks' });
       }
     });
   };

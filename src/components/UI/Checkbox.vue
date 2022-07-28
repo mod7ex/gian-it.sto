@@ -21,6 +21,11 @@ defineProps({
     type: Boolean,
     default: false,
   },
+
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const id = Math.random().toString();
@@ -38,6 +43,7 @@ defineEmits(['clicked']);
           :checked="modelValue"
           @change="(e) => $emit('update:modelValue', !modelValue)"
           @click="() => $emit('clicked')"
+          :disabled="disabled"
       />
 
     </div>

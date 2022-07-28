@@ -27,10 +27,9 @@ let removeCheckbox;
 let removeFunnel;
 
 await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]).then(()=>{
-    removeCheckbox = removeItem(fields.checkboxes);
+    removeCheckbox = removeItem(fields.process_checkboxes);
     removeFunnel = removeItem(fields.pipelines);
-})
-
+});
 
 </script>
 
@@ -78,13 +77,13 @@ await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]).then(
         <div class="col-span-12 sm:col-span-12">
             <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>
             <ul>
-                <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
+                <li v-for="(c, i) in fields.process_checkboxes" :key="'input-'+i" class="flex items-start mb-2">
                     <span class="w-5 pt-2">{{ i + 1 }}</span>
-                    <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i].description" />
+                    <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.process_checkboxes[i].description" />
                     <Button color="red" size="sm" @click="removeCheckbox(i)">Удалить</Button>
                 </li>
             </ul>
-            <Button size="xs" class="mt-4" @click="fields.checkboxes.push({description: ''})">Добавить</Button>
+            <Button size="xs" class="mt-4" @click="fields.process_checkboxes.push({description: ''})">Добавить</Button>
         </div>
 
         <hr class="col-span-12" />

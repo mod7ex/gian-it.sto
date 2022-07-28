@@ -29,27 +29,26 @@ export default function () {
       // department_id: current,
       start_date: '',
       end_date: '',
+      order: '',
     });
   }
 
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
-  const { reset, trigger } = order;
+  // const { reset } = order;
 
   const resetFilter = () => {
     Object.keys(filter).forEach((key) => {
-      if (key !== 'department_id') {
-        filter[key] = '';
-      }
+      if (key !== 'department_id') { filter[key] = ''; }
     });
 
-    reset(true);
+    // reset(true);
   };
 
   const fetchFinances = async (bool = false) => {
     if (bool) resetStore();
     await fill(filter);
-    trigger();
+    // trigger();
   };
 
   return {

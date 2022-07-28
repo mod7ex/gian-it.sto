@@ -21,7 +21,7 @@ const defaults = {
 };
 
 const deepDefaults = {
-  checkboxes: [{ description: '' }],
+  process_checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
 };
@@ -43,8 +43,8 @@ const setField = function (key) {
     return;
   }
 
-  if (key === 'checkboxes') {
-    fields.checkboxes = this.checkboxes ?? defaults.checkboxes;
+  if (key === 'process_checkboxes') {
+    fields.process_checkboxes = this.process_checkboxes ?? defaults.process_checkboxes;
     return;
   }
 
@@ -110,7 +110,7 @@ export default (process_category) => effectScope().run(() => {
     fields = undefined;
     files = undefined;
 
-    deepDefaults.checkboxes = [{ description: '' }];
+    deepDefaults.process_checkboxes = [{ description: '' }];
     deepDefaults.pipelines = [{}];
     deepDefaults.temp_file_ids = [];
   });

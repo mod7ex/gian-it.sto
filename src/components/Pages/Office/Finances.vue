@@ -21,17 +21,15 @@ const { render } = form();
 
 const { filter, order, resetFilter, fetchFinances, cleanUp } = service();
 
-const { criteriaOptions, criteria } = order;
+const { criteriaOptions } = order;
 
 const SuspenseArea = useSuspense();
 
 const filterSignature = ref('');
 
 watch(filter, debounce(() => {
-  // if (filter.department_id) { // when problem fixed
-  if (current.value) {
-    filterSignature.value = objectSignature(filter);
-  }
+  // if (filter.department_id) { // Fix
+  if (current.value) { filterSignature.value = objectSignature(filter); }
 }), { deep: true }); // will work without deep because values are primary
 
 cleanUp();
@@ -72,7 +70,7 @@ cleanUp();
           <Select
             label="Сортировать"
             :options="criteriaOptions"
-            v-model="criteria"
+            v-model="filter.order"
             class="w-44"
           />
         </div>
@@ -85,7 +83,7 @@ cleanUp();
         </div>
       </div>
 
-      <suspense-area :key="filterSignature" >
+      <suspense-area :key="`${filterSignature}`" >
         <Table @bottom-touched="()=>fetchFinances()" />
       </suspense-area>
 

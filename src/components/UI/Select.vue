@@ -93,6 +93,5 @@ const options = computed(() => props.options?.map((e) => {
     <p class="mt-1 text-xs text-red-600" :class="[`text-${error.lenght ? 'red-600' : 'gray-500'}`]">
       &#160;{{ error ?? help  }}
     </p>
-
   </div>
 </template>

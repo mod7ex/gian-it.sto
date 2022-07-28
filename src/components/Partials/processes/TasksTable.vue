@@ -30,8 +30,8 @@ await load(id);
         @edit="(task) => redirectTo({ name: 'ProcessTaskEdit', params: { task, id } })"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id: task, name} }" >
-            <Link :href="{ name: 'ProcessTask', params: { task, id, name } }"> {{ value }} </Link>
+        <template #td-name="{ value, item: {id: task} }" >
+            <Link :href="{ name: 'ProcessTaskEdit', params: { task, id } }"> {{ value }} </Link>
         </template>
 
         <template #td-role="{ value }" >

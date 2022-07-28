@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import Button from '@/UI/Button.vue';
+import Badge from '@/UI/Badge.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
 import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
@@ -22,10 +23,14 @@ const StagesSelection = proxiedSelect(state, fields);
 
 const removeItem = (resource) => maybeRun((i) => resource.splice(i, 1), computed(() => resource.length > 1));
 
-const removeCheckbox = removeItem(fields.checkboxes);
-const removeFunnel = removeItem(fields.pipelines);
+let removeCheckbox;
+let removeFunnel;
 
-await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]);
+await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]).then(()=>{
+    removeCheckbox = removeItem(fields.checkboxes);
+    removeFunnel = removeItem(fields.pipelines);
+})
+
 
 </script>
 
@@ -46,7 +51,7 @@ await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]);
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-            <Select label="Этап заказа" :options="OrderStagesOptions" v-model="fields.order_stage_id" />
+            <Select label="Этап заказ-нарядa" :options="OrderStagesOptions" v-model="fields.order_stage_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-3">

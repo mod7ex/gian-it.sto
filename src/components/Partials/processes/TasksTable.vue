@@ -1,26 +1,24 @@
 <script setup>
 import Link from '@/UI/Link.vue';
 import Badge from '@/UI/Badge.vue';
-import form from '~/services/processes/why-form';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/processes/tasks';
-import useAppRouter from '~/composables/useAppRouter'
+import useAppRouter from '~/composables/useAppRouter';
 
-let {route} = useAppRouter()
+const { route, redirectTo } = useAppRouter();
+
+const { id } = route.params;
 
 const { state, load, drop } = store;
 
-const { render } = form();
-
 const fields = [
   { label: 'Название', key: 'name' },
-  { label: 'Воронка', key: 'pipeline' },
-  { label: 'Порядок', key: 'order' },
-  { label: 'Ответственная роль', key: 'user' },
+  { label: 'Ответственная роль', key: 'role' },
+  { label: 'Порядок', key: 'position' },
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-await load(route.params.id);
+await load(id);
 
 </script>
 
@@ -29,24 +27,20 @@ await load(route.params.id);
         :fields="fields"
         :items="state.raw"
         @delete="drop"
-        @edit="render"
+        @edit="(task) => redirectTo({ name: 'ProcessTaskEdit', params: { task, id } })"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id} }" >
-            <Link @click="() => render(id)"> {{ value }} </Link>
+        <template #td-name="{ value, item: {id: task, name} }" >
+            <Link :href="{ name: 'ProcessTask', params: { task, id, name } }"> {{ value }} </Link>
         </template>
 
-        <template #td-pipeline="{ value }" >
-          <Badge :point="true" :color="blue">
-            {{ value }}
+        <template #td-role="{ value }" >
+          <Badge :point="true" color="blue">
+            {{ value.title }}
           </Badge>
         </template>
 
-        <template #td-order="{ value }" >
-            {{ value }}
-        </template>
-
-        <template #td-user="{ value }" >
+        <template #td-position="{ value }" >
             {{ value }}
         </template>
 

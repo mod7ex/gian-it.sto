@@ -6,8 +6,8 @@ import Button from '@/UI/Button.vue';
 
 const DEFAULTS = {
   loading: false,
-  title: 'Удалить ?',
-  text: 'продолжить удаление!',
+  title: 'Подтверждаете удаление ?',
+  text: '',
   resultMsg: null,
   success: true,
   icon: null,

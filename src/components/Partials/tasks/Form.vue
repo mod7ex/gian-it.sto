@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, defineComponent, h } from 'vue';
+import { computed, watch, defineComponent, h, onMounted } from 'vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
 import Upload from '@/UI/Upload.vue';
@@ -40,6 +40,11 @@ await Promise.all([
 })
 
 const StagesSelection = proxiedSelect(state, fields);
+
+onMounted(() => {
+  console.log(options.value.map(({ value }) => value));
+  console.log(fields.user_id);
+});
 
 </script>
 

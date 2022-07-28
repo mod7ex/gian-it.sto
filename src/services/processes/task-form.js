@@ -93,7 +93,7 @@ export default (process_category) => effectScope().run(() => {
 
     const { data, success } = await save.process_task(fields, null, true);
 
-    success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+    success && redirectTo({ name: 'ProcessTask', params: { task: data?.process_task?.id, id: process_category } });
   };
 
   const atMounted = async () => {

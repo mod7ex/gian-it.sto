@@ -79,12 +79,12 @@ const options = computed(() => props.options?.map((e) => {
       @blur="$emit('blured')"
       :disabled="props.disabled"
     >
-      <option :selected="!modelValue" disabled>-- выберите --</option>
+      <option :selected="!modelValue" value="">-- выберите --</option>
       <option
-        v-for="item in options"
-        :value="item.value"
-        :key="item.value"
-        :selected="modelValue == item.value"
+          v-for="item in options"
+          :value="item.value"
+          :key="item.value"
+          :selected="modelValue == item.value"
       >{{ item.label }}
       </option>
 

@@ -9,7 +9,7 @@ const defaults = {
   id: '',
   name: '',
   description: '',
-  order_id: undefined,
+  order_id: '',
   user_id: '',
   deadline_at: '',
   position: '',
@@ -101,7 +101,7 @@ export default () => effectScope().run(() => {
 
     const { data, success } = await save.task(fields, null, true);
 
-    success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+    // success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
   };
 
   const atMounted = async () => {

@@ -60,7 +60,6 @@ const setField = function (key) {
   if (key === 'temp_file_ids') { fields[key] = []; return; }
 
   fields[key] = this[key] ?? defaults[key];
-  if (key === 'id') alert(this.id);
 };
 
 const setForm = async (payload) => {

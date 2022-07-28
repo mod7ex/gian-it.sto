@@ -28,13 +28,13 @@ await load();
         @edit="render"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id} }" >
-            <Link :href="{ name: 'Process', params: {id} }"> {{ value }} </Link>
+        <template #td-name="{ value, item: {id, name} }" >
+            <Link :href="{ name: 'Process', params: {id, name} }"> {{ value }} </Link>
         </template>
 
         <template #td-tasks_count="{ value }" >
             <Badge :point="true" color="blue">
-              {{ value ?? '0' }} задач
+              {{ value ?? '(Unknown)' }} задач
             </Badge>
         </template>
 

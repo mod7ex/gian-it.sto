@@ -36,7 +36,7 @@ const { drop: dropUser, selectedUser } = store;
                     <PencilIcon class="mr-2 h-5 w-5 text-gray-400" />Изменить
                 </Button>
 
-                <Button size="xs" color="red" @click="() => drop(() => dropUser(selectedUser.id), 'продолжить удаление!', 'Удалить ?')">
+                <Button size="xs" color="red" @click="() => drop(() => dropUser(selectedUser.id))">
                     <TrashIcon class="mr-2 h-5 w-5 text-white" />Удалить
                 </Button>
             </v-can>

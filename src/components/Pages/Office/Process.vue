@@ -13,7 +13,7 @@ const SuspenseArea = useSuspense(Table);
 </script>
 
 <template>
-  <OfficeLayout title="Название процесса / Список задач">
+  <OfficeLayout :title="`${route.params.name} / Список задач`">
     <template #actions>
         <Button type="secondary" :link="{name: 'Processes'}">
             <ArrowLeftIcon class="w-5 h-5 mr-1"/>К списку процессов

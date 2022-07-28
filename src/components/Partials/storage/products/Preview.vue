@@ -1,7 +1,8 @@
 <script setup>
-import { PencilIcon as PencilSolidIcon, ArrowNarrowLeftIcon, CheckIcon, RefreshIcon } from '@heroicons/vue/solid';
+import { PencilIcon as PencilSolidIcon, ArrowNarrowLeftIcon, CheckIcon, RefreshIcon, PlusIcon } from '@heroicons/vue/solid';
 import { onMounted, ref } from 'vue';
 import Button from '@/UI/Button.vue';
+import Avatar from '@/UI/Avatar.vue';
 import TextArea from '@/UI/TextArea.vue';
 import store from '~/store/storage/products';
 import form from '~/services/storage/products/form';
@@ -92,7 +93,7 @@ onMounted(() => {
                 <dl class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                     <div class="py-3 flex justify-between text-sm font-medium">
                         <dt class="text-gray-500">Добавил</dt>
-                        <!-- <dd class="text-gray-900">Вася Пупкин</dd> -->
+                        <dd class="text-gray-900">Вася Пупкин</dd>
                         <dd class="text-gray-900">{{ `${target.user?.name} ${target.user?.surname}` ?? 'Unknown' }}</dd>
                     </div>
 
@@ -144,7 +145,7 @@ onMounted(() => {
                     ></TextArea>
                 </div>
             </div>
-<!--
+<!-- -->
             <div>
                 <h3 class="font-medium text-gray-900">Запросили</h3>
                 <ul class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
@@ -177,7 +178,7 @@ onMounted(() => {
                     </li>
                 </ul>
             </div>
--->
+<!-- -->
             <div class="flex justify-between">
                 <Button color="blue" class="flex-1 justify-center" @click="() => redirectToForm(target.id)">Изменить</Button>
                 <Button color="red" class="flex-1 ml-3 justify-center" @click="()=>dropProduct(target.id)">Удалить</Button>

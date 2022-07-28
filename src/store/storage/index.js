@@ -13,9 +13,10 @@ const reset = () => {
   state.raw = [];
 };
 
-const load = async (payload = {}) => {
+const load = async (params = {}) => {
   if (hasCRUD) {
-    state.raw = await $.storages(payload);
+    const key = `storages${params.department_id ? `/department/${params.department_id}` : ''}`;
+    state.raw = (await $({ key, params })).storages ?? [];
   }
 };
 

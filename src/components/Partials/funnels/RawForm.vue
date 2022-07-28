@@ -17,12 +17,5 @@ await atMounted();
             :error="v$.name.$errors[0]?.$message"
             @blured="v$.name.$touch"
         />
-        <Input
-            label="Тип"
-            v-model="pipeline.type"
-            :required="true"
-            :error="v$.type.$errors[0]?.$message"
-            @blured="v$.type.$touch"
-        />
     </div>
 </template>

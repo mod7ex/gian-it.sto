@@ -66,7 +66,7 @@ export default function () {
           pipeline = reactive({
             id: id ?? '',
             name: '',
-            type: '',
+            type: 'task',
           });
 
           v$ = useVuelidate(formRules(), pipeline, { $lazy: true });

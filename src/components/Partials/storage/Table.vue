@@ -4,10 +4,12 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import store from '~/store/storage';
 import Table from '@/Layout/Table.vue';
 import form from '~/services/storage/form';
+import departmentStore from '~/store/departments';
+
+const { current } = departmentStore;
 
 const fields = [
   { label: 'Название', key: 'name' },
-  { label: 'Город', key: 'city' },
   { label: 'Дата создания', key: 'created_at' },
 ];
 
@@ -17,7 +19,7 @@ const { render } = form();
 
 const { storages, load, drop: dropStorage } = store;
 
-await load();
+await load({ department_id: current.value });
 
 </script>
 
@@ -31,10 +33,6 @@ await load();
         <!-- Body -->
         <template #td-name="{ value, item: {id} }" >
             <Link :href="{name: 'Storage', params: { id }}" >{{ value }} </Link>
-        </template>
-
-        <template #td-city="{ value }" >
-            {{ value }}
         </template>
 
         <template #td-created_at="{ value }" >

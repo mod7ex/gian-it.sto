@@ -8,6 +8,9 @@ import store from '~/store/storage';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import formRules from '~/validationsRules/storage';
+import departmentStore from '~/store/departments';
+
+const { current } = departmentStore;
 
 const { load } = store;
 
@@ -22,7 +25,7 @@ const setForm = (payload = {}) => {
   storage.city_id = payload.city?.id;
 };
 
-const atMountedStorageForm = async () => {
+const atMounted = async () => {
   const { id } = storage;
 
   if (id) {
@@ -44,7 +47,7 @@ const saveForm = async () => {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      await load({ department_id: current.value });
       toaster.success(message);
     }
   }
@@ -66,7 +69,7 @@ export default function () {
           storage = reactive({
             id: id ?? '',
             name: '',
-            city_id: '',
+            department_id: current.value,
           });
           v$ = useVuelidate(formRules(), storage, { $lazy: true });
         },
@@ -82,8 +85,9 @@ export default function () {
 
   return {
     storage,
-    atMountedStorageForm,
+    atMounted,
     render: modalUp,
     v$,
+    current,
   };
 }

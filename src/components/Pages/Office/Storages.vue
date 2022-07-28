@@ -5,6 +5,9 @@ import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense';
 import Table from '@/Partials/storage/Table.vue';
 import form from '~/services/storage/form';
+import departmentStore from '~/store/departments';
+
+const { current } = departmentStore;
 
 const { render } = form();
 
@@ -26,7 +29,7 @@ const SuspenseTable = useSuspense(Table);
         </Button>
       </template>
 
-      <suspense-table loadingMsg="получаем складов..." />
+      <suspense-table loadingMsg="получаем складов..." v-if="current" :key="`dep-${current}`" />
 
     </OfficeLayout>
 </template>

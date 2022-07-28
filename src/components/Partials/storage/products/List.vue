@@ -17,9 +17,7 @@ const { dropProduct, defaults } = form();
 
 const { fetchProducts, redirectToForm } = service();
 
-const { pixel, container } = useIntersectionObserver(() => {
-    emit('bottomTouched');
-}, computed(() => products.value.length > 0));
+const { pixel, container } = useIntersectionObserver(() => { emit('bottomTouched'); }, computed(() => products.value.length > 0));
 
 const fields = [
   { label: 'Название', key: 'name' },

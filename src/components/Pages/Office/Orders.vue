@@ -31,11 +31,9 @@ const SuspenseArea = useSuspense();
         <ViewBoardsIcon class="w-5 h-5 mr-1"/>Этапы
       </Button>
 
-      <!--
-        <Button color="blue" :link="{ name: 'OrderForm' }">
-          <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
-        </Button>
-      -->
+      <Button color="blue" :link="{ name: 'OrderForm' }">
+        <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
+      </Button>
     </template>
 
     <Header>Фильтр</Header>

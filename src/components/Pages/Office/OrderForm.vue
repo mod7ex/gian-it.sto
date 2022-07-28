@@ -61,7 +61,7 @@ onUnmounted(clearMemory);
   <p>TODO: get rid of re-rendring</p>
 -->
 
-    <suspense-area :key="`suspense-${current}-${department}`">
+    <suspense-area :key="`suspense-${current}-${department}-${fields?.id ?? 'none'}`">
       <component :is="tabs[current].component" v-bind="tabs[current].props" />
     </suspense-area>
     <!-- ISSUE : solved using the v-show directive ,but there might still a small issue !  -->

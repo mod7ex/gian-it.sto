@@ -12,7 +12,6 @@ import save from '~/helpers/save';
 const { redirectToForm } = service();
 
 const { dropProduct, defaults } = form();
-
 const { select, selectedProduct: target, replace } = store;
 
 const editMode = ref(false);

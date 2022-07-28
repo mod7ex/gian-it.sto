@@ -2,6 +2,7 @@ import { reactive, ref, effectScope, onScopeDispose } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import save, { upload } from '~/helpers/save';
+import { deepCopyObj } from '~/helpers';
 import useToast from '~/composables/useToast.js';
 
 const defaults = {
@@ -15,6 +16,11 @@ const defaults = {
   position: '',
   files: '',
   time: '',
+  process_category: '',
+
+};
+
+const deepDefaults = {
   checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
@@ -45,17 +51,20 @@ const setField = function (key) {
   fields[key] = this[key] ?? defaults[key];
 };
 
-const setForm = async (payload) => { Object.keys(fields).forEach(setField, payload ?? {}); };
+const setForm = async (payload, _id) => {
+  Object.keys(fields).forEach(setField, payload ?? {});
+  fields.process_category = _id;
+};
 
 const log = (e) => { files.value = e.target.files; };
 
-export default () => effectScope().run(() => {
+export default (process_category) => effectScope().run(() => {
   const toaster = useToast();
 
   const { route, isThePage, redirectTo } = useAppRouter('ProcessTaskEdit');
 
   if (!fields) {
-    fields = reactive(defaults);
+    fields = reactive({ ...deepCopyObj(defaults), ...deepDefaults, process_category }); // FIX: issue with deep
     files = ref();
   }
 
@@ -89,11 +98,11 @@ export default () => effectScope().run(() => {
 
   const atMounted = async () => {
     if (!isThePage.value) return;
-    const { id } = route.params;
-    if (id) {
-      let task = {};
-      task = await $.process_task(route.params.id);
-      await setForm(task);
+    const { task, id } = route.params;
+    if (task) {
+      let ts = {};
+      ts = await $.process_task(task);
+      await setForm(ts, id);
     }
   };
 
@@ -101,9 +110,9 @@ export default () => effectScope().run(() => {
     fields = undefined;
     files = undefined;
 
-    defaults.checkboxes = [{ description: '' }];
-    defaults.pipelines = [{}];
-    defaults.temp_file_ids = [];
+    deepDefaults.checkboxes = [{ description: '' }];
+    deepDefaults.pipelines = [{}];
+    deepDefaults.temp_file_ids = [];
   });
 
   return {

@@ -12,17 +12,15 @@ import clientStore from '~/store/clients';
 import carStore from '~/store/cars/cars';
 import appealReasonStore from '~/store/processes/why';
 import processStore from '~/store/processes/index';
-import pipelineStore from '~/store/pipelines';
-import stagesStore from '~/store/pipelines/stages';
+import orderStagesStore from '~/store/orders/stages';
 import { maybeRun, generateShapedIdfromId } from '~/helpers';
 
+const { options: orderStagesOptions, load: loadOrderStages } = orderStagesStore;
 const { load: loadUsers, options: userOptions } = userStore;
 const { load: loadClients, options: clientOptions } = clientStore;
 const { load: loadCars, options: carOptions, reset: resetCars } = carStore;
 const { load: loadAppealReasons, options: appealReasonOptions } = appealReasonStore;
 const { load: loadProcesses, options: processOptions } = processStore;
-const { orderFunnelOption } = pipelineStore;
-const { load_orders_stages, options: stagesOptions } = stagesStore;
 
 const { fields, atMounted, saveOrder, current, log, isEditPage } = service();
 
@@ -33,7 +31,7 @@ onMounted(resetCars);
 watch(() => fields.client_id, (client_id) => loadCars({ client_id }));
 
 await Promise.all([
-  load_orders_stages(),
+  loadOrderStages(),
   loadAppealReasons(),
   loadProcesses(),
   atMounted(),
@@ -41,7 +39,7 @@ await Promise.all([
   loadClients({ department_id: current.value }),
 ]);
 
-const ID = ref(`#${generateShapedIdfromId(fields.id)}`);
+const ID = computed(() => `#${generateShapedIdfromId(fields.id)}`)
 
 </script>
 
@@ -54,7 +52,8 @@ const ID = ref(`#${generateShapedIdfromId(fields.id)}`);
 
       <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-3" v-if="isEditPage">
-          <Input label="Номер заказ-наряда" disabled v-model="ID" />
+          <input :value="fields.id" /> 
+          <Input label="Номер заказ-наряда" disabled v-model="ID" /> 
         </div>
 
         <div class="col-span-12 sm:col-span-3">
@@ -81,12 +80,14 @@ const ID = ref(`#${generateShapedIdfromId(fields.id)}`);
           <Select label="Процесс" :options="processOptions" v-model="fields.process_id" />
         </div>
 
-        <div class="col-span-12 sm:col-span-4">
+<!--
+         <div class="col-span-12 sm:col-span-4">
           <Select label="Воронка" :options="orderFunnelOption" v-model="fields.pipeline_id" disabled  />
         </div>
+-->
 
         <div class="col-span-12 sm:col-span-3">
-          <Select label="Этап воронки" :options="stagesOptions" v-model="fields.stage_id" />
+          <Select label="Этап заказа" :options="orderStagesOptions" v-model="fields.order_stage_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-12">

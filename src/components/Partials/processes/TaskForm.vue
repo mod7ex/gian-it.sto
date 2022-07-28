@@ -18,9 +18,12 @@ const { options, load } = rolesStore;
 
 const { fields, atMounted, log } = service();
 
-const removeItem = maybeRun((i) => fields.checkboxes.splice(i, 1), computed(() => fields.checkboxes.length > 1));
-
 const StagesSelection = proxiedSelect(state, fields);
+
+const removeItem = (resource) => maybeRun((i) => resource.splice(i, 1), computed(() => resource.length > 1));
+
+const removeCheckbox = removeItem(fields.checkboxes);
+const removeFunnel = removeItem(fields.pipelines);
 
 await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]);
 
@@ -56,7 +59,7 @@ await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]);
                 <li v-for="(p, i) in fields.pipelines" :key="'input-'+i" class="flex items-center">
                     <Select class="mr-3 pipeline w-full" :label="`Воронка ${i + 1}`" :options="pipelinesOptions" v-model="fields.pipelines[i].pipeline_id" />
                     <StagesSelection :index="i" :pipeline_id="fields.pipelines[i].pipeline_id" v-model="fields.pipelines[i].stage_id" />
-                    <Button color="red" size="sm" @click="fields.pipelines.splice(1, i)">Удалить</Button>
+                    <Button color="red" size="sm" @click="removeFunnel(i)">Удалить</Button>
                 </li>
             </ul>
             <Button size="xs" class="mt-4" @click="fields.pipelines.push({})">Добавить</Button>
@@ -73,7 +76,7 @@ await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]);
                 <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
                     <span class="w-5 pt-2">{{ i + 1 }}</span>
                     <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i].description" />
-                    <Button color="red" size="sm" @click="removeItem(i)">Удалить</Button>
+                    <Button color="red" size="sm" @click="removeCheckbox(i)">Удалить</Button>
                 </li>
             </ul>
             <Button size="xs" class="mt-4" @click="fields.checkboxes.push({description: ''})">Добавить</Button>

@@ -7,9 +7,9 @@ import Form from '@/Partials/processes/TaskForm.vue';
 import service from '~/services/processes/task-form';
 import useAppRouter from '~/composables/useAppRouter';
 
-const { isEditPage, saveTask } = service();
+const { route, back } = useAppRouter();
 
-const { back } = useAppRouter();
+const { isEditPage, saveTask } = service(route.params.id);
 
 const SuspenseArea = useSuspense(Form);
 

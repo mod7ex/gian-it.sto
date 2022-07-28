@@ -1,15 +1,14 @@
-import { reactive, ref, effectScope, computed } from 'vue';
+import { reactive, ref, effectScope } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import save, { upload } from '~/helpers/save';
 import { deepCopyObj } from '~/helpers';
 import communicate from '~/helpers/communicate';
 import useToast from '~/composables/useToast.js';
-import pipelineStore from '~/store/pipelines';
+// import pipelineStore from '~/store/pipelines';
 import orderStore from '~/store/orders/orders';
 import departmentStore from '~/store/departments';
-
-const { orderFunnelOption } = pipelineStore;
+// const { orderFunnelOption } = pipelineStore;
 const { current } = departmentStore;
 const { drop } = orderStore;
 
@@ -25,7 +24,7 @@ const defaults = {
 
   client_id: '',
 
-  stage_id: '',
+  order_stage_id: '',
 
   car_id: '',
 
@@ -34,11 +33,10 @@ const defaults = {
   process_id: '',
 
   comment: '',
-
 };
 
 const refDefaults = {
-  pipeline_id: computed(() => orderFunnelOption.value[0].value),
+  // pipeline_id: computed(() => orderFunnelOption.value[0].value),
   department_id: current,
 };
 
@@ -62,6 +60,7 @@ const setField = function (key) {
   if (key === 'temp_file_ids') { fields[key] = []; return; }
 
   fields[key] = this[key] ?? defaults[key];
+  if (key === 'id') alert(this.id);
 };
 
 const setForm = async (payload) => {

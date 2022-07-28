@@ -6,7 +6,7 @@ import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/tasks/form';
-import { maybeRun, tasksColorMap } from '~/helpers';
+import { tasksColorMap, maybeRun } from '~/helpers';
 import userStore from '~/store/employees';
 import departmentStore from '~/store/departments';
 import pipelineStore from '~/store/pipelines';
@@ -23,16 +23,21 @@ const { load: loadStages, options: stagesOptions } = stagesStore;
 
 const { fields, atMounted, log, isEditPage } = service();
 
-const removeItem = maybeRun((i) => fields.checkboxes.splice(i, 1), computed(() => fields.checkboxes.length > 1));
-
 const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
+
+const removeItem = (resource) => maybeRun((i) => resource.splice(i, 1), computed(() => resource.length > 1));
+let removeCheckbox;
+let removeFunnel;
 
 await Promise.all([
     loadOrders({ department_id: current.value ?? '' }),
     load({ department_id: current.value ?? '' }),
     loadFunnels({type: 'task'}),
     atMounted()
-]);
+]).then(()=>{
+    removeCheckbox = removeItem(fields.checkboxes);
+    removeFunnel = removeItem(fields.pipelines);
+})
 
 const StagesSelection = proxiedSelect(state, fields);
 
@@ -80,7 +85,7 @@ const StagesSelection = proxiedSelect(state, fields);
                     <Select class="mr-3 pipeline w-full" :label="`Воронка ${i + 1}`" :options="pipelinesOptions" v-model="fields.pipelines[i].pipeline_id" />
                     <StagesSelection :index="i" :pipeline_id="fields.pipelines[i].pipeline_id" v-model="fields.pipelines[i].stage_id" />
                     <!-- <Select class="mr-3" :label="`Этап Воронка ${i + 1}`" :options="state.raw" v-model="fields.pipelines[i].stage_id" :disabled="!fields.pipelines[i].pipeline_id" /> -->
-                    <Button color="red" size="sm" @click="fields.pipelines.splice(1, i)">Удалить</Button>
+                    <Button color="red" size="sm" @click="removeFunnel(i)">Удалить</Button>
                 </li>
             </ul>
             <Button size="xs" class="mt-4" @click="fields.pipelines.push({})">Добавить</Button>
@@ -101,7 +106,7 @@ const StagesSelection = proxiedSelect(state, fields);
                 <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
                     <span class="w-5 pt-2">{{ i + 1 }}</span>
                     <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i].description" />
-                    <Button color="red" size="sm" @click="removeItem(i)">Удалить</Button>
+                    <Button color="red" size="sm" @click="removeCheckbox(i)">Удалить</Button>
                 </li>
             </ul>
             <Button size="xs" class="mt-4" @click="fields.checkboxes.push({ description: '' })">Добавить</Button>

@@ -1,7 +1,7 @@
 import { reactive, ref, effectScope, onScopeDispose } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
-import { hyphenatedDateFormat } from '~/helpers';
+import { hyphenatedDateFormat, deepCopyObj } from '~/helpers';
 import save, { upload } from '~/helpers/save';
 import useToast from '~/composables/useToast.js';
 
@@ -17,11 +17,13 @@ const defaults = {
 
   files: '',
 
-  checkboxes: [{ description: '' }],
-
   start_at: '',
   end_at: '',
 
+};
+
+const deepDefaults = {
+  checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
 };
@@ -70,15 +72,13 @@ export default () => effectScope().run(() => {
   const { route, isThePage, redirectTo } = useAppRouter('TaskEdit');
 
   if (!fields) {
-    fields = reactive(defaults);
+    fields = reactive({ ...deepCopyObj(defaults), ...deepDefaults });
     files = ref();
   }
 
   /* ************ task form ************ */
 
   const saveTask = async () => {
-    console.log(fields);
-
     const len = files.value?.length ?? 0;
     if (len) {
       const fileSet = new FormData();
@@ -105,12 +105,13 @@ export default () => effectScope().run(() => {
   };
 
   const atMounted = async () => {
-    if (!isThePage.value) return;
-    const { id } = route.params;
-    if (id) {
-      let task = {};
-      task = await $.task(route.params.id);
-      await setForm(task);
+    if (isThePage.value) {
+      const { id } = route.params;
+      if (id) {
+        let task = {};
+        task = await $.task(route.params.id);
+        await setForm(task);
+      }
     }
   };
 
@@ -118,9 +119,9 @@ export default () => effectScope().run(() => {
     fields = undefined;
     files = undefined;
 
-    defaults.checkboxes = [{ description: '' }];
-    defaults.pipelines = [{}];
-    defaults.temp_file_ids = [];
+    deepDefaults.checkboxes = [{ description: '' }];
+    deepDefaults.pipelines = [{}];
+    deepDefaults.temp_file_ids = [];
   });
 
   return {

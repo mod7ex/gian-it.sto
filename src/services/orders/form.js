@@ -40,6 +40,8 @@ const refDefaults = {
   department_id: current,
 };
 
+const generateDefault = () => ({ ...deepCopyObj(defaults), ...refDefaults, ...{ checkboxes: [''], temp_file_ids: [] } });
+
 const clearMemory = () => {
   fields = undefined;
   files = undefined;
@@ -75,7 +77,7 @@ export default () => effectScope().run(() => {
 
   if (!fields) {
     // Trying to make a deep copy of defaults, ISSUE : doesn't work for checkboxes
-    fields = reactive({ ...deepCopyObj(defaults), ...refDefaults, ...{ checkboxes: [''], temp_file_ids: [] } });
+    fields = reactive(generateDefault());
 
     files = ref();
   }
@@ -115,7 +117,7 @@ export default () => effectScope().run(() => {
       return;
     }
 
-    await setForm(defaults);
+    await setForm(generateDefault());
   };
 
   const dropOrder = async () => {
@@ -141,5 +143,6 @@ export default () => effectScope().run(() => {
     current,
     clearMemory,
     dropOrder,
+    route,
   };
 });

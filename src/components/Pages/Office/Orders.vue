@@ -4,7 +4,7 @@ import { watch, ref } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Header from '@/UI/Header.vue';
-// import KanBan from '~/components/Partials/orders/items/KanBan.vue';
+import KanBan from '~/components/Partials/orders/items/KanBan.vue';
 import useSuspense from '~/composables/useSuspense';
 import VFilter from '~/components/Partials/orders/items/Filter.vue';
 import departmentStore from '~/store/departments';
@@ -40,9 +40,7 @@ const SuspenseArea = useSuspense();
 
     <v-filter />
 
-    <suspense-area :key="`orders-${current}-${key}`" >
-      <!-- <kan-ban /> -->
-    </suspense-area>
+    <suspense-area :key="`orders-${current}-${key}`" > <kan-ban /> </suspense-area>
 
   </OfficeLayout>
 </template>

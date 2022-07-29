@@ -1,56 +1,14 @@
 <script setup>
-import {
-  ClockIcon,
-  PaperClipIcon,
-} from '@heroicons/vue/outline';
-import { ref } from 'vue';
+import { ClockIcon, PaperClipIcon } from '@heroicons/vue/outline';
 import Card from '@/UI/Card.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Checkbox from '@/UI/Checkbox.vue';
 import Badge from '@/UI/Badge.vue';
 import Comments from '@/Partials/Comments.vue';
-import useAppRouter from '~/composables/useAppRouter.js';
-import { tasksColorMap, debounce } from '~/helpers';
-import $ from '~/helpers/fetch.js';
-import save from '~/helpers/save';
-import useToast from '~/composables/useToast';
+import { tasksColorMap } from '~/helpers';
+import service from '~/services/tasks/preview';
 
-const toaster = useToast();
-
-const { route, back } = useAppRouter();
-
-const task = ref({});
-
-const atMounted = async () => {
-  const { id } = route.params;
-
-  task.value = await $.task(id);
-
-  console.log(task.value);
-
-  if (!task.value.id) back();
-};
-
-const checkBox = debounce(async (_id, is_checked, i) => {
-  const { success, message } = await save({ path: `tasks/checkboxes/${_id}/status`, data: { is_checked } });
-  if (!success) {
-    toaster.danger(message ?? 'Не удалось изменить статус флажка');
-    task.value.checkboxes[i].is_checked = !is_checked;
-  }
-});
-
-// ********** Fix : Rate limiter not needed in fact debouncer is needed
-/*
-const last = ref(Date.now());
-
-const notify = async () => {
-  const now = Date.now();
-  if (now - last.value > 5000) { // 5 seconds
-    last.value = now;
-    await checkBox()
-  }
-};
-*/
+const { task, atMounted, route } = service();
 
 await atMounted();
 

@@ -1,6 +1,6 @@
 <script setup>
 import { ArrowLeftIcon, XIcon } from '@heroicons/vue/outline';
-import { ref, defineAsyncComponent, onUnmounted, computed } from 'vue';
+import { ref, defineAsyncComponent, onScopeDispose, computed } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Tabs from '@/UI/Tabs.vue';
@@ -13,7 +13,7 @@ const { drop } = useConfirmDialog();
 
 const { current: department } = departmentStore;
 
-const { fields, isEditPage, clearMemory, dropOrder } = service();
+const { fields, isEditPage, clearMemory, dropOrder, route } = service();
 
 const suspenseArea = useSuspense();
 
@@ -34,7 +34,7 @@ const current = ref(0);
 
 const labels = computed(() => (!isEditPage.value ? [tabs[0].label] : tabs.map(({ label }) => label)));
 
-onUnmounted(clearMemory);
+onScopeDispose(clearMemory);
 
 </script>
 
@@ -61,7 +61,7 @@ onUnmounted(clearMemory);
   <p>TODO: get rid of re-rendring</p>
 -->
 
-    <suspense-area :key="`suspense-${current}-${department}-${fields?.id ?? 'none'}`">
+    <suspense-area :key="`suspense-${current}-${department}-${route.params.id ?? 'none'}`">
       <component :is="tabs[current].component" v-bind="tabs[current].props" />
     </suspense-area>
     <!-- ISSUE : solved using the v-show directive ,but there might still a small issue !  -->

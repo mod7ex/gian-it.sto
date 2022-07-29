@@ -34,6 +34,15 @@ const props = defineProps({
     type: [String, Object],
     required: false,
   },
+  blur: {
+    type: Boolean,
+    default: false,
+  },
+
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 let ring = props.color;
@@ -50,7 +59,9 @@ if (props.type === 'secondary') {
 
 const styles = [
   'relative inline-flex items-center border font-medium shadow-sm focus:outline-none',
-  `focus:ring-${ring}-500 bg-${bg}-600 hover:bg-${bg}-700`,
+  `focus:ring-${ring}-500`,
+  // `focus:ring-${ring}-500 bg-${bg}-600 hover:bg-${bg}-700`,
+  `${props.disabled ? `bg-${bg}-500 cursor-not-allowed` : `bg-${bg}-600 hover:bg-${bg}-700`}`,
   border, text,
 ];
 
@@ -141,6 +152,10 @@ if (props.circle) {
   }
 }
 
+const handelClick = (e) => {
+  if (props.blur) e.target.blur();
+};
+
 </script>
 
 <template>
@@ -148,7 +163,7 @@ if (props.circle) {
     <slot></slot>
   </router-link>
 
-  <button type="button" :class="styles.concat($attrs.class)" v-else>
+  <button @click="handelClick" :disabled="props.disabled" type="button" :class="styles.concat($attrs.class)" v-else>
     <slot></slot>
   </button>
 </template>

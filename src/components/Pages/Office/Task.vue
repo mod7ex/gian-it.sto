@@ -1,31 +1,17 @@
 <script setup>
 import { CheckIcon, ClockIcon, PencilIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
-import { ref } from 'vue';
+import { onScopeDispose } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import useSuspense from '~/composables/useSuspense';
 import Preview from '@/Partials/tasks/Preview.vue';
-import useAppRouter from '~/composables/useAppRouter.js';
-import save from '~/helpers/save';
-import { hyphenatedDateFormat } from '~/helpers';
-import useToast from '~/composables/useToast.js';
+import service from '~/services/tasks/preview';
+
+const { back, task_id, ping, key, clearMemo, task } = service();
 
 const SuspenseArea = useSuspense(Preview);
 
-const toaster = useToast();
-const { route, back } = useAppRouter();
-
-const key = ref('now');
-
-const task = route.params.id;
-
-const ping = async (start) => {
-  const path = `tasks/${task}/to/${start ? 'process' : 'done'}`;
-  const { success, message } = await save({ path, data: { [`${start ? 'start' : 'end'}_at`]: hyphenatedDateFormat(new Date()) } });
-  if (success) key.value = Date.now();
-  const msg = message ?? (success ? 'Статус успешно изменен' : 'Не удалось изменить статус задача');
-  toaster[success ? 'success' : 'danger'](msg);
-};
+onScopeDispose(clearMemo);
 
 </script>
 
@@ -36,18 +22,20 @@ const ping = async (start) => {
           <ArrowLeftIcon class="w-5 h-5 mr-1"/>К задачам
         </Button>
 
-        <Button color="purple" @click="() => ping(true)">
+        <Button color="purple" @click="() => ping(true)" blur v-if="((task?.status === 'wait') || (task?.status === 'done')) || (task?.status === 'pause')">
           <ClockIcon class="w-5 h-5 mr-1"/>Начать
         </Button>
 
-        <Button color="green" @click="() => ping(false)">
+        <Button color="green" @click="() => ping(false)" blur v-if="(task?.status === 'process') || (task?.status === 'pause')">
           <CheckIcon class="w-5 h-5 mr-1"/>Завершить
         </Button>
 
-        <Button color="blue" :link="{name: 'TaskEdit', params: {id: task} }">
+        <Button color="blue" :link="{name: 'TaskEdit', params: {id: task_id} }">
           <PencilIcon class="w-5 h-5 mr-1"/>Изменить
         </Button>
     </template>
+
+    --------> {{ task?.status }}
 
     <suspense-area :key="key" />
 

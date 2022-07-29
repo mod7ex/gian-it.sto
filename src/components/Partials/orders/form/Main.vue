@@ -22,7 +22,7 @@ const { load: loadCars, options: carOptions, reset: resetCars } = carStore;
 const { load: loadAppealReasons, options: appealReasonOptions } = appealReasonStore;
 const { load: loadProcesses, options: processOptions } = processStore;
 
-const { fields, atMounted, saveOrder, current, log, isEditPage } = service();
+const { fields, atMounted, saveOrder, current, log, isEditPage, route } = service();
 
 const removeItem = maybeRun((i) => fields.checkboxes.splice(i, 1), computed(() => fields.checkboxes.length > 1));
 
@@ -30,16 +30,16 @@ onMounted(resetCars);
 
 watch(() => fields.client_id, (client_id) => loadCars({ client_id }));
 
+const ID = ref('')
+
 await Promise.all([
   loadOrderStages(),
   loadAppealReasons(),
   loadProcesses(),
-  atMounted(),
   loadUsers({ department_id: current.value }),
   loadClients({ department_id: current.value }),
-]);
-
-const ID = computed(() => `#${generateShapedIdfromId(fields.id)}`)
+  atMounted(),
+]).then(() => { ID.value = `#${generateShapedIdfromId(route.params.id)}` });
 
 </script>
 
@@ -52,7 +52,6 @@ const ID = computed(() => `#${generateShapedIdfromId(fields.id)}`)
 
       <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-3" v-if="isEditPage">
-          <input :value="fields.id" /> 
           <Input label="Номер заказ-наряда" disabled v-model="ID" /> 
         </div>
 

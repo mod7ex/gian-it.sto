@@ -1,20 +1,15 @@
 <script setup>
-import { onMounted, watch } from 'vue';
+import { watch } from 'vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/orders';
 import userStore from '~/store/employees';
-// import pipelineStore from '~/store/pipelines/index';
 
 const { options, load } = userStore;
-
-// const { typesOptions, loadTypes } = pipelineStore;
 
 const { filter, current } = service();
 
 watch(current, (department_id) => { load({ department_id }); }, { immediate: true });
-
-// onMounted(loadTypes);
 
 </script>
 
@@ -26,24 +21,19 @@ watch(current, (department_id) => { load({ department_id }); }, { immediate: tru
       <Input label="Дата от" type="date" v-model="filter.created_after" />
       <Input label="Дата до" type="date" v-model="filter.created_before" />
 
-      <div>
+      <div class="w-full user">
         <Select
           label="Исполнитель"
           v-model="filter.user_id"
           :options="options"
-          class="w-44"
+          class="w-full"
         />
       </div>
-
-    <!--
-        <div>
-        <Select
-          label="Тип"
-          v-model="filter.type"
-          :options="typesOptions"
-          class="w-44"
-        />
-      </div>
-    -->
     </div>
 </template>
+
+<style>
+.user {
+  max-width: 300px;
+}
+</style>

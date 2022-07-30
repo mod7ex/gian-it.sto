@@ -5,7 +5,7 @@ import carsService from '~/services/cars/cars';
 
 import Table from '@/Layout/Table.vue';
 
-const { dropCar, movetoEditCarPage } = carsService();
+const { dropCar, moveToEditCarPage } = carsService();
 
 const { drop } = useConfirmDialog();
 
@@ -21,15 +21,24 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['carDropped']);
+
+const dropCarWrapper = async (id) => {
+  const { success, message } = await dropCar(id);
+  try {
+    return { success, message };
+  } finally {
+    if (success) emit('carDropped', id);
+  }
+};
+
 const fields = [
   { label: 'Автомобиль', key: 'car_model' },
   { label: 'Вин номер', key: 'vin' },
   { label: 'Гос. номер', key: 'number' },
 ];
 
-if (props.showOwner) {
-  fields.push({ label: 'Владелец', key: 'client' });
-}
+if (props.showOwner) { fields.push({ label: 'Владелец', key: 'client' }); }
 
 </script>
 
@@ -37,8 +46,8 @@ if (props.showOwner) {
     <Table
         :fields="fields"
         :items="props.cars"
-        @delete="(id) => drop(() => dropCar(id))"
-        @edit="(id) => movetoEditCarPage(id)"
+        @delete="(id) => drop(() => dropCarWrapper(id))"
+        @edit="moveToEditCarPage"
     >
         <!-- Header -->
         <template #th-client="{ label }">
@@ -55,7 +64,7 @@ if (props.showOwner) {
         </template>
 
         <template #td-vin="{ value, item: {id} }" >
-          <Link @click="()=>movetoEditCarPage(id)">{{ value }}</Link>
+          <Link @click="()=>moveToEditCarPage(id)">{{ value }}</Link>
         </template>
 
         <template #td-number="{ value }" >

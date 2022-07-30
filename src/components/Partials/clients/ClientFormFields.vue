@@ -14,13 +14,14 @@ const { options: cityOptions, load } = cityStore;
 
 const { clientFields, v$, atMountedClientForm, addItem } = service();
 
-await (async ()=>{
-    await load();
-    await atMountedClientForm();
-})();
+await Promise.all([load(), atMountedClientForm()]);
 
 const addMail = addItem('emails');
 const addPhone = addItem('phones');
+
+const notifyClientCars = (v) => {
+    clientFields.cars = clientFields.cars.filter(({id}) => id != v)
+}
 
 </script>
 
@@ -133,7 +134,7 @@ const addPhone = addItem('phones');
                 <span>Автомобили</span>
                 <Button color="blue" :link="{name: 'CarForm', query: { client_id: clientFields.id }}" >Добавить</Button>
             </div>
-            <cars-table :cars="clientFields.cars" :showOwner="false" />
+            <cars-table :cars="clientFields.cars" :showOwner="false" @carDropped="notifyClientCars" />
         </div>
     </div>
 </template>

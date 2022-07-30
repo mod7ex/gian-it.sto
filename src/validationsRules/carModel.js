@@ -7,3 +7,9 @@ export default function () {
     car_mark_id: { required: helpers.withMessage('Выберите марку автомобиля', required) },
   }));
 }
+
+export function carMarks() {
+  return computed(() => ({
+    name: { required: helpers.withMessage('Укажите имя', required) },
+  }));
+}

@@ -11,12 +11,10 @@ import Label from '@/UI/Label.vue';
 import Table from '@/Partials/clients/Table.vue';
 import useSuspense from '~/composables/useSuspense.js';
 import service from '~/services/clients/clients';
-import cityStore from '~/store/cities';
 
 const { filter, order, resetFilter, fetchClients, cleanUp } = service();
 
-const { criteriaOptions, criteria } = order;
-const { options, load } = cityStore;
+const { criteriaOptions } = order;
 
 const SuspenseArea = useSuspense();
 
@@ -31,11 +29,7 @@ const setFilterSignature = () => {
 watch(() => Reflect.deleteProperty({ ...filter }, 'department_id'), debounce(setFilterSignature), { deep: true });
 watch(() => filter.department_id, setFilterSignature);
 
-onMounted(async () => {
-  await load(); // cities
-
-  cleanUp();
-});
+onMounted(cleanUp);
 
 </script>
 
@@ -66,16 +60,9 @@ onMounted(async () => {
         <Input label="Номер машины" v-model="filter.number"/>
 
         <Select
-          label="Город"
-          :options="options"
-          v-model="filter.city_id"
-          class="w-52"
-        />
-
-        <Select
           label="Сортировать"
           :options="criteriaOptions"
-          v-model="criteria"
+          v-model="filter.order"
           class="w-44"
         />
 

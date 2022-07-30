@@ -2,8 +2,10 @@
 import { CogIcon } from '@heroicons/vue/outline';
 import Button from '@/UI/Button.vue';
 import service from '~/services/orders/storage-requests.js';
-import Badge from '@/UI/Badge.vue';
-import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
+import Table from '@/Partials/orders/items/Requests.vue';
+import useSuspense from '~/composables/useSuspense';
+
+const SuspenseArea = useSuspense(Table);
 
 const { render } = service();
 
@@ -18,64 +20,7 @@ const { render } = service();
         </Button>
       </div>
 
-      <Table>
-        <THead>
-        <Tr>
-          <Th>Наименование</Th>
-          <Th>Дата добавления</Th>
-          <Th>Цена закупки</Th>
-          <Th>Цена продажи</Th>
-          <Th>Комментарий</Th>
-          <Th>Статус</Th>
-        </Tr>
-        </THead>
-        <TBody>
-        <Tr>
-          <Td>
-            Название запчасти <span class="text-gray-400">#2323</span>
-          </Td>
-          <Td>
-            11.11.2022
-          </Td>
-          <Td>
-            5 000 ₽
-          </Td>
-          <Td>
-            7 000 ₽
-          </Td>
-          <Td>
-            Какой-то комментарий
-          </Td>
-          <Td>
-            <Badge :point="true" color="green">
-              Выдал Иванов Иван 11.12.2022
-            </Badge>
-          </Td>
-        </Tr>
-        <Tr>
-          <Td>
-            Название запчасти 2 <span class="text-gray-400">#12</span>
-          </Td>
-          <Td>
-            03.12.2021
-          </Td>
-          <Td>
-            2 000 ₽
-          </Td>
-          <Td>
-            5 000 ₽
-          </Td>
-          <Td>
-            Какой-то комментарий
-          </Td>
-          <Td>
-            <Badge :point="true" color="yellow">
-              Ожидает
-            </Badge>
-          </Td>
-        </Tr>
-        </TBody>
-      </Table>
+      <suspense-area />
 
     </div>
 </template>

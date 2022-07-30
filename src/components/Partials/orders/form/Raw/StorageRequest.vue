@@ -3,13 +3,19 @@ import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import TextArea from '@/UI/TextArea.vue';
 import store from '~/store/storage/products'
+import storageStore from '~/store/storage'
+import departmentStore from '~/store/departments'
 
 import service from '~/services/orders/storage-requests';
+import { watch } from 'vue';
 
 const { items, atMounted, products_request } = service();
+const { current } = departmentStore;
 const { load, options } = store;
+const { load: loadStorages, options: storageOptions } = storageStore;
 
-await Promise.all([load(), atMounted()]);
+await Promise.all([loadStorages({ department_id: current.value }), atMounted()]);
+// await Promise.all([load({ storage_id: products_request.storage_id }), loadStorages({ department_id: current.value }), atMounted()]);
 
 const statusOptions = [
   {label: 'Ожидает', value: 'wait'},
@@ -19,12 +25,22 @@ const statusOptions = [
   {label: 'Отменено', value: 'cancel'},
 ]
 
+watch(() => products_request.storage_id, async (storage_id) => { await load({ storage_id }) });
+
 </script>
 
 <template>
     <div>
+        <Select
+          label="склад"
+          :options="storageOptions"
+          :required="true"
+          v-model="products_request.storage_id"
+          class="m-3 sm:col-span-6 col-span-12"
+        />
 
         <Select
+          :disabled="!products_request.storage_id"
           label="Товар"
           :options="options"
           :required="true"
@@ -37,6 +53,14 @@ const statusOptions = [
           type="number"
           :required="true"
           v-model="products_request.sum"
+          class="m-3 sm:col-span-6 col-span-12"
+        />
+
+        <Input
+          label="Count"
+          type="number"
+          :required="true"
+          v-model="products_request.count"
           class="m-3 sm:col-span-6 col-span-12"
         />
 

@@ -16,7 +16,7 @@ const { options: engineOptions, load: loadEngines } = engineStore;
 const { options: fuelOptions, load: loadFuels } = fuelStore;
 const { options: clientOptions, load: loadClients } = clientStore;
 
-const { atMountedCarForm, carFields, theSelectedCarMark, v$ } = form();
+const { atMountedCarForm, carFields, theSelectedCarMark, v$, routeInstance } = form();
 
 const extractor = ({ id, name }) => ({ value: id, label: name });
 const modelOptions = computed(() => getMarkModels(theSelectedCarMark.value).map(extractor));
@@ -30,14 +30,13 @@ await (async () => {
   await atMountedCarForm();
 })();
 
-console.log(v$.value)
-
 </script>
 
 <template>
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 sm:col-span-4">
             <Select
+                :disabled="routeInstance.query.client_id"
                 label="Владелец"
                 :options="clientOptions"
                 v-model="carFields.client_id"
@@ -65,6 +64,7 @@ console.log(v$.value)
 
         <div class="col-span-12 sm:col-span-4">
             <Select
+                :disabled="!theSelectedCarMark"
                 label="Модель"
                 :options="modelOptions"
                 v-model="carFields.car_model_id"

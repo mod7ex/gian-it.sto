@@ -1,5 +1,5 @@
 <script setup>
-import { PlusCircleIcon, CollectionIcon, RefreshIcon } from '@heroicons/vue/outline';
+import { PlusCircleIcon, CollectionIcon, RefreshIcon, CheckCircleIcon, CurrencyDollarIcon } from '@heroicons/vue/outline';
 import { ref, watch } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Header from '@/UI/Header.vue';
@@ -47,6 +47,33 @@ cleanUp();
           <PlusCircleIcon class="w-5 h-5 mr-1"/>Добавить операцию
         </Button>
       </template>
+
+      <!-- Summary -->
+      <Header>сводка</Header>
+
+      <div class="flex flex-wrap items-stretch">
+        <div class="flex justify-start items-center rounded shadow p-4 flex-grow">
+          <div><CurrencyDollarIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
+          <div>
+            <h5 class="text-gray-500 font-semibold">Баланс</h5>
+            <h2 class="font-bold text-lg">10 000 0000 &#8381;</h2>
+          </div>
+        </div>
+        <div class="mx-6 flex justify-start items-center rounded shadow p-4 flex-grow">
+          <div><RefreshIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
+          <div>
+            <h5 class="text-gray-500 font-semibold">Траты</h5>
+            <h2 class="font-bold text-lg">-10 0000 &#8381;</h2>
+          </div>
+        </div>
+        <div class="flex justify-start items-center rounded shadow p-4 flex-grow">
+          <div><CheckCircleIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
+          <div>
+            <h5 class="text-gray-500 font-semibold">Ожидается</h5>
+            <h2 class="font-bold text-lg">10 0000 0000 &#8381;</h2>
+          </div>
+        </div>
+      </div>
 
       <!-- Filter -->
       <Header>Фильтр</Header>

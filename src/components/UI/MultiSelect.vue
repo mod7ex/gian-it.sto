@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps({
   label: {
@@ -22,15 +22,9 @@ const props = defineProps({
     required: false,
     default: '',
   },
-  multiple: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
   modelValue: {
-    type: [String, Number, Array],
+    type: Array,
     required: false,
-    default: '',
   },
   disabled: {
     type: Boolean,
@@ -39,14 +33,8 @@ const props = defineProps({
 });
 
 const styles = [
-  'mt-1 block w-full py-2 text-base focus:outline-none sm:text-sm rounded-md shadow-sm',
+  'mt-1 block w-full py-2 text-base focus:outline-none sm:text-sm rounded-md shadow-sm px-2',
 ];
-
-if (props.multiple) {
-  styles.push('px-2');
-} else {
-  styles.push('pl-3 pr-10');
-}
 
 if (props.error.length > 0) {
   styles.push('border-red-300 focus:ring-red-500 focus:border-red-500');
@@ -64,6 +52,12 @@ const options = computed(() => props.options?.map((e) => {
   };
 }));
 
+const emit = defineEmits(['blured', 'update:modelValue']);
+
+const items = ref(props.modelValue);
+
+watch(items, () => { emit('update:modelValue', items.value.filter((v) => v != null)); });
+
 </script>
 
 <template>
@@ -72,20 +66,20 @@ const options = computed(() => props.options?.map((e) => {
       {{ props.label }}
     </label>
 
-    <select
-      :class="styles"
-      :multiple="props.multiple"
-      @input="$emit('update:modelValue', $event.target.value)"
-      @blur="$emit('blured')"
-      :disabled="props.disabled"
-    >
-      <option :selected="!modelValue" value="">-- {{options.length === 0 ? 'пустой' : 'выберите'}} --</option>
+      <select
+        :class="styles"
+        multiple
+        @blur="$emit('blured')"
+        :disabled="props.disabled"
+        v-model="items"
+      >
+      <!-- <option selected :value="null" >-- (none) --</option> -->
       <option
+          class="text-md"
           v-for="item in options"
           :value="item.value"
           :key="item.value"
-          :selected="modelValue == item.value"
-      >{{ item.label }}
+        >{{ item.label }}
       </option>
 
     </select>

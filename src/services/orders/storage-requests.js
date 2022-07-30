@@ -14,11 +14,21 @@ const { load } = store;
 
 let products_request;
 
+function setField(key = '') {
+  if (key.includes('_id')) {
+    products_request[key] = this[key.replace('_id', '')]?.id;
+    return;
+  }
+  products_request[key] = this[key];
+}
+
 const setForm = (payload = {}) => {
-  products_request.id = payload.id;
-  products_request.status = payload.status;
-  products_request.sum = payload.sum;
-  products_request.product_id = payload.product_id;
+  // products_request.id = payload.id;
+  // products_request.status = payload.status;
+  // products_request.sum = payload.sum;
+  // products_request.product_id = payload.product_id;
+  // products_request.storage_id = payload.storage_id;
+  Object.keys(products_request).forEach(setField, payload);
 };
 
 const saveForm = async () => {
@@ -64,6 +74,7 @@ export default function () {
             sum: '',
             order_id: route.params.id,
             product_id: '',
+            storage_id: '',
           });
         },
       });

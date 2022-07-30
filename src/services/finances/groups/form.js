@@ -7,7 +7,7 @@ import useToast from '~/composables/useToast.js';
 import store from '~/store/finances/groups';
 import useModalForm from '~/composables/useModalForm';
 import communicate from '~/helpers/communicate';
-import formRules from '~/validationsRules/carModel';
+import { carMarks as formRules } from '~/validationsRules/carModel';
 
 const { load } = store;
 

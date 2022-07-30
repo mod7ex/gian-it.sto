@@ -1,4 +1,4 @@
-import { ref, reactive, onScopeDispose } from 'vue';
+import { ref, reactive, onScopeDispose, computed } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import formRules from '~/validationsRules/carForm.js';
 import useAppRouter from '~/composables/useAppRouter.js';
@@ -98,5 +98,6 @@ export default function () {
     atMountedCarForm,
     theSelectedCarMark,
     v$,
+    routeInstance,
   };
 }

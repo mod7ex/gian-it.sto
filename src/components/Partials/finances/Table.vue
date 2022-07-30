@@ -21,7 +21,7 @@ const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Сумма (₽)', key: 'sum' },
   { label: 'Тип операции', key: 'operation_type' },
-  { label: 'Oтдел', key: 'department' },
+  // { label: 'Oтдел', key: 'department' },
   { label: 'Дата создания', key: 'created_at' },
 ];
 
@@ -62,11 +62,11 @@ await fetchFinances(true);
                     {{ value === 'in' ? 'Приход' : 'Расход' }}
                 </Badge>
             </template>
-
+<!-- 
             <template #td-department="{ value }" >
                 {{ value?.name ?? '_' }}
             </template>
-
+-->
             <template #td-created_at="{ value }" >
                 {{ value?.split(' ')[0] }}
             </template>

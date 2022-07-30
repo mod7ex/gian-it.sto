@@ -4,6 +4,9 @@ import $ from '~/helpers/fetch.js';
 import save, { upload } from '~/helpers/save';
 import { deepCopyObj } from '~/helpers';
 import useToast from '~/composables/useToast.js';
+import store from '~/store/processes/tasks';
+
+const { drop } = store;
 
 const defaults = {
   id: '',
@@ -16,12 +19,10 @@ const defaults = {
   position: '',
   files: '',
   time: '',
-  process_category: '',
-
 };
 
 const deepDefaults = {
-  process_checkboxes: [{ description: '' }],
+  checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
 };
@@ -43,28 +44,35 @@ const setField = function (key) {
     return;
   }
 
-  if (key === 'process_checkboxes') {
-    fields.process_checkboxes = this.process_checkboxes ?? defaults.process_checkboxes;
+  if (key === 'checkboxes') {
+    fields.checkboxes = this.checkboxes ?? defaults.checkboxes;
+    return;
+  }
+
+  if (key === 'process_categories') {
+    fields.process_categories = this.process_categories?.map(({ id }) => id) ?? [];
     return;
   }
 
   fields[key] = this[key] ?? defaults[key];
 };
 
-const setForm = async (payload, _id) => {
-  Object.keys(fields).forEach(setField, payload ?? {});
-  fields.process_category = _id;
-};
+const setForm = async (payload) => { Object.keys(fields).forEach(setField, payload ?? {}); };
 
 const log = (e) => { files.value = e.target.files; };
 
 export default (process_category) => effectScope().run(() => {
   const toaster = useToast();
 
-  const { route, isThePage, redirectTo } = useAppRouter('ProcessTaskEdit');
+  const { route, isThePage, redirectTo, back } = useAppRouter('ProcessTaskEdit');
+
+  const dropTask = async (_id) => {
+    await drop(_id);
+    back();
+  };
 
   if (!fields) {
-    fields = reactive({ ...deepCopyObj(defaults), ...deepDefaults, process_category }); // FIX: issue with deep
+    fields = reactive({ ...deepCopyObj(defaults), ...deepDefaults, process_categories: [process_category] }); // FIX: issue with deep
     files = ref();
   }
 
@@ -98,11 +106,11 @@ export default (process_category) => effectScope().run(() => {
 
   const atMounted = async () => {
     if (!isThePage.value) return;
-    const { task, id } = route.params;
+    const { task } = route.params;
     if (task) {
       let ts = {};
       ts = await $.process_task(task);
-      await setForm(ts, id);
+      await setForm(ts);
     }
   };
 
@@ -110,9 +118,10 @@ export default (process_category) => effectScope().run(() => {
     fields = undefined;
     files = undefined;
 
-    deepDefaults.process_checkboxes = [{ description: '' }];
+    deepDefaults.checkboxes = [{ description: '' }];
     deepDefaults.pipelines = [{}];
     deepDefaults.temp_file_ids = [];
+    deepDefaults.process_categories = [];
   });
 
   return {
@@ -121,5 +130,6 @@ export default (process_category) => effectScope().run(() => {
     saveTask,
     atMounted,
     log,
+    dropTask,
   };
 });

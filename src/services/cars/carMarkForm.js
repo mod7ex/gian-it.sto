@@ -7,7 +7,7 @@ import store from '~/store/cars/marks';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/cars/CarMarkRawForm.vue';
 import communicate from '~/helpers/communicate';
-import formRules from '~/validationsRules/carModel';
+import { carMarks as formRules } from '~/validationsRules/carModel';
 
 const { load } = store;
 
@@ -22,6 +22,7 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
+  console.log(mark);
   const isValideForm = await v$.value.$validate();
 
   if (!isValideForm) return;

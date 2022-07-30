@@ -18,7 +18,7 @@ const dropCar = async (id) => {
 };
 
 /* ************ To Update car page ************ */
-const movetoEditCarPage = async (id) => {
+const moveToEditCarPage = async (id) => {
   await redirect({ name: 'EditCar', params: { id } });
 };
 
@@ -34,7 +34,7 @@ export default function () {
   });
 
   return {
-    movetoEditCarPage,
+    moveToEditCarPage,
     dropCar,
   };
 }

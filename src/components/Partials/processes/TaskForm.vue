@@ -1,20 +1,23 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
 import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
+import MultiSelect from '@/UI/MultiSelect.vue';
 import service from '~/services/processes/task-form';
 import { maybeRun } from '~/helpers';
 import orderStagesStore from '~/store/orders/stages';
+import processStore from '~/store/processes/index';
 import pipelineStore from '~/store/pipelines';
 import rolesStore from '~/store/roles';
 import proxiedSelect from '@/StoSelect';
 
 const { load: loadOrderStages, options: OrderStagesOptions } = orderStagesStore;
 const { load: loadFunnels, state, options: pipelinesOptions } = pipelineStore;
+const { load: loadProcesses, options: processOptions } = processStore;
 const { options, load } = rolesStore;
 
 const { fields, atMounted, log } = service();
@@ -26,8 +29,8 @@ const removeItem = (resource) => maybeRun((i) => resource.splice(i, 1), computed
 let removeCheckbox;
 let removeFunnel;
 
-await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]).then(()=>{
-    removeCheckbox = removeItem(fields.process_checkboxes);
+await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages(), loadProcesses()]).then(() => {
+    removeCheckbox = removeItem(fields.checkboxes);
     removeFunnel = removeItem(fields.pipelines);
 });
 
@@ -37,24 +40,28 @@ await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]).then(
     <div class="grid grid-cols-12 gap-6">
 
         <!-- **************************************************************** -->
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-4">
             <Input label="Название задачи" v-model="fields.name" />
         </div>
 
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-4">
             <Input label="Времени на выполнение (в часах)" type="number" v-model="fields.time" />
         </div>
 
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-4">
             <Input label="Порядок" type="number" v-model="fields.position" />
         </div>
 
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-4">
             <Select label="Этап заказ-нарядa" :options="OrderStagesOptions" v-model="fields.order_stage_id" />
         </div>
 
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-4">
             <Select label="Роль исполнителя" :options="options" v-model="fields.role_id" />
+        </div>
+        
+        <div class="col-span-12 sm:col-span-4">
+            <multi-select label="Категории процессов" :options="processOptions" v-model="fields.process_categories" />
         </div>
 
 <!--  -->
@@ -77,13 +84,13 @@ await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages()]).then(
         <div class="col-span-12 sm:col-span-12">
             <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>
             <ul>
-                <li v-for="(c, i) in fields.process_checkboxes" :key="'input-'+i" class="flex items-start mb-2">
+                <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
                     <span class="w-5 pt-2">{{ i + 1 }}</span>
-                    <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.process_checkboxes[i].description" />
+                    <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i].description" />
                     <Button color="red" size="sm" @click="removeCheckbox(i)">Удалить</Button>
                 </li>
             </ul>
-            <Button size="xs" class="mt-4" @click="fields.process_checkboxes.push({description: ''})">Добавить</Button>
+            <Button size="xs" class="mt-4" @click="fields.checkboxes.push({description: ''})">Добавить</Button>
         </div>
 
         <hr class="col-span-12" />

@@ -23,7 +23,7 @@ export default () => effectScope().run(() => {
   const { redirectTo } = useAppRouter();
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); });
 
-  const { reset, trigger } = order;
+  const { reset } = order;
 
   const resetFilter = () => {
     Object.keys(filter).forEach((key) => {
@@ -40,7 +40,7 @@ export default () => effectScope().run(() => {
     if (!filter.department_id) return;
     if (bool) resetStore();
     await fill(filter);
-    trigger();
+    // trigger();
   };
 
   if (!filter) {
@@ -49,7 +49,7 @@ export default () => effectScope().run(() => {
       search: '',
       number: '',
       department_id: current,
-      city_id: '',
+      order: 'id',
     });
   }
 

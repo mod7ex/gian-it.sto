@@ -4,9 +4,11 @@ import Select from '@/UI/Select.vue';
 import form from '~/services/finances/form';
 import store from '~/store/finances/groups';
 import departmentStore from '~/store/departments';
+import orderStore from '~/store/orders/orders';
 
 const { options, load } = store;
-const { options: departmentOptions } = departmentStore;
+const { current } = departmentStore;
+const { load: loadOrders, options: orderOptions } = orderStore;
 
 const { finance, atMountedFinanceForm, v$ } = form();
 
@@ -15,12 +17,21 @@ const types = [
   { label: 'Расход', value: 'out' },
 ];
 
-await Promise.all([load(), atMountedFinanceForm()]);
+await Promise.all([load(), loadOrders({ department_id: current.value }), atMountedFinanceForm()]);
 
 </script>
 
 <template>
     <div>
+        <Select
+          label="Заказ-наряд"
+          v-model="finance.order_id"
+          :options="orderOptions"
+          :required="true"
+          :error="v$.order_id.$errors[0]?.$message"
+          @blured="v$.order_id.$touch"
+        />
+
         <Input
           label="Hазвание финансовая сделка"
           v-model="finance.name"
@@ -55,13 +66,14 @@ await Promise.all([load(), atMountedFinanceForm()]);
           :error="v$.finance_group_id.$errors[0]?.$message"
           @blured="v$.finance_group_id.$touch"
         />
-
+<!--
         <v-can ability="crud departments">
           <Select
             label="Отделение"
             v-model="finance.department_id"
-            :options="departmentOptions"
+            :current"
           />
         </v-can>
+-->
     </div>
 </template>

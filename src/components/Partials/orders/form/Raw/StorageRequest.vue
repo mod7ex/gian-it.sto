@@ -49,15 +49,7 @@ watch(() => products_request.storage_id, async (storage_id) => { await load({ st
         />
 
         <Input
-          label="Сумма"
-          type="number"
-          :required="true"
-          v-model="products_request.sum"
-          class="m-3 sm:col-span-6 col-span-12"
-        />
-
-        <Input
-          label="Count"
+          label="Количество"
           type="number"
           :required="true"
           v-model="products_request.count"

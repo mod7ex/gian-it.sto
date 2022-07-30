@@ -182,3 +182,17 @@ export const tasksColorMap = {
   pause: { color: 'red', label: 'В паузе' },
   done: { color: 'indigo', label: 'Завершена' },
 };
+
+// ***************************** Distruct a PaslCase or camelCase word
+
+export const distructCamelOrPascalCaseWord = (word, toLower = false) => {
+  if (!word) return [];
+  if (word.length === 1) return [word];
+  for (let i = 1; i < word.length; i++) {
+    if (word[i] === word[i].toUpperCase()) {
+      const item = toLower ? word.substring(0, i).toLocaleLowerCase() : word.substring(0, i);
+      return [item, ...distructCamelOrPascalCaseWord(word.substring(i))];
+    }
+  }
+  return [word];
+};

@@ -1,5 +1,6 @@
 <script setup>
 import Badge from '@/UI/Badge.vue';
+import Link from '@/UI/Link.vue';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/orders/storage-requests';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
@@ -7,39 +8,41 @@ import service from '~/services/orders/storage-requests.js';
 import { tasksColorMap } from '~/helpers/index';
 
 const { drop } = useConfirmDialog();
-const { state, drop: dropRequest } = store;
+const { state, drop: dropRequest, load } = store;
 
 const { render } = service();
 
-const fields = [
-  { label: 'Наименование', key: 'name' },
+const cols = [
+  { label: 'Товар', key: 'product' },
   // { label: 'Цена закупки (₽)', key: 'buy' },
   // { label: 'Цена продажи (₽)', key: 'sell' },
-  { label: 'Kоличество', key: 'sum' },
+  { label: 'Kоличество', key: 'count' },
   { label: 'Комментарий', key: 'comment' },
   { label: 'Статус', key: 'status' },
   { label: 'Дата добавления', key: 'created_at' },
 ];
 
+await load();
+
 </script>
 
 <template>
   <Table
-      :fields="fields"
+      :fields="cols"
       :items="state.raw"
-      @delete="(id) => drop(() => dropRequest(id))"
-      @edit="(id) => render(id)"
+      @delete="(v) => drop(() => dropRequest(v))"
+      @edit="(v) => render(v)"
   >
       <!-- Body -->
-      <template #td-name="{ value, item: {id} }" >
-          <Link @click="() => render(id)">{{ value }} </Link>
+      <template #td-product="{ value, item: { id } }" >
+          <Link @click="() => render(id)">{{ value?.name }}</Link>
       </template>
 
-      <template #td-sum="{ value }" >
-          <span class="font-bold" >{{ value }}  ₽</span>
+      <template #td-count="{ value }" >
+          <span class="font-bold" >{{ value }}</span>
       </template>
 
-      <template #td-comment="{ value }" > {{ value }} </template>
+      <template #td-comment="{ value }" > {{ value ?? '_' }} </template>
 
       <template #td-status="{ value }" >
           <Badge :point="true" :color="tasksColorMap[value].color">

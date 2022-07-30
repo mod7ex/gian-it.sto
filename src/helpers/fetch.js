@@ -26,7 +26,9 @@ export default new Proxy($fetch, {
      * proxy.clients(params = {}, toast)
      *
      */
-    const { path, ressource } = extract(key);
+    let { path, ressource } = extract(key);
+
+    if (ressource === 'products_requests') ressource = 'product_requests'; // Fix --> Server side fix
 
     const fallBackErr = communicate.fetch.error[ressource];
 

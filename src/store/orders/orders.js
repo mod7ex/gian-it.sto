@@ -12,7 +12,8 @@ const reset = () => {
 };
 
 const load = async (payload) => {
-  const key = `orders${payload.department_id ? `/department/${payload.department_id}` : ''}`;
+  if (!payload.department_id) return;
+  const key = `orders/department/${payload.department_id}`;
   state.raw = (await $({ key })).orders ?? [];
 };
 

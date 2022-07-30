@@ -71,7 +71,7 @@ export default function () {
           products_request = reactive({
             id: id ?? '',
             status: '',
-            sum: '',
+            count: '',
             order_id: route.params.id,
             product_id: '',
             storage_id: '',

@@ -5,12 +5,14 @@ import Table from '@/Layout/Table.vue';
 import store from '~/store/orders/storage-requests';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import service from '~/services/orders/storage-requests.js';
+import index from '~/services/orders/form';
 import { tasksColorMap } from '~/helpers/index';
 
 const { drop } = useConfirmDialog();
 const { state, drop: dropRequest, load } = store;
 
 const { render } = service();
+const { fields } = index();
 
 const cols = [
   { label: 'Товар', key: 'product' },
@@ -22,7 +24,7 @@ const cols = [
   { label: 'Дата добавления', key: 'created_at' },
 ];
 
-await load();
+await load({ order_id: fields.id });
 
 </script>
 

@@ -14,7 +14,7 @@ const { load } = store;
 
 let products_request;
 
-function setField(key = '') {
+function setField(key) {
   if (key.includes('_id')) {
     products_request[key] = this[key.replace('_id', '')]?.id;
     return;
@@ -23,15 +23,10 @@ function setField(key = '') {
 }
 
 const setForm = (payload = {}) => {
-  // products_request.id = payload.id;
-  // products_request.status = payload.status;
-  // products_request.sum = payload.sum;
-  // products_request.product_id = payload.product_id;
-  // products_request.storage_id = payload.storage_id;
   Object.keys(products_request).forEach(setField, payload);
 };
 
-const saveForm = async () => {
+const saveForm = async (order_id) => {
   const { message, success } = await save.products_request(products_request);
 
   try {
@@ -39,7 +34,7 @@ const saveForm = async () => {
   } finally {
     if (success) {
       toaster.success(message);
-      await load();
+      await load({ order_id });
     }
   }
 };
@@ -47,10 +42,10 @@ const saveForm = async () => {
 const atMounted = async () => {
   const { id } = products_request;
 
-  if (id) {
-    const dep = await $.products_request(id);
-    setForm(dep || {});
-  }
+  if (!id) return;
+
+  const { success, product_request } = await $({ key: `products-requests/${id}` });
+  if (success) setForm(product_request);
 };
 
 export default function () {
@@ -65,7 +60,7 @@ export default function () {
       const { render } = useModalForm({
         title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].products_request),
         RawForm,
-        atSubmit: saveForm,
+        atSubmit: () => saveForm(route.params.id),
         atClose: () => scope.stop(),
         atOpen: (id) => {
           products_request = reactive({
@@ -86,7 +81,6 @@ export default function () {
   };
 
   return {
-    saveForm,
     render: modalUp,
     atMounted,
     products_request,

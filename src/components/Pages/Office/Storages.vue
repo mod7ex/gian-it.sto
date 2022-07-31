@@ -8,7 +8,6 @@ import Table from '@/Partials/storage/Table.vue';
 import form from '~/services/storage/form';
 import departmentStore from '~/store/departments';
 import Requests from '@/Partials/storage/Requests.vue';
-import Template from '~/components/Partials/orders/form/Raw/Template.vue';
 
 const { current } = departmentStore;
 
@@ -29,8 +28,8 @@ const show = ref(false);
 
           <Transition name="request-slide">
 
-            <div @click.stop="() => {}" v-if="show" class="overflow-hidden absolute bg-white shadow-lg rounded-md z-30 sm:-right-1/2 top-11" id="sto-requests">
-              <suspense-area > <Requests /> </suspense-area>
+            <div @click.stop="() => {}" v-if="show" class="flex items-center justify-center overflow-hidden absolute bg-white shadow-lg rounded-md z-30 sm:-right-40 md:-right-1/2 top-11" id="sto-requests">
+              <suspense-area loadingMsg=""> <Requests /> </suspense-area>
             </div>
 
           </Transition>
@@ -53,6 +52,7 @@ const show = ref(false);
 <style scoped>
 #sto-requests {
   width: 400px;
+  min-height: 100px;
 }
 
 /*
@@ -60,18 +60,16 @@ const show = ref(false);
   durations and timing functions.
 */
 .request-slide-enter-active {
-  transition: all .5s ease-out;
+  transition: all .3s ease-out;
 }
 
 .request-slide-leave-active {
-  transition: all .5s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all .2s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .request-slide-enter-from,
 .request-slide-leave-to {
   /* transform: translateY(-100px); */
-  height: 0;
-  width: 0;
   opacity: 0;
 }
 </style>

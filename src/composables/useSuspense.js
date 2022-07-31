@@ -2,7 +2,8 @@ import { defineComponent, h, Suspense, onErrorCaptured, ref, computed } from 'vu
 import { ExclamationIcon } from '@heroicons/vue/outline';
 import Spinner from '@/UI/Spinner.vue';
 
-const wrapper = h('div', { class: 'col-span-12 sm:col-span-12 flex justify-center items-center' });
+const wrapper = h('div', { class: 'flex justify-center items-center' });
+// const wrapper = h('div', { class: 'bg-green-600 col-span-12 sm:col-span-12 flex justify-center items-center' });
 
 const defaultFallback = (text) => h(
   wrapper,

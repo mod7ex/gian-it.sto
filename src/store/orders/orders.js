@@ -15,6 +15,7 @@ const load = async (payload) => {
   if (!payload.department_id) return;
   const key = `orders/department/${payload.department_id}`;
   state.raw = (await $({ key })).orders ?? [];
+  console.log(state.raw.map((item) => item.stage));
 };
 
 const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));

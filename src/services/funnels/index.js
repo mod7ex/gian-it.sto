@@ -19,7 +19,6 @@ let v$;
 const setForm = (payload = {}) => {
   pipeline.id = payload.id;
   pipeline.name = payload.name;
-  pipeline.type = payload.type;
 };
 
 const atMounted = async () => {
@@ -66,7 +65,6 @@ export default function () {
           pipeline = reactive({
             id: id ?? '',
             name: '',
-            type: 'task',
           });
 
           v$ = useVuelidate(formRules(), pipeline, { $lazy: true });

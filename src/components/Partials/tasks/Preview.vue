@@ -8,7 +8,7 @@ import Comments from '@/Partials/Comments.vue';
 import { tasksColorMap } from '~/helpers';
 import service from '~/services/tasks/preview';
 
-const { task, atMounted, route } = service();
+const { task, atMounted, route, checkBox } = service();
 
 await atMounted();
 

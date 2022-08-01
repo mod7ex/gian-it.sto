@@ -15,9 +15,11 @@ const SuspenseArea = useSuspense(Table);
 <template>
     <OfficeLayout title="Рабочие процессы">
       <template #actions>
-        <Button type="secondary" :link="{ name: 'DiagnosticCard' }">
-          <MapIcon class="w-5 h-5 mr-1"/>Диагностическая карта
-        </Button>
+        <!--
+          <Button type="secondary" :link="{ name: 'DiagnosticCard' }">
+            <MapIcon class="w-5 h-5 mr-1"/>Диагностическая карта
+          </Button>
+        -->
 
         <Button type="secondary" :link="{ name: 'Why' }">
           <QuestionMarkCircleIcon class="w-5 h-5 mr-1"/>Причины обращения

@@ -12,7 +12,7 @@ await load({ department_id: current.value });
 </script>
 
 <template>
-  <div :class="$attrs.class" class="w-full h-full">
+  <div :class="$attrs.class" class="w-full h-full cursor-pointer">
     <ul>
       <li
         v-for="(item, i) in state.raw"

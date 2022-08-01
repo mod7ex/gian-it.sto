@@ -18,7 +18,7 @@ export default (state, fields) => defineComponent({
         class: 'mr-3 pipeline w-full',
         label: `Этап воронки ${props.index + 1}`,
         modelValue: fields.pipelines[props.index].stage_id,
-        disabled: !props.pipeline_id,
+        disabled: (!props.pipeline_id) && (props.pipeline_id !== 0),
         'onUpdate:modelValue': (v) => emit('update:modelValue', v),
       },
     );

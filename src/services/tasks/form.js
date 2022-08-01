@@ -47,6 +47,7 @@ const setField = function (key) {
 
   if (key === 'checkboxes') {
     fields.checkboxes = this.checkboxes ?? defaults.checkboxes;
+    if (fields.checkboxes.length === 0) fields.checkboxes.push('');
     return;
   }
 
@@ -101,7 +102,7 @@ export default () => effectScope().run(() => {
 
     const { data, success } = await save.task(fields, null, true);
 
-    // success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+    success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
   };
 
   const atMounted = async () => {

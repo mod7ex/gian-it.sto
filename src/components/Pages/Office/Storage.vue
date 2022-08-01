@@ -1,6 +1,6 @@
 <script setup>
 import {
-  PlusCircleIcon,
+  // PlusCircleIcon,
   // SaveAsIcon,
   ArrowLeftIcon,
   ViewListIcon,
@@ -15,32 +15,36 @@ import ProductsList from '@/Partials/storage/products/List.vue';
 import Preview from '@/Partials/storage/products/Preview.vue';
 import useSuspense from '~/composables/useSuspense';
 import store from '~/store/storage/products';
+import useAppRouter from '~/composables/useAppRouter';
 
-const { setAvailability, state, selected, current, selectedProduct } = store;
+const { setAvailability, state, selected, selectedProduct } = store;
 
 const suspenseArea = useSuspense();
 
 const { fetchProducts, filter } = service();
+const { route } = useAppRouter();
 
 const grid = ref(true);
 
 </script>
 
 <template>
-    <OfficeLayout :title="current" main-classes="flex-1 flex flex-col overflow-hidden">
+    <OfficeLayout :title="`${route.params.name ?? '(Unknown)'}`" main-classes="flex-1 flex flex-col overflow-hidden">
 
       <template #actions>
         <Button type="secondary" :link="{ name: 'Storages' }">
-          <ArrowLeftIcon class="w-5 h-5 mr-1"/>Выбрать другой склад
+          <ArrowLeftIcon class="w-5 h-5 mr-1"/>Назад
         </Button>
 <!--
         <Button color="blue">
           <SaveAsIcon class="w-5 h-5 mr-1"/>Приход
         </Button>
 -->
-        <Button color="blue" :link="{ name: 'StorageForm' }">
-          <PlusCircleIcon class="w-5 h-5 mr-1"/>Добавить позицию
-        </Button>
+        <!--
+          <Button color="blue" :link="{ name: 'StorageForm' }">
+            <PlusCircleIcon class="w-5 h-5 mr-1"/>Добавить позицию
+          </Button>
+        -->
       </template>
 
       <template #content>

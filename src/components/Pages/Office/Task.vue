@@ -35,8 +35,6 @@ onScopeDispose(clearMemo);
         </Button>
     </template>
 
-    --------> {{ task?.status }}
-
     <suspense-area :key="key" />
 
   </OfficeLayout>

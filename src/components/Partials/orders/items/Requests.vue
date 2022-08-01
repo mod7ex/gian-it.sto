@@ -7,6 +7,9 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import service from '~/services/orders/storage-requests.js';
 import index from '~/services/orders/form';
 import { tasksColorMap } from '~/helpers/index';
+import useAppRouter from '~/composables/useAppRouter';
+
+const { route } = useAppRouter();
 
 const { drop } = useConfirmDialog();
 const { state, drop: dropRequest, load } = store;
@@ -24,7 +27,8 @@ const cols = [
   { label: 'Дата добавления', key: 'created_at' },
 ];
 
-await load({ order_id: fields.id });
+
+await load({ order_id: route.params.id });
 
 </script>
 
@@ -47,8 +51,8 @@ await load({ order_id: fields.id });
       <template #td-comment="{ value }" > {{ value ?? '_' }} </template>
 
       <template #td-status="{ value }" >
-          <Badge :point="true" :color="tasksColorMap[value].color">
-              {{ tasksColorMap[value].label }}
+          <Badge :point="true" :color="tasksColorMap[value]?.color">
+              {{ tasksColorMap[value]?.label }}
           </Badge>
       </template>
 

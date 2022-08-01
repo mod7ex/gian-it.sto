@@ -1,13 +1,13 @@
 <script setup>
+import { watch } from 'vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import TextArea from '@/UI/TextArea.vue';
-import store from '~/store/storage/products'
-import storageStore from '~/store/storage'
-import departmentStore from '~/store/departments'
-
+import store from '~/store/storage/products';
+import storageStore from '~/store/storage';
+import departmentStore from '~/store/departments';
 import service from '~/services/orders/storage-requests';
-import { watch } from 'vue';
+import { tasksColorMap } from '~/helpers';
 
 const { items, atMounted, products_request } = service();
 const { current } = departmentStore;
@@ -17,15 +17,9 @@ const { load: loadStorages, options: storageOptions } = storageStore;
 await Promise.all([loadStorages({ department_id: current.value }), atMounted()]);
 // await Promise.all([load({ storage_id: products_request.storage_id }), loadStorages({ department_id: current.value }), atMounted()]);
 
-const statusOptions = [
-  {label: 'Ожидает', value: 'wait'},
-  {label: 'Обработка', value: 'process'},
-  {label: 'Приостановлено', value: 'pause'},
-  {label: 'Готово', value: 'done'},
-  {label: 'Отменено', value: 'cancel'},
-]
+const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
-watch(() => products_request.storage_id, async (storage_id) => { await load({ storage_id }) });
+watch(() => products_request.storage_id, async (storage_id) => { await load({ storage_id }); });
 
 </script>
 

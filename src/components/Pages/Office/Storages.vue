@@ -23,8 +23,8 @@ const show = ref(false);
 <template>
     <OfficeLayout title="Все склады" @click="show = false">
       <template #actions>
-        <div class="relative cursor-pointer">
-          <BellIcon class="h-9 mr-1 border p-1 rounded-full shadow-md hover:bg-gray-100" @click.stop="() => { show = !show }"/>
+        <div class="relative">
+          <BellIcon class="cursor-pointer h-9 mr-1 border p-1 rounded-full shadow-md hover:bg-gray-100" @click.stop="() => { show = !show }"/>
 
           <Transition name="request-slide">
 

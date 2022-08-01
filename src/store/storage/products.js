@@ -8,15 +8,10 @@ const state = reactive({
   selectedId: undefined,
   pages: 1000,
   page: 1,
-  currentStorage: {},
 });
 
 const setAvailability = (bool) => {
   state.inStock = bool ?? false;
-};
-
-const locate = async (id) => {
-  state.currentStorage = await $.storage(id);
 };
 
 const replace = (payload) => {
@@ -64,7 +59,6 @@ export default {
   state: readonly(state),
 
   setAvailability,
-  locate,
   load,
   sort,
   drop,
@@ -73,7 +67,6 @@ export default {
   select,
   replace,
   selectedProduct,
-  current: computed(() => state.currentStorage.name ?? 'Unknown'),
   selected: computed(() => !!(selectedProduct.value.id)),
   products: computed(() => state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0))),
   options: computed(() => state.raw.map(({ id, name }) => ({ value: id, label: name }))),

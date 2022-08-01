@@ -3,7 +3,7 @@ import useOrder from '~/composables/useOrder.js';
 import store from '~/store/storage/products';
 import useAppRouter from '~/composables/useAppRouter';
 
-const { sort, fill, reset, locate } = store;
+const { sort, fill, reset } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -27,12 +27,11 @@ export default () => effectScope().run(() => {
 
   const { trigger } = order;
 
-  const { route, redirectTo } = useAppRouter();
+  const { redirectTo } = useAppRouter();
 
   const fetchProducts = async (bool = false) => {
     if (bool) {
       reset();
-      await locate(route.params.id);
     }
     await fill(filter);
     trigger();

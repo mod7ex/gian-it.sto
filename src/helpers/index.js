@@ -181,6 +181,7 @@ export const tasksColorMap = {
   process: { color: 'green', label: 'В работе' },
   pause: { color: 'red', label: 'В паузе' },
   done: { color: 'indigo', label: 'Завершена' },
+  cancel: { color: 'red', label: 'Отменено' },
 };
 
 // ***************************** Distruct a PaslCase or camelCase word

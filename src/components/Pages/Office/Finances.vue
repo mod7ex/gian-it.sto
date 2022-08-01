@@ -19,11 +19,11 @@ const { current } = departmentStore;
 
 const { render } = form();
 
-const { filter, order, resetFilter, fetchFinances, cleanUp } = service();
+const { filter, order, resetFilter, cleanUp } = service();
 
 const { criteriaOptions } = order;
 
-const SuspenseArea = useSuspense();
+const SuspenseArea = useSuspense(Table);
 
 const filterSignature = ref('');
 
@@ -110,9 +110,7 @@ cleanUp();
         </div>
       </div>
 
-      <suspense-area :key="`${filterSignature}`" >
-        <Table @bottom-touched="()=>fetchFinances()" />
-      </suspense-area>
+      <suspense-area :key="`${filterSignature}`" />
 
     </OfficeLayout>
 </template>

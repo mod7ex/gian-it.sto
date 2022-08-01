@@ -31,8 +31,8 @@ await load({ department_id: current.value });
         @edit="(id) => render(id)"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id} }" >
-            <Link :href="{name: 'Storage', params: { id }}" >{{ value }} </Link>
+        <template #td-name="{ value, item: {id, name} }" >
+            <Link :href="{name: 'Storage', params: { id, name }}" >{{ value }} </Link>
         </template>
 
         <template #td-created_at="{ value }" >

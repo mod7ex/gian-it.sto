@@ -38,25 +38,40 @@ const pick = (i) => { emit('update:modelValue', current.value = i); };
     </div>
 
     <div class="hidden sm:block">
-      <div class="border-b-2 border-gray-200">
-        <nav class="-mb-px flex space-x-6" aria-label="Tabs">
-          <div v-for="(tab, i) in tabs" :key="`tab-${i}`" class="flex">
+      <div class="border-b-2 border-gray-200 z-0">
+        <!-- <nav class="-mb-px flex space-x-6" aria-label="Tabs"> -->
 
-            <button
-              @click="() => pick(i)"
-              :aria-current="i == current ? 'page' : undefined"
-              :class="[i == current ?
-                  'cursor-pointer border-blue-500 text-blue-600' :
-                  'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                  'border-b-2 cursor-pointer whitespace-nowrap py-4 px-1 font-medium text-sm',
-                  ]"
-            >
-              {{ tab }}
-            </button>
+          <TransitionGroup name="tabs" tag="nav" class="-mb-px flex space-x-6">
+            <div v-for="(tab, i) in tabs" :key="`tab-${i}`" class="flex">
 
-          </div>
-        </nav>
+              <button
+                @click="() => pick(i)"
+                :aria-current="i == current ? 'page' : undefined"
+                :class="[i == current ?
+                    'cursor-pointer border-blue-500 text-blue-600' :
+                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                    'border-b-2 cursor-pointer whitespace-nowrap py-4 px-1 font-medium text-sm',
+                    ]"
+              >
+                {{ tab }}
+              </button>
+
+            </div>
+          </TransitionGroup>
+
+        <!-- </nav> -->
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.tabs-enter-active,
+.tabs-leave-active {
+  transition: all 2s ease;
+}
+.tabs-enter-from,
+.tabs-leave-to {
+  opacity: 0;
+}
+</style>

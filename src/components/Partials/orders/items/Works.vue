@@ -1,5 +1,6 @@
 <script setup>
 import Badge from '@/UI/Badge.vue';
+import Avatar from '@/UI/Avatar.vue';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/orders/work';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
@@ -13,6 +14,7 @@ const { load, state } = store;
 
 const fields = [
   { label: 'Вид работы', key: 'name' },
+  { label: 'Исполнитель', key: 'user' },
   { label: 'Сумма', key: 'sum' },
   { label: 'Время', key: 'time' },
   { label: 'Комментарии', key: 'comments' },
@@ -36,11 +38,19 @@ await load({order_id :route.params.id});
       </template>
 
       <template #td-sum="{ value }" >
-        {{ value ?? '_' }}
+        {{ value ?? '_' }} ₽
+      </template>
+
+      <template #td-user="{ value }" >
+        <Avatar
+          :title="`${value.name} ${value.surname}`"
+          :subtitle="value.office_position"
+          :image="value.avatar"
+        />
       </template>
 
       <template #td-time="{ value }" >
-        {{ value ?? '_' }}
+        {{ `${value} Ч` ?? '_' }}
       </template>
 
       <template #td-comments="{ value }" >

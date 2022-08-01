@@ -23,6 +23,8 @@ const { load: loadStages, options: stagesOptions } = stagesStore;
 
 const { fields, atMounted, log, isEditPage } = service();
 
+const fieldsPipelineIds = computed(()=> fields.pipelines.map(({ pipeline_id }) => pipeline_id))
+
 const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
 const removeItem = (resource) => maybeRun((i) => resource.splice(i, 1), computed(() => resource.length > 1));
@@ -32,7 +34,7 @@ let removeFunnel;
 await Promise.all([
     loadOrders({ department_id: current.value ?? '' }),
     load({ department_id: current.value ?? '' }),
-    loadFunnels({type: 'task'}),
+    loadFunnels(),
     atMounted()
 ]).then(()=>{
     removeCheckbox = removeItem(fields.checkboxes);
@@ -44,6 +46,10 @@ const StagesSelection = proxiedSelect(state, fields);
 onMounted(() => {
   console.log(options.value.map(({ value }) => value));
   console.log(fields.user_id);
+});
+
+const cannotAdd = computed(() => { 
+    return pipelinesOptions.value.map(({ value }) => value).length === (new Set(fieldsPipelineIds.value)).size
 });
 
 </script>
@@ -93,7 +99,7 @@ onMounted(() => {
                     <Button color="red" size="sm" @click="removeFunnel(i)">Удалить</Button>
                 </li>
             </ul>
-            <Button size="xs" class="mt-4" @click="fields.pipelines.push({})">Добавить</Button>
+            <Button v-if="!cannotAdd" size="xs" class="mt-4" @click="fields.pipelines.push({})">Добавить</Button>
         </div>
 <!--  -->
 

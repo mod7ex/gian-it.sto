@@ -38,7 +38,7 @@ await Promise.all([atMounted(), load({department_id: current.value})]);
         />
 
         <Input
-          label="Количество"
+          label="Сумма"
           type="number"
           :required="true"
           v-model="work.sum"
@@ -61,7 +61,7 @@ await Promise.all([atMounted(), load({department_id: current.value})]);
         />
 
         <TextArea
-          label="Материалы"
+          label="Комментарии"
           :required="true"
           v-model="work.comments"
           class="sm:col-span-6 col-span-12"

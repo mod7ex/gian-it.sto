@@ -34,6 +34,7 @@ const routes = [
 
   { path: '/storages', component: () => import(/* webpackChunkName: "Storages" */ '@/Pages/Office/Storages.vue'), name: 'Storages' },
   { path: '/storages/:id', component: () => import(/* webpackChunkName: "Storage" */ '@/Pages/Office/Storage.vue'), name: 'Storage' },
+  { path: '/storages/requested', component: () => import(/* webpackChunkName: "Storage" */ '@/Pages/Office/Storage.vue'), name: 'StorageRequests' },
   { path: '/storages/:id/create', component: () => import(/* webpackChunkName: "StorageProductForm" */ '@/Pages/Office/StorageForm.vue'), name: 'StorageForm' },
   { path: '/storages/:id/update/:product', component: () => import(/* webpackChunkName: "StorageProductForm" */ '@/Pages/Office/StorageForm.vue'), name: 'EditStorage' },
 

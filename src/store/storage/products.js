@@ -10,6 +10,10 @@ const state = reactive({
   page: 1,
 });
 
+const set = (data) => {
+  state.raw = data;
+};
+
 const setAvailability = (bool) => {
   state.inStock = bool ?? false;
 };
@@ -24,7 +28,8 @@ const reset = () => {
   state.raw = [];
   state.pages = 1000;
   state.page = 1;
-  state.currentStorage = {};
+  state.selectedId = undefined;
+  state.inStock = true;
 };
 
 const sort = (v) => {
@@ -42,8 +47,9 @@ const load = async (payload = {}) => {
 };
 
 const fill = async (payload) => {
+  // in payload should be included storage_id
   if (state.page > state.pages) return;
-  const data = await $({ key: 'products', params: { ...payload, storage_id: state.currentStorage.id, page: state.page } });
+  const data = await $({ key: 'products', params: { ...payload, page: state.page } });
   state.raw = state.raw.concat(data?.products ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
@@ -57,7 +63,7 @@ const selectedProduct = computed(() => (state.selectedId ? state.raw.find(({ id 
 
 export default {
   state: readonly(state),
-
+  set,
   setAvailability,
   load,
   sort,

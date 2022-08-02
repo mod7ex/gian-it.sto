@@ -1,9 +1,14 @@
-import { reactive, effectScope, onScopeDispose } from 'vue';
+import { reactive, effectScope, onScopeDispose, computed } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 import store from '~/store/storage/products';
 import useAppRouter from '~/composables/useAppRouter';
+import requestsStore from '~/store/orders/storage-requests';
+import departmentStore from '~/store/departments';
 
-const { sort, fill, reset } = store;
+const { load, productsRequests, setRequestStatus: ping, state } = requestsStore;
+const { current } = departmentStore;
+
+const { sort, fill, reset, set } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -25,16 +30,20 @@ export default () => effectScope().run(() => {
 
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
-  const { trigger } = order;
-
-  const { redirectTo } = useAppRouter();
+  const { redirectTo, isThePage } = useAppRouter('StorageRequests');
 
   const fetchProducts = async (bool = false) => {
-    if (bool) {
-      reset();
-    }
+    if (isThePage.value) return;
+    if (bool) reset();
     await fill(filter);
-    trigger();
+  };
+
+  const fetchRequestedParts = async () => {
+    if (isThePage.value) {
+      await load({ department_id: current.value });
+      // eslint-disable-next-line no-unused-vars
+      set(Object.entries(productsRequests.value).map(([_, [{ product }]]) => product));
+    }
   };
 
   const redirectToForm = async (id) => {
@@ -51,5 +60,10 @@ export default () => effectScope().run(() => {
     filter,
     fetchProducts,
     redirectToForm,
+    fetchRequestedParts,
+    isThePage,
+    productsRequests,
+    ping,
+    key: computed(() => state.raw.length),
   };
 });

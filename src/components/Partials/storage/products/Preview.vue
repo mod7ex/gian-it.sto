@@ -1,6 +1,6 @@
 <script setup>
 import { PencilIcon as PencilSolidIcon, ArrowNarrowLeftIcon, CheckIcon, RefreshIcon, PlusIcon } from '@heroicons/vue/solid';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import Button from '@/UI/Button.vue';
 import Avatar from '@/UI/Avatar.vue';
 import TextArea from '@/UI/TextArea.vue';
@@ -8,11 +8,14 @@ import store from '~/store/storage/products';
 import form from '~/services/storage/products/form';
 import service from '~/services/storage/products';
 import save from '~/helpers/save';
+import { generateShapedIdfromId } from '~/helpers';
 
-const { redirectToForm } = service();
+const { redirectToForm, isThePage, productsRequests, ping, key } = service();
 
 const { dropProduct, defaults } = form();
-const { select, selectedProduct: target, replace } = store;
+const { select, selectedProduct: target, replace, state } = store;
+
+const requests = computed(() => productsRequests.value[state.selectedId].filter(({ status }) => status === 'wait'));
 
 const editMode = ref(false);
 const description = ref('');
@@ -145,25 +148,26 @@ onMounted(() => {
                 </div>
             </div>
 <!-- -->
-            <div>
+            <div v-if="isThePage && requests.length" :key="`${key}-requests`">
                 <h3 class="font-medium text-gray-900">Запросили</h3>
                 <ul class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                    <li class="py-3 flex justify-between items-center">
-                        <Avatar
-                            image="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=1024&h=1024&q=80"
-                            title="Вася Пупкин"
-                        />
 
-                        <button type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
-                    </li>
+                    <li v-for="request in requests" :key="request.id" class="py-3">
+                        <div class="mb-2 flex justify-between items-center">
+                            <Avatar
+                                :image="request?.user?.avatar"
+                                :title="`${request?.user?.name} ${request?.user?.surname}`"
+                                :subtitle="request?.user?.office_position"
+                            />
 
-                    <li class="py-3 flex justify-between items-center">
-                        <Avatar
-                            image="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=oilqXxSqey&ixqx=SjPZjUxoVh&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            title="Георгий Пласкунов"
-                        />
+                            <!-- <p class="text-xs">количество: {{ request?.count }}</p> -->
 
-                        <button type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
+                            <button @click="() => ping(request?.id, 'done')" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
+                            <p class="text-xs">Kоличество: {{ request?.count }}</p>
+                        </div>
                     </li>
 
                     <li class="py-2 flex justify-between items-center">

@@ -7,14 +7,12 @@ import useSuspense from '~/composables/useSuspense';
 import Table from '@/Partials/storage/Table.vue';
 import form from '~/services/storage/form';
 import departmentStore from '~/store/departments';
-import Requests from '@/Partials/storage/Requests.vue';
 
 const { current } = departmentStore;
 
 const { render } = form();
 
 const SuspenseTable = useSuspense(Table);
-const SuspenseArea = useSuspense();
 
 const show = ref(false);
 
@@ -23,17 +21,9 @@ const show = ref(false);
 <template>
     <OfficeLayout title="Все склады" @click="show = false">
       <template #actions>
-        <div class="relative">
-          <BellIcon class="cursor-pointer h-9 mr-1 border p-1 rounded-full shadow-md hover:bg-gray-100" @click.stop="() => { show = !show }"/>
-
-          <Transition name="request-slide">
-
-            <div @click.stop="() => {}" v-if="show" class="flex items-center justify-center overflow-hidden absolute bg-white shadow-lg rounded-md z-30 sm:-right-40 md:-right-1/2 top-11" id="sto-requests">
-              <suspense-area loadingMsg=""> <Requests /> </suspense-area>
-            </div>
-
-          </Transition>
-        </div>
+        <Button type="secondary" :link="{ name: 'StorageRequests', params: { name: 'Запрошенные запчасти' } }">
+          <BellIcon class="w-5 h-5 mr-1"/>Запрошенные запчасти
+        </Button>
 
         <Button type="secondary" :link="{ name: 'Producers' }">
           <CogIcon class="w-5 h-5 mr-1"/>Производители
@@ -50,10 +40,12 @@ const show = ref(false);
 </template>
 
 <style scoped>
+/*
 #sto-requests {
   width: 400px;
   min-height: 100px;
 }
+*/
 
 /*
   Enter and leave animations can use different

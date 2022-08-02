@@ -5,8 +5,10 @@ import save, { upload } from '~/helpers/save';
 import { deepCopyObj } from '~/helpers';
 import useToast from '~/composables/useToast.js';
 import store from '~/store/processes/tasks';
+import departmentStore from '~/store/departments';
 
 const { drop } = store;
+const { current } = departmentStore;
 
 const defaults = {
   id: '',
@@ -25,6 +27,7 @@ const deepDefaults = {
   process_checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
+  department_id: current,
 };
 
 let fields;

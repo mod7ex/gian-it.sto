@@ -6,16 +6,17 @@ import useIntersectionObserver from '~/composables/useIntersectionObserver';
 import store from '~/store/storage/products';
 import service from '~/services/storage/products';
 import form from '~/services/storage/products/form';
+import Badge from '~/components/UI/Badge.vue';
 
 defineProps({ grid: Boolean });
 
 const emit = defineEmits(['bottomTouched']);
 
-const { products, select } = store;
+const { select, products } = store;
 
 const { dropProduct, defaults } = form();
 
-const { fetchProducts, redirectToForm } = service();
+const { fetchProducts, redirectToForm, fetchRequestedParts, isThePage } = service();
 
 const { pixel, container } = useIntersectionObserver(() => { emit('bottomTouched'); }, computed(() => products.value.length > 0));
 
@@ -25,7 +26,7 @@ const fields = [
   { label: 'Место', key: 'place' },
 ];
 
-await fetchProducts(true)
+await Promise.all([fetchProducts(true), fetchRequestedParts()]);
 
 </script>
 
@@ -46,6 +47,7 @@ await fetchProducts(true)
                     </div>
 
                     <div class="p-4">
+                        <Badge v-if="isThePage" :point="true" color="yellow">Запрошено</Badge>
                         <p class="mb-1 mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{{ item.name }}</p>
                         <p class="mb-1 block text-sm font-medium text-gray-500 pointer-events-none">В наличии: {{ item.count }}</p>
                         <p class="mb-1 block text-sm font-medium text-gray-500 pointer-events-none">Место: {{ item.place }}</p>
@@ -61,7 +63,6 @@ await fetchProducts(true)
             @delete="(id) => dropProduct(id)"
             @edit="(id) => redirectToForm(id)"
         >
-            <!-- Body -->
             <template #td-name="{ value, item: {id} }" >
                 <Link @click="() => select(id)">{{ value }} </Link>
             </template>
@@ -73,10 +74,8 @@ await fetchProducts(true)
             <template #td-place="{ value }" >
                 {{ value }}
             </template>
-            <!-- ****** -->
         </Table>
 
-        <!-- pagination pixel -->
         <pixel />
     </div>
 </template>

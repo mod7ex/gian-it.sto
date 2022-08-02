@@ -1,12 +1,6 @@
 <script setup>
-import {
-  // PlusCircleIcon,
-  // SaveAsIcon,
-  ArrowLeftIcon,
-  ViewListIcon,
-  ViewGridIcon,
-} from '@heroicons/vue/outline';
-import { ref } from 'vue';
+import { ArrowLeftIcon, ViewListIcon, ViewGridIcon } from '@heroicons/vue/outline';
+import { onScopeDispose, ref } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
@@ -17,14 +11,16 @@ import useSuspense from '~/composables/useSuspense';
 import store from '~/store/storage/products';
 import useAppRouter from '~/composables/useAppRouter';
 
-const { setAvailability, state, selected, selectedProduct } = store;
+const { setAvailability, state, selected, selectedProduct, reset } = store;
 
 const suspenseArea = useSuspense();
 
-const { fetchProducts, filter } = service();
+const { fetchProducts } = service();
 const { route } = useAppRouter();
 
 const grid = ref(true);
+
+onScopeDispose(reset);
 
 </script>
 

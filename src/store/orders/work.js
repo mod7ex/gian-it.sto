@@ -14,7 +14,7 @@ const load = async (payload) => {
   state.raw = await $.works(payload);
 };
 
-const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));
+const drop = async (id) => _$.work(id, (v) => state.raw.deleteById(v));
 
 export default {
   state: readonly(state),

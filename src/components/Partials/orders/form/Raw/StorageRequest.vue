@@ -5,6 +5,7 @@ import Select from '@/UI/Select.vue';
 import TextArea from '@/UI/TextArea.vue';
 import store from '~/store/storage/products';
 import storageStore from '~/store/storage';
+import storageRequestsStore from '~/store/orders/storage-requests';
 import departmentStore from '~/store/departments';
 import service from '~/services/orders/storage-requests';
 import { tasksColorMap } from '~/helpers';
@@ -13,11 +14,17 @@ const { items, atMounted, products_request } = service();
 const { current } = departmentStore;
 const { load, options } = store;
 const { load: loadStorages, options: storageOptions } = storageStore;
+const { loadStatuses, state } = storageRequestsStore;
 
-await Promise.all([loadStorages({ department_id: current.value }), atMounted()]);
+let statusOptions;
+
+await Promise.all([loadStorages({ department_id: current.value }), loadStatuses(), atMounted()]).then(()=>{
+  statusOptions = state.statuses.map((value) => ({ label: tasksColorMap[value].label, value }));
+})
 // await Promise.all([load({ storage_id: products_request.storage_id }), loadStorages({ department_id: current.value }), atMounted()]);
 
-const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
+// const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
+
 
 watch(() => products_request.storage_id, async (storage_id) => { await load({ storage_id }); });
 

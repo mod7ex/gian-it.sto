@@ -56,11 +56,14 @@ const fillColumns = () => {
 const log = async (e) => {
   const { item: { id: orderId }, to: { id: order_stage_id } } = e;
 
+  // eslint-disable-next-line eqeqeq
+  const target = state.raw.find(({ id }) => id == orderId); if (target && target.stage?.id == order_stage_id) return;
+
   const { message, success } = await save({ data: { order_stage_id }, path: `orders/${orderId}/stage` });
 
   if (!success) {
-    fillColumns();
-    return toaster.danger(message ?? 'Что-то пошло не так');
+    toaster.danger(message ?? 'Что-то пошло не так');
+    return fillColumns();
   }
 
   return toaster.success('Стадия заказа успешно обновлена');

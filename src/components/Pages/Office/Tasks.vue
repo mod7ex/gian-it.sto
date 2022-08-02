@@ -16,9 +16,9 @@ import pipelineStore from '~/store/pipelines';
 import userStore from '~/store/employees';
 import orderStore from '~/store/orders/orders';
 
-const SuspenseArea = useSuspense();
+const SuspenseArea = useSuspense(Table);
 
-const { order, filter, resetFilter, fetchTasks, current, clearMemo } = service();
+const { order, filter, resetFilter, current, clearMemo } = service();
 
 const { criteriaOptions, criteria } = order;
 
@@ -137,9 +137,7 @@ onScopeDispose(clearMemo);
     </div>
 
     <!-- Table -->
-    <suspense-area :key="`tab-${filterSignature}-${current}`" >
-      <Table @bottom-touched="()=>fetchTasks()" />
-    </suspense-area>
+    <suspense-area :key="`tab-${filterSignature}-${current}`" />
 
   </OfficeLayout>
 </template>

@@ -15,10 +15,8 @@ const { state: StagesState, load: loadStages } = orderStagesStore;
 let columns;
 
 const filter = reactive({
-  type: '',
-  user_id: '',
-  created_after: '',
-  created_before: '',
+  client_id: '',
+  car_id: '',
 });
 
 const getKanBanPayload = () => {
@@ -56,13 +54,9 @@ const fillColumns = () => {
 };
 
 const log = async (e) => {
-  // good
-  console.log('yes');
-  return true;
-  /*
-  const { item: { id: orderId }, to: { id: stage_id } } = e;
+  const { item: { id: orderId }, to: { id: order_stage_id } } = e;
 
-  const { message, success } = await save({ data: { stage_id }, path: `orders/${orderId}/pipelines/${StagesState.pipeline}/stage` });
+  const { message, success } = await save({ data: { order_stage_id }, path: `orders/${orderId}/stage` });
 
   if (!success) {
     fillColumns();
@@ -70,11 +64,10 @@ const log = async (e) => {
   }
 
   return toaster.success('Стадия заказа успешно обновлена');
-  */
 };
 
 const atMounted = async () => {
-  await Promise.all([load({ department_id: current.value }), loadStages()]).then(fillColumns);
+  await Promise.all([load({ ...filter, department_id: current.value }), loadStages()]).then(fillColumns);
 };
 
 export default () => effectScope().run(() => {

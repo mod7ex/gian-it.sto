@@ -6,7 +6,7 @@ import store from '~/store/finances/groups';
 
 import Table from '@/Layout/Table.vue';
 
-const { state, load, drop: dropGroup } = store;
+const { state, load, drop: dropGroup, fill } = store;
 
 const { render } = form();
 
@@ -23,6 +23,7 @@ await load();
 
 <template>
     <Table
+        @bottom-touched="fill"
         :fields="fields"
         :items="state.raw"
         @delete="(id) => drop(() => dropGroup(id))"

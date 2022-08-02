@@ -49,6 +49,7 @@ await Promise.all([atMounted(), load({department_id: current.value})]);
           label="Исполнитель"
           :options="options"
           :required="true"
+          v-model="work.user_id"
           class="sm:col-span-6 col-span-12"
         />
 

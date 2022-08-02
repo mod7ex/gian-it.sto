@@ -13,11 +13,12 @@ await atMounted();
 </script>
 
 <template>
-      <div class="grid grid-cols-12 grid-rows-6 sm:grid-rows-4 xl:grid-rows-3 gap-2">
+      <div class="flex items-stretch overflow-x-scroll pb-3 my-16">
+      <!-- <div class="grid grid-cols-12 grid-rows-6 sm:grid-rows-4 xl:grid-rows-3 gap-2"> -->
         <div
           v-for="[id, {name, color}] in Object.entries(columns)"
           :key="id"
-          class="rounded-lg p-3 col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3"
+          class="rounded-lg p-3 col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 mr-5 stage"
           :style="{background: color}"
         >
           <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ name }}</p>
@@ -72,6 +73,11 @@ await atMounted();
 </template>
 
 <style scoped>
+.stage{
+  min-width: 300px;
+  min-height: 600px;
+}
+
 .ghost {
   opacity: 0.5;
 }

@@ -25,7 +25,9 @@ await fetchTasks(true);
 </script>
 
 <template>
+
     <Table
+        @bottom-touched="()=>fetchTasks()"
         :fields="fields"
         :items="state.raw"
         @delete="removeTask"

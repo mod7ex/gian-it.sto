@@ -22,7 +22,7 @@ const cols = [
   // { label: 'Цена закупки (₽)', key: 'buy' },
   // { label: 'Цена продажи (₽)', key: 'sell' },
   { label: 'Kоличество', key: 'count' },
-  { label: 'Комментарий', key: 'comment' },
+//   { label: 'Комментарий', key: 'comment' },
   { label: 'Статус', key: 'status' },
   { label: 'Дата добавления', key: 'created_at' },
 ];
@@ -48,7 +48,7 @@ await load({ order_id: route.params.id });
           <span class="font-bold" >{{ value }}</span>
       </template>
 
-      <template #td-comment="{ value }" > {{ value ?? '_' }} </template>
+      <!-- <template #td-comment="{ value }" > {{ value ?? '_' }} </template> -->
 
       <template #td-status="{ value }" >
           <Badge :point="true" :color="tasksColorMap[value]?.color">

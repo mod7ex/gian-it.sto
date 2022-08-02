@@ -32,7 +32,7 @@ const defaults = {
 
   process_id: '',
 
-  comment: '',
+  // comment: '',
 };
 
 const refDefaults = {
@@ -53,8 +53,12 @@ const setField = function (key) {
   if (key.includes('_id')) {
     if (['pipeline_id', 'department_id'].includes(key)) return;
 
-    fields[key] = this[key.replace('_id', '')]?.id;
+    if (key === 'order_stage_id') {
+      fields.order_stage_id = this.stage?.id;
+      return;
+    }
 
+    fields[key] = this[key.replace('_id', '')]?.id;
     return;
   }
 

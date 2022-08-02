@@ -89,9 +89,11 @@ await Promise.all([
           <Select label="Этап заказа" :options="orderStagesOptions" v-model="fields.order_stage_id" />
         </div>
 
-        <div class="col-span-12 sm:col-span-12">
-          <TextArea label="Комментарий" v-model="fields.comment" />
-        </div>
+<!--
+          <div class="col-span-12 sm:col-span-12">
+            <TextArea label="Комментарий" v-model="fields.comment" />
+          </div>
+-->
 
         <div class="col-span-12 sm:col-span-12">
             <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>

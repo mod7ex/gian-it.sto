@@ -39,10 +39,10 @@ const setField = function (key) {
     return;
   }
 
-  // if (key === 'pipelines') {
-  //   fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage: { id: stage_id } }) => ({ pipeline_id, stage_id })) ?? [{}];
-  //   return;
-  // }
+  if (key === 'pipelines') {
+    fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage: { id: stage_id } }) => ({ pipeline_id, stage_id })) ?? [{}];
+    return;
+  }
 
   if (key === 'process_checkboxes') {
     fields.process_checkboxes = this.process_checkboxes ?? defaults.process_checkboxes;
@@ -65,11 +65,15 @@ const log = (e) => { files.value = e.target.files; };
 export default (process_category) => effectScope().run(() => {
   const toaster = useToast();
 
-  const { route, isThePage, redirectTo, back } = useAppRouter('ProcessTaskEdit');
+  const { route, isThePage, redirectTo } = useAppRouter('ProcessTaskEdit');
 
   const dropTask = async (_id) => {
-    await drop(_id);
-    back();
+    const { success, message } = await drop(_id);
+    try {
+      return { success, message };
+    } finally {
+      success && redirectTo({ name: 'Process', params: { id: process_category } });
+    }
   };
 
   if (!fields) {
@@ -102,7 +106,7 @@ export default (process_category) => effectScope().run(() => {
 
     const { data, success } = await save.process_task(fields, null, true);
 
-    success && redirectTo({ name: 'ProcessTask', params: { task: data?.process_task?.id, id: process_category } });
+    success && redirectTo({ name: 'ProcessTaskEdit', params: { task: data?.process_task?.id, id: process_category } });
   };
 
   const atMounted = async () => {

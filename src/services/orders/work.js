@@ -16,9 +16,12 @@ let work;
 
 const setForm = (payload = {}) => {
   work.id = payload?.id;
-  work.client_id = payload?.client?.id;
-  work.payment_method = payload?.payment_method;
-  work.comment = payload?.comment;
+  work.name = payload?.name;
+  work.comments = payload?.comments;
+  work.time = payload?.time;
+  work.sum = payload?.sum;
+  work.order_id = payload?.order?.id;
+  work.user_id = payload?.user?.id;
 };
 
 const saveForm = async (order_id) => {
@@ -62,6 +65,7 @@ export default function () {
             id: id ?? '',
             name: '',
             order_id: route.params.id,
+            user_id: '',
             comments: '',
             sum: '',
             time: '',

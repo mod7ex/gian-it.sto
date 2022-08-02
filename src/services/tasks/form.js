@@ -1,4 +1,4 @@
-import { reactive, ref, effectScope, onScopeDispose } from 'vue';
+import { reactive, ref, effectScope, onScopeDispose, computed } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat, deepCopyObj } from '~/helpers';
@@ -127,6 +127,7 @@ export default () => effectScope().run(() => {
 
   return {
     fields,
+    selectedFunnelsIds: computed(() => fields.pipelines.map(({ pipeline_id }) => Number(pipeline_id))),
     isEditPage: isThePage,
     saveTask,
     atMounted,

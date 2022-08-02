@@ -5,12 +5,15 @@ import Table from '@/Layout/Table.vue';
 import store from '~/store/orders/work';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useAppRouter from '~/composables/useAppRouter';
+import service from '~/services/orders/work';
+
+const { render } = service();
 
 const { route } = useAppRouter()
 
 const { drop } = useConfirmDialog();
 
-const { load, state } = store;
+const { load, state, drop: dropWork } = store;
 
 const fields = [
   { label: 'Вид работы', key: 'name' },
@@ -28,8 +31,8 @@ await load({order_id :route.params.id});
   <Table
     :fields="fields"
     :items="state.raw"
-    @delete="(id) => drop(() => void(id))"
-    @edit="(id) => void(id)"
+    @delete="(id) => drop(() => dropWork(id))"
+    @edit="(id) => render(id)"
   >
       <!-- Body -->
 

@@ -21,9 +21,7 @@ const { options: orderOptions, load: loadOrders } = orderStore;
 const { state, load: loadFunnels, options: pipelinesOptions } = pipelineStore;
 const { load: loadStages, options: stagesOptions } = stagesStore;
 
-const { fields, atMounted, log, isEditPage } = service();
-
-const fieldsPipelineIds = computed(()=> fields.pipelines.map(({ pipeline_id }) => pipeline_id))
+const { fields, atMounted, log, isEditPage, selectedFunnelsIds } = service();
 
 const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
@@ -36,10 +34,10 @@ await Promise.all([
     load({ department_id: current.value ?? '' }),
     loadFunnels(),
     atMounted()
-]).then(()=>{
+]).then(() => {
     removeCheckbox = removeItem(fields.checkboxes);
     removeFunnel = removeItem(fields.pipelines);
-})
+});
 
 const StagesSelection = proxiedSelect(state, fields);
 
@@ -48,9 +46,8 @@ onMounted(() => {
   console.log(fields.user_id);
 });
 
-const cannotAdd = computed(() => { 
-    return pipelinesOptions.value.map(({ value }) => value).length === (new Set(fieldsPipelineIds.value)).size
-});
+const cannotAdd = computed(() => pipelinesOptions.value.map(({ value }) => value).length === (new Set(selectedFunnelsIds.value)).size);
+const notSelectedFunnels = computed(() => pipelinesOptions.value.filter(({ value }) => !selectedFunnelsIds.value.includes(Number(value))));
 
 </script>
 
@@ -95,7 +92,6 @@ const cannotAdd = computed(() => {
                 <li v-for="(p, i) in fields.pipelines" :key="'input-'+i" class="flex items-center">
                     <Select class="mr-3 pipeline w-full" :label="`Воронка ${i + 1}`" :options="pipelinesOptions" v-model="fields.pipelines[i].pipeline_id" />
                     <StagesSelection :index="i" :pipeline_id="fields.pipelines[i].pipeline_id" v-model="fields.pipelines[i].stage_id" />
-                    <!-- <Select class="mr-3" :label="`Этап Воронка ${i + 1}`" :options="state.raw" v-model="fields.pipelines[i].stage_id" :disabled="!fields.pipelines[i].pipeline_id" /> -->
                     <Button color="red" size="sm" @click="removeFunnel(i)">Удалить</Button>
                 </li>
             </ul>

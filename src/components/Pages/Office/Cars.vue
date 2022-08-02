@@ -20,8 +20,16 @@ const SuspensCarsTable = useSuspense(CarsTable);
     <template #actions>
 
       <Button type="secondary" :link="{name: 'Clients'}">
-        <ArrowLeftIcon class="w-5 h-5 mr-1" />К Клиенти
+        <ArrowLeftIcon class="w-5 h-5 mr-1" />К клиентам
       </Button>
+
+<!--
+      <v-can ability="crud fuels">
+        <Button type="secondary" :link="{name: 'CarMarks'}">
+          <GlobeIcon class="w-5 h-5 mr-1" />Тип топлива
+        </Button>
+      </v-can>
+-->
 
       <v-can ability="crud car marks">
         <Button type="secondary" :link="{name: 'CarMarks'}">

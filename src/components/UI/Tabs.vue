@@ -12,9 +12,9 @@ defineProps({
   tabs: Array,
 });
 
-const current = ref(0);
+const current = ref('main');
 
-const pick = (i) => { emit('update:modelValue', current.value = i); };
+const pick = (tb) => { emit('update:modelValue', current.value = tb); };
 
 </script>
 
@@ -29,10 +29,10 @@ const pick = (i) => { emit('update:modelValue', current.value = i); };
         <option
           v-for="(tab, i) in tabs"
           :key="`option-tab-${i}`"
-          :selected="i == current"
-          :value="i"
+          :selected="tab.tab == current"
+          :value="tab.tab"
         >
-          {{ tab }}
+          {{ tab.label }}
         </option>
       </select>
     </div>
@@ -45,15 +45,15 @@ const pick = (i) => { emit('update:modelValue', current.value = i); };
             <div v-for="(tab, i) in tabs" :key="`tab-${i}`" class="flex">
 
               <button
-                @click="() => pick(i)"
-                :aria-current="i == current ? 'page' : undefined"
-                :class="[i == current ?
+                @click="() => pick(tab.tab)"
+                :aria-current="tab.tab == current ? 'page' : undefined"
+                :class="[tab.tab == current ?
                     'cursor-pointer border-blue-500 text-blue-600' :
                     'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                     'border-b-2 cursor-pointer whitespace-nowrap py-4 px-1 font-medium text-sm',
                     ]"
               >
-                {{ tab }}
+                {{ tab.label }}
               </button>
 
             </div>

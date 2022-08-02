@@ -8,20 +8,9 @@ import producerStore from '~/store/storage/producers';
 
 const { load, options } = producerStore;
 
-const {
-  isValideAvatarFileSize,
-  log,
-  avatar,
-  product,
-  v$,
-  atMountedProductForm,
-  isUploadingAvatar,
-} = form();
+const { isValideAvatarFileSize, log, avatar, product, v$, atMountedProductForm, isUploadingAvatar, } = form();
 
-await (async ()=>{
-    await load()
-    await atMountedProductForm();
-})();
+await Promise.all([load(), atMountedProductForm()]);
 
 </script>
 

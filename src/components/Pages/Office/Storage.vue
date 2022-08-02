@@ -1,6 +1,6 @@
 <script setup>
-import { ArrowLeftIcon, ViewListIcon, ViewGridIcon } from '@heroicons/vue/outline';
-import { onScopeDispose, ref } from 'vue';
+import { ArrowLeftIcon, ViewListIcon, ViewGridIcon, PlusCircleIcon } from '@heroicons/vue/outline';
+import { onMounted, onScopeDispose, ref } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
@@ -9,23 +9,30 @@ import ProductsList from '@/Partials/storage/products/List.vue';
 import Preview from '@/Partials/storage/products/Preview.vue';
 import useSuspense from '~/composables/useSuspense';
 import store from '~/store/storage/products';
+import $ from '~/helpers/fetch.js';
 import useAppRouter from '~/composables/useAppRouter';
 
 const { setAvailability, state, selected, selectedProduct, reset } = store;
 
 const suspenseArea = useSuspense();
 
-const { fetchProducts } = service();
+const { fetchProducts, isThePage } = service();
 const { route } = useAppRouter();
 
 const grid = ref(true);
+
+const currentStorage = ref();
+
+onMounted(async () => {
+  currentStorage.value = isThePage.value ? 'Запрошенные запчасти' : (await $.storage(route.params.id))?.name;
+});
 
 onScopeDispose(reset);
 
 </script>
 
 <template>
-    <OfficeLayout :title="`${route.params.name ?? '(Unknown)'}`" main-classes="flex-1 flex flex-col overflow-hidden">
+    <OfficeLayout :title="currentStorage" main-classes="flex-1 flex flex-col overflow-hidden">
 
       <template #actions>
         <Button type="secondary" :link="{ name: 'Storages' }">
@@ -36,11 +43,9 @@ onScopeDispose(reset);
           <SaveAsIcon class="w-5 h-5 mr-1"/>Приход
         </Button>
 -->
-        <!--
-          <Button color="blue" :link="{ name: 'StorageForm' }">
-            <PlusCircleIcon class="w-5 h-5 mr-1"/>Добавить позицию
-          </Button>
-        -->
+        <Button v-if="!isThePage" color="blue" :link="{ name: 'StorageForm', params: { id: route.params?.id } }">
+          <PlusCircleIcon class="w-5 h-5 mr-1"/>Добавить позицию
+        </Button>
       </template>
 
       <template #content>

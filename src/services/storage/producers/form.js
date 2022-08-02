@@ -7,7 +7,7 @@ import useToast from '~/composables/useToast.js';
 import store from '~/store/storage/producers';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
-import formRules from '~/validationsRules/carModel';
+import { carMarks as formRules } from '~/validationsRules/carModel';
 
 const { load } = store;
 

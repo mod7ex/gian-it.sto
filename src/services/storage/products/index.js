@@ -30,12 +30,12 @@ export default () => effectScope().run(() => {
 
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
-  const { redirectTo, isThePage } = useAppRouter('StorageRequests');
+  const { redirectTo, isThePage, route } = useAppRouter('StorageRequests');
 
   const fetchProducts = async (bool = false) => {
     if (isThePage.value) return;
     if (bool) reset();
-    await fill(filter);
+    await fill({ ...filter, storage_id: route.params.id });
   };
 
   const fetchRequestedParts = async () => {
@@ -46,14 +46,12 @@ export default () => effectScope().run(() => {
     }
   };
 
-  const redirectToForm = async (id) => {
-    if (!id) return;
-    await redirectTo({ name: 'EditStorage', params: { product: id } });
+  const redirectToForm = async (id, product) => {
+    if (!id || !product) return;
+    await redirectTo({ name: 'EditStorage', params: { product, id } });
   };
 
-  onScopeDispose(() => {
-    filter = undefined;
-  });
+  onScopeDispose(() => { filter = undefined; });
 
   return {
     order,

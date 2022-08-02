@@ -10,6 +10,15 @@ const state = reactive({
   page: 1,
 });
 
+const decreaseCount = (product_id, amount) => {
+  for (let i = 0; i < state.raw.length; i++) {
+    if (state.raw[i].id === product_id) {
+      state.raw[i].count -= amount;
+      return;
+    }
+  }
+};
+
 const set = (data) => {
   state.raw = data;
 };
@@ -76,4 +85,5 @@ export default {
   selected: computed(() => !!(selectedProduct.value.id)),
   products: computed(() => state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0))),
   options: computed(() => state.raw.map(({ id, name }) => ({ value: id, label: name }))),
+  decreaseCount,
 };

@@ -54,9 +54,11 @@ onScopeDispose(clearMemo);
   <OfficeLayout title="Задачи">
 
     <template #actions>
-      <Button type="secondary" :link="{ name: 'Funnels' }">
-        <ViewBoardsIcon class="w-5 h-5 mr-1"/>Воронка
-      </Button>
+      <v-can ability="crud pipelines">
+        <Button type="secondary" :link="{ name: 'Funnels' }">
+          <ViewBoardsIcon class="w-5 h-5 mr-1"/>Воронка
+        </Button>
+      </v-can>
 
       <v-can ability="create tasks">
         <Button color="blue" :link="{ name: 'TaskCreate' }">

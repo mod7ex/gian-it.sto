@@ -21,7 +21,7 @@ const show = ref(false);
 <template>
     <OfficeLayout title="Все склады" @click="show = false">
       <template #actions>
-        <Button type="secondary" :link="{ name: 'StorageRequests', params: { name: 'Запрошенные запчасти' } }">
+        <Button type="secondary" :link="{ name: 'StorageRequests' }">
           <BellIcon class="w-5 h-5 mr-1"/>Запрошенные запчасти
         </Button>
 

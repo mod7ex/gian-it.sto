@@ -20,11 +20,11 @@ const toVisualize = ref();
 
 <template>
   <div>
-      <div class="mb-5">
+      <v-can ability="crud document templates" class="mb-5">
         <Button color="blue" class="mr-3" @click="() => render()">
           <DocumentTextIcon class="w-5 h-5 mr-1"/>Загрузить шаблон
         </Button>
-      </div>
+      </v-can>
 
       <!-- Document preview  -->
       <Teleport to="#sto-modal-teleport">

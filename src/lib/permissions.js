@@ -3,17 +3,20 @@ import useAuth from '~/composables/useAuth.js';
 const { isUserLogged, user } = useAuth();
 
 const routesPermissionsMap = {
-  // copy all pages from router and add permissions
+  // Todo: copy all pages from router and add permissions the router can catch some forgotten things
+
+  // Orders: ['crud orders', 'read orders'],
 
   Finances: 'crud finances',
 
   Storages: 'crud storages',
 
+  Processes: 'crud processes',
+
   Tasks: ['read tasks', 'read department tasks', 'read own tasks'],
   Task: ['read tasks', 'read department tasks', 'read own tasks'],
   TaskEdit: ['update tasks', 'update department tasks', 'update own tasks'],
   TaskCreate: 'create tasks',
-
   TaskCreateForm: 'create tasks',
 
   Employers: ['read users', 'crud users'],
@@ -37,7 +40,9 @@ export function userHasPermission(permissionName) {
   return !!(user.value.permissions.find((perm) => (perm.name === permissionName)));
 }
 
-export function userHasAtLeastOnePermission(permissionsArray) {
+export function userHasAtLeastOnePermission(permissionsArray, allowEmpty = false) {
+  if (allowEmpty && permissionsArray.length === 0) return true;
+
   // one role is enough to let the user pass (| <--> U)
   return !!(permissionsArray.find((perm) => userHasPermission(perm)));
 }

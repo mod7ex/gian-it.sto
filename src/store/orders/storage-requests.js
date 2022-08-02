@@ -12,9 +12,7 @@ const state = reactive({
   statuses: [],
 });
 
-const reset = () => {
-  state.raw = [];
-};
+const reset = () => { state.raw = []; state.statuses = []; };
 
 const setRequestStatus = async (productRequest_id, status) => {
   if (!productRequest_id) return;

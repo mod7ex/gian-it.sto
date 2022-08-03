@@ -10,6 +10,36 @@ const state = reactive({
   page: 1,
 });
 
+const IndexById = (_id) => {
+  for (let i = 0; i < state.raw.length; i++) {
+    // eslint-disable-next-line eqeqeq
+    if (state.raw[i]?.id == _id) {
+      return i;
+    }
+  }
+};
+
+const addProductRequest = (product_id, payload) => {
+  state.raw[IndexById(product_id)].product_requests.push(payload);
+};
+
+const updateCount = (product_id, count) => {
+  state.raw[IndexById(product_id)].count += count;
+};
+
+const dropRequestFromProduct = (request_id, product_id) => {
+  state.raw[IndexById(product_id)].product_requests.deleteById(request_id);
+};
+
+const contains = (requests = [], _status) => requests.some(({ status }) => status === _status);
+
+const getProducts = (bool) => computed(() => {
+  // const foo = state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0)).filter(({ product_requests }) => contains(product_requests, 'wait'));
+  const items = state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0));
+  if (!bool) return items;
+  return items.filter(({ product_requests }) => contains(product_requests, 'wait'));
+});
+
 const setAvailability = (bool) => {
   state.inStock = bool ?? false;
 };
@@ -59,6 +89,8 @@ const locallyDropProduct = (v) => {
   state.raw.deleteById(v);
 };
 
+const products = computed(() => state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0)));
+
 export default {
   state: readonly(state),
   setAvailability,
@@ -70,7 +102,11 @@ export default {
   select,
   replace,
   selected: computed(() => !!(state.selectedId)),
-  products: computed(() => state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0))),
+  products,
   options: computed(() => state.raw.map(({ id, name }) => ({ value: id, label: name }))),
   locallyDropProduct,
+  getProducts,
+  dropRequestFromProduct,
+  updateCount,
+  addProductRequest,
 };

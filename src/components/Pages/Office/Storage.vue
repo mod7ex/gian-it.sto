@@ -16,7 +16,7 @@ const { setAvailability, state } = store;
 
 const suspenseArea = useSuspense();
 
-const { fetchProducts, isThePage, clearMemo } = service();
+const { fetchProducts, isThePage, clearMemo, selected } = service();
 const { route } = useAppRouter();
 
 const grid = ref(true);
@@ -97,7 +97,7 @@ onScopeDispose(clearMemo);
 
           </div>
 
-          <preview v-if="state.selectedId" :key="`${isThePage ? 'on' : 'off'}`" />
+          <preview v-if="selected" :key="`${isThePage ? 'on' : 'off'}`" />
 
         </div>
       </template>

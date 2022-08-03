@@ -12,13 +12,10 @@ const state = reactive({
   statuses: [],
 });
 
-const locallyDropRequest = (v) => {
-  state.raw.deleteById(v);
-};
-
 const dropProduct = (product_id) => {
   if (!product_id) return;
 
+  // eslint-disable-next-line eqeqeq
   state.raw = state.raw.filter(({ product: { id } }) => product_id != id);
 };
 
@@ -32,24 +29,12 @@ const replace = (payload) => {
   }
 };
 
-const updateCount = (product_id, count) => {
-  if (!product_id) return;
-
-  for (let i = 0; i < state.raw.length; i++) {
-    // eslint-disable-next-line eqeqeq
-    if (state.raw[i].product?.id == product_id) {
-      state.raw[i].product.count -= count;
-    }
-  }
-};
-
 const reset = () => { state.raw = []; state.statuses = []; };
 
 const setRequestStatus = async (productRequest_id, status) => {
   if (!productRequest_id) return;
   const { success, message } = await save({ path: `products-requests/${productRequest_id}/status`, data: { status } });
   if (success) {
-    // locallyDropRequest(productRequest_id);
     return toaster.success('Product assigned');
   }
   return toaster.danger(message ?? 'что-то пошло не так');
@@ -76,7 +61,7 @@ const load = async (payload) => {
   state.raw = await $.products_requests(payload);
 };
 
-const drop = async (id) => _$.order(id, locallyDropRequest);
+const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));
 
 const productsRequests = computed(() => getProductsRequests(state.raw));
 
@@ -88,11 +73,9 @@ export default {
   loadStatuses,
   productsRequests,
   replace,
-  updateCount,
 
   // eslint-disable-next-line no-unused-vars
   products: computed(() => Object.entries(productsRequests.value).map(([_, [{ product }]]) => product)),
   setRequestStatus,
-  locallyDropRequest,
   dropProduct,
 };

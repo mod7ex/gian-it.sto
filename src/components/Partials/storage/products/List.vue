@@ -16,8 +16,8 @@ const { select, reset } = store;
 
 const { dropProduct, defaults } = form();
 
-const { fetchProducts, redirectToForm, fetchRequestedParts, isThePage, products } = service();
- 
+const { fetchProducts, redirectToForm, isThePage, products } = service();
+
 const { pixel, container } = useIntersectionObserver(() => { emit('bottomTouched'); }, computed(() => products?.value?.length > 0));
 
 const fields = [
@@ -26,7 +26,7 @@ const fields = [
   { label: 'Место', key: 'place' },
 ];
 
-await Promise.all([fetchProducts(true), fetchRequestedParts()]);
+await Promise.all([fetchProducts(true)]);
 
 onScopeDispose(() => reset(true));
 

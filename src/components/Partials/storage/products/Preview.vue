@@ -1,6 +1,6 @@
 <script setup>
 import { PencilIcon as PencilSolidIcon, ArrowNarrowLeftIcon, CheckIcon, RefreshIcon, PlusIcon } from '@heroicons/vue/solid';
-import { onMounted, ref, computed, watch } from 'vue';
+import { onMounted, ref, watch, computed } from 'vue';
 import Button from '@/UI/Button.vue';
 import Avatar from '@/UI/Avatar.vue';
 import TextArea from '@/UI/TextArea.vue';
@@ -9,15 +9,16 @@ import form from '~/services/storage/products/form';
 import service from '~/services/storage/products';
 import save from '~/helpers/save';
 import { generateShapedIdfromId } from '~/helpers';
+import assignService from '~/services/storage/products/assign-product';
 
-const { redirectToForm, isThePage, productsRequests, ping, key, replaceInRequests, products } = service();
+const { redirectToForm, isThePage, ping, key, replaceInRequests, target } = service();
+
+const { render } = assignService();
+
+const requests = computed(() => target.value?.product_requests?.filter(({ status }) => status === 'wait'));
 
 const { dropProduct, defaults } = form();
-const { select, replace, state } = store;
-
-const requests = computed(() => productsRequests.value[state.selectedId] ?? []);
-
-const target = computed(() => (state.selectedId ? products.value.find(({ id }) => id === state.selectedId) ?? {} : {}));
+const { select, replace } = store;
 
 const editMode = ref(false);
 const description = ref('');
@@ -31,8 +32,6 @@ const saveDescription = async () => {
       const product = { ...target.value };
       product.description = description.value;
       const { data, success } = await save.product(product, null, true);
-      // !isThePage.value && success && replace(data?.product);
-      // isThePage.value && success && replaceInRequests(data?.product);
       success && (isThePage.value ? replaceInRequests : replace)(data?.product);
       return success;
     } finally {
@@ -150,8 +149,12 @@ onMounted(() => {
             </div>
 <!-- -->
             <div>
-                <h3 class="font-medium text-gray-900">Запросили</h3>
-                <ul class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200" v-if="isThePage && requests.length" :key="`${key}-${requests.length}-requests`">
+                <h3 class="font-medium text-gray-900" v-if="requests?.length">Запросили</h3>
+                <ul
+                    class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200"
+                    v-if="requests?.length"
+                    :key="`${key}-${requests.length}-requests`"
+                >
                     <li v-for="request in requests" :key="request.id" class="py-3">
                         <div class="mb-2 flex justify-between items-center">
                             <Avatar
@@ -160,29 +163,17 @@ onMounted(() => {
                                 :subtitle="request?.user?.office_position"
                             />
 
-                            <!-- <p class="text-xs">количество: {{ request?.count }}</p> -->
-
-                            <button @click="() => ping(request)" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
+                            <button @click="() => ping(request, target?.id)" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
                         </div>
                         <div class="flex justify-between items-center">
                             <p class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
                             <p class="text-xs">Kоличество: {{ request?.count }}</p>
                         </div>
                     </li>
-
-                    <!-- <li class="py-2 flex justify-between items-center">
-                        <button type="button" class="group -ml-1 bg-white p-1 rounded-md flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <span class="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
-                                <PlusIcon class="h-5 w-5" />
-                            </span>
-
-                            <span class="ml-4 text-sm font-medium text-indigo-600 group-hover:text-indigo-500">Добавить выдачу</span>
-                        </button>
-                    </li> -->
                 </ul>
 
                 <div class="py-2 flex justify-between items-center">
-                    <button type="button" class="group -ml-1 bg-white p-1 rounded-md flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button @click="() => render(target?.id)" type="button" class="flex-grow group -ml-1 bg-white p-1 rounded-md flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <span class="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
                             <PlusIcon class="h-5 w-5" />
                         </span>

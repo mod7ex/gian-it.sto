@@ -19,13 +19,12 @@ const setRequestStatus = async (productRequest_id, status) => {
   const { success, message } = await save({ path: `products-requests/${productRequest_id}/status`, data: { status } });
   if (success) {
     state.raw.deleteById(productRequest_id);
-    toaster.success('Product assigned');
-    return;
+    return toaster.success('Product assigned');
   }
-  toaster.danger(message ?? 'что-то пошло не так');
+  return toaster.danger(message ?? 'что-то пошло не так');
 };
 
-const productsRequests = computed(() => state.raw.reduce((prev, request) => {
+const getProductsRequests = (arr = []) => arr.reduce((prev, request) => {
   // {product_id: [...requests]}
   const productId = request.product?.id;
   if (productId in prev) {
@@ -35,7 +34,9 @@ const productsRequests = computed(() => state.raw.reduce((prev, request) => {
   }
 
   return prev;
-}, {}));
+}, {});
+
+const productsRequests = computed(() => getProductsRequests(state.raw));
 
 const loadStatuses = async () => {
   const { success, statuses } = await $({ key: 'products-requests/get-statuses' });
@@ -43,10 +44,17 @@ const loadStatuses = async () => {
 };
 
 const load = async (payload) => {
-  state.raw = await $.products_requests(payload);
+  const data = await $.products_requests(payload);
+  state.raw = data;
+  // eslint-disable-next-line no-unused-vars
+  return Object.entries(getProductsRequests(data)).map(([_, [{ product }]]) => product); // return products
 };
 
-const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));
+const locallyDropRequest = (v) => {
+  state.raw.deleteById(v);
+};
+
+const drop = async (id) => _$.order(id, locallyDropRequest);
 
 export default {
   state: readonly(state),
@@ -56,5 +64,6 @@ export default {
   loadStatuses,
   productsRequests,
   setRequestStatus,
+  locallyDropRequest,
   // products: computed(() => state.raw.map(({ product }) => product)),
 };

@@ -15,7 +15,8 @@ const { redirectToForm, isThePage, productsRequests, ping, key } = service();
 const { dropProduct, defaults } = form();
 const { select, selectedProduct: target, replace, state } = store;
 
-const requests = computed(() => productsRequests.value[state.selectedId].filter(({ status }) => status === 'wait'));
+// const requests = computed(() => productsRequests.value[state.selectedId]?.filter(({ status }) => status === 'wait'));
+const requests = computed(() => productsRequests.value[state.selectedId] ?? []);
 
 const editMode = ref(false);
 const description = ref('');
@@ -84,7 +85,7 @@ onMounted(() => {
                 <div class="mt-4 flex items-start justify-between">
                     <div>
                         <h2 class="text-lg font-medium text-gray-900">{{ target.name }}</h2>
-                        <p class="text-sm font-medium text-gray-500">В наличии: {{ target.count }} шт</p>
+                        <p :key="target.count" class="text-sm font-medium text-gray-500">В наличии: {{ target.count }} шт</p>
                         <p class="text-sm font-medium text-gray-500">Место: {{ target.place }}</p>
                     </div>
                 </div>
@@ -148,27 +149,26 @@ onMounted(() => {
                 </div>
             </div>
 <!-- -->
-            <div v-if="isThePage && requests.length" :key="`${key}-requests`">
+            <div v-if="isThePage && requests.length" :key="`${key}-${requests.length}-requests`">
                 <h3 class="font-medium text-gray-900">Запросили</h3>
                 <ul class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
+                        <li v-for="request in requests" :key="request.id" class="py-3">
+                            <div class="mb-2 flex justify-between items-center">
+                                <Avatar
+                                    :image="request?.user?.avatar"
+                                    :title="`${request?.user?.name} ${request?.user?.surname}`"
+                                    :subtitle="request?.user?.office_position"
+                                />
 
-                    <li v-for="request in requests" :key="request.id" class="py-3">
-                        <div class="mb-2 flex justify-between items-center">
-                            <Avatar
-                                :image="request?.user?.avatar"
-                                :title="`${request?.user?.name} ${request?.user?.surname}`"
-                                :subtitle="request?.user?.office_position"
-                            />
+                                <!-- <p class="text-xs">количество: {{ request?.count }}</p> -->
 
-                            <!-- <p class="text-xs">количество: {{ request?.count }}</p> -->
-
-                            <button @click="() => ping(request?.id, 'done')" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <p class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
-                            <p class="text-xs">Kоличество: {{ request?.count }}</p>
-                        </div>
-                    </li>
+                                <button @click="() => ping(request)" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
+                                <p class="text-xs">Kоличество: {{ request?.count }}</p>
+                            </div>
+                        </li>
 
                     <li class="py-2 flex justify-between items-center">
                         <button type="button" class="group -ml-1 bg-white p-1 rounded-md flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500">

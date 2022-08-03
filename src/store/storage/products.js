@@ -68,6 +68,10 @@ const drop = async (id) => _$.product(id, (v) => {
   state.raw.deleteById(v);
 });
 
+const locallyDropProduct = (v) => {
+  state.raw.deleteById(v);
+};
+
 const selectedProduct = computed(() => (state.selectedId ? state.raw.find(({ id }) => id === state.selectedId) ?? {} : {}));
 
 export default {
@@ -86,4 +90,5 @@ export default {
   products: computed(() => state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0))),
   options: computed(() => state.raw.map(({ id, name }) => ({ value: id, label: name }))),
   decreaseCount,
+  locallyDropProduct,
 };

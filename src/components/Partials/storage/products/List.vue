@@ -49,7 +49,7 @@ await Promise.all([fetchProducts(true), fetchRequestedParts()]);
                     <div class="p-4">
                         <Badge v-if="isThePage" :point="true" color="yellow">Запрошено</Badge>
                         <p class="mb-1 mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{{ item.name }}</p>
-                        <p class="mb-1 block text-sm font-medium text-gray-500 pointer-events-none">В наличии: {{ item.count }}</p>
+                        <p :key="item.count" class="mb-1 block text-sm font-medium text-gray-500 pointer-events-none">В наличии: {{ item.count }}</p>
                         <p class="mb-1 block text-sm font-medium text-gray-500 pointer-events-none">Место: {{ item.place }}</p>
                     </div>
                 </li>
@@ -68,7 +68,7 @@ await Promise.all([fetchProducts(true), fetchRequestedParts()]);
             </template>
 
             <template #td-count="{ value }" >
-                {{ value }}
+                <p :key="item.count">{{ value }}</p>
             </template>
 
             <template #td-place="{ value }" >

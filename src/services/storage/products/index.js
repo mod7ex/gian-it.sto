@@ -5,10 +5,10 @@ import useAppRouter from '~/composables/useAppRouter';
 import requestsStore from '~/store/orders/storage-requests';
 import departmentStore from '~/store/departments';
 
-const { load, productsRequests, setRequestStatus: ping, state } = requestsStore;
+const { load, productsRequests, setRequestStatus, state, locallyDropRequest } = requestsStore;
 const { current } = departmentStore;
 
-const { sort, fill, reset, set } = store;
+const { sort, fill, reset, set, decreaseCount, locallyDropProduct, products } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -18,6 +18,16 @@ const pivot = {
 };
 
 let filter;
+
+const ping = async (request, status = 'done') => {
+  const { id, product: { id: product_id }, count } = request;
+  if (!id) return;
+  const wasSet = await setRequestStatus(id, status);
+  if (wasSet && product_id && count) {
+    decreaseCount(product_id, count);
+    // if (productsRequests.value[product_id].length === 0) locallyDropProduct(product_id);
+  }
+};
 
 export default () => effectScope().run(() => {
   if (!filter) {
@@ -39,11 +49,8 @@ export default () => effectScope().run(() => {
   };
 
   const fetchRequestedParts = async () => {
-    if (isThePage.value) {
-      await load({ department_id: current.value });
-      // eslint-disable-next-line no-unused-vars
-      set(Object.entries(productsRequests.value).map(([_, [{ product }]]) => product));
-    }
+    if (!isThePage.value) return;
+    set(await load({ department_id: current.value, status: 'wait' }));
   };
 
   const redirectToForm = async (id, product) => {

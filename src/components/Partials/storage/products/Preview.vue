@@ -149,28 +149,28 @@ onMounted(() => {
                 </div>
             </div>
 <!-- -->
-            <div v-if="isThePage && requests.length" :key="`${key}-${requests.length}-requests`">
+            <div>
                 <h3 class="font-medium text-gray-900">Запросили</h3>
-                <ul class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                        <li v-for="request in requests" :key="request.id" class="py-3">
-                            <div class="mb-2 flex justify-between items-center">
-                                <Avatar
-                                    :image="request?.user?.avatar"
-                                    :title="`${request?.user?.name} ${request?.user?.surname}`"
-                                    :subtitle="request?.user?.office_position"
-                                />
+                <ul class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200" v-if="isThePage && requests.length" :key="`${key}-${requests.length}-requests`">
+                    <li v-for="request in requests" :key="request.id" class="py-3">
+                        <div class="mb-2 flex justify-between items-center">
+                            <Avatar
+                                :image="request?.user?.avatar"
+                                :title="`${request?.user?.name} ${request?.user?.surname}`"
+                                :subtitle="request?.user?.office_position"
+                            />
 
-                                <!-- <p class="text-xs">количество: {{ request?.count }}</p> -->
+                            <!-- <p class="text-xs">количество: {{ request?.count }}</p> -->
 
-                                <button @click="() => ping(request)" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <p class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
-                                <p class="text-xs">Kоличество: {{ request?.count }}</p>
-                            </div>
-                        </li>
+                            <button @click="() => ping(request)" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
+                            <p class="text-xs">Kоличество: {{ request?.count }}</p>
+                        </div>
+                    </li>
 
-                    <li class="py-2 flex justify-between items-center">
+                    <!-- <li class="py-2 flex justify-between items-center">
                         <button type="button" class="group -ml-1 bg-white p-1 rounded-md flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             <span class="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
                                 <PlusIcon class="h-5 w-5" />
@@ -178,8 +178,18 @@ onMounted(() => {
 
                             <span class="ml-4 text-sm font-medium text-indigo-600 group-hover:text-indigo-500">Добавить выдачу</span>
                         </button>
-                    </li>
+                    </li> -->
                 </ul>
+
+                <div class="py-2 flex justify-between items-center">
+                    <button type="button" class="group -ml-1 bg-white p-1 rounded-md flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <span class="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400">
+                            <PlusIcon class="h-5 w-5" />
+                        </span>
+
+                        <span class="ml-4 text-sm font-medium text-indigo-600 group-hover:text-indigo-500">Добавить выдачу</span>
+                    </button>
+                </div>
             </div>
 <!-- -->
             <div class="flex justify-between">

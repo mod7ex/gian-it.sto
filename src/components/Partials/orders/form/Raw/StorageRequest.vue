@@ -25,8 +25,7 @@ await Promise.all([loadStorages({ department_id: current.value }), loadStatuses(
 
 // const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
-
-watch(() => products_request.storage_id, async (storage_id) => { await load({ storage_id }); });
+watch(() => products_request.storage_id, async (storage_id) => { await load({ storage_id }); }, {immediate: true});
 
 </script>
 
@@ -65,12 +64,14 @@ watch(() => products_request.storage_id, async (storage_id) => { await load({ st
           class="m-3 sm:col-span-6 col-span-12"
         />
 
-        <TextArea
-          label="Комментарий"
-          :required="true"
-          v-model="products_request.comment"
-          class="m-3 sm:col-span-6 col-span-12"
-        />
+        <!--
+          <TextArea
+            label="Комментарий"
+            :required="true"
+            v-model="products_request.comment"
+            class="m-3 sm:col-span-6 col-span-12"
+          />
+        -->
 
     </div>
 </template>

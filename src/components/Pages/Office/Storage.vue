@@ -97,7 +97,6 @@ onScopeDispose(clearMemo);
 
           </div>
 
-          <!-- <preview v-if="selected" :key="`${isThePage ? 'on' : 'off'}`" /> -->
           <preview v-if="state.selectedId" :key="`${isThePage ? 'on' : 'off'}`" />
 
         </div>

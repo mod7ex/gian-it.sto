@@ -16,6 +16,11 @@ let products_request;
 
 function setField(key) {
   if (key.includes('_id')) {
+    if (key === 'storage_id') {
+      products_request.storage_id = this?.product?.storage?.id;
+      return;
+    }
+
     products_request[key] = this[key.replace('_id', '')]?.id;
     return;
   }

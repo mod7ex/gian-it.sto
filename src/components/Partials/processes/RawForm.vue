@@ -19,7 +19,7 @@ await (async ()=>{
     <div>
       <div>
         <Input
-          label="Название процесса"
+          label="Название"
           v-model="process.name"
           :required="true"
           :error="v$.name.$errors[0]?.$message"

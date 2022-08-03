@@ -60,7 +60,7 @@ if (props.position === 'center') {
       <MenuItems :class="menuStyles">
         <slot name="items" :items="items">
           <div class="py-1" v-for="(child, i) in items" :key="i">
-            <MenuItem v-slot="{ active }" v-for="item in child" :key="item.label">
+            <MenuItem v-slot="{ active }" v-for="item in child.filter(({hide}) => !hide)" :key="item.label">
                 <button
                     v-if="item.click"
                     :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'w-full text-left block px-4 py-2 text-sm']"

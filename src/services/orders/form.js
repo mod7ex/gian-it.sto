@@ -32,6 +32,8 @@ const defaults = {
 
   process_id: '',
 
+  total_sum: '',
+
   // comment: '',
 };
 
@@ -70,6 +72,11 @@ const setField = function (key) {
 
 const setForm = async (payload) => {
   Object.keys(fields).forEach(setField, payload ?? {});
+};
+
+export const setOrder = async (order_id) => {
+  const order = await $.order(order_id);
+  setForm(order);
 };
 
 const log = (e) => {
@@ -115,13 +122,12 @@ export default () => effectScope().run(() => {
   const atMounted = async () => {
     const { id } = route.params;
     if (isThePage.value && id) {
-      const order = await $.order(route.params.id);
-      await setForm(order);
+      await setOrder(route.params.id);
 
       return;
     }
 
-    await setForm(generateDefault());
+    setForm(generateDefault());
   };
 
   const dropOrder = async () => {
@@ -148,5 +154,6 @@ export default () => effectScope().run(() => {
     clearMemory,
     dropOrder,
     route,
+    setOrder,
   };
 });

@@ -61,7 +61,7 @@ const load = async (payload) => {
   state.raw = await $.products_requests(payload);
 };
 
-const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));
+const drop = async (id) => _$.products_request(id, (v) => state.raw.deleteById(v));
 
 const productsRequests = computed(() => getProductsRequests(state.raw));
 

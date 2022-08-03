@@ -40,9 +40,7 @@ const getProducts = (bool) => computed(() => {
   return items.filter(({ product_requests }) => contains(product_requests, 'wait'));
 });
 
-const setAvailability = (bool) => {
-  state.inStock = bool ?? false;
-};
+const setAvailability = (bool) => { state.inStock = bool ?? false; };
 
 const replace = (payload) => {
   if (!payload.id) return;

@@ -7,6 +7,7 @@ import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import store from '~/store/orders/work';
 import useAppRouter from '~/composables/useAppRouter';
+import { setOrder } from '~/services/orders/form';
 
 const toaster = useToast();
 
@@ -32,6 +33,7 @@ const saveForm = async (order_id) => {
   } finally {
     if (success) {
       await load({ order_id });
+      await setOrder(order_id);
       toaster.success(message);
     }
   }

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onScopeDispose } from 'vue';
+import { computed, onMounted, onScopeDispose } from 'vue';
 import Table from '@/Layout/Table.vue';
 import Link from '@/UI/Link.vue';
 import useIntersectionObserver from '~/composables/useIntersectionObserver';
@@ -16,20 +16,20 @@ const { select, reset } = store;
 
 const { dropProduct, defaults } = form();
 
-const { fetchProducts, redirectToForm, isThePage, products } = service();
+const { fetchProducts, redirectToForm, isThePage, products, target } = service();
 
 const { pixel, container } = useIntersectionObserver(() => { emit('bottomTouched'); }, computed(() => products?.value?.length > 0));
 
 const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Количество', key: 'count' },
-  { label: 'Место', key: 'place' },
+//   { label: 'Место', key: 'place' },
 ];
 
 await Promise.all([fetchProducts(true)]);
 
 onScopeDispose(() => reset(true));
-
+ 
 </script>
 
 <template>
@@ -70,12 +70,14 @@ onScopeDispose(() => reset(true));
             </template>
 
             <template #td-count="{ value }" >
-                <p :key="item.count">{{ value }}</p>
+                <p :key="item?.count">{{ value }}</p>
             </template>
 
+        <!--
             <template #td-place="{ value }" >
                 {{ value }}
             </template>
+        -->
         </Table>
 
         <pixel />

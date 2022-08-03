@@ -1,4 +1,6 @@
 <script setup>
+import { defaults } from '~/composables/useAvatar';
+
 const props = defineProps({
   image: {
     type: String,
@@ -24,7 +26,7 @@ const props = defineProps({
   <div class="flex-shrink-0 group block">
     <div class="flex items-center">
       <div>
-        <img class="object-cover inline-block h-9 w-9 rounded-full" :src="props.image" alt="" style="min-width: 40px; min-height: 40px" />
+        <img class="object-cover inline-block h-9 w-9 rounded-full" :src="props.image ?? defaults.avatar" alt="" style="min-width: 40px; min-height: 40px" />
       </div>
 
       <slot name="detail">

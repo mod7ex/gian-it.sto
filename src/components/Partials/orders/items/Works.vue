@@ -6,14 +6,24 @@ import store from '~/store/orders/work';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useAppRouter from '~/composables/useAppRouter';
 import service from '~/services/orders/work';
+import { setOrder } from '~/services/orders/form';
 
 const { render } = service();
 
-const { route } = useAppRouter()
+const { route } = useAppRouter();
 
 const { drop } = useConfirmDialog();
 
 const { load, state, drop: dropWork } = store;
+
+const dropWorkThenSet = async (v) => {
+  const result = await dropWork(v);
+  try {
+    return result;
+  } finally {
+    await setOrder(route.params.id);
+  }
+};
 
 const fields = [
   { label: 'Вид работы', key: 'name' },
@@ -31,8 +41,9 @@ await load({order_id :route.params.id});
   <Table
     :fields="fields"
     :items="state.raw"
-    @delete="(id) => drop(() => dropWork(id))"
+    @delete="(id) => drop(() => dropWorkThenSet(id))"
     @edit="(id) => render(id)"
+    last
   >
       <!-- Body -->
 
@@ -61,5 +72,11 @@ await load({order_id :route.params.id});
       </template>
 
       <!-- ****** -->
+
+      <!-- aditional row -->
+
+      <template #td-last-name="{ }" >сумму</template>
+
+      <template #td-last-sum="{ items }" >{{ items.reduce((prev, curr) => prev + (curr.sum ?? 0), 0) }} ₽</template>
   </Table>
 </template>

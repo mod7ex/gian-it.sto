@@ -22,6 +22,21 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+
+  last: {
+    type: Boolean,
+    default: false,
+  },
+
+  noDelete: {
+    type: Boolean,
+    default: false,
+  },
+
+  noEdit: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['delete', 'edit', 'bottomTouched']);
@@ -60,11 +75,12 @@ const { pixel, container } = useIntersectionObserver(() => {
 
                     <Td v-if="props.actions" class="text-center py-5">
                         <Dropdown
+                            v-if="!props.noDelete || !props.noEdit"
                             direction="right"
                             position="center"
                             :items="[[
-                                { label: 'Изменить', click: () => $emit('edit', item.id), icon: PencilIcon },
-                                { label: 'Удалить', click: () => $emit('delete', item.id), icon: XIcon },
+                                { label: 'Изменить', click: () => $emit('edit', item.id), icon: PencilIcon, hide: props.noEdit },
+                                { label: 'Удалить', click: () => $emit('delete', item.id), icon: XIcon, hide: props.noDelete },
                             ]]"
                         >
                             <MenuButton>
@@ -75,6 +91,14 @@ const { pixel, container } = useIntersectionObserver(() => {
                         </Dropdown>
                     </Td>
                 </Tr>
+
+                <Tr :class="(props.items.length & 1) ? 'bg-white' : 'bg-gray-100'" v-if="props.last">
+                    <Td v-for="field in props.fields" :key="`las-${field.key}-${i}`">
+                        <slot :name="`td-last-${field.key}`" :items="items"></slot>
+                    </Td>
+                    <Td v-if="props.actions" class="text-center py-5"></Td>
+                </Tr>
+
             </TBody>
         </Table>
 

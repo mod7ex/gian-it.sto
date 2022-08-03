@@ -23,3 +23,5 @@
 ## . A store class or controller class (OOP) could have been created to avoid repetition
 
 ### -----> Todo: when permissions are editable uncomment tabs and permission for orders
+### -----> сумма работ + суммы запчастей = Сумма: 100 000 ₽
+

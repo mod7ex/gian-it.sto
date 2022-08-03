@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import { DocumentTextIcon } from '@heroicons/vue/outline';
-import Button from '@/UI/Button.vue';
+// import { DocumentTextIcon } from '@heroicons/vue/outline';
+// import Button from '@/UI/Button.vue';
 import DocPreview from '@/Layout/modal/DocPreview.vue';
 import service from '~/services/orders/template';
 import store from '~/store/orders/documents';
@@ -20,11 +20,13 @@ const toVisualize = ref();
 
 <template>
   <div>
-      <v-can ability="crud document templates" class="mb-5">
-        <Button color="blue" class="mr-3" @click="() => render()">
-          <DocumentTextIcon class="w-5 h-5 mr-1"/>Загрузить шаблон
-        </Button>
-      </v-can>
+      <!--
+        <v-can ability="crud document templates" class="mb-5">
+          <Button color="blue" class="mr-3" @click="() => render()">
+            <DocumentTextIcon class="w-5 h-5 mr-1"/>Загрузить шаблон
+          </Button>
+        </v-can>
+      -->
 
       <!-- Document preview  -->
       <Teleport to="#sto-modal-teleport">

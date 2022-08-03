@@ -1,6 +1,6 @@
 <script setup>
 import { ArrowLeftIcon, ViewListIcon, ViewGridIcon, PlusCircleIcon } from '@heroicons/vue/outline';
-import { onMounted, onScopeDispose, ref } from 'vue';
+import { onMounted, ref, onScopeDispose } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
@@ -12,11 +12,11 @@ import store from '~/store/storage/products';
 import $ from '~/helpers/fetch.js';
 import useAppRouter from '~/composables/useAppRouter';
 
-const { setAvailability, state, selected, selectedProduct, reset } = store;
+const { setAvailability, state } = store;
 
 const suspenseArea = useSuspense();
 
-const { fetchProducts, isThePage } = service();
+const { fetchProducts, isThePage, clearMemo } = service();
 const { route } = useAppRouter();
 
 const grid = ref(true);
@@ -27,7 +27,7 @@ onMounted(async () => {
   currentStorage.value = isThePage.value ? 'Запрошенные запчасти' : (await $.storage(route.params.id))?.name;
 });
 
-onScopeDispose(reset);
+onScopeDispose(clearMemo);
 
 </script>
 
@@ -97,7 +97,8 @@ onScopeDispose(reset);
 
           </div>
 
-          <preview v-if="selected" :key="selectedProduct.id ?? 'product-preview'" />
+          <!-- <preview v-if="selected" :key="`${isThePage ? 'on' : 'off'}`" /> -->
+          <preview v-if="state.selectedId" :key="`${isThePage ? 'on' : 'off'}`" />
 
         </div>
       </template>

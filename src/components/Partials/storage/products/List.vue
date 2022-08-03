@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onScopeDispose } from 'vue';
 import Table from '@/Layout/Table.vue';
 import Link from '@/UI/Link.vue';
 import useIntersectionObserver from '~/composables/useIntersectionObserver';
@@ -12,13 +12,13 @@ defineProps({ grid: Boolean });
 
 const emit = defineEmits(['bottomTouched']);
 
-const { select, products } = store;
+const { select, reset } = store;
 
 const { dropProduct, defaults } = form();
 
-const { fetchProducts, redirectToForm, fetchRequestedParts, isThePage } = service();
-
-const { pixel, container } = useIntersectionObserver(() => { emit('bottomTouched'); }, computed(() => products.value.length > 0));
+const { fetchProducts, redirectToForm, fetchRequestedParts, isThePage, products } = service();
+ 
+const { pixel, container } = useIntersectionObserver(() => { emit('bottomTouched'); }, computed(() => products?.value?.length > 0));
 
 const fields = [
   { label: 'Название', key: 'name' },
@@ -28,6 +28,8 @@ const fields = [
 
 await Promise.all([fetchProducts(true), fetchRequestedParts()]);
 
+onScopeDispose(() => reset(true));
+
 </script>
 
 <template>
@@ -35,7 +37,7 @@ await Promise.all([fetchProducts(true), fetchRequestedParts()]);
 
         <div class="flex" v-if="grid">
             <ul role="list" class="w-full grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                <li v-for="item in products" :key="item.id" class="relative shadow-md">
+                <li v-for="item in products" :key="`${item.id}-${item.count}`" class="relative shadow-md">
                     <div class="group block w-full aspect-w-10 aspect-h-7 rounded-lg bg-gray-100 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-offset-gray-100 focus-within:ring-indigo-500 overflow-hidden">
                         <div
                             :style="`background-image: url(${item.photo ?? defaults.photo});`"

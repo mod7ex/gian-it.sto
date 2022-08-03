@@ -1,6 +1,6 @@
 <script setup>
 import { PencilIcon as PencilSolidIcon, ArrowNarrowLeftIcon, CheckIcon, RefreshIcon, PlusIcon } from '@heroicons/vue/solid';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import Button from '@/UI/Button.vue';
 import Avatar from '@/UI/Avatar.vue';
 import TextArea from '@/UI/TextArea.vue';
@@ -10,13 +10,14 @@ import service from '~/services/storage/products';
 import save from '~/helpers/save';
 import { generateShapedIdfromId } from '~/helpers';
 
-const { redirectToForm, isThePage, productsRequests, ping, key } = service();
+const { redirectToForm, isThePage, productsRequests, ping, key, replaceInRequests, products } = service();
 
 const { dropProduct, defaults } = form();
-const { select, selectedProduct: target, replace, state } = store;
+const { select, replace, state } = store;
 
-// const requests = computed(() => productsRequests.value[state.selectedId]?.filter(({ status }) => status === 'wait'));
 const requests = computed(() => productsRequests.value[state.selectedId] ?? []);
+
+const target = computed(() => (state.selectedId ? products.value.find(({ id }) => id === state.selectedId) ?? {} : {}));
 
 const editMode = ref(false);
 const description = ref('');
@@ -30,7 +31,9 @@ const saveDescription = async () => {
       const product = { ...target.value };
       product.description = description.value;
       const { data, success } = await save.product(product, null, true);
-      success && replace(data?.product);
+      // !isThePage.value && success && replace(data?.product);
+      // isThePage.value && success && replaceInRequests(data?.product);
+      success && (isThePage.value ? replaceInRequests : replace)(data?.product);
       return success;
     } finally {
       isUpdating.value = false;
@@ -40,13 +43,11 @@ const saveDescription = async () => {
   }
 };
 
-const reset = () => {
-  description.value = target.value.description;
-};
+const reset = () => { description.value = target.value.description; };
 
-const close = () => {
-  editMode.value = false;
-};
+watch(target, reset);
+
+const close = () => { editMode.value = false; };
 
 const edit = async () => {
   if (isUpdating.value) return;
@@ -96,8 +97,7 @@ onMounted(() => {
                 <dl class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                     <div class="py-3 flex justify-between text-sm font-medium">
                         <dt class="text-gray-500">Добавил</dt>
-                        <dd class="text-gray-900">Вася Пупкин</dd>
-                        <dd class="text-gray-900">{{ `${target.user?.name} ${target.user?.surname}` ?? 'Unknown' }}</dd>
+                        <dd class="text-gray-900">{{ `${target.user?.name ?? ''} ${target.user?.surname ?? 'Unknown'}` }}</dd>
                     </div>
 
                     <div class="py-3 flex justify-between text-sm font-medium">
@@ -126,7 +126,7 @@ onMounted(() => {
                 <h3 class="font-medium text-gray-900">Описание</h3>
                 <div>
                     <div class="mt-2 flex items-center justify-between mb-2">
-                        <p class="text-sm text-gray-500 italic ml-1">
+                        <p class="text-sm text-gray-500 italic ml-1" :key="target.description">
                             {{ description ? `${description.substr(0, 23)}...` : 'Добавить описание' }}
                         </p>
 
@@ -184,7 +184,7 @@ onMounted(() => {
 <!-- -->
             <div class="flex justify-between">
                 <Button color="blue" class="flex-1 justify-center" @click="() => redirectToForm(target?.storage?.id, target.id)">Изменить</Button>
-                <Button color="red" class="flex-1 ml-3 justify-center" @click="()=>dropProduct(target?.storage?.id, target.id)">Удалить</Button>
+                <Button color="red" class="flex-1 ml-3 justify-center" @click="()=>dropProduct(target.id, isThePage)">Удалить</Button>
             </div>
         </div>
     </aside>
@@ -192,8 +192,6 @@ onMounted(() => {
 
 <style scoped>
 
-textarea{
-    width: 100%;
-}
+textarea{ width: 100%; }
 
 </style>

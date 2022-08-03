@@ -10,19 +10,6 @@ const state = reactive({
   page: 1,
 });
 
-const decreaseCount = (product_id, amount) => {
-  for (let i = 0; i < state.raw.length; i++) {
-    if (state.raw[i].id === product_id) {
-      state.raw[i].count -= amount;
-      return;
-    }
-  }
-};
-
-const set = (data) => {
-  state.raw = data;
-};
-
 const setAvailability = (bool) => {
   state.inStock = bool ?? false;
 };
@@ -33,11 +20,11 @@ const replace = (payload) => {
   state.raw[i] = payload;
 };
 
-const reset = () => {
+const reset = (clear_selected = false) => {
   state.raw = [];
   state.pages = 1000;
   state.page = 1;
-  state.selectedId = undefined;
+  clear_selected && (state.selectedId = undefined);
   state.inStock = true;
 };
 
@@ -72,11 +59,8 @@ const locallyDropProduct = (v) => {
   state.raw.deleteById(v);
 };
 
-const selectedProduct = computed(() => (state.selectedId ? state.raw.find(({ id }) => id === state.selectedId) ?? {} : {}));
-
 export default {
   state: readonly(state),
-  set,
   setAvailability,
   load,
   sort,
@@ -85,10 +69,8 @@ export default {
   fill,
   select,
   replace,
-  selectedProduct,
-  selected: computed(() => !!(selectedProduct.value.id)),
+  selected: computed(() => !!(state.selectedId)),
   products: computed(() => state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0))),
   options: computed(() => state.raw.map(({ id, name }) => ({ value: id, label: name }))),
-  decreaseCount,
   locallyDropProduct,
 };

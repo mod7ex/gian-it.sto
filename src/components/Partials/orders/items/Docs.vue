@@ -13,7 +13,7 @@ const { drop } = useConfirmDialog();
 const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Посмотреть', key: 'view' }, // fake keys
-  { label: 'Удалить', key: 'drop' }, // fake keys
+  // { label: 'Удалить', key: 'drop' }, // fake keys
 ];
 
 await loadTemplates();
@@ -40,11 +40,13 @@ defineEmits(['preveiw']);
       </Link>
     </template>
 
-    <template #td-drop="{ item }" >
+    <!-- 
+      <template #td-drop="{ item }" >
       <Link @click="() => drop(() => dropTemplate(item.id))">
         <TrashIcon class="text-blue-600 h-6 hover:text-blue-900" />
       </Link>
-    </template>
+    </template> 
+    -->
 
     <!-- ****** -->
   </Table>

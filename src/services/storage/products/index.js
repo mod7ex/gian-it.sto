@@ -1,14 +1,14 @@
-import { reactive, effectScope, onScopeDispose, computed } from 'vue';
+import { reactive, effectScope, computed } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 import store from '~/store/storage/products';
 import useAppRouter from '~/composables/useAppRouter';
-import requestsStore from '~/store/orders/storage-requests';
 import departmentStore from '~/store/departments';
+import requestsStore from '~/store/orders/storage-requests';
 
-const { load, productsRequests, setRequestStatus, state, locallyDropRequest } = requestsStore;
+const { load, productsRequests, setRequestStatus, state, products: requestedProducts, locallyDropRequest, replace, updateCount } = requestsStore;
 const { current } = departmentStore;
 
-const { sort, fill, reset, set, decreaseCount, locallyDropProduct, products } = store;
+const { sort, fill, reset, products: rawProducts, select } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -19,17 +19,27 @@ const pivot = {
 
 let filter;
 
+const clearMemo = () => {
+  filter = undefined;
+};
+
 const ping = async (request, status = 'done') => {
   const { id, product: { id: product_id }, count } = request;
   if (!id) return;
   const wasSet = await setRequestStatus(id, status);
   if (wasSet && product_id && count) {
-    decreaseCount(product_id, count);
-    // if (productsRequests.value[product_id].length === 0) locallyDropProduct(product_id);
+    locallyDropRequest(id);
+    if (productsRequests.value[product_id]) {
+      updateCount(product_id, count);
+      return;
+    }
+    select();
   }
 };
 
 export default () => effectScope().run(() => {
+  const { redirectTo, isThePage, route } = useAppRouter('StorageRequests');
+
   if (!filter) {
     filter = reactive({
       name: '',
@@ -40,8 +50,6 @@ export default () => effectScope().run(() => {
 
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
-  const { redirectTo, isThePage, route } = useAppRouter('StorageRequests');
-
   const fetchProducts = async (bool = false) => {
     if (isThePage.value) return;
     if (bool) reset();
@@ -50,15 +58,13 @@ export default () => effectScope().run(() => {
 
   const fetchRequestedParts = async () => {
     if (!isThePage.value) return;
-    set(await load({ department_id: current.value, status: 'wait' }));
+    await load({ department_id: current.value, status: 'wait' });
   };
 
   const redirectToForm = async (id, product) => {
     if (!id || !product) return;
     await redirectTo({ name: 'EditStorage', params: { product, id } });
   };
-
-  onScopeDispose(() => { filter = undefined; });
 
   return {
     order,
@@ -70,5 +76,10 @@ export default () => effectScope().run(() => {
     productsRequests,
     ping,
     key: computed(() => state.raw.length),
+    replaceInRequests: replace,
+    requestedProducts,
+    rawProducts,
+    clearMemo,
+    products: isThePage.value ? requestedProducts : rawProducts,
   };
 });

@@ -8,6 +8,9 @@ import save from '~/helpers/save';
 import store from '~/store/storage/products';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useAuth from '~/composables/useAuth';
+import requestsStore from '~/store/orders/storage-requests';
+
+const { dropProduct: dropProductFromRequests } = requestsStore;
 
 const { select, drop: removeProduct } = store;
 const { user } = useAuth();
@@ -19,8 +22,11 @@ export default () => effectScope().run(() => {
   const { route, isThePage, back } = useAppRouter('EditStorage');
 
   const previousPage = async (id) => {
-    if (id) select(id);
-    back();
+    try {
+      back();
+    } finally {
+      if (id) select(id);
+    }
   };
 
   const { avatar, isUploadingAvatar, isValideAvatarFileSize, log, setAvatar, updateAvatar, defaults } = useAvatar();
@@ -97,15 +103,15 @@ export default () => effectScope().run(() => {
     await setFields(payload || {});
   };
 
-  const dropProduct = (id = route.params.product) => drop(async () => {
+  const dropProduct = (id = route.params.product, bool = false) => drop(async () => {
     const { success, message } = await removeProduct(id);
+    bool && dropProductFromRequests(id);
     success && isThePage.value && back();
+    success && select();
     return { success, message };
   });
 
-  onScopeDispose(() => {
-    product = undefined;
-  });
+  onScopeDispose(() => { product = undefined; });
 
   return {
     isValideAvatarFileSize,

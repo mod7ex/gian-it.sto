@@ -34,6 +34,7 @@ await fetchClients(true);
 <template>
     <div :ref="(v)=>container = v">
         <Table
+            @bottom-touched="()=>fetchClients()"
             :fields="fields"
             :items="state.raw"
             @delete="(id) => drop(() => dropClient(id))"

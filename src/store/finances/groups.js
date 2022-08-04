@@ -14,6 +14,8 @@ const state = reactive({
 
 const reset = () => {
   state.raw = [];
+  state.pages = 100;
+  state.page = 1;
 };
 
 const load = async () => {
@@ -22,9 +24,10 @@ const load = async () => {
 };
 
 const fill = async (payload) => {
+  if (!hasCRUD) return;
   if (state.page > state.pages) return;
   const data = await $.finance_groups({ ...payload, page: state.page });
-  state.raw = state.raw.concat(data?.finance_groups ?? []);
+  state.raw = state.raw.concat(data ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
 };

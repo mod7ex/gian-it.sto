@@ -3,19 +3,33 @@ import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
 import { userHasAtLeastOnePermission } from '~/lib/permissions.js';
 
-const hasPermission = userHasAtLeastOnePermission(['crud cars', 'crud car marks', 'crud fuels', 'crud engine volumes', 'crud car models']);
+// const hasPermission = userHasAtLeastOnePermission(['crud cars', 'crud car marks', 'crud fuels', 'crud engine volumes', 'crud car models']);
+const hasPermission = userHasAtLeastOnePermission(['crud cars']);
 
 const state = reactive({
   raw: [],
+  pages: 100,
+  page: 1,
 });
 
 const reset = () => {
   state.raw = [];
+  state.pages = 100;
+  state.page = 1;
 };
 
 const load = async (payload = {}) => {
   if (!hasPermission) return;
   state.raw = await $.cars(payload);
+};
+
+const fill = async (payload) => {
+  if (!hasPermission) return;
+  if (state.page > state.pages) return;
+  const data = await $({ key: 'cars', params: { ...payload, page: state.page } });
+  state.raw = state.raw.concat(data?.cars ?? []);
+  state.pages = data?.meta?.last_page ?? 100;
+  state.page += 1;
 };
 
 const drop = async (id) => _$.car(id, (v) => {
@@ -28,6 +42,7 @@ export default {
   state: readonly(state),
   reset,
   load,
+  fill,
   drop,
   cars: computed(() => state.raw.map(extractor)),
   options: computed(() => state.raw.map(({ id, vin }) => ({ label: vin, value: id }))),

@@ -7,10 +7,10 @@ import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/finances/RawForm.vue';
 import communicate from '~/helpers/communicate';
 import service from '~/services/finances/index';
-// import departmentStore from '~/store/departments';
+import departmentStore from '~/store/departments';
 import formRules from '~/validationsRules/finance';
 
-// const { current } = departmentStore;
+const { current } = departmentStore;
 
 const toaster = useToast();
 
@@ -19,13 +19,11 @@ let v$;
 
 const setFormField = function (key) {
   if (key.includes('_id')) {
-    /*
     if (key === 'department_id') {
       // we might wanna make it optional if the user doesn't have crud departments
       finance.department_id = this.department?.id ?? current.value;
       return;
     }
-    */
 
     finance[key] = this[key.replace('_id', '')]?.id;
     return;
@@ -34,9 +32,7 @@ const setFormField = function (key) {
   finance[key] = this[key] ?? '';
 };
 
-const setForm = (payload = {}) => {
-  Object.keys(finance).forEach(setFormField, payload);
-};
+const setForm = (payload = {}) => { Object.keys(finance).forEach(setFormField, payload); };
 
 const atMountedFinanceForm = async () => {
   const { id } = finance;
@@ -88,7 +84,7 @@ export default function () {
             sum: '',
             finance_group_id: '',
             order_id: '',
-            // department_id: '',
+            department_id: current.value,
           });
 
           v$ = useVuelidate(formRules(), finance, { $lazy: true });
@@ -109,5 +105,6 @@ export default function () {
     atMountedFinanceForm,
     finance,
     v$,
+    current,
   };
 }

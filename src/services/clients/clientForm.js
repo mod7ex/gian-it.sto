@@ -26,7 +26,6 @@ const defaultClientFields = {
   born_at: '',
   phones: [''],
   emails: [''],
-  city_id: '',
   department_id: '',
   cars: [],
 };
@@ -57,11 +56,6 @@ const setClientField = function (key) {
   if (key === 'department_id') {
     // if (!hasCRUDdepartments) clientFields.department_id = userDepartment.value; // not needed
     clientFields.department_id = this.department?.id ?? current.value;
-    return;
-  }
-
-  if (key === 'city_id') {
-    clientFields.city_id = this.city?.id;
     return;
   }
 

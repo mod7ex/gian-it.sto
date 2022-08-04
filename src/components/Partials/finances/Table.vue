@@ -6,6 +6,7 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import store from '~/store/finances/finances';
 import service from '~/services/finances/index';
 import Table from '@/Layout/Table.vue';
+import { generateShapedIdfromId } from '~/helpers'
 
 const { render } = form();
 
@@ -17,6 +18,7 @@ const { drop } = useConfirmDialog();
 
 const fields = [
   { label: 'Название', key: 'name' },
+  { label: 'Заказ-наряд', key: 'order' },
   { label: 'Сумма (₽)', key: 'sum' },
   { label: 'Тип операции', key: 'operation_type' },
   // { label: 'Oтдел', key: 'department' },
@@ -45,6 +47,12 @@ await fetchFinances(true);
             <Link @click="() => render(id)">{{ value }} </Link>
         </template>
 
+        <template #td-order="{ value }" >
+            <Link :href="{ name: 'OrderEdit', params: { id: value?.id } }" :disabled="!value?.id">
+                {{ value?.id ? `#${generateShapedIdfromId(value?.id)}` : '_' }}
+            </Link>
+        </template>
+
         <template #td-sum="{ value }" >
             <span class="font-bold" >{{ value }}  ₽</span>
         </template>
@@ -54,7 +62,7 @@ await fetchFinances(true);
                 {{ value === 'in' ? 'Приход' : 'Расход' }}
             </Badge>
         </template>
-<!--
+<!-- 
         <template #td-department="{ value }" >
             {{ value?.name ?? '_' }}
         </template>

@@ -44,6 +44,7 @@ if (props.showOwner) { fields.push({ label: 'Владелец', key: 'client' })
 
 <template>
     <Table
+        @bottom-touched="() => $emit('bottomTouched')"
         :fields="fields"
         :items="props.cars"
         @delete="(id) => drop(() => dropCarWrapper(id))"

@@ -16,14 +16,16 @@ export const pingLoader = (bool = true, to, from) => {
   if (isEmptyToastsList.value) {
     clearTimeout(timer);
 
-    if (bool) {
-      if (to.name !== 'OrderEdit' || !to.query.tab) {
-        loading.value = bool;
+    setTimeout(() => {
+      if (bool) {
+        if (to.name !== 'OrderEdit' || !to.query.tab) {
+          loading.value = bool;
+        }
       }
-    }
 
-    timer = setTimeout(() => {
-      loading.value = false;
-    }, import.meta.env.VITE_NAVIGATION_LOADER_DURATION);
+      timer = setTimeout(() => {
+        loading.value = false;
+      }, import.meta.env.VITE_NAVIGATION_LOADER_DURATION);
+    }, 0);
   }
 };

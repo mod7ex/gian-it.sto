@@ -50,7 +50,7 @@ await load({ order_id: route.params.id });
   >
       <!-- Body -->
       <template #td-product="{ value }" >
-          <Link :href="route.fullPath" >{{ value?.name }}</Link>
+          <Link disabled >{{ value?.name }}</Link>
       </template>
 
       <template #td-count="{ value }" >

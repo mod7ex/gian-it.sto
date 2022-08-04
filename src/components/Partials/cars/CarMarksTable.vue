@@ -5,22 +5,26 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/cars/marks';
 
-const { state, load, drop: dropMark } = store;
+const { state, fill, drop: dropMark, reset } = store;
 
 const { drop } = useConfirmDialog();
 
 const { render } = form();
 
-const fields = [
-  { label: 'Название', key: 'name' },
-];
+const fields = [ { label: 'Название', key: 'name' }, ];
 
-await load();
+const fetchMarks = async (bool = false) => {
+  if (bool) reset();
+  await fill();
+};
+
+await fetchMarks(true);
 
 </script>
 
 <template>
     <Table
+        @bottom-touched="() => fetchMarks()"
         :fields="fields"
         :items="state.raw"
         @delete="(id) => drop(() => dropMark(id))"

@@ -7,14 +7,12 @@ import service from '~/services/clients/clientForm.js';
 import Button from '@/UI/Button.vue';
 import CarsTable from '~/components/Layout/cars/CarsTable.vue';
 import departmentStore from '~/store/departments';
-import cityStore from '~/store/cities';
 
 const { options: departmentOptions } = departmentStore;
-const { options: cityOptions, load } = cityStore;
 
 const { clientFields, v$, atMountedClientForm, addItem } = service();
 
-await Promise.all([load(), atMountedClientForm()]);
+await atMountedClientForm();
 
 const addMail = addItem('emails');
 const addPhone = addItem('phones');
@@ -66,10 +64,6 @@ const notifyClientCars = (v) => {
         <div class="col-span-12 sm:col-span-4 ">
             <Input label="Паспорт" v-model="clientFields.passport" />
             <!-- <Input label="Паспорт" mask="#### #######" v-model="clientFields.passport" /> -->
-        </div>
-
-        <div class="col-span-12 sm:col-span-3 ">
-            <Select label="Город" :options="cityOptions" v-model="clientFields.city_id" />
         </div>
 
         <v-can ability="crud departments" class="col-span-12 sm:col-span-3">

@@ -75,7 +75,7 @@ await atMounted();
 <style scoped>
 .stage{
   min-width: 300px;
-  min-height: 600px;
+  min-height: 400px;
 }
 
 .ghost {

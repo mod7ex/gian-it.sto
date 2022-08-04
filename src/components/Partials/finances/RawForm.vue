@@ -7,15 +7,12 @@ import departmentStore from '~/store/departments';
 import orderStore from '~/store/orders/orders';
 
 const { options, load } = store;
-const { current } = departmentStore;
+const { current, options: depOptions } = departmentStore;
 const { load: loadOrders, options: orderOptions } = orderStore;
 
 const { finance, atMountedFinanceForm, v$ } = form();
 
-const types = [
-  { label: 'Приход', value: 'in' },
-  { label: 'Расход', value: 'out' },
-];
+const types = [{ label: 'Приход', value: 'in' }, { label: 'Расход', value: 'out' }];
 
 await Promise.all([load(), loadOrders({ department_id: current.value }), atMountedFinanceForm()]);
 
@@ -66,14 +63,13 @@ await Promise.all([load(), loadOrders({ department_id: current.value }), atMount
           :error="v$.finance_group_id.$errors[0]?.$message"
           @blured="v$.finance_group_id.$touch"
         />
-<!--
         <v-can ability="crud departments">
           <Select
             label="Отделение"
             v-model="finance.department_id"
-            :current"
+            :required="true"
+            :options="depOptions"
           />
         </v-can>
--->
     </div>
 </template>

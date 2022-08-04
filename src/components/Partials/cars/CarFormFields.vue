@@ -21,14 +21,7 @@ const { atMountedCarForm, carFields, theSelectedCarMark, v$, routeInstance } = f
 const extractor = ({ id, name }) => ({ value: id, label: name });
 const modelOptions = computed(() => getMarkModels(theSelectedCarMark.value).map(extractor));
 
-await (async () => {
-  await loadMarks();
-  await loadModels();
-  await loadEngines();
-  await loadFuels();
-  await loadClients();
-  await atMountedCarForm();
-})();
+await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClients(),atMountedCarForm()]);
 
 </script>
 
@@ -47,7 +40,13 @@ await (async () => {
         </div>
 
         <div class="col-span-12 sm:col-span-4">
-            <Input label="Вин номер" v-model="carFields.vin" />
+            <Input
+                label="Вин номер"
+                v-model="carFields.vin"
+                :required="true"
+                :error="v$.vin.$errors[0]?.$message"
+                @input="v$.vin.$touch"
+            />
         </div>
 
         <div class="col-span-12 sm:col-span-4">

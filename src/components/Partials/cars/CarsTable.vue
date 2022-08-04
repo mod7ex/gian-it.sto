@@ -2,12 +2,17 @@
 import CarsTable from '~/components/Layout/cars/CarsTable.vue'; 
 import store from '~/store/cars/cars';
 
-const { cars, load } = store;
+const { cars, fill, reset } = store;
 
-await load();
+const fetchCars = async (bool = false) => {
+  if (bool) reset();
+  await fill();
+};
+
+await fetchCars(true);
 
 </script>
 
 <template>
-  <cars-table :cars="cars" />
+  <cars-table :cars="cars" @bottom-touched="() => fetchCars()" />
 </template>

@@ -15,14 +15,20 @@ const { drop } = useConfirmDialog();
 
 const { render } = form();
 
-const { state, load, drop: dropCarModel } = store;
+const { state, fill, drop: dropCarModel, reset } = store;
 
-await load();
+const fetchModels = async (bool = false) => {
+  if (bool) reset();
+  await fill();
+};
+
+await fetchModels(true);
 
 </script>
 
 <template>
     <Table
+        @bottom-touched="() => fetchModels()"
         :fields="fields"
         :items="state.raw"
         @delete="(id) => drop(() => dropCarModel(id))"

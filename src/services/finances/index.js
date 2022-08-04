@@ -1,11 +1,11 @@
 import { reactive, onScopeDispose } from 'vue';
 import useOrder from '~/composables/useOrder.js';
-// import departmentStore from '~/store/departments';
+import departmentStore from '~/store/departments';
 import store from '~/store/finances/finances';
 
-// const { current } = departmentStore;
+const { current } = departmentStore;
 
-const { sort, fill, reset: resetStore } = store;
+const { sort, fill, reset: resetStore, state } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -26,7 +26,6 @@ export default function () {
       name: '',
       type: '',
       sum: '',
-      // department_id: current,
       start_date: '',
       end_date: '',
       order: '',
@@ -47,7 +46,7 @@ export default function () {
 
   const fetchFinances = async (bool = false) => {
     if (bool) resetStore();
-    await fill(filter);
+    await fill({ ...filter, department_id: current.value });
     // trigger();
   };
 
@@ -56,8 +55,8 @@ export default function () {
     filter,
     resetFilter,
     fetchFinances,
-    cleanUp: () => onScopeDispose(() => {
-      filter = undefined;
-    }),
+    current,
+    state,
+    cleanUp: () => onScopeDispose(() => { filter = undefined; }),
   };
 }

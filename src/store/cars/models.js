@@ -7,15 +7,28 @@ const hasCRUD = userHasPermission('crud car models');
 
 const state = reactive({
   raw: [],
+  pages: 100,
+  page: 1,
 });
 
 const reset = () => {
   state.raw = [];
+  state.pages = 100;
+  state.page = 1;
 };
 
 const load = async () => {
   if (!hasCRUD) return;
   state.raw = await $.car_models();
+};
+
+const fill = async (payload) => {
+  if (!hasCRUD) return;
+  if (state.page > state.pages) return;
+  const data = await $({ key: 'car_models', params: { ...payload, page: state.page } });
+  state.raw = state.raw.concat(data?.car_models ?? []);
+  state.pages = data?.meta?.last_page ?? 100;
+  state.page += 1;
 };
 
 const drop = async (id) => _$.car_model(id, (v) => {
@@ -34,5 +47,6 @@ export default {
   reset,
   load,
   drop,
+  fill,
   getMarkModels,
 };

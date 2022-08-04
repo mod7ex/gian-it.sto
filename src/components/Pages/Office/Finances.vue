@@ -1,6 +1,6 @@
 <script setup>
 import { PlusCircleIcon, CollectionIcon, RefreshIcon, CheckCircleIcon, CurrencyDollarIcon } from '@heroicons/vue/outline';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
@@ -13,13 +13,10 @@ import Table from '@/Partials/finances/Table.vue';
 import form from '~/services/finances/form';
 import service from '~/services/finances/index';
 import { debounce, objectSignature } from '~/helpers';
-import departmentStore from '~/store/departments';
-
-const { current } = departmentStore;
 
 const { render } = form();
 
-const { filter, order, resetFilter, cleanUp } = service();
+const { filter, order, resetFilter, cleanUp, current, state } = service();
 
 const { criteriaOptions } = order;
 
@@ -33,6 +30,18 @@ watch(filter, debounce(() => {
 }), { deep: true }); // will work without deep because values are primary
 
 cleanUp();
+
+const reducers = {
+  balance: (b, curr) => b + (curr.sum * (curr.operation_type === 'in' ? 1 : -1)),
+  loss: (b, curr) => b + (curr.sum * (curr.operation_type === 'out' ? 1 : 0)),
+  wait: (b, curr) => '(Comming soon)',
+};
+
+const reducedState = (reducer, initial) => Array.prototype.reduce.apply(state.raw, [reducer, initial]);
+
+const balance = computed(() => reducedState(reducers.balance, 0));
+const loss = computed(() => reducedState(reducers.loss, 0));
+const wating = computed(() => reducedState(reducers.wait, 0));
 
 </script>
 
@@ -52,25 +61,25 @@ cleanUp();
       <Header>сводка</Header>
 
       <div class="flex flex-wrap items-stretch">
-        <div class="flex justify-start items-center rounded shadow p-4 flex-grow">
+        <div class="flex justify-start items-center rounded shadow p-4 flex-grow bg-gray-50">
           <div><CurrencyDollarIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
           <div>
             <h5 class="text-gray-500 font-semibold">Баланс</h5>
-            <h2 class="font-bold text-lg">10 000 0000 &#8381;</h2>
+            <h2 class="font-bold text-lg transactions">{{ balance }} &#8381;</h2>
           </div>
         </div>
-        <div class="mx-6 flex justify-start items-center rounded shadow p-4 flex-grow">
+        <div class="md:mx-6 flex justify-start items-center rounded shadow p-4 flex-grow bg-gray-50">
           <div><RefreshIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
           <div>
             <h5 class="text-gray-500 font-semibold">Траты</h5>
-            <h2 class="font-bold text-lg">-10 0000 &#8381;</h2>
+            <h2 class="font-bold text-lg transactions">-{{ loss }} &#8381;</h2>
           </div>
         </div>
-        <div class="flex justify-start items-center rounded shadow p-4 flex-grow">
+        <div class="flex justify-start items-center rounded shadow p-4 flex-grow bg-gray-50">
           <div><CheckCircleIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
           <div>
             <h5 class="text-gray-500 font-semibold">Ожидается</h5>
-            <h2 class="font-bold text-lg">10 0000 0000 &#8381;</h2>
+            <h2 class="font-bold text-lg transactions">{{ wating }} &#8381;</h2>
           </div>
         </div>
       </div>
@@ -110,7 +119,13 @@ cleanUp();
         </div>
       </div>
 
-      <suspense-area :key="`${filterSignature}`" />
+      <suspense-area :key="`${filterSignature}-${current}`" v-if="current != null" />
 
     </OfficeLayout>
 </template>
+
+<style scoped>
+.transactions{
+  min-width: 150px;
+}
+</style>

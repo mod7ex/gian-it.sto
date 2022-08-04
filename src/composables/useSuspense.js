@@ -2,8 +2,8 @@ import { defineComponent, h, Suspense, onErrorCaptured, ref, computed } from 'vu
 import { ExclamationIcon } from '@heroicons/vue/outline';
 import Spinner from '@/UI/Spinner.vue';
 
-const wrapper = h('div', { class: 'flex justify-center items-center' });
-// const wrapper = h('div', { class: 'bg-green-600 col-span-12 sm:col-span-12 flex justify-center items-center' });
+// const wrapper = h('div', { class: 'flex justify-center items-center' });
+const wrapper = h('div', { class: 'my-16 col-span-12 sm:col-span-12 flex justify-center items-center' });
 
 const defaultFallback = (text) => h(
   wrapper,
@@ -22,7 +22,7 @@ export default function useSuspense(Comp, FallbackComp) {
     props: {
       loadingMsg: {
         type: String,
-        default: 'Loading...',
+        default: 'Подождите идёт загрузка...',
       },
 
       errorMsg: {
@@ -35,7 +35,7 @@ export default function useSuspense(Comp, FallbackComp) {
       const errorMessage = ref();
 
       onErrorCaptured((e) => {
-        console.log(e);
+        console.log('From Suspense', e);
         errorMessage.value = e.message || errorMsg;
       });
 
@@ -47,6 +47,7 @@ export default function useSuspense(Comp, FallbackComp) {
         Suspense,
         {},
         {
+          // default: () => (Fallback), // for Debug
           default: () => (Comp ? h(Comp) : slots.default()),
           fallback: () => (!isThereError.value ? Fallback : errorFallback(errorMessage.value)),
         },

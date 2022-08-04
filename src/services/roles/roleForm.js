@@ -22,6 +22,7 @@ export default () => effectScope().run(() => {
   const { toggles: permissions, setToggles, truthyTogglesArray } = useToggles();
 
   const setRoleForm = async (payload) => {
+    role.name = payload?.name;
     role.title = payload?.title;
     role.id = payload?.id;
 
@@ -40,6 +41,7 @@ export default () => effectScope().run(() => {
     role = reactive({
       id: '',
       title: '',
+      name: '',
     });
 
     rawRolePermissions = shallowRef([]);

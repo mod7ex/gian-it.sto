@@ -12,11 +12,15 @@ export const loading = ref(false);
 
 let timer;
 
-export const pingLoader = (bool = true) => {
+export const pingLoader = (bool = true, to, from) => {
   if (isEmptyToastsList.value) {
     clearTimeout(timer);
 
-    if (bool) loading.value = bool;
+    if (bool) {
+      if (to.name !== 'OrderEdit' || !to.query.tab) {
+        loading.value = bool;
+      }
+    }
 
     timer = setTimeout(() => {
       loading.value = false;

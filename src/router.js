@@ -97,7 +97,7 @@ router.beforeEach((to, from, next) => {
 
 router.beforeEach(navigationGuards);
 
-router.beforeEach(pingLoader);
+router.beforeEach((to, from) => pingLoader(true, to, from));
 
 router.afterEach(() => pingLoader(false));
 

@@ -33,7 +33,7 @@ const props = defineProps({
     default: '',
   },
   disabled: {
-    type: Boolean,
+    type: [String, Number, Object, Symbol, Boolean],
     required: false,
   },
 });
@@ -77,7 +77,7 @@ const options = computed(() => props.options?.map((e) => {
       :multiple="props.multiple"
       @input="$emit('update:modelValue', $event.target.value)"
       @blur="$emit('blured')"
-      :disabled="props.disabled"
+      :disabled="!!props.disabled"
     >
       <option :selected="!modelValue" value="">-- {{options.length === 0 ? 'пустой' : 'выберите'}} --</option>
       <option

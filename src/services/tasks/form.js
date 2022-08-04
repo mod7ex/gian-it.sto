@@ -4,6 +4,9 @@ import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat, deepCopyObj } from '~/helpers';
 import save, { upload } from '~/helpers/save';
 import useToast from '~/composables/useToast.js';
+import depStore from '~/store/departments';
+
+const { current } = depStore;
 
 const defaults = {
   id: '',
@@ -19,10 +22,10 @@ const defaults = {
 
   start_at: '',
   end_at: '',
-
 };
 
 const deepDefaults = {
+  department_id: current,
   checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
@@ -72,6 +75,8 @@ export default () => effectScope().run(() => {
 
   const { route, isThePage, redirectTo } = useAppRouter('TaskEdit');
 
+  const { order_id } = route.query;
+
   if (!fields) {
     fields = reactive({ ...deepCopyObj(defaults), ...deepDefaults });
     files = ref();
@@ -102,7 +107,14 @@ export default () => effectScope().run(() => {
 
     const { data, success } = await save.task(fields, null, true);
 
-    success && redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+    if (success) {
+      if (order_id != null) {
+        redirectTo({ name: 'OrderEdit', params: { id: order_id }, query: { tab: 'tasks' } });
+        return;
+      }
+
+      redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+    }
   };
 
   const atMounted = async () => {
@@ -113,7 +125,7 @@ export default () => effectScope().run(() => {
         task = await $.task(route.params.id);
         await setForm(task);
       }
-    }
+    } else if (order_id) fields.order_id = order_id;
   };
 
   onScopeDispose(() => {

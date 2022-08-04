@@ -1,20 +1,16 @@
 <script setup>
-import { ref } from 'vue';
-
 const emit = defineEmits(['update:modelValue']);
 
 defineProps({
   modelValue: {
-    type: Number,
+    type: [Number, String],
     required: false,
   },
 
   tabs: Array,
 });
 
-const current = ref('main');
-
-const pick = (tb) => { emit('update:modelValue', current.value = tb); };
+const pick = (tb) => { emit('update:modelValue', tb); };
 
 </script>
 
@@ -29,7 +25,7 @@ const pick = (tb) => { emit('update:modelValue', current.value = tb); };
         <option
           v-for="(tab, i) in tabs"
           :key="`option-tab-${i}`"
-          :selected="tab.tab == current"
+          :selected="tab.tab == modelValue"
           :value="tab.tab"
         >
           {{ tab.label }}
@@ -46,8 +42,8 @@ const pick = (tb) => { emit('update:modelValue', current.value = tb); };
 
               <button
                 @click="() => pick(tab.tab)"
-                :aria-current="tab.tab == current ? 'page' : undefined"
-                :class="[tab.tab == current ?
+                :aria-current="tab.tab == modelValue ? 'page' : undefined"
+                :class="[tab.tab == modelValue ?
                     'cursor-pointer border-blue-500 text-blue-600' :
                     'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                     'border-b-2 cursor-pointer whitespace-nowrap py-4 px-1 font-medium text-sm',

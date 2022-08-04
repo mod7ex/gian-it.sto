@@ -3,14 +3,14 @@ import { ref } from 'vue';
 // import { DocumentTextIcon } from '@heroicons/vue/outline';
 // import Button from '@/UI/Button.vue';
 import DocPreview from '@/Layout/modal/DocPreview.vue';
-import service from '~/services/orders/template';
+// import service from '~/services/orders/template';
 import store from '~/store/orders/documents';
 import useSuspense from '~/composables/useSuspense';
 import DocsTable from '@/Partials/orders/items/Docs.vue';
 
 const SuspenseArea = useSuspense();
 
-const { render } = service();
+// const { render } = service();
 
 const { state } = store;
 

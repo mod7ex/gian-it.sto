@@ -84,7 +84,7 @@ const log = (e) => {
 };
 
 export default () => effectScope().run(() => {
-  const { route, isThePage, redirectTo } = useAppRouter('OrderEdit');
+  const { route, isThePage, redirectTo, router } = useAppRouter('OrderEdit');
 
   if (!fields) {
     // Trying to make a deep copy of defaults, ISSUE : doesn't work for checkboxes
@@ -155,5 +155,6 @@ export default () => effectScope().run(() => {
     dropOrder,
     route,
     setOrder,
+    router,
   };
 });

@@ -1,6 +1,6 @@
 <script setup>
 import { ArrowLeftIcon, XIcon } from '@heroicons/vue/outline';
-import { ref, defineAsyncComponent, onScopeDispose, computed } from 'vue';
+import { ref, defineAsyncComponent, onScopeDispose, computed, watch } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Tabs from '@/UI/Tabs.vue';
@@ -14,7 +14,7 @@ const { drop } = useConfirmDialog();
 
 const { current: department } = departmentStore;
 
-const { fields, isEditPage, clearMemory, dropOrder, route } = service();
+const { fields, isEditPage, clearMemory, dropOrder, route, router } = service();
 
 const suspenseArea = useSuspense();
 
@@ -25,17 +25,22 @@ const tabs = [
   // { tab: 'payment',permissions: [], label: 'Оплаты', component: defineAsyncComponent(() => import('@/Partials/orders/form/Payment.vue')) },
   { tab: 'orders', permissions: ['crud documents', 'crud document templates'], label: 'Документы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Docs.vue')) },
   { tab: 'storages', permissions: [], label: 'Склад', component: defineAsyncComponent(() => import('@/Partials/orders/form/Storages.vue')) },
-  { tab: 'works', permissions: [], label: 'Работы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Works.vue')) },
-  // { tab: 'works', permissions: ['crud works', 'read works'], label: 'Работы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Works.vue')) },
+  { tab: 'works', permissions: ['crud works', 'read works'], label: 'Работы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Works.vue')) },
   // { tab: 'diagnostic-card',permissions: [], label: 'Диагностическая карта', component: defineAsyncComponent(() => import('@/Partials/orders/form/DiagnosticCards.vue')) },
-  { tab: 'comments', permissions: [], label: 'Комментарии', component: defineAsyncComponent(() => import('@/Partials/Comments.vue')), props: { model: 'order', id: computed(() => `${fields?.id ?? ''}`) } },
+  { tab: 'comments', permissions: [], label: 'Комментарии', component: defineAsyncComponent(() => import('@/Partials/Comments.vue')), props: { model: 'order', id: computed(() => `${route.params?.id ?? ''}`) } },
 ];
 
-const current = ref('main');
+const current = ref(isEditPage.value ? (route.query.tab ?? 'main') : 'main');
+
+if (isEditPage.value) {
+  watch(current, (tab) => {
+    router.push({ name: 'OrderEdit', params: route.params, query: { tab } });
+  }, { immediate: true });
+}
+
 const theTab = computed(() => tabs.find(({ tab }) => tab === current.value));
 
 const getTabs = () => tabs.filter(({ permissions }) => userHasAtLeastOnePermission(permissions, true)).map(({ tab, label }) => ({ label, tab }));
-
 const labels = computed(() => (!isEditPage.value ? [{ label: tabs[0].label, tab: tabs[0].tab }] : getTabs()));
 
 onScopeDispose(clearMemory);
@@ -63,7 +68,7 @@ onScopeDispose(clearMemory);
 
     <!-- <p>TODO: get rid of re-rendring</p> -->
 
-    <suspense-area :key="`suspense-${current}-${department}-${route.params.id ?? 'none'}`">
+    <suspense-area v-if="current" :key="`order-form-${current}-${department}-${route.params?.id ?? 'none'}`">
       <component :is="theTab.component" v-bind="theTab.props" />
     </suspense-area>
     <!-- ISSUE : solved using the v-show directive ,but there might still a small issue !  -->

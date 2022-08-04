@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, defineComponent, h, onMounted } from 'vue';
+import { computed, watch, defineComponent, h } from 'vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
 import Upload from '@/UI/Upload.vue';
@@ -14,6 +14,9 @@ import stagesStore from '~/store/pipelines/stages';
 import orderStore from '~/store/orders/orders';
 import Badge from '@/UI/Badge.vue';
 import proxiedSelect from '@/StoSelect';
+import useAppRouter from '~/composables/useAppRouter.js';
+
+const { route } = useAppRouter();
 
 const { current } = departmentStore;
 const { load, options } = userStore;
@@ -21,7 +24,7 @@ const { options: orderOptions, load: loadOrders } = orderStore;
 const { state, load: loadFunnels, options: pipelinesOptions } = pipelineStore;
 const { load: loadStages, options: stagesOptions } = stagesStore;
 
-const { fields, atMounted, log, isEditPage, selectedFunnelsIds } = service();
+const { fields, atMounted, log, isEditPage, selectedFunnelsIds } = service(route.query.order_id);
 
 const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
@@ -40,11 +43,6 @@ await Promise.all([
 });
 
 const StagesSelection = proxiedSelect(state, fields);
-
-onMounted(() => {
-  console.log(options.value.map(({ value }) => value));
-  console.log(fields.user_id);
-});
 
 const cannotAdd = computed(() => pipelinesOptions.value.map(({ value }) => value).length === (new Set(selectedFunnelsIds.value)).size);
 const notSelectedFunnels = computed(() => pipelinesOptions.value.filter(({ value }) => !selectedFunnelsIds.value.includes(Number(value))));
@@ -66,7 +64,7 @@ const notSelectedFunnels = computed(() => pipelinesOptions.value.filter(({ value
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-            <Select label="Заказ наряд" :options="orderOptions" v-model="fields.order_id" />
+            <Select label="Заказ наряд" :options="orderOptions" v-model="fields.order_id" :disabled="route.query.order_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-3">

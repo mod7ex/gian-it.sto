@@ -1,33 +1,45 @@
 <script setup>
+import { computed } from 'vue';
 import Link from '@/UI/Link.vue';
 import Badge from '@/UI/Badge.vue';
 import Avatar from '@/UI/Avatar.vue';
 import store from '~/store/tasks';
 import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
-import { generateShapedIdfromId, tasksColorMap } from '~/helpers'
+import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
+
+const props = defineProps({
+  order_id: {
+    type: [String, Number],
+    default: undefined,
+  },
+});
 
 const { fetchTasks, removeTask, edit } = service();
 
 const fields = [
-  { label: 'Название', key: 'name' },
-  { label: 'Ответственный', key: 'author' },
-  { label: 'Статус', key: 'status' },
-  { label: 'Крайний срок', key: 'deadline_at' },
-  { label: 'Заказ-наряд', key: 'order' },
-  { label: 'Дата создания', key: 'created_at' },
+    { label: 'Название', key: 'name' },
+    { label: 'Ответственный', key: 'author' },
+    { label: 'Статус', key: 'status' },
+    { label: 'Крайний срок', key: 'deadline_at' },
 ];
+  
+if (!props.order_id) {
+    fields.push({ label: 'Заказ-наряд', key: 'order' });
+}
+
+fields.push({ label: 'Дата создания', key: 'created_at' });
 
 const { state } = store;
 
-await fetchTasks(true);
+await fetchTasks(true, props.order_id);
 
 </script>
 
 <template>
 
     <Table
-        @bottom-touched="()=>fetchTasks()"
+        @bottom-touched="()=>fetchTasks(false, props.order_id)"
         :fields="fields"
         :items="state.raw"
         @delete="removeTask"

@@ -1,5 +1,6 @@
 <script setup>
 import Badge from '@/UI/Badge.vue';
+import Link from '@/UI/Link.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/orders/work';
@@ -44,11 +45,12 @@ await load({order_id :route.params.id});
     @delete="(id) => drop(() => dropWorkThenSet(id))"
     @edit="(id) => render(id)"
     last
+
   >
       <!-- Body -->
 
-      <template #td-name="{ item }" >
-        <Badge :point="true" color="blue" class="text-sm">{{ item.name }}</Badge>
+      <template #td-name="{ value, item: { id } }" >
+        <Link @click="() => render(id)">{{ value }}</Link>
       </template>
 
       <template #td-sum="{ value }" >
@@ -75,7 +77,7 @@ await load({order_id :route.params.id});
 
       <!-- aditional row -->
 
-      <template #td-last-name="{ }" >сумму</template>
+      <template #td-last-name="{ }" >суммa</template>
 
       <template #td-last-sum="{ items }" >{{ items.reduce((prev, curr) => prev + (curr.sum ?? 0), 0) }} ₽</template>
   </Table>

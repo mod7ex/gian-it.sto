@@ -5,7 +5,7 @@ const { isUserLogged, user } = useAuth();
 const routesPermissionsMap = {
   // Todo: copy all pages from router and add permissions the router can catch some forgotten things
 
-  // Orders: ['crud orders', 'read orders'],
+  Orders: ['crud orders', 'read orders'],
 
   Finances: 'crud finances',
 

@@ -41,16 +41,16 @@ await load({ order_id: route.params.id });
 
 <template>
   <Table
-      :fields="cols"
-      :items="state.raw"
-      @delete="(v) => drop(() => dropRequestThenSet(v))"
-      @edit="(v) => render(v)"
-      noEdit
+    :fields="cols"
+    :items="state.raw"
+    @delete="(v) => drop(() => dropRequestThenSet(v))"
+    @edit="(v) => render(v)"
+    noEdit
+    last
   >
       <!-- Body -->
-      <template #td-product="{ value, item: { id } }" >
-          <Link @click="() => void(id)">{{ value?.name }}</Link>
-          <!-- <Link @click="() => render(id)">{{ value?.name }}</Link> -->
+      <template #td-product="{ value }" >
+          <Link :href="route.fullPath" >{{ value?.name }}</Link>
       </template>
 
       <template #td-count="{ value }" >
@@ -78,5 +78,17 @@ await load({ order_id: route.params.id });
       </template>
 
       <!-- ****** -->
+
+      <!-- aditional row -->
+
+      <template #td-last-product="{ }" >суммa</template>
+
+      <template #td-last-buy="{ items }" >{{ items.reduce((prev, curr) => prev + ((curr.product.input_sum ?? 0) * curr.count), 0) }} ₽</template>
+      
+      <template #td-last-sell="{ items }" >{{ items.reduce((prev, curr) => prev + ((curr.product.output_sum ?? 0) * curr.count), 0) }} ₽</template>
+
   </Table>
 </template>
+
+
+ 

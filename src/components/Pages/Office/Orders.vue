@@ -31,11 +31,11 @@ const SuspenseArea = useSuspense();
         <ViewBoardsIcon class="w-5 h-5 mr-1"/>Этапы
       </Button>
 
-      <!-- <v-can ability="crud orders"> -->
+      <v-can ability="crud orders">
         <Button color="blue" :link="{ name: 'OrderForm' }">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
         </Button>
-      <!-- </v-can> -->
+      </v-can>
     </template>
 
     <Header>Фильтр</Header>

@@ -6,6 +6,8 @@ import useConfirmDialog from '~/composables/useConfirmDialog';
 import useAppRouter from '~/composables/useAppRouter';
 import { cleanUp } from '~/helpers';
 
+const { load, sort, fill, reset: resetStore, drop: dropTask } = store;
+
 const { current } = departmentStore;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
@@ -24,8 +26,6 @@ let filter;
 const clearMemo = () => { filter = undefined; };
 
 export default () => effectScope().run(() => {
-  const { sort, fill, reset: resetStore, drop: dropTask } = store;
-
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
   const { reset, trigger } = order;
@@ -52,7 +52,11 @@ export default () => effectScope().run(() => {
     reset(true);
   };
 
-  const fetchTasks = async (bool = false) => {
+  const fetchTasks = async (bool = false, order_id) => {
+    if (order_id) {
+      await load({ order_id });
+      return;
+    }
     if (!filter.department_id) return;
     if (bool) resetStore();
     await fill(cleanUp(filter));

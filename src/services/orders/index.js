@@ -56,8 +56,10 @@ const fillColumns = () => {
 const log = async (e) => {
   const { item: { id: orderId }, to: { id: order_stage_id } } = e;
 
-  // eslint-disable-next-line eqeqeq
-  const target = state.raw.find(({ id }) => id == orderId); if (target && target.stage?.id == order_stage_id) return;
+  // eslint-disable-next-line
+  const target = state.raw.find(({ id }) => id == orderId);
+  // eslint-disable-next-line
+  if (target.stage?.id == order_stage_id) return;
 
   const { message, success } = await save({ data: { order_stage_id }, path: `orders/${orderId}/stage` });
 

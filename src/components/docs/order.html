@@ -1,0 +1,247 @@
+<style>
+  @import url('./styles.css');
+</style>
+
+<div id="main">
+  <button id="print">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 17l3 6h-18l3-6h2.203l-1.967 4h11.527l-1.956-4h2.193zm6-12v14h-2.764l-2-4h-14.472l-2 4h-2.764v-14h4v-4h16v4h4zm-6-2h-12v2h12v-2zm4 4.5c0-.276-.224-.5-.5-.5s-.5.224-.5.5.224.5.5.5.5-.224.5-.5z" /></svg>
+  </button>
+
+  <div id="wrapper" class="bg-gray-50 w-full border rounded border-gray-200 sto-mx-auto mt-3 p-3 wrapper-temp">
+    <div class="sto-mb-4">
+      <h1 class="title-1">ПОСТАВЩИК: ИП Арутюнян Асмик Михайловна, ИНН 231139389283, 350901, Краснодарский край, Краснодар г, 2-я Российская ул, дом № 67, тел.: +7 (861) 213-95-59</h1>
+    </div>
+
+    <p class="sto-mb-8">адрес: 350901, Краснодарский край, Краснодар г, 2-я Российская ул, дом № 67</p>
+
+    <div>
+      <h1 class="title-2 sto-mb-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Заказ-наряд № { order.id } от { order.created_at }</h1>
+
+      <ul class="sto-mb-4">
+        <li class="list-row bold">Заказчик: { client.surname } { client.name } { client.middle_name }</li>
+        <li class="list-row bold">адрес заказчика :{ client.address } телефоны: { client.phone }</li>
+        <li class="list-row bold">Автомобиль : { car.car_model } гос. номер: { car.number } VIN: { car.vin } год вып. { car.year } пробег. { car.miles }</li>
+      </ul>
+
+      <p class="sto-mb-4">Цена автомототранспортного средства, определяемая по соглашению сторон __________________</p>
+
+      <ul class="sto-mb-8">
+        <li class="list-row bold">Плательщик: { client.surname } { client.name } { client.middle_name }</li>
+        <li class="list-row bold">ИНН адрес:{ client.address }, телефоны: { client.phone }</li>
+      </ul>
+
+      <div class="sto-mb-4">
+        <p class="bold">Причина обращения: { order.process.appeal_reason }</p>
+        <p class="bold">Комментарий: { order.comment }</p>
+      </div>
+
+      <h1 class="title-2 sto-mb-2">
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Выполненные работы по заказ-наряду № { order.id } от { order.created_at }</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Причине обращения "{ order.process.appeal_reason }"</p>
+      </h1>
+
+      <!-- Table -->
+
+      <table class="sto-table sto-mb-2">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Артикул</th>
+            <th>Наименование</th>
+            <th>Кол. оп.</th>
+            <th>Цена н/ч</th>
+            <th>Норма</th>
+            <th>н/ч</th>
+            <th>Всего</th>
+            <th>в т.ч. НДС</th>
+          </tr>
+          <tr>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>7</th>
+            <th>8</th>
+            <th>9</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td></td>
+            <td>Снятие и установка турбокомпрессора</td>
+            <td class="numeric">1</td>
+            <td class="numeric">6,000.00</td>
+            <td class="numeric">1.000</td>
+            <td>рубль</td>
+            <td class="numeric">6,000.00</td>
+            <td class="numeric">0.00</td>
+          </tr>
+        </tbody>
+
+        <tfoot>
+          <tr>
+            <td class="bold numeric"></td>
+            <td class="bold numeric"></td>
+            <td class="bold numeric">Итого работ:</td>
+            <td class="bold numeric surround">4</td>
+            <td class="bold numeric"></td>
+            <td class="bold numeric"></td>
+            <td class="bold numeric">на сумму:</td>
+            <td class="bold numeric surround">58,000.00</td>
+            <td class="bold numeric surround">0</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- *********************************** -->
+
+      <p class="sto-mb-4">Пятьдесят восемь тысяч рублей 00 копеек</p>
+
+      <h1 class="title-2 sto-mb-2">
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Расходная накладная к заказ-наряду № { order.id } от { order.created_at }</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Причине обращения "{ order.process.appeal_reason }"</p>
+      </h1>
+
+      <!-- Table -->
+
+      <table class="sto-table sto-mb-2">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Артикул</th>
+            <th>Наименование</th>
+            <th>Кол-во</th>
+            <th>Ед.изм.</th>
+            <th>Цена</th>
+            <th>Всего</th>
+            <th>в т.ч. НДС</th>
+          </tr>
+          <tr>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>7</th>
+            <th>8</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>0249971045</td>
+            <td>Кольцо упл. масл. трубы Mercedes</td>
+            <td class="numeric">1</td>
+            <td class="numeric">шт</td>
+            <td class="numeric">1 100,00</td>
+            <td class="numeric">1,100.00</td>
+            <td class="numeric">0.00</td>
+          </tr>
+        </tbody>
+
+        <tfoot>
+          <tr>
+            <td class="bold"></td>
+            <td class="bold"></td>
+            <td class="bold numeric">Итого материалов:</td>
+            <td class="bold numeric surround">2</td>
+            <td class="bold numeric"></td>
+            <td class="bold numeric">на сумму:</td>
+            <td class="bold numeric surround">2,200.00</td>
+            <td class="bold numeric surround">0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- *********************************** -->
+
+      <p class="sto-mb-4">Две тысячи двести рублей 00 копеек</p>
+
+      <table class="sto-table foot sto-mb-2">
+        <tfoot class="alone">
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="bold numeric">Итого по</td>
+            <td class="wrapped bold numeric surround">60,200.00</td>
+            <td class="wrapped bold numeric surround">0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <p class="bold sto-mb-4">Всего по причине обращения: Шестьдесят тысяч двести рублей 00 копеек</p>
+
+      <table class="sto-table foot sto-mb-2">
+        <tfoot class="alone">
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="bold numeric">Итого по з</td>
+            <td class="wrapped bold numeric surround">60,200.00</td>
+            <td class="wrapped bold numeric surround">0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <p class="bold sto-mb-4">Всего по заказ-наряду: Шестьдесят тысяч двести рублей 00 копеек</p>
+
+      <div class="sto-mx-auto max-w-70 sto-mb-4">
+        <p class="sto-text-left sto-mb-2">Мастер __ /Стрельченко Сергей Иванович/</p>
+        <p class="sto-mb-3">
+          Гарантии: Гарантия на работы: слесарные - 30 дней, электрические - 30 дней, оригинальные з/ч - 30 дней, з/ч, связанные с электрооборудованием, подачей топлива и системой впрыска - гарантии нет, неоригинальные з/ч - гарантии нет. Гарантийные обязательства на работы выполняются фирмой только
+          при предъявлении акта приемки автомобиля и техпаспорта (доверенности).
+        </p>
+        <p>Рекомендации: Замена масла, масляного и воздушного фильтров.</p>
+      </div>
+
+      <p class="bold mt-4 sto-mb-2">3. Приложения к заказ-наряду</p>
+
+      <p class="sto-mb-2">Ознакомился и получил следующие документы:</p>
+
+      <ul class="sto-mb-4">
+        <li class="sto-flex sto-space-between sto-mb-2">
+          <p>1) Гарантийная карта</p>
+          <p>_________________ /{ client.surname } { client.name } { client.middle_name }/</p>
+        </li>
+        <li class="sto-flex sto-space-between sto-mb-2">
+          <p>2) Диагностическая карта</p>
+          <p>_________________ /{ client.surname } { client.name } { client.middle_name }/</p>
+        </li>
+        <li class="sto-flex sto-space-between sto-mb-2">
+          <p>3) Акт выполненных работ - квитанция об оплате</p>
+          <p>_________________ /{ client.surname } { client.name } { client.middle_name }/</p>
+        </li>
+        <li class="sto-flex sto-space-between sto-mb-2">
+          <p>4) Акт приема-передачи турбины или автомобиля</p>
+          <p>_________________ /{ client.surname } { client.name } { client.middle_name }/</p>
+        </li>
+      </ul>
+
+      <div class="sto-flex sto-space-between">
+        <p>Дата: { order.created_at }</p>
+        <ul>
+          <li>Заказчик /{ client.surname } { client.name } { client.middle_name }/</li>
+          <li>Плательщи /{ client.surname } { client.name } { client.middle_name }/</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("print").addEventListener("click", () => {
+    window.print();
+  });
+</script>

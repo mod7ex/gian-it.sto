@@ -23,9 +23,7 @@ const grid = ref(true);
 
 const currentStorage = ref();
 
-onMounted(async () => {
-  currentStorage.value = isThePage.value ? 'Запрошенные запчасти' : (await $.storage(route.params.id))?.name;
-});
+onMounted(async () => { currentStorage.value = isThePage.value ? 'Запрошенные запчасти' : (await $.storage(route.params.id))?.name; });
 
 onScopeDispose(clearMemo);
 

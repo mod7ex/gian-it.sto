@@ -43,7 +43,7 @@ export const cleanUp = (obj, ...fields) => {
     Object.keys(obj).forEach((prop) => {
       if (fields.includes(prop)) return;
       const val = Reflect.get(obj, prop);
-      if (val == null) return; // null & undefined -> stop
+      if (val == null || val === '') return; // null & undefined -> stop
       Reflect.set(data, prop, val);
     });
   }

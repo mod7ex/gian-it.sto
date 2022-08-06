@@ -1,0 +1,98 @@
+<style>
+  @import url("./styles.css");
+</style>
+
+<div id="main">
+  <button id="print">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 17l3 6h-18l3-6h2.203l-1.967 4h11.527l-1.956-4h2.193zm6-12v14h-2.764l-2-4h-14.472l-2 4h-2.764v-14h4v-4h16v4h4zm-6-2h-12v2h12v-2zm4 4.5c0-.276-.224-.5-.5-.5s-.5.224-.5.5.224.5.5.5.5-.224.5-.5z" /></svg>
+  </button>
+
+  <div id="wrapper" class="bg-gray-50 w-full border rounded border-gray-200 sto-mx-auto mt-3 p-3 wrapper-temp">
+    <div class="sto-mb-3 sto-text-right">
+        <span>
+            <h4>Приложе</h4>
+        </span>
+    </div>
+
+    <div class="sto-mb-3 sto-text-center">
+        <h3 class="sto-mb-1">ПРИЕМО-СДАТОЧНЫЙ АКТ</h3>
+        <p>выполненных работ</p>
+    </div>
+
+    <div class="sto-text-right">
+        <span>14.07.2022</span>
+    </div>
+
+    <div>
+        <p>Мы, нижеподписавшиеся:</p>
+    </div>
+
+    <ul class="sto-mb-2">
+      <li class="list-row bold">Исполнитель: Стрельченко Сергей Иванович</li>
+      <li class="list-row bold">Заказчик: Голуб Андрей Иванович</li>
+      <li class="list-row bold">адрес заказчика : телефоны: +7 (988) 367-49-94</li>
+      <li class="list-row bold">
+        <div>
+          <p>Плательщик:  Голуб Андрей Иванович</p>
+          <p>ИНН    адрес:________, телефоны: +7 (988) 367-49-94</p>
+        </div>
+      </li>
+    </ul>
+
+    <p class="sto-mb-1">
+      Подписали настоящий Акт о том, что Исполнитель сдал, а Заказчик принял комплекс работ (услуг) по техническому обслуживанию и ремонту автотранспортного средства.
+    </p>
+
+    <div class="sto-border sto-flex sto-p-1 sto-mb-1">
+      <ul class="sto-w-50">
+        <li class="bold sto-mb-1">Автомототранспортное средство ___:</li>
+        <li class="bold sto-mb-1">Марка, модель : ___</li>
+        <li class="bold sto-mb-1">Год вып: ___</li>
+        <li class="bold sto-mb-1">Гос. номер: ___</li>
+        <li class="bold sto-mb-1">VIN: ___</li>
+        <li class="bold sto-mb-1">Двигатель:___</li>
+      </ul>
+
+      <ul>
+        <li class="bold sto-mb-1">Шасси №: ___</li>
+        <li class="bold sto-mb-1">Кузов №: ___</li>
+        <li class="bold sto-mb-1">Цвет: ___</li>
+        <li class="bold sto-mb-1">Тех. паспорт: ___</li>
+        <li class="bold sto-mb-1">пробег: ___</li>
+      </ul>
+    </div>
+
+    <div class="sto-mb-3">
+      <p>согласно Перечню выполненных работ (Заказ-наряд).	</p>
+      <p>
+        &nbsp;&nbsp;&nbsp;&nbsp;В ходе сдачи приемки выполненных работ (оказанных услуг) Заказчиком с участием
+        Исполнителя проверены комплектность и техническое состояние автомототранспортного
+        средства, объем и качество выполненных работ (оказанных услуг), исправность узлов и агрегатов.	
+      </p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;Претензий по срокам и качеству выполненных работ (оказанных услуг) не имеется.	</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;Замененные (неисправные) и неизрасходованные узлы и детали Заказчиком получены.</p>
+    </div>
+
+    <ul class="sto-mb-4">
+      <li class="sto-flex sto-space-between sto-mb-2">
+        <p>Заказчик</p>
+        <p>_________________ /Голуб Андрей Иванович/</p>
+      </li>
+      <li class="sto-flex sto-space-between sto-mb-2">
+        <p>Плательщик</p>
+        <p>_________________ /Голуб Андрей Иванович/</p>
+      </li>
+      <li class="sto-flex sto-space-between sto-mb-2">
+        <p>Мастер</p>
+        <p>_________________ /Стрельченко Сергей Иванович/</p>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById("print").addEventListener("click", () => {
+    window.print();
+  });
+</script>

@@ -8,6 +8,7 @@ const state = reactive({
   selectedId: undefined,
   pages: 1000,
   page: 1,
+  pending: false,
 });
 
 const IndexById = (_id) => {
@@ -33,11 +34,13 @@ const dropRequestFromProduct = (request_id, product_id) => {
 
 const contains = (requests = [], _status) => requests.some(({ status }) => status === _status);
 
-const getProducts = (bool) => computed(() => {
+const getProducts = (is_requests_page) => computed(() => {
   // const foo = state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0)).filter(({ product_requests }) => contains(product_requests, 'wait'));
   const items = state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0));
-  if (!bool) return items;
-  return items.filter(({ product_requests }) => contains(product_requests, 'wait'));
+  if (!is_requests_page) return items;
+  const result = items.filter(({ product_requests }) => contains(product_requests, 'wait'));
+  console.log(result);
+  return result;
 });
 
 const setAvailability = (bool) => { state.inStock = bool ?? false; };
@@ -71,12 +74,15 @@ const load = async (payload = {}) => {
 };
 
 const fill = async (payload) => {
+  if (state.pending) return;
+  state.pending = true;
   // in payload should be included storage_id
   if (state.page > state.pages) return;
   const data = await $({ key: 'products', params: { ...payload, page: state.page } });
   state.raw = state.raw.concat(data?.products ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
+  state.pending = false;
 };
 
 const drop = async (id) => _$.product(id, (v) => {

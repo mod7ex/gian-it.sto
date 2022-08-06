@@ -10,12 +10,12 @@ export default function (cb, condition) {
     },
   });
 
-  const observer = new IntersectionObserver(([entry]) => {
+  const observer = new IntersectionObserver(async ([entry]) => {
     if (!condition.value) return;
 
     if (!entry.isIntersecting) return;
 
-    cb();
+    await cb();
   }, {
     root: container.value,
     rootMargin: '0px',

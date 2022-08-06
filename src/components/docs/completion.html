@@ -1,0 +1,139 @@
+<style>
+  @import url("./styles.css");
+</style>
+
+<div id="main">
+  <button id="print">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 17l3 6h-18l3-6h2.203l-1.967 4h11.527l-1.956-4h2.193zm6-12v14h-2.764l-2-4h-14.472l-2 4h-2.764v-14h4v-4h16v4h4zm-6-2h-12v2h12v-2zm4 4.5c0-.276-.224-.5-.5-.5s-.5.224-.5.5.224.5.5.5.5-.224.5-.5z" /></svg>
+  </button>
+
+  <div id="wrapper" class="bg-gray-50 w-full border rounded border-gray-200 sto-mx-auto mt-3 p-3 wrapper-temp">
+    <div class="sto-flex sto-mb-4">
+      <div class="max-w-80 sto-w-full">
+        <div class="sto-flex sto-items-center sto-mb-2">
+          <span class="sto-mr-2">Поставщик:</span>
+          <p class="bold">ИП Арутюнян Асмик Михайловна, ИНН 231139389283, 350901, Краснодарский край, Краснодар г, 2-я Российская ул, дом № 67, тел.: +7 (861) 213-95-59</p>
+        </div>
+
+        <h2 class="sto-mb-2">Акт об оказании услуг 00000002529 от 14.07.2022</h2>
+
+        <ul class="sto-mb-2">
+          <li class="sto-flex sto-mb-1 sto-items-center">
+            <span class="sto-w-px-120 sto-mr-2">Покупатель:</span>
+            <p>Голуб Андрей Иванович, тел.: +7 (988) 367-49-94</p>
+          </li>
+          <li class="sto-flex sto-mb-1 sto-items-center">
+            <span class="sto-w-px-120 sto-mr-2">Автомобиль:</span>
+            <p>Mercedes GL-350 белый № У222СЕ93 VIN WDC1668241A612575	</p>
+          </li>
+          <li class="sto-flex sto-mb-1 sto-items-center">
+            <span class="sto-w-px-120 sto-mr-2">Док. основание:</span>
+            <p>Заказ-наряд № 00000002529 от 12.07.2022</p>
+          </li>
+        </ul>
+
+        <div>
+          <h5>Причина обращения:  Неисправность автомобиля</h5>
+          <h5>Комментарий: Неисправность автомобиля</h5>
+        </div>
+      </div>
+
+      <div class="sto-flex-grow-1">
+        <div class="sto-dotted sto-box">
+        </div>
+        <div class="sto-flex sto-w-full sto-text-small">
+          <span class="sto-dotted sto-p-1 sto-flex-grow-1">в валюте:</span>
+          <span class="sto-dotted sto-p-1 sto-flex-grow-1">Руб</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+
+    <table class="sto-table sto-mb-2">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Услуга</th>
+          <th>Кол-во</th>
+          <th>Норма</th>
+          <th>н/ч</th>
+          <th>Цена н/ч</th>
+          <th>Сумма</th>
+          <th>в т.ч. НДС</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>1	Снятие и установка турбокомпрессора</td>
+          <td>1</td>
+          <td class="numeric">1.000</td>
+          <td>рубль</td>
+          <td class="numeric">6,000.00</td>
+          <td class="numeric">6,000.00</td>
+          <td class="numeric">0.00</td>
+        </tr>
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td class="bold numeric sto-relative sto-pb-3"><span class="sto-absolute sto-w-px-240 sto-right-0">Итого по причине обращения Руб:</span></td>
+          <td class="bold numeric surround">на сумму:</td>
+          <td class="bold numeric surround">58,000.00</td>
+        </tr>
+      </tfoot>
+  </table>
+
+  <!-- *********************************** -->
+
+  <p class="bold sto-mb-4">	Пятьдесят восемь тысяч рублей 00 копеек</p>
+
+  <table class="sto-table foot sto-mb-4">
+    <tfoot class="alone">
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="bold numeric">Итого Руб:</td>
+        <td class="max-w-px-80 wrapped bold numeric surround">58,000.00</td>
+        <td class="max-w-px-80 wrapped bold numeric surround">0.00</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <p class="sto-mb-1">Всего услуг 4 на сумму 58 000,00 Руб (в т.ч. НДС 0,00 Руб)</p>
+  <h4 class="sto-mb-4">Пятьдесят восемь тысяч рублей 00 копеек</h4>
+
+  <p class="sto-text-small sto-mb-3">
+    Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и срокам оказания услуг не имеет.
+  </p>
+  
+
+  <ul class="sto-flex">
+    <li class="sto-flex sto-w-60">
+      <h4>Исполнитель</h4>
+      <p class="sto-text-small">______________/ Стрельченко Сергей Иванович /</p>
+    </li>
+    <li class="sto-flex">
+      <h4>Заказчик</h4>
+      <p class="sto-text-small">______________</p>
+    </li>
+  </ul>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById("print").addEventListener("click", () => {
+    window.print();
+  });
+</script>

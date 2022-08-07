@@ -1,4 +1,4 @@
-import { onScopeDispose, reactive } from 'vue';
+import { onScopeDispose, reactive, effectScope, computed, h } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import clientFormValidationsRules from '~/validationsRules/clientForm';
 import useAppRouter from '~/composables/useAppRouter.js';
@@ -6,12 +6,20 @@ import $ from '~/helpers/fetch.js';
 import { hyphenatedDateFormat } from '~/helpers';
 import departmentStore from '~/store/departments';
 import save from '~/helpers/save';
+import useModalForm from '~/composables/useModalForm';
+import useToast from '~/composables/useToast.js';
+import communicate from '~/helpers/communicate';
+import service from '~/services/clients/clients';
+import RawForm from '~/components/Partials/clients/ClientFormFields.vue';
+
+const toaster = useToast();
 
 const { current, setCurrent } = departmentStore;
 
 let routeInstance;
 let isEditClientPage;
 let redirectBack;
+let modalUp;
 let v$;
 
 const defaultClientFields = {
@@ -34,22 +42,34 @@ let clientFields;
 
 /* ************ client form ************ */
 
-const saveClient = async () => {
+const saveClient = async (inModal) => {
   const isValideForm = await v$.value.$validate();
 
   if (!isValideForm) return;
 
   v$.value.$reset();
 
-  const { data, success } = await save.client(clientFields, null, true);
+  const { data, success, message } = await save.client(clientFields, null, true);
 
-  if (!success) return;
+  if (inModal) {
+    const { fetchClients } = service();
+    try {
+      return { message, success };
+    } finally {
+      if (success) {
+        await fetchClients(true);
+        toaster.success(message);
+      }
+    }
+  } else {
+    if (!success) return;
 
-  if (data?.client?.department?.id) setCurrent(data?.client?.department?.id);
+    if (data?.client?.department?.id) setCurrent(data?.client?.department?.id);
 
-  await redirectBack();
+    redirectBack();
 
-  return success;
+    return success;
+  }
 };
 
 const setClientField = function (key) {
@@ -84,7 +104,10 @@ const setForm = async (payload) => {
   clientFields.born_at = hyphenatedDateFormat(clientFields.born_at);
 };
 
-const atMountedClientForm = async () => {
+const atMountedClientForm = async (inModal) => {
+  console.log(inModal);
+  if (inModal) return;
+
   let client = {};
 
   if (isEditClientPage.value && routeInstance.params.id) {
@@ -111,10 +134,19 @@ const addItem = (item) => () => {
   clientFields[item] = [''];
 };
 
-export default function () {
-  if (!clientFields) {
-    clientFields = reactive(defaultClientFields);
-  }
+const clearMemo = () => onScopeDispose(() => {
+  clientFields = undefined;
+  routeInstance = undefined;
+  isEditClientPage = undefined;
+  redirectBack = undefined;
+  modalUp = undefined;
+  v$ = undefined;
+});
+
+const prepare = () => {
+  if (clientFields) return;
+
+  clientFields = reactive(defaultClientFields);
 
   const { route, isThePage, back } = useAppRouter('EditClient');
 
@@ -123,17 +155,38 @@ export default function () {
   const rules = clientFormValidationsRules();
 
   v$ = useVuelidate(rules, clientFields, { $lazy: true });
+};
 
-  onScopeDispose(() => {
-    clientFields = undefined;
-    routeInstance = undefined;
-    isEditClientPage = undefined;
-    redirectBack = undefined;
-    v$ = undefined;
-  });
+export default function (inModal) {
+  console.log(inModal);
+  if (!inModal) {
+    prepare();
+    clearMemo();
+  } else {
+    modalUp = (...args) => {
+      const scope = effectScope();
+
+      scope.run(() => {
+        const isUpdate = computed(() => !!clientFields.id);
+
+        const { render } = useModalForm({
+          title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].client),
+          RawForm: h(RawForm, { inModal: true }),
+          atSubmit: () => saveClient(true),
+          atClose: () => scope.stop(),
+          atOpen: () => prepare(),
+        });
+
+        render(...args);
+
+        clearMemo();
+      });
+    };
+  }
 
   return {
     clientFields,
+    modalUp,
     isEditClientPage,
     v$,
     saveClient,

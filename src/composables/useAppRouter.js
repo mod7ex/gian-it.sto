@@ -5,10 +5,26 @@ import { computed } from 'vue';
   Always should be used inside a scope 'component scope'
 */
 
+const isThePageFuncky = (_name, route) => {
+  if (typeof _name === 'string') {
+    return route?.name === _name;
+  }
+
+  if (Array.isArray(_name)) {
+    for (let i = 0; i < _name.length; i++) {
+      if (isThePageFuncky(_name[i])) return true;
+    }
+
+    return false;
+  }
+
+  return false;
+};
+
 export default function useAppRouter(pageName = '_') {
   const [router, route] = [useRouter(), useRoute()];
 
-  const isThePage = computed(() => route?.name === pageName);
+  const isThePage = computed(() => isThePageFuncky(pageName, route));
 
   const redirectTo = async (to = '/') => {
     if (!to || !to?.name) return;

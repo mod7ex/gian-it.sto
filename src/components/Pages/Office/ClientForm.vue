@@ -9,9 +9,9 @@ import ClientFormFields from '~/components/Partials/clients/ClientFormFields.vue
 import useSuspense from '~/composables/useSuspense.js';
 import form from '~/services/clients/clientForm.js';
 
-const SuspensClientFormFields = useSuspense(ClientFormFields);
+const SuspenseArea = useSuspense(ClientFormFields);
 
-const { isEditClientPage, saveClient, redirectBack } = form();
+const { isEditClientPage, saveClient, redirectBack } = form(false);
 
 </script>
 
@@ -28,7 +28,9 @@ const { isEditClientPage, saveClient, redirectBack } = form();
       </Button>
     </template>
 
-    <SuspensClientFormFields/>
+    <suspense-area>
+      <client-form-fields :inModal="false" />
+    </suspense-area>
 
   </OfficeLayout>
 </template>

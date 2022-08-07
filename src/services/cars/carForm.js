@@ -1,34 +1,53 @@
-import { ref, reactive, onScopeDispose } from 'vue';
+import { ref, reactive, onScopeDispose, effectScope, computed } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import formRules from '~/validationsRules/carForm.js';
 import useAppRouter from '~/composables/useAppRouter.js';
+import RawForm from '~/components/Partials/cars/CarFormFields.vue';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
+import useModalForm from '~/composables/useModalForm';
+import communicate from '~/helpers/communicate';
+import service from '~/services/cars/cars';
+import useToast from '~/composables/useToast.js';
+
+const toaster = useToast();
 
 let routeInstance;
 let isEditCarPage;
 let redirectBack;
 let v$;
-
+let modalUp;
 let carFields;
 let theSelectedCarMark;
 
 /* ************ Car form ************ */
 
-const saveCar = async () => {
+const saveCar = async (_modal = false) => {
   const isValideForm = await v$.value.$validate();
 
   if (!isValideForm) return;
 
   v$.value.$reset();
 
-  const { success } = await save.car(carFields, null, true);
+  const { success, message } = await save.car(carFields, null, true);
 
-  if (!success) return;
+  if (_modal) {
+    const { fetchCars } = service();
+    try {
+      return { message, success };
+    } finally {
+      if (success) {
+        await fetchCars(true);
+        toaster.success(message);
+      }
+    }
+  } else {
+    if (!success) return;
 
-  redirectBack();
+    redirectBack();
 
-  return success;
+    return success;
+  }
 };
 
 const setCarField = function (key) {
@@ -41,12 +60,38 @@ const setCarField = function (key) {
   carFields[key] = this[key] ?? '';
 };
 
-const setCarForm = async (payload) => {
-  Object.keys(carFields).forEach(setCarField, payload);
+const setCarForm = async (payload) => { Object.keys(carFields).forEach(setCarField, payload); };
+
+const prepare = () => {
+  if (carFields) return;
+
+  const { route, isThePage, back } = useAppRouter('EditCar');
+
+  [routeInstance, isEditCarPage, redirectBack] = [route, isThePage, back];
+
+  carFields = reactive({
+    id: '',
+    number: '',
+    vin: '',
+    year: '',
+    body: '',
+    color: '',
+    notes: '',
+    fuel_id: '',
+    engine_volume_id: '',
+    client_id: '',
+    car_model_id: '',
+  });
+
+  theSelectedCarMark = ref();
+
+  v$ = useVuelidate(formRules(), carFields, { $lazy: true });
 };
 
-const atMountedCarForm = async () => {
-  let car = { client: { id: routeInstance.query.client_id } };
+const atMountedCarForm = async (isModal) => {
+  if (isModal) return;
+
+  let car = { client: { id: routeInstance?.query?.client_id } };
 
   if (isEditCarPage.value && routeInstance.params.id) {
     car = await $.car(routeInstance.params.id);
@@ -55,49 +100,50 @@ const atMountedCarForm = async () => {
   await setCarForm(car);
 };
 
-export default function () {
-  if (!carFields) {
-    const { route, isThePage, back } = useAppRouter('EditCar');
+const clearMemo = () => onScopeDispose(() => {
+  routeInstance = undefined;
+  isEditCarPage = undefined;
+  redirectBack = undefined;
+  carFields = undefined;
+  theSelectedCarMark = undefined;
+  modalUp = undefined;
+  v$ = undefined;
+});
 
-    [routeInstance, isEditCarPage, redirectBack] = [route, isThePage, back];
+export default function (_modal = false) {
+  if (!_modal) {
+    prepare();
+    clearMemo();
+  } else {
+    modalUp = (...args) => {
+      const scope = effectScope();
 
-    carFields = reactive({
-      id: '',
-      number: '',
-      vin: '',
-      year: '',
-      The: '',
-      body: '',
-      color: '',
-      notes: '',
-      fuel_id: '',
-      engine_volume_id: '',
-      client_id: '',
-      car_model_id: '',
-    });
+      scope.run(() => {
+        const isUpdate = computed(() => !!carFields.id);
 
-    theSelectedCarMark = ref();
+        const { render } = useModalForm({
+          title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].car),
+          RawForm,
+          atSubmit: () => saveCar(true),
+          atClose: () => scope.stop(),
+          atOpen: () => prepare(),
+        });
 
-    v$ = useVuelidate(formRules(), carFields, { $lazy: true });
+        render(...args);
+
+        clearMemo();
+      });
+    };
   }
 
-  onScopeDispose(() => {
-    routeInstance = undefined;
-    isEditCarPage = undefined;
-    redirectBack = undefined;
-    carFields = undefined;
-    theSelectedCarMark = undefined;
-    v$ = undefined;
-  });
-
   return {
-    carFields,
+    routeInstance,
     isEditCarPage,
+    render: modalUp,
+    carFields,
     saveCar,
-    setCarForm,
     atMountedCarForm,
     theSelectedCarMark,
     v$,
-    routeInstance,
   };
 }

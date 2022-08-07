@@ -10,26 +10,33 @@ import engineStore from '~/store/cars/engines';
 import fuelStore from '~/store/cars/fuels';
 import clientStore from '~/store/clients';
 
+const props = defineProps({
+  inModal: {
+    type: Boolean,
+    default: true,
+  },
+});
+
 const { options: markOptions, load: loadMarks } = markStore;
 const { getMarkModels, load: loadModels } = modelStore;
 const { options: engineOptions, load: loadEngines } = engineStore;
 const { options: fuelOptions, load: loadFuels } = fuelStore;
 const { options: clientOptions, load: loadClients } = clientStore;
 
-const { atMountedCarForm, carFields, theSelectedCarMark, v$, routeInstance } = form();
+const { atMountedCarForm, carFields, theSelectedCarMark, v$, routeInstance } = form(props.inModal);
 
 const extractor = ({ id, name }) => ({ value: id, label: name });
 const modelOptions = computed(() => getMarkModels(theSelectedCarMark.value).map(extractor));
 
-await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClients(),atMountedCarForm()]);
+await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClients(),atMountedCarForm(props.inModal)]);
 
 </script>
 
 <template>
     <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 sm:col-span-4">
+        <div class="col-span-12 sm:col-span-6 md:col-span-4">
             <Select
-                :disabled="routeInstance.query.client_id"
+                :disabled="routeInstance?.query?.client_id"
                 label="Владелец"
                 :options="clientOptions"
                 v-model="carFields.client_id"
@@ -39,7 +46,7 @@ await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClient
             />
         </div>
 
-        <div class="col-span-12 sm:col-span-4">
+        <div class="col-span-12 sm:col-span-6 md:col-span-4">
             <Input
                 label="Вин номер"
                 v-model="carFields.vin"
@@ -49,19 +56,18 @@ await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClient
             />
         </div>
 
-        <div class="col-span-12 sm:col-span-4">
+        <div class="col-span-12 sm:col-span-6 md:col-span-4">
             <Input label="Гос номер" v-model="carFields.number" />
         </div>
 
-        <div class="col-span-12 sm:col-span-4">
-            <Input label="Год выпуска" type="number" :min="1950" :max="new Date().getFullYear()" :step="2" mask="####" v-model="carFields.year" />
+        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+            <Input label="Год выпуска" type="number" :min="1950" :max="new Date().getFullYear()" :mask="props.inModal ? undefined : '####'" :step="2" v-model="carFields.year" />
         </div>
-
-        <div class="col-span-12 sm:col-span-4">
+        <div class="col-span-12 sm:col-span-6 md:col-span-4">
             <Select label="Марка" :options="markOptions" v-model="theSelectedCarMark" />
         </div>
 
-        <div class="col-span-12 sm:col-span-4">
+        <div class="col-span-12 sm:col-span-6 md:col-span-4">
             <Select
                 :disabled="!theSelectedCarMark"
                 label="Модель"
@@ -73,19 +79,19 @@ await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClient
             />
         </div>
 
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-6 md:col-span-3">
             <Input label="Кузов" v-model="carFields.body" />
         </div>
 
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-6 md:col-span-3">
             <Select label="Двигатель" :options="engineOptions" v-model="carFields.engine_volume_id" />
         </div>
 
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-6 md:col-span-3">
             <Select label="Топливо" :options="fuelOptions" v-model="carFields.fuel_id" />
         </div>
 
-        <div class="col-span-12 sm:col-span-3">
+        <div class="col-span-12 sm:col-span-6 md:col-span-3">
             <Input label="Цвет" v-model="carFields.color" />
         </div>
 

@@ -1,13 +1,8 @@
 <script setup>
 import CarsTable from '~/components/Layout/cars/CarsTable.vue'; 
-import store from '~/store/cars/cars';
+import service from '~/services/cars/cars';
 
-const { cars, fill, reset } = store;
-
-const fetchCars = async (bool = false) => {
-  if (bool) reset();
-  await fill();
-};
+const { fetchCars, cars } = service();
 
 await fetchCars(true);
 

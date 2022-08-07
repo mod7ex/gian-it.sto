@@ -1,6 +1,8 @@
 <script setup>
 import { ExclamationCircleIcon } from '@heroicons/vue/solid';
 
+// Fix ISSUE --> https://github.com/vuejs-tips/vue-the-mask/issues/82
+
 const props = defineProps({
   label: {
     type: String,

@@ -60,7 +60,7 @@ export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } =
       },
     }));
 
-    await atOpen(...args);
+    if (atOpen instanceof Function) await atOpen(...args);
 
     app.mount('#sto-modal');
 

@@ -2,7 +2,12 @@ import { onScopeDispose } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import store from '~/store/cars/cars';
 
-const { drop } = store;
+const { drop, fill, reset, cars } = store;
+
+const fetchCars = async (bool = false) => {
+  if (bool) reset();
+  await fill();
+};
 
 let redirect;
 let isEditCarPage;
@@ -36,5 +41,7 @@ export default function () {
   return {
     moveToEditCarPage,
     dropCar,
+    fetchCars,
+    cars,
   };
 }

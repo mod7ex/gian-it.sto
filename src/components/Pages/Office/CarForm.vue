@@ -11,9 +11,9 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 const { route, back } = useAppRouter();
 
-const SuspensCarFormFields = useSuspense(CarFormFields);
+const SuspenseArea = useSuspense();
 
-const { saveCar, isEditCarPage } = form();
+const { saveCar, isEditCarPage } = form(false);
 
 const { dropCar } = cars();
 
@@ -41,7 +41,9 @@ const { drop } = useConfirmDialog();
       </Button>
     </template>
 
-    <SuspensCarFormFields />
+    <suspense-area>
+      <car-form-fields :in-modal="false" />
+    </suspense-area>
 
   </OfficeLayout>
 </template>

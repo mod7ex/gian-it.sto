@@ -8,18 +8,22 @@ import Button from '@/UI/Button.vue';
 import CarsTable from '~/components/Layout/cars/CarsTable.vue';
 import departmentStore from '~/store/departments';
 
+const props = defineProps({
+  inModal: {
+    type: Boolean,
+  },
+});
+
 const { options: departmentOptions } = departmentStore;
 
-const { clientFields, v$, atMountedClientForm, addItem } = service();
+const { clientFields, v$, atMountedClientForm, addItem } = service(props.inModal);
 
-await atMountedClientForm();
+await atMountedClientForm(props.inModal);
 
 const addMail = addItem('emails');
 const addPhone = addItem('phones');
 
-const notifyClientCars = (v) => {
-    clientFields.cars = clientFields.cars.filter(({id}) => id != v)
-}
+const notifyClientCars = (v) => { clientFields.cars = clientFields.cars.filter(({id}) => id != v) }
 
 </script>
 
@@ -63,7 +67,7 @@ const notifyClientCars = (v) => {
 
         <div class="col-span-12 sm:col-span-4 ">
             <Input label="Паспорт" v-model="clientFields.passport" />
-            <!-- <Input label="Паспорт" mask="#### #######" v-model="clientFields.passport" /> -->
+            <!-- <Input label="Паспорт" :mask="props.inModal ? undefined : '#### #######'" v-model="clientFields.passport" /> -->
         </div>
 
         <v-can ability="crud departments" class="col-span-12 sm:col-span-3">
@@ -86,7 +90,7 @@ const notifyClientCars = (v) => {
                 <div v-for="(phone, i) in clientFields.phones" class="flex items-center" :key="`phones-${i}`">
                     <Input
                         :label="`Телефон ${i + 1}`"
-                        mask="+7 ### ###-##-##"
+                        :mask="props.inModal ? undefined : '+7 ### ###-##-##'"
                         v-model="clientFields.phones[i]"
                         :error="clientFields.phones.invalide == i ?  v$.phones.$errors[0]?.$message : ''"
                         @input="v$.phones.$touch"
@@ -120,7 +124,7 @@ const notifyClientCars = (v) => {
         </div>
 
         <div class="col-span-12 sm:col-span-12">
-            <TextArea label="Примечания" rows="5" v-model="clientFields.notes" />
+            <TextArea label="Примечания" v-model="clientFields.notes" />
         </div>
 
         <div class="col-span-12 sm:col-span-12" v-if="clientFields.id">

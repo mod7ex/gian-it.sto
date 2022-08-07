@@ -7,13 +7,10 @@ import useSuspense from '~/composables/useSuspense';
 import service from '~/services/tasks/form';
 import departmentStore from '~/store/departments';
 import taskService from '~/services/tasks';
-import useAppRouter from '~/composables/useAppRouter';
 
 const { current } = departmentStore;
 
-const { route } = useAppRouter();
-
-const { isEditPage, saveTask } = service();
+const { isEditPage, saveTask, route, back } = service();
 
 const { removeTask } = taskService();
 
@@ -24,8 +21,8 @@ const SuspenseArea = useSuspense(Form);
 <template>
   <OfficeLayout :title="isEditPage ? 'Обновление задачи' : 'Создание новой задачи'">
     <template #actions>
-      <Button type="secondary" link="/tasks">
-        <ArrowLeftIcon class="w-5 h-5 mr-1"/>К задачам
+      <Button type="secondary" @click="back">
+        <ArrowLeftIcon class="w-5 h-5 mr-1"/>Bернуться
       </Button>
 
       <Button color="green" @click="saveTask">

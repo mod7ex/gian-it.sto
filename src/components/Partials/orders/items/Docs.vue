@@ -1,5 +1,5 @@
 <script setup>
-import { EyeIcon, TrashIcon } from '@heroicons/vue/outline';
+import { EyeIcon, TrashIcon, DownloadIcon } from '@heroicons/vue/outline';
 import Link from '@/UI/Link.vue';
 import Table from '@/Layout/Table.vue';
 import Badge from '@/UI/Badge.vue';
@@ -13,12 +13,13 @@ const { drop } = useConfirmDialog();
 const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Посмотреть', key: 'view' }, // fake keys
+  { label: 'Скачать', key: 'download' }, // fake keys
   // { label: 'Удалить', key: 'drop' }, // fake keys
 ];
 
 await loadTemplates();
 
-defineEmits(['preveiw']);
+defineEmits(['preveiw', 'download']);
 
 </script>
 
@@ -40,13 +41,19 @@ defineEmits(['preveiw']);
       </Link>
     </template>
 
-    <!-- 
+    <template #td-download="{ index }" >
+      <Link @click="$emit('download', index)">
+        <DownloadIcon class="text-blue-600 h-6 hover:text-blue-900" />
+      </Link>
+    </template>
+
+<!-- 
       <template #td-drop="{ item }" >
       <Link @click="() => drop(() => dropTemplate(item.id))">
         <TrashIcon class="text-blue-600 h-6 hover:text-blue-900" />
       </Link>
     </template> 
-    -->
+-->
 
     <!-- ****** -->
   </Table>

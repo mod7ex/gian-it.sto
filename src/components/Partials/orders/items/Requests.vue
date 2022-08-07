@@ -46,11 +46,11 @@ await load({ order_id: route.params.id });
     @delete="(v) => drop(() => dropRequestThenSet(v))"
     @edit="(v) => render(v)"
     noEdit
-    last
+    :last="!!state.raw.length"
   >
       <!-- Body -->
       <template #td-product="{ value }" >
-          <Link disabled >{{ value?.name }}</Link>
+          <Link :disabled="true" >{{ value?.name }}</Link>
       </template>
 
       <template #td-count="{ value }" >

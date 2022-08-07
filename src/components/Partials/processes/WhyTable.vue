@@ -4,7 +4,7 @@ import form from '~/services/processes/why-form';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/processes/why';
 
-const { state, load, drop } = store;
+const { state, drop, reset, fill } = store;
 
 const { render } = form();
 
@@ -13,12 +13,18 @@ const fields = [
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-await load();
+const fetchWhys = async (bool = false) => {
+  if (bool) reset();
+  await fill();
+};
+
+await fetchWhys(true);
 
 </script>
 
 <template>
     <Table
+        @bottom-touched="() => fetchWhys()"
         :fields="fields"
         :items="state.raw"
         @delete="drop"

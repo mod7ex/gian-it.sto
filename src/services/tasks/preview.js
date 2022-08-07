@@ -45,12 +45,12 @@ export default () => effectScope().run(() => {
 
   const task_id = route.params.id;
 
-  const key = ref('random');
-
   const ping = async (start) => {
     const path = `tasks/${task_id}/to/${start ? 'process' : 'done'}`;
     const { success, message, data } = await save({ path, data: { [`${start ? 'start' : 'end'}_at`]: hyphenatedDateFormat(new Date()) } });
-    if (success) { key.value = data?.task?.status ?? 'random'; }
+    if (success) {
+      task.value.status = data?.task?.status;
+    }
     const msg = message ?? (success ? 'Статус успешно изменен' : 'Не удалось изменить статус задача');
     toaster[success ? 'success' : 'danger'](msg);
   };
@@ -63,7 +63,6 @@ export default () => effectScope().run(() => {
     route,
     ping,
     task_id,
-    key,
     clearMemo: () => { task = undefined; },
   };
 });

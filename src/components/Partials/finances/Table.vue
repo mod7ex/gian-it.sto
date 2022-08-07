@@ -48,7 +48,7 @@ await fetchFinances(true);
         </template>
 
         <template #td-order="{ value }" >
-            <Link :href="{ name: 'OrderEdit', params: { id: value?.id } }" :disabled="!value?.id">
+            <Link :href="{ name: 'OrderEdit', params: { id: value?.id ?? '0' } }" :disabled="!value?.id">
                 {{ value?.id ? `#${generateShapedIdfromId(value?.id)}` : '_' }}
             </Link>
         </template>

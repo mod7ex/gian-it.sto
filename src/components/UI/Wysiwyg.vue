@@ -35,7 +35,7 @@ watch(() => props.modelValue, (v) => {
         theme="snow"
         toolbar="minimal"
         style="height: 200px"
-        />
+      />
   </div>
 </template>
 

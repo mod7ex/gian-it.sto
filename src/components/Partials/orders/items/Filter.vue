@@ -24,15 +24,7 @@ onMounted(loadCars);
 
       <Input label="Дата от" type="date" v-model="filter.created_after" />
       <Input label="Дата до" type="date" v-model="filter.created_before" />
-
-      <div class="">
-        <Select
-          label="Автомобиль"
-          v-model="filter.car_id"
-          :options="carOptions"
-          class="w-full"
-        />
-      </div>
+<!--
 
       <div class="w-full user">
         <Select
@@ -43,11 +35,21 @@ onMounted(loadCars);
         />
       </div>
 
+      <div class="">
+        <Select
+          label="Автомобиль"
+          v-model="filter.car_id"
+          :options="carOptions"
+          class="w-full"
+        />
+      </div>
+
+ -->
     </div>
 </template>
 
 <style>
 .user {
-  max-width: 400px;
+  max-width: 300px;
 }
 </style>

@@ -5,7 +5,7 @@ import form from '~/services/processes/form';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/processes';
 
-const { state, load, drop } = store;
+const { state, drop, reset, fill } = store;
 
 const { render } = form();
 
@@ -15,13 +15,19 @@ const fields = [
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-await load();
+const fetchProcesses = async (bool = false) => {
+  if (bool) reset();
+  await fill();
+};
+
+await fetchProcesses(true);
 
 </script>
 
 <template>
 
     <Table
+        @bottom-touched="() => fetchProcesses()"
         :fields="fields"
         :items="state.raw"
         @delete="drop"

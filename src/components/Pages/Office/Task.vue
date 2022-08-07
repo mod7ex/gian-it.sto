@@ -18,8 +18,8 @@ onScopeDispose(clearMemo);
 <template>
   <OfficeLayout title="Название задачи">
     <template #actions>
-        <Button type="secondary" @click="() => back()">
-          <ArrowLeftIcon class="w-5 h-5 mr-1"/>К задачам
+        <Button type="secondary" @click="back">
+          <ArrowLeftIcon class="w-5 h-5 mr-1"/>Bернуться
         </Button>
 
         <Button color="purple" @click="() => ping(true)" blur v-if="((task?.status === 'wait') || (task?.status === 'done')) || (task?.status === 'pause')">
@@ -35,7 +35,7 @@ onScopeDispose(clearMemo);
         </Button>
     </template>
 
-    <suspense-area :key="key" />
+    <suspense-area />
 
   </OfficeLayout>
 </template>

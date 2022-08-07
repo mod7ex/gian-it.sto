@@ -73,7 +73,7 @@ const log = (e) => {
 export default () => effectScope().run(() => {
   const toaster = useToast();
 
-  const { route, isThePage, redirectTo } = useAppRouter('TaskEdit');
+  const { route, isThePage, redirectTo, back } = useAppRouter('TaskEdit');
 
   const { order_id } = route.query;
 
@@ -144,5 +144,7 @@ export default () => effectScope().run(() => {
     saveTask,
     atMounted,
     log,
+    route,
+    back,
   };
 });

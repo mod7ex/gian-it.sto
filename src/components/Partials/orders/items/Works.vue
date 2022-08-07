@@ -44,7 +44,7 @@ await load({order_id :route.params.id});
     :items="state.raw"
     @delete="(id) => drop(() => dropWorkThenSet(id))"
     @edit="(id) => render(id)"
-    last
+    :last="!!state.raw.length"
 
   >
       <!-- Body -->

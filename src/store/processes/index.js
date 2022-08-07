@@ -3,14 +3,31 @@ import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
+import { userHasPermission } from '~/lib/permissions.js';
+
+const hasPermission = userHasPermission('crud processes');
+
 const { drop: dropWrapper } = useConfirmDialog();
 
 const state = reactive({
   raw: [],
+  pages: 100,
+  page: 1,
 });
 
 const reset = () => {
   state.raw = [];
+  state.pages = 100;
+  state.page = 1;
+};
+
+const fill = async (payload) => {
+  if (!hasPermission) return;
+  if (state.page > state.pages) return;
+  const data = await $({ key: 'process_categories', ...payload, page: state.page });
+  state.raw = state.raw.concat(data?.process_categories ?? []);
+  state.pages = data?.meta?.last_page ?? 100;
+  state.page += 1;
 };
 
 const load = async () => {
@@ -26,5 +43,6 @@ export default {
   reset,
   load,
   drop,
+  fill,
   options: computed(() => state.raw.map(({ id, name }) => ({ label: name, value: id }))),
 };

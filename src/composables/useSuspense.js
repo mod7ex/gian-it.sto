@@ -3,7 +3,7 @@ import { ExclamationIcon } from '@heroicons/vue/outline';
 import Spinner from '@/UI/Spinner.vue';
 
 // const wrapper = h('div', { class: 'flex justify-center items-center' });
-const wrapper = h('div', { class: 'my-16 col-span-12 sm:col-span-12 flex justify-center items-center' });
+const wrapper = h('div', { class: 'mt-8 mb-12 col-span-12 sm:col-span-12 flex justify-center items-center' });
 
 const defaultFallback = (text) => h(
   wrapper,

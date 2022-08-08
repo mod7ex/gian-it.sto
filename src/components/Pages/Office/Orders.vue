@@ -42,7 +42,7 @@ const SuspenseArea = useSuspense();
 
     <v-filter />
 
-    <!-- <suspense-area :key="`orders-${current}-${key}`" > <kan-ban /> </suspense-area> -->
+    <suspense-area :key="`orders-${current}-${key}`" > <kan-ban /> </suspense-area>
 
   </OfficeLayout>
 </template>

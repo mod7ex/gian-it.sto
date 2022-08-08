@@ -173,6 +173,11 @@ const dis = computed(() => props.disabled);
   height: 100%;
 }
 
+#listing::-webkit-scrollbar {
+  width: .2em;
+  height: .2em;
+}
+
 .sto-select-enter-active {
   transition: all 0.2s ease-out;
 }

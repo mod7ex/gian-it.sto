@@ -60,6 +60,13 @@ module.exports = {
 
         'text-xs',
         'text-sm',
+
+        'border-red-300',
+        'border-gray-300',
+        'focus:ring-red-500',
+        'focus:border-red-500',
+        'focus:ring-indigo-500',
+        'focus:border-indigo-500',
       ],
     },
   },

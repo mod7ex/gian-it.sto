@@ -2,7 +2,6 @@
 import Link from '@/UI/Link.vue';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import carsService from '~/services/cars/cars';
-
 import Table from '@/Layout/Table.vue';
 
 const { dropCar, moveToEditCarPage } = carsService();

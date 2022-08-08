@@ -138,23 +138,25 @@ const clearMemo = () => onScopeDispose(() => {
   v$ = undefined;
 });
 
-const prepare = () => {
+const prepare = (inModal) => {
   if (clientFields) return;
 
   clientFields = reactive(defaultClientFields);
+
+  clientFields.department_id = current.value;
 
   const { route, isThePage, back } = useAppRouter('EditClient');
 
   [routeInstance, isEditClientPage, redirectBack] = [route, isThePage, back];
 
-  const rules = clientFormValidationsRules();
+  const rules = clientFormValidationsRules(inModal);
 
   v$ = useVuelidate(rules, clientFields, { $lazy: true });
 };
 
 export default function (inModal) {
   if (!inModal) {
-    prepare();
+    prepare(false);
     clearMemo();
   } else {
     modalUp = (...args) => {
@@ -168,7 +170,7 @@ export default function (inModal) {
           RawForm: h(RawForm, { inModal: true }),
           atSubmit: () => saveClient(true),
           atClose: () => scope.stop(),
-          atOpen: () => prepare(),
+          atOpen: () => prepare(true),
         });
 
         render(...args);

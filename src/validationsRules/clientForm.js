@@ -27,15 +27,16 @@ const requiredArr = arrayValidator(required.$validator);
 const mails = arrayValidator(email.$validator);
 const phoned = arrayValidator(isValidPhone);
 
-export default function () {
+export default function (inModal) {
   return computed(() => ({
     name: { required: helpers.withMessage('Укажите имя', required) },
     surname: { required: helpers.withMessage('Укажите фамилия', required) },
 
     emails: {
       mails: helpers.withMessage('Укажите верный email', mails),
-      requiredArr: helpers.withMessage('Укажите email', requiredArr),
+      ...inModal ? undefined : { requiredArr: helpers.withMessage('Укажите email', requiredArr) },
     },
+
     phones: {
       requiredArr: helpers.withMessage('Укажите телефон', requiredArr),
       phoned: helpers.withMessage('Укажите верный телефон', phoned),

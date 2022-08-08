@@ -4,6 +4,7 @@ import { computed, watch, onMounted, ref } from 'vue';
 import Button from '@/UI/Button.vue';
 import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
+import StoSelect from '@/UI/StoSelect.vue';
 // import TextArea from '@/UI/TextArea.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/orders/form';
@@ -64,12 +65,20 @@ await Promise.all([
         </div>
 
         <div class="col-span-12 sm:col-span-4 flex items-center">
-          <Select class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" />
+          <sto-select :search="true" class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" />
           <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => modalUp()" />
         </div>
 
         <div class="col-span-12 sm:col-span-4 flex items-center">
-          <Select class="flex-grow mr-1" label="Автомобиль" :options="carOptions" v-model="fields.car_id" :disabled="!fields.client_id" />
+          <sto-select
+            :search="true"
+            class="flex-grow mr-1"
+            label="Автомобиль"
+            :options="carOptions"
+            v-model="fields.car_id"
+            :disabled="!fields.client_id"
+            :key="fields.client_id"
+          />
           <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => render()" />
         </div>
 <!--

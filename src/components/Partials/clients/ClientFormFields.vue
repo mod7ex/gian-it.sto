@@ -72,6 +72,7 @@ const notifyClientCars = (v) => { clientFields.cars = clientFields.cars.filter((
 
         <v-can ability="crud departments" class="col-span-12 sm:col-span-3">
             <Select
+                :disabled="inModal"
                 label="Отделение"
                 :options="departmentOptions"
                 v-model="clientFields.department_id"

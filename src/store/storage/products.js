@@ -13,7 +13,7 @@ const state = reactive({
 
 const IndexById = (_id) => {
   for (let i = 0; i < state.raw.length; i++) {
-    // eslint-disable-next-line eqeqeq
+    // eslint-disable-next-line
     if (state.raw[i]?.id == _id) {
       return i;
     }
@@ -39,7 +39,6 @@ const getProducts = (is_requests_page) => computed(() => {
   const items = state.raw.filter(({ count }) => (state.inStock ? count > 0 : count === 0));
   if (!is_requests_page) return items;
   const result = items.filter(({ product_requests }) => contains(product_requests, 'wait'));
-  console.log(result);
   return result;
 });
 
@@ -75,9 +74,9 @@ const load = async (payload = {}) => {
 
 const fill = async (payload) => {
   if (state.pending) return;
-  state.pending = true;
   // in payload should be included storage_id
   if (state.page > state.pages) return;
+  state.pending = true;
   const data = await $({ key: 'products', params: { ...payload, page: state.page } });
   state.raw = state.raw.concat(data?.products ?? []);
   state.pages = data?.meta?.last_page ?? 100;

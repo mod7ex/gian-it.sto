@@ -10,6 +10,7 @@ const state = reactive({
   raw: [],
   pages: 100,
   page: 1,
+  pending: false,
 });
 
 const reset = () => {
@@ -24,12 +25,15 @@ const load = async () => {
 };
 
 const fill = async (payload) => {
+  if (state.pending) return;
   if (!hasCRUD) return;
   if (state.page > state.pages) return;
-  const data = await $.finance_groups({ ...payload, page: state.page });
-  state.raw = state.raw.concat(data ?? []);
+  state.pending = true;
+  const data = await $({ key: 'finance_groups', ...payload, page: state.page });
+  state.raw = state.raw.concat(data?.finance_groups ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
+  state.pending = false;
 };
 
 const drop = async (id) => _$.finance_group(id, (v) => {

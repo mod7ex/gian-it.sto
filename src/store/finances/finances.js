@@ -10,6 +10,7 @@ const state = reactive({
   raw: [],
   pages: 100,
   page: 1,
+  pending: false,
 });
 
 const reset = () => {
@@ -24,11 +25,14 @@ const load = async (payload = {}) => {
 };
 
 const fill = async (payload) => {
+  if (state.pending) return;
   if (state.page > state.pages) return;
+  state.pending = true;
   const data = await $({ key: 'finances', params: { ...payload, page: state.page } });
   state.raw = state.raw.concat(data?.finances ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
+  state.pending = false;
 };
 
 const sort = (v) => {

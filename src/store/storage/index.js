@@ -7,10 +7,15 @@ const hasCRUD = userHasPermission('crud storages');
 
 const state = reactive({
   raw: [],
+  pages: 100,
+  page: 1,
+  pending: false,
 });
 
 const reset = () => {
   state.raw = [];
+  state.pages = 100;
+  state.page = 1;
 };
 
 const load = async (params = {}) => {
@@ -20,6 +25,19 @@ const load = async (params = {}) => {
   }
 };
 
+const fill = async (payload) => {
+  if (state.pending) return;
+  if (!hasCRUD) return;
+  if (state.page > state.pages) return;
+  state.pending = true;
+  const key = `storages${payload.department_id ? `/department/${payload.department_id}` : ''}`;
+  const data = await $({ key, params: { ...payload, page: state.page } });
+  state.raw = state.raw.concat(data?.storages ?? []);
+  state.pages = data?.meta?.last_page ?? 100;
+  state.page += 1;
+  state.pending = false;
+};
+
 const drop = async (id) => _$.storage(id, (v) => {
   state.raw.deleteById(v);
 });
@@ -27,6 +45,7 @@ const drop = async (id) => _$.storage(id, (v) => {
 export default {
   state: readonly(state),
 
+  fill,
   load,
   drop,
   reset,

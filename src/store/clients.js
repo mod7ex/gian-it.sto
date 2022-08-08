@@ -7,6 +7,7 @@ const state = reactive({
   raw: [],
   pages: 100,
   page: 1,
+  pending: false,
 });
 
 const sort = (v) => {
@@ -25,11 +26,14 @@ const load = async (payload) => {
 };
 
 const fill = async (payload) => {
+  if (state.pending) return;
   if (state.page > state.pages) return;
+  state.pending = true;
   const data = await $({ key: 'clients', params: { ...payload, page: state.page } });
   state.raw = state.raw.concat(data?.clients ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
+  state.pending = false;
 };
 
 const drop = async (id) => _$.client(id, (v) => {
@@ -43,14 +47,11 @@ export default {
   drop,
   sort,
   fill,
-
   count: computed(() => state.raw.length),
-
   options: computed(() => state.raw.map((item) => ({
     value: item.id,
     label: `${item.name} ${item.surname}`,
   }))),
-
   directory: computed(() => alphaGroupper(state.raw, 'surname', ({ id, name, surname, avatar }) => ({
     id,
     title: `${name ?? ''} ${surname ?? ''}`,

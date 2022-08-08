@@ -13,7 +13,6 @@ const props = defineProps({
   options: {
     type: Array,
     required: false,
-    default: [],
   },
 
   help: {
@@ -74,7 +73,7 @@ const { pixel, container } = useIntersectionObserver(() => {
   emit('bottomTouched');
 }, computed(() => filteredOptions.value.length > 0));
 
-const ping = (bool) => { up.value = !!bool; };
+const dis = computed(() => props.disabled);
 
 const theLabel = computed(() => (computedOptions.value.length === 0
   ? '-- пустой --'
@@ -82,23 +81,28 @@ const theLabel = computed(() => (computedOptions.value.length === 0
     ? (computedOptions.value.find(({ value }) => value == props.modelValue)?.label ?? 'try change department')
     : '-- выберите --'));
 
-const handelBlur = (e, force = false) => {
-  searchPayload.value = undefined;
-  if (force) return ping(false);
+const ping = (bool) => {
+  if (bool) { searchPayload.value = undefined; }
+  up.value = !!bool;
+};
 
+const handelBlur = (e, force = false) => {
   // Fix --> https://github.com/vueuse/vueuse/blob/main/packages/core/useActiveElement/index.ts
 
   // it's important to make this task the last in the task-queue in order to have the input already clicked
   // Fix --> this might create few issues later but we're not sure (^_^)
 
   setTimeout(() => {
+    if (force) {
+      if (window?.document.activeElement?.classList.contains('modex-select')) return;
+      return ping(false);
+    }
+
     // console.log(window?.document.activeElement);
     if (window?.document.activeElement === searchBar.value) return;
     ping(false);
   });
 };
-
-const dis = computed(() => props.disabled);
 
 </script>
 
@@ -108,12 +112,10 @@ const dis = computed(() => props.disabled);
 
     <div class="relative">
 
-      <!-- :class="[`border-${props.error ? 'red' : 'gray'}-300 focus:ring-${props.error ? 'red' : 'indigo'}-500 focus:border-${props.error ? 'red' : 'indigo'}-500`]" -->
-      <!-- class="mt-1 block w-full py-2 text-base focus:outline-none sm:text-sm rounded-md shadow-sm" -->
       <Button
-      :disabled="dis"
+        :disabled="dis"
         type="secondary"
-        :class="['mt-1 w-full text-base font-thin focus:outline-none sm:text-sm rounded-md shadow-sm flex justify-between items-center', dis ? 'bg-gray-100' : 'cursor-pointer']"
+        :class="['modex-select mt-1 w-full text-base font-thin focus:outline-none sm:text-sm rounded-md shadow-sm flex justify-between items-center', dis ? 'bg-gray-100' : 'cursor-pointer']"
         @click="() =>ping(!up)"
         @blur="handelBlur"
       >
@@ -146,7 +148,7 @@ const dis = computed(() => props.disabled);
             v-if="filteredOptions.length > 0"
           >
             <span
-              class="block text-sm p-2 hover:bg-gray-100 cursor-pointer"
+              class="block text-sm p-2 hover:bg-gray-300 cursor-pointer"
               v-for="item in filteredOptions"
               @click="$emit('update:modelValue', item.value)"
               :key="item.value"

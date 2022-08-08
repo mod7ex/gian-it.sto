@@ -9,6 +9,7 @@ const state = reactive({
   raw: [],
   pages: 100,
   page: 1,
+  pending: false,
 });
 
 const reset = () => {
@@ -18,15 +19,18 @@ const reset = () => {
 };
 
 const fill = async (payload) => {
+  if (state.pending) return;
   if (state.page > state.pages) return;
+  state.pending = true;
   const data = await $({ key: 'appeal_reasons', ...payload, page: state.page });
   state.raw = state.raw.concat(data?.appeal_reasons ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
+  state.pending = false;
 };
 
-const load = async () => {
-  state.raw = await $.appeal_reasons();
+const load = async (payload) => {
+  state.raw = await $.appeal_reasons(payload);
 };
 
 const drop = (id) => dropWrapper(async () => _$.appeal_reason(id, (v) => {

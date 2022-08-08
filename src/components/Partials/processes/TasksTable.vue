@@ -9,7 +9,7 @@ const { route, redirectTo } = useAppRouter();
 
 const { id } = route.params;
 
-const { state, load, drop } = store;
+const { state, fill, reset, drop } = store;
 
 const fields = [
   { label: 'Название', key: 'name' },
@@ -18,12 +18,18 @@ const fields = [
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-await load(id);
+const fetchTasks = async (bool = false) => {
+  if (bool) reset();
+  await fill({process_category_id: id});
+};
+
+await fetchTasks(true);
 
 </script>
 
 <template>
     <Table
+        @bottom-touched="() => fetchTasks()"
         :fields="fields"
         :items="state.raw"
         @delete="drop"

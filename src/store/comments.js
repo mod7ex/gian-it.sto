@@ -9,6 +9,7 @@ const state = reactive({
   raw: [],
   pages: 100,
   page: 1,
+  pending: false,
 });
 
 const sort = (v) => {
@@ -27,12 +28,15 @@ const load = async (model, id) => {
 };
 
 const fill = async (model, id) => {
+  if (state.pending) return;
   if (state.page > state.pages) return;
+  state.pending = true;
   const key = `comments/${model}/${id}`;
   const data = await $({ key, params: { page: state.page } });
   state.raw = state.raw.concat(data?.comments ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
+  state.pending = false;
 };
 
 const save = async (model, id, description) => {

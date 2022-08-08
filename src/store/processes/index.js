@@ -13,6 +13,7 @@ const state = reactive({
   raw: [],
   pages: 100,
   page: 1,
+  pending: false,
 });
 
 const reset = () => {
@@ -22,12 +23,15 @@ const reset = () => {
 };
 
 const fill = async (payload) => {
+  if (state.pending) return;
   if (!hasPermission) return;
   if (state.page > state.pages) return;
+  state.pending = true;
   const data = await $({ key: 'process_categories', ...payload, page: state.page });
   state.raw = state.raw.concat(data?.process_categories ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
+  state.pending = false;
 };
 
 const load = async () => {

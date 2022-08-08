@@ -17,14 +17,20 @@ const { drop } = useConfirmDialog();
 
 const { render } = form();
 
-const { storages, load, drop: dropStorage } = store;
+const { storages, fill, reset, drop: dropStorage } = store;
 
-await load({ department_id: current.value });
+const fetchStorages = async (bool = false) => {
+  if (bool) reset();
+  await fill({ department_id: current.value });
+};
+
+await fetchStorages(true);
 
 </script>
 
 <template>
     <Table
+        @bottom-touched="() => fetchStorages()"
         :fields="fields"
         :items="storages"
         @delete="(id) => drop(() => dropStorage(id))"

@@ -8,9 +8,6 @@ import $ from '~/helpers/fetch.js';
 import useModalForm from '~/composables/useModalForm';
 import communicate from '~/helpers/communicate';
 import service from '~/services/cars/cars';
-import useToast from '~/composables/useToast.js';
-
-const toaster = useToast();
 
 let routeInstance;
 let isEditCarPage;
@@ -38,7 +35,6 @@ const saveCar = async (_modal = false) => {
     } finally {
       if (success) {
         await fetchCars(true);
-        toaster.success(message);
       }
     }
   } else {
@@ -141,7 +137,7 @@ export default function (_modal = false) {
     isEditCarPage,
     render: modalUp,
     carFields,
-    saveCar,
+    saveCar: () => saveCar(false),
     atMountedCarForm,
     theSelectedCarMark,
     v$,

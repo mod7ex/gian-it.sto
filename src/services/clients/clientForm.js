@@ -7,12 +7,9 @@ import { hyphenatedDateFormat } from '~/helpers';
 import departmentStore from '~/store/departments';
 import save from '~/helpers/save';
 import useModalForm from '~/composables/useModalForm';
-import useToast from '~/composables/useToast.js';
 import communicate from '~/helpers/communicate';
 import service from '~/services/clients/clients';
 import RawForm from '~/components/Partials/clients/ClientFormFields.vue';
-
-const toaster = useToast();
 
 const { current, setCurrent } = departmentStore;
 
@@ -58,7 +55,6 @@ const saveClient = async (inModal) => {
     } finally {
       if (success) {
         await fetchClients(true);
-        toaster.success(message);
       }
     }
   } else {
@@ -105,7 +101,6 @@ const setForm = async (payload) => {
 };
 
 const atMountedClientForm = async (inModal) => {
-  console.log(inModal);
   if (inModal) return;
 
   let client = {};
@@ -158,7 +153,6 @@ const prepare = () => {
 };
 
 export default function (inModal) {
-  console.log(inModal);
   if (!inModal) {
     prepare();
     clearMemo();
@@ -189,7 +183,7 @@ export default function (inModal) {
     modalUp,
     isEditClientPage,
     v$,
-    saveClient,
+    saveClient: () => saveClient(false),
     atMountedClientForm,
     addItem,
     redirectBack,

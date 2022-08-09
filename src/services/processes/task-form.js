@@ -27,6 +27,7 @@ const deepDefaults = {
   process_checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
+  delete_file_ids: [],
   department_id: current,
 };
 
@@ -37,6 +38,7 @@ let files;
 const setField = function (key) {
   if (key.includes('_id')) {
     if (key === 'temp_file_ids') return;
+    if (key === 'delete_file_ids') return;
 
     fields[key] = this[key.replace('_id', '')]?.id;
     return;
@@ -130,6 +132,7 @@ export default (process_category) => effectScope().run(() => {
     deepDefaults.pipelines = [{}];
     deepDefaults.temp_file_ids = [];
     deepDefaults.process_categories = [];
+    deepDefaults.delete_file_ids = [];
   });
 
   return {

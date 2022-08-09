@@ -11,6 +11,6 @@ export default function () {
 
     finance_group_id: { required: helpers.withMessage('Выберите финансовую группу', required) },
 
-    order_id: { required: helpers.withMessage('Выберите Заказ', required) },
+    // order_id: { required: helpers.withMessage('Выберите Заказ', required) },
   }));
 }

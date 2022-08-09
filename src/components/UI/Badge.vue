@@ -30,11 +30,15 @@ const props = defineProps({
     `bg-${props.color}-100`,
     `text-${props.color}-800 ${props.margin ? 'm-1' : ''}`,
     `text-${props.size}`,
+    $attrs.class,
     (props.size === 'xs' ? 'px-2.5' : 'px-3')
   ]">
-    <svg :class="[
-        'mr-1.5 h-2 w-2', `text-${props.color}-400`, (props.size === 'xs' ? '-ml-0.5' : '-ml-1')
-    ]" fill="currentColor" viewBox="0 0 8 8" v-if="props.point">
+    <svg
+      :class="[ 'mr-1.5 h-2 w-2', `text-${props.color}-400`, (props.size === 'xs' ? '-ml-0.5' : '-ml-1') ]"
+      fill="currentColor"
+      viewBox="0 0 8 8"
+      v-if="props.point"
+    >
       <circle cx="4" cy="4" r="3" />
     </svg>
 

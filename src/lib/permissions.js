@@ -84,7 +84,7 @@ export const PERMISSIONS = {
     READ_OWN: () => userHasPermission('read own tasks') && !isAdmin.value,
 
     UPDATE: () => userHasAtLeastOnePermission(['update tasks', 'update department tasks', 'update own tasks']),
-    UPDATE_DEPARTMENT: () => userHasPermission('update department tasks') && !!isAdmin.value,
+    UPDATE_DEPARTMENT: () => userHasPermission('update department tasks') && !isAdmin.value,
     UPDATE_OWN: () => userHasPermission('update own tasks') && !isAdmin.value,
 
     DELETE: () => userHasAtLeastOnePermission(['delete tasks', 'delete department tasks', 'delete own tasks']),

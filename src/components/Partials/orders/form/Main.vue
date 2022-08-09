@@ -16,6 +16,8 @@ import processStore from '~/store/processes/index';
 import orderStagesStore from '~/store/orders/stages';
 import carForm from '~/services/cars/carForm';
 import clientForm from '~/services/clients/clientForm';
+import StoFiles from '@/Partials/Files.vue'
+import useConfirmDialog from '~/composables/useConfirmDialog';
 import { maybeRun, generateShapedIdfromId } from '~/helpers';
 
 const { options: orderStagesOptions, load: loadOrderStages } = orderStagesStore;
@@ -46,6 +48,12 @@ await Promise.all([
   atMounted(),
 ]).then(() => { if(isEditPage.value) {ID.value = `#${generateShapedIdfromId(route.params.id)}`} });
 
+const { simple } = useConfirmDialog();
+
+const handelBlackListedFile = (id) =>  {
+    fields.delete_file_ids.push(id)
+    fields.files.deleteById(id)
+}
 </script>
 
 <template>
@@ -116,7 +124,7 @@ await Promise.all([
             <Button size="xs" class="mt-4" @click="fields.checkboxes.push('')">Добавить</Button>
         </div>
 
-        <div class="col-span-12"><Upload :multiple="true" @selected="log" /></div>
+        <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" />
 
       </div>
   </div>

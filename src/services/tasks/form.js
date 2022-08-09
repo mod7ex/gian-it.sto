@@ -30,6 +30,7 @@ const deepDefaults = {
   checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
+  delete_file_ids: [],
 };
 
 let fields;
@@ -39,6 +40,7 @@ let files;
 const setField = function (key) {
   if (key.includes('_id')) {
     if (key === 'temp_file_ids') return;
+    if (key === 'delete_file_ids') return;
 
     fields[key] = this[key.replace('_id', '')]?.id;
     return;
@@ -60,7 +62,7 @@ const setField = function (key) {
     return;
   }
 
-  fields[key] = this[key] ?? defaults[key];
+  fields[key] = (this[key] ?? defaults[key]) ?? deepDefaults[key];
 };
 
 const setForm = async (payload) => {
@@ -136,6 +138,7 @@ export default () => effectScope().run(() => {
     deepDefaults.checkboxes = [{ description: '' }];
     deepDefaults.pipelines = [{}];
     deepDefaults.temp_file_ids = [];
+    deepDefaults.delete_file_ids = [];
   });
 
   return {

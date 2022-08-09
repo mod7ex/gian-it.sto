@@ -2,7 +2,7 @@
 import { computed, watch, defineComponent, h } from 'vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
-import Upload from '@/UI/Upload.vue';
+import StoFiles from '@/Partials/Files.vue'
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/tasks/form';
@@ -12,11 +12,12 @@ import departmentStore from '~/store/departments';
 import pipelineStore from '~/store/pipelines';
 import stagesStore from '~/store/pipelines/stages';
 import orderStore from '~/store/orders/orders';
-import Badge from '@/UI/Badge.vue';
+import useConfirmDialog from '~/composables/useConfirmDialog';
 import proxiedSelect from '@/StoSelect';
 import useAppRouter from '~/composables/useAppRouter.js';
 
 const { route } = useAppRouter();
+const { simple } = useConfirmDialog();
 
 const { current } = departmentStore;
 const { load, options } = userStore;
@@ -46,6 +47,11 @@ const StagesSelection = proxiedSelect(state, fields);
 
 const cannotAdd = computed(() => pipelinesOptions.value.map(({ value }) => value).length === (new Set(selectedFunnelsIds.value)).size);
 const notSelectedFunnels = computed(() => pipelinesOptions.value.filter(({ value }) => !selectedFunnelsIds.value.includes(Number(value))));
+
+const handelBlackListedFile = (id) =>  {
+    fields.delete_file_ids.push(id)
+    fields.files.deleteById(id)
+}
 
 </script>
 
@@ -119,20 +125,12 @@ const notSelectedFunnels = computed(() => pipelinesOptions.value.filter(({ value
 
         <hr class="col-span-12" />
 
-        <div class="col-span-12 sm:col-span-12 pb-10 grid grid-cols-12">
-
-            <Upload :multiple="true" @selected="log" class="col-span-12 sm:col-span-6" />
-
-            <div class="col-span-12 sm:col-span-6" v-if="fields.files.length">
-                <h2 class="text-gray-600 mb-3">Файлы</h2>
-                <Badge color="green" :point="true" v-for="c in fields.files" :key="c.name">{{ c.name }}</Badge>
-            </div>
-        </div>
+        <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" />
     </div>
 </template>
 
 <style scoped>
 .pipeline {
     max-width: 300px;
-}
+} 
 </style>

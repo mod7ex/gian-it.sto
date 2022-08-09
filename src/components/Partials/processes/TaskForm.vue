@@ -12,9 +12,12 @@ import { maybeRun } from '~/helpers';
 import orderStagesStore from '~/store/orders/stages';
 import processStore from '~/store/processes/index';
 import pipelineStore from '~/store/pipelines';
+import StoFiles from '@/Partials/Files.vue'
 import rolesStore from '~/store/roles';
 import proxiedSelect from '@/StoSelect';
+import useConfirmDialog from '~/composables/useConfirmDialog';
 
+const { simple } = useConfirmDialog();
 const { load: loadOrderStages, options: OrderStagesOptions } = orderStagesStore;
 const { load: loadFunnels, state, options: pipelinesOptions } = pipelineStore;
 const { load: loadProcesses, options: processOptions } = processStore;
@@ -33,6 +36,11 @@ await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages(), loadPr
     removeCheckbox = removeItem(fields.process_checkboxes);
     removeFunnel = removeItem(fields.pipelines);
 });
+
+const handelBlackListedFile = (id) =>  {
+    fields.delete_file_ids.push(id)
+    fields.files.deleteById(id)
+}
 
 </script>
 
@@ -95,14 +103,6 @@ await Promise.all([load(), loadFunnels(), atMounted(), loadOrderStages(), loadPr
 
         <hr class="col-span-12" />
 
-        <div class="col-span-12 sm:col-span-12 pb-10 grid grid-cols-12">
-
-            <Upload :multiple="true" @selected="log" class="col-span-12 sm:col-span-6" />
-
-            <div class="col-span-12 sm:col-span-6" v-if="fields.files.length">
-                <h2 class="text-gray-600 mb-3">Файлы</h2>
-                <Badge color="green" :point="true" v-for="c in fields.files" :key="c.name">{{ c.name }}</Badge>
-            </div>
-        </div>
+        <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" />
     </div>
 </template>

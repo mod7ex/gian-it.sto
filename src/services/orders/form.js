@@ -42,7 +42,7 @@ const refDefaults = {
   department_id: current,
 };
 
-const generateDefault = () => ({ ...deepCopyObj(defaults), ...refDefaults, ...{ checkboxes: [''], temp_file_ids: [] } });
+const generateDefault = () => ({ ...deepCopyObj(defaults), ...refDefaults, ...{ checkboxes: [''], temp_file_ids: [], delete_file_ids: [] } });
 
 const clearMemory = () => {
   fields = undefined;
@@ -53,6 +53,9 @@ const clearMemory = () => {
 
 const setField = function (key) {
   if (key.includes('_id')) {
+    if (key === 'temp_file_ids') return;
+    if (key === 'delete_file_ids') return;
+
     if (['pipeline_id', 'department_id'].includes(key)) return;
 
     if (key === 'order_stage_id') {

@@ -41,7 +41,7 @@ const handler = (...args) => {
       try {
         let result;
 
-        if (proceed_function) result = await proceed_function();
+        if (proceed_function instanceof Function) result = await proceed_function();
         else result = {};
 
         success.value = result?.success ?? false;
@@ -89,6 +89,72 @@ const handler = (...args) => {
   });
 };
 
+const simple = (...args) => {
+  const scope = effectScope(true);
+
+  scope.run(() => {
+    let proceed_function;
+
+    const { title, text, icon } = toRefs(reactive({ ...DEFAULTS }));
+
+    let timer;
+    let ConfirmDialogApp;
+
+    const close = () => {
+      clearTimeout(timer);
+      icon.value = null;
+
+      if (!ConfirmDialogApp) return;
+      ConfirmDialogApp.unmount();
+      ConfirmDialogApp = undefined;
+      scope.stop();
+    };
+
+    const proceed = async () => {
+      try {
+        if (proceed_function instanceof Function) await proceed_function();
+      } finally {
+        close();
+      }
+    };
+
+    const closeBtn = h(Button, { class: 'mx-3 justify-center', innerHTML: 'Закрыть', onClick: close });
+    const proceedBtn = h(Button, { class: 'mx-3 justify-center', innerHTML: 'продолжить', color: 'red', onClick: proceed });
+    const actions = h('div', { class: 'mt-5 sm:mt-6 flex justify-center items-end' }, [closeBtn, proceedBtn]);
+
+    const ConfirmDialog = defineComponent({
+      render() {
+        return h(
+          Dialog,
+          { open: true, onClose: close, type: 'danger', icon: icon.value },
+          {
+            title: () => title.value,
+            text: () => text.value,
+            actions: () => actions,
+          },
+        );
+      },
+    });
+
+    const newConfirmDialogApp = () => createApp(ConfirmDialog);
+
+    const open = (_onYesFunction, _text, _title) => {
+      proceed_function = _onYesFunction;
+      text.value = _text ?? DEFAULTS.text;
+      title.value = _title ?? DEFAULTS.title;
+
+      ConfirmDialogApp = newConfirmDialogApp();
+      ConfirmDialogApp.mount('#sto-confirm');
+
+      timer = setTimeout(close, import.meta.env.VITE_CONFIRM_DIALOG_TTL);
+    };
+
+    icon.value = TrashIcon;
+    open(...args);
+  });
+};
+
 export default () => ({
   drop: handler,
+  simple,
 });

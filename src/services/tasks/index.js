@@ -14,11 +14,11 @@ const DEFAULT_ORDER_CRITERIA = 'id';
 
 const pivot = {
   id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
-  // name: { label: 'По имени', sort: (a, b) => (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)) },
+  name: { label: 'По имени', sort: (a, b) => (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)) },
   // department: { label: 'По отделам', sort: (a, b) => ((b.department?.id ?? 0) - (a.department?.id ?? 0)) },
   // type: { label: 'По типу', sort: (a, b) => (a.operation_type > b.operation_type ? 1 : (a.operation_type < b.operation_type ? -1 : 0)) },
   // sum: { label: 'По сумме', sort: (a, b) => (a.sum - b.sum) },
-  // date: { label: 'По дате', sort: (a, b) => ((new Date(a.created_at).getTime()) - (new Date(b.created_at).getTime())) },
+  date: { label: 'По дате', sort: (a, b) => ((new Date(a.created_at).getTime()) - (new Date(b.created_at).getTime())) },
 };
 
 let filter;
@@ -72,7 +72,7 @@ export default () => effectScope().run(() => {
       try {
         return { success, message };
       } finally {
-        // success && redirige && await redirectTo({ name: 'Tasks' });
+        success && redirige && await redirectTo({ name: 'Tasks' });
       }
     });
   };
@@ -80,8 +80,6 @@ export default () => effectScope().run(() => {
   const edit = async (id) => {
     await redirectTo({ name: 'TaskEdit', params: { id } });
   };
-
-  // onScopeDispose(() => { filter = undefined; }); // not here
 
   return {
     order,

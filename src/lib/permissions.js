@@ -1,3 +1,4 @@
+import { computed } from 'vue';
 import useAuth from '~/composables/useAuth.js';
 
 const { isUserLogged, user } = useAuth();
@@ -17,7 +18,6 @@ const routesPermissionsMap = {
   Task: ['read tasks', 'read department tasks', 'read own tasks'],
   TaskEdit: ['update tasks', 'update department tasks', 'update own tasks'],
   TaskCreate: 'create tasks',
-  TaskCreateForm: 'create tasks',
 
   Employers: ['read users', 'crud users'],
   EmployerForm: 'crud users',
@@ -75,3 +75,22 @@ const navigationGuards = (to, from, next) => {
 };
 
 export default navigationGuards;
+
+// ************* Tasks
+
+export const getTasksPermissions = () => {
+  const read_department_tasks = computed(() => userHasPermission('read department tasks') && !userHasPermission('read tasks'));
+  const read_own_tasks = computed(() => userHasPermission('read own tasks') && !read_department_tasks.value);
+
+  const update_department_tasks = computed(() => userHasPermission('update department tasks') && !userHasPermission('update tasks'));
+  const update_own_tasks = computed(() => userHasPermission('update own tasks') && !update_department_tasks.value);
+
+  return {
+    read_department_tasks,
+    read_own_tasks,
+    update_department_tasks,
+    update_own_tasks,
+  };
+};
+
+// *******************

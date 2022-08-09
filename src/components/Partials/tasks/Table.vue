@@ -7,6 +7,7 @@ import store from '~/store/tasks';
 import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
 import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
+import { userHasAtLeastOnePermission } from '~/lib/permissions';
 
 const props = defineProps({
   order_id: {
@@ -44,10 +45,11 @@ await fetchTasks(true, props.order_id);
         :items="state.raw"
         @delete="removeTask"
         @edit="edit"
+        :noEdit="!userHasAtLeastOnePermission(['update tasks', 'update department tasks', 'update own tasks'])"
     >
         <!-- Body -->
         <template #td-name="{ value, item: {id} }" >
-            <Link :href="{name: 'Task', params: { id }}" >{{ value }} </Link>
+            <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
         </template>
 
         <template #td-author="{ value }" >

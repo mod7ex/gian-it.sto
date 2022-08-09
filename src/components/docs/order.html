@@ -71,13 +71,13 @@
         <tbody>
           <tr>
             <td>1</td>
-            <td></td>
-            <td>Снятие и установка турбокомпрессора</td>
-            <td class="numeric">1</td>
-            <td class="numeric">6,000.00</td>
+            <td>{ product.sku }</td>
+            <td>{ product.name }</td>
+            <td class="numeric">{ product_request.count }</td>
+            <td class="numeric">{ product.output_sum }</td>
             <td class="numeric">1.000</td>
             <td>рубль</td>
-            <td class="numeric">6,000.00</td>
+            <td class="numeric">{ product.output_sum * product.count }</td>
             <td class="numeric">0.00</td>
           </tr>
         </tbody>
@@ -135,9 +135,9 @@
         <tbody>
           <tr>
             <td>1</td>
-            <td>0249971045</td>
-            <td>Кольцо упл. масл. трубы Mercedes</td>
-            <td class="numeric">1</td>
+            <td>{ product.sku }</td>
+            <td>{ product.name }</td>
+            <td class="numeric">{ product_request.count }</td>
             <td class="numeric">шт</td>
             <td class="numeric">1 100,00</td>
             <td class="numeric">1,100.00</td>
@@ -172,7 +172,7 @@
             <td></td>
             <td></td>
             <td class="bold numeric">Итого по</td>
-            <td class="wrapped bold numeric surround">60,200.00</td>
+            <td class="wrapped bold numeric surround">{ sum of both tables }</td>
             <td class="wrapped bold numeric surround">0.00</td>
           </tr>
         </tfoot>
@@ -198,12 +198,9 @@
       <p class="bold sto-mb-4">Всего по заказ-наряду: Шестьдесят тысяч двести рублей 00 копеек</p>
 
       <div class="sto-mx-auto max-w-70 sto-mb-4">
-        <p class="sto-text-left sto-mb-2">Мастер __ /Стрельченко Сергей Иванович/</p>
-        <p class="sto-mb-3">
-          Гарантии: Гарантия на работы: слесарные - 30 дней, электрические - 30 дней, оригинальные з/ч - 30 дней, з/ч, связанные с электрооборудованием, подачей топлива и системой впрыска - гарантии нет, неоригинальные з/ч - гарантии нет. Гарантийные обязательства на работы выполняются фирмой только
-          при предъявлении акта приемки автомобиля и техпаспорта (доверенности).
-        </p>
-        <p>Рекомендации: Замена масла, масляного и воздушного фильтров.</p>
+        <p class="sto-text-left sto-mb-2">Мастер __ /{ user.name } { user.surname } { user.middlename }/</p>
+        <p class="sto-mb-3">{ order.description }</p>
+        <p>{ order.checkboxes[i] }</p>
       </div>
 
       <p class="bold mt-4 sto-mb-2">3. Приложения к заказ-наряду</p>

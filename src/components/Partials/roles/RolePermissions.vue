@@ -1,12 +1,12 @@
 <script setup>
 import { computed } from 'vue';
 import Toggle from '@/UI/Toggle.vue';
-import roleForm from '~/services/roles/roleForm.js';
+import service from '~/services/roles/roleForm.js';
 import useAppRouter from '~/composables/useAppRouter.js';
 
 const { router, route } = useAppRouter();
 
-const { rawRolePermissions, permissions, atMountedRoleForm, role } = roleForm();
+const { rawRolePermissions, permissions, atMountedRoleForm, role } = service();
 
 await atMountedRoleForm();
 

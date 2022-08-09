@@ -4,6 +4,7 @@ import { debounce, hyphenatedDateFormat } from '~/helpers';
 import $ from '~/helpers/fetch.js';
 import save from '~/helpers/save';
 import useToast from '~/composables/useToast';
+import { canTasks } from '~/lib/permissions';
 
 const toaster = useToast();
 
@@ -56,6 +57,7 @@ export default () => effectScope().run(() => {
   };
 
   return {
+    canTasks,
     task,
     atMounted,
     checkBox,

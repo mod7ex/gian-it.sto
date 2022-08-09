@@ -8,7 +8,7 @@ import Comments from '@/Partials/Comments.vue';
 import { tasksColorMap } from '~/helpers';
 import service from '~/services/tasks/preview';
 
-const { task, atMounted, route, checkBox } = service();
+const { task, atMounted, route, checkBox, canTasks } = service();
 
 await atMounted();
 
@@ -64,14 +64,8 @@ await atMounted();
                     :key="item.id"
                     :class="['py-2', {'line-through': item.is_checked}]"
                 >
-                    <!-- <Checkbox
-                        :label="item.description"
-                        v-model="item.is_checked"
-                        :key="`${item.id}-${item.is_checked ? 'yup' : 'down'}`"
-                        @click="() => checkBox(item.id, !item.is_checked, i)"
-                    /> -->
-
                     <Checkbox
+                        :disabled="!canTasks(task, 'update')"
                         :label="item.description"
                         v-model="item.is_checked"
                         @clicked="() => checkBox(item.id, !item.is_checked, i)"
@@ -84,6 +78,6 @@ await atMounted();
         </div>
     </Card>
 
-    <Comments model="task" :id="route.params.id" class="mt-2" />
+    <Comments model="task" :id="route.params.id" class="mt-2" :disabled="!canTasks(task, 'update')" />
 </div>
 </template>

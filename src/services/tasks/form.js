@@ -14,6 +14,7 @@ const defaults = {
   description: '',
   order_id: '',
   user_id: '',
+  author_id: '',
   deadline_at: '',
   position: '',
   status: '',

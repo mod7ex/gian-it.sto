@@ -29,13 +29,13 @@ const props = defineProps({
   },
 
   noDelete: {
-    type: Boolean,
-    default: false,
+    type: Function,
+    default: () => false,
   },
 
   noEdit: {
-    type: Boolean,
-    default: false,
+    type: Function,
+    default: () => false,
   },
 });
 
@@ -44,6 +44,8 @@ const emit = defineEmits(['delete', 'edit', 'bottomTouched']);
 const { pixel, container } = useIntersectionObserver(() => {
   emit('bottomTouched');
 }, computed(() => props.items.length > 0));
+
+const noActions = (item) => props.noDelete(item) && props.noEdit(item);
 
 </script>
 
@@ -75,12 +77,12 @@ const { pixel, container } = useIntersectionObserver(() => {
 
                     <Td v-if="props.actions" class="text-center py-5">
                         <Dropdown
-                            v-if="!props.noDelete || !props.noEdit"
+                            v-if="!noActions(item)"
                             direction="right"
                             position="center"
                             :items="[[
-                                { label: 'Изменить', click: () => $emit('edit', item.id), icon: PencilIcon, hide: props.noEdit },
-                                { label: 'Удалить', click: () => $emit('delete', item.id), icon: XIcon, hide: props.noDelete },
+                                { label: 'Изменить', click: () => $emit('edit', item.id), icon: PencilIcon, hide: props.noEdit(item) },
+                                { label: 'Удалить', click: () => $emit('delete', item.id), icon: XIcon, hide: props.noDelete(item) },
                             ]]"
                         >
                             <MenuButton>

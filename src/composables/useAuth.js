@@ -15,6 +15,7 @@ const token = computed({
 
 const user = ref(defaultUserFields);
 const isUserLogged = computed(() => !!user.value.id);
+const isAdmin = computed(() => user.value.roles[0].name === 'admin');
 const userDepartment = computed(() => user.value?.department?.id);
 
 const setToken = ((payload) => {
@@ -64,5 +65,6 @@ export default function useAuth() {
     user: readonly(user),
     logOut,
     userDepartment,
+    isAdmin,
   };
 }

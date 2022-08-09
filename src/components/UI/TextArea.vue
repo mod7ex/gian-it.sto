@@ -2,6 +2,10 @@
 import { ExclamationCircleIcon } from '@heroicons/vue/solid';
 
 const props = defineProps({
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
   label: {
     type: String,
     required: false,
@@ -87,17 +91,19 @@ defineEmits(['blured', 'update:modelValue']);
       </slot>
 
       <textarea
-             :class="styles"
-             :placeholder="props.placeholder"
-             :value="props.modelValue"
-             @input="e => $emit('update:modelValue', e.target.value)"
-            :rows="$attrs.rows"
-            @blur="e => $emit('blured')"
+        :class="styles"
+        :placeholder="props.placeholder"
+        :value="props.modelValue"
+        @input="e => $emit('update:modelValue', e.target.value)"
+        :rows="$attrs.rows"
+        @blur="e => $emit('blured')"
+        :disabled="props.disabled"
       ></textarea>
 
       <slot name="after">
-        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
-             v-if="props.error.length > 0"
+        <div
+          class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"
+          v-if="props.error.length > 0"
         >
           <ExclamationCircleIcon class="h-5 w-5 text-red-500" aria-hidden="true" />
         </div>

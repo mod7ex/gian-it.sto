@@ -1,7 +1,7 @@
-import { computed } from 'vue';
+// import { computed } from 'vue';
 import useAuth from '~/composables/useAuth.js';
 
-const { isUserLogged, user } = useAuth();
+const { isUserLogged, user, isAdmin, userDepartment } = useAuth();
 
 const routesPermissionsMap = {
   // Todo: copy all pages from router and add permissions the router can catch some forgotten things
@@ -76,21 +76,43 @@ const navigationGuards = (to, from, next) => {
 
 export default navigationGuards;
 
-// ************* Tasks
+export const PERMISSIONS = {
 
-export const getTasksPermissions = () => {
-  const read_department_tasks = computed(() => userHasPermission('read department tasks') && !userHasPermission('read tasks'));
-  const read_own_tasks = computed(() => userHasPermission('read own tasks') && !read_department_tasks.value);
+  TASKS: {
+    READ: () => userHasAtLeastOnePermission(['read tasks', 'read department tasks', 'read own tasks']),
+    READ_DEPARTMENT: () => userHasPermission('read department tasks') && !isAdmin.value,
+    READ_OWN: () => userHasPermission('read own tasks') && !isAdmin.value,
 
-  const update_department_tasks = computed(() => userHasPermission('update department tasks') && !userHasPermission('update tasks'));
-  const update_own_tasks = computed(() => userHasPermission('update own tasks') && !update_department_tasks.value);
+    UPDATE: () => userHasAtLeastOnePermission(['update tasks', 'update department tasks', 'update own tasks']),
+    UPDATE_DEPARTMENT: () => userHasPermission('update department tasks') && !!isAdmin.value,
+    UPDATE_OWN: () => userHasPermission('update own tasks') && !isAdmin.value,
 
-  return {
-    read_department_tasks,
-    read_own_tasks,
-    update_department_tasks,
-    update_own_tasks,
-  };
+    DELETE: () => userHasAtLeastOnePermission(['delete tasks', 'delete department tasks', 'delete own tasks']),
+    DELETE_DEPARTMENT: () => userHasPermission('delete department tasks') && !isAdmin.value,
+    DELETE_OWN: () => userHasPermission('delete own tasks') && !isAdmin.value,
+  },
 };
 
-// *******************
+/**
+ *
+ * @param {Task} item
+ * @param {'delete' | 'update'} action
+ * @returns {boolean}
+ */
+export const canTasks = (item, action = 'update') => {
+  if (PERMISSIONS.TASKS[`${action.toUpperCase()}_OWN`]()) {
+    const theAuthor = typeof item.author === 'object' ? item.author?.id : item.author_id;
+    if (theAuthor != user.value?.id) return false;
+    return true;
+  }
+
+  if (PERMISSIONS.TASKS[`${action.toUpperCase()}_DEPARTMENT`]()) {
+    const theDepartment = typeof item.department === 'object' ? item.department?.id : item.department_id;
+    if (theDepartment != userDepartment.value) return false;
+    return true;
+  }
+
+  // you're an admin --->
+
+  return PERMISSIONS.TASKS[`${action.toUpperCase()}`]();
+};

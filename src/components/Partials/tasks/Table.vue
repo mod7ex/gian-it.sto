@@ -7,7 +7,7 @@ import store from '~/store/tasks';
 import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
 import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
-import { userHasAtLeastOnePermission } from '~/lib/permissions';
+import { canTasks } from '~/lib/permissions';
 
 const props = defineProps({
   order_id: {
@@ -19,14 +19,14 @@ const props = defineProps({
 const { fetchTasks, removeTask, edit } = service();
 
 const fields = [
-    { label: 'Название', key: 'name' },
-    { label: 'Ответственный', key: 'author' },
-    { label: 'Статус', key: 'status' },
-    { label: 'Крайний срок', key: 'deadline_at' },
+  { label: 'Название', key: 'name' },
+  { label: 'Ответственный', key: 'author' },
+  { label: 'Статус', key: 'status' },
+  { label: 'Крайний срок', key: 'deadline_at' },
 ];
-  
+
 if (!props.order_id) {
-    fields.push({ label: 'Заказ-наряд', key: 'order' });
+  fields.push({ label: 'Заказ-наряд', key: 'order' });
 }
 
 fields.push({ label: 'Дата создания', key: 'created_at' });
@@ -45,7 +45,8 @@ await fetchTasks(true, props.order_id);
         :items="state.raw"
         @delete="removeTask"
         @edit="edit"
-        :noEdit="!userHasAtLeastOnePermission(['update tasks', 'update department tasks', 'update own tasks'])"
+        :noEdit="(item) => !canTasks(item, 'update')"
+        :noDelete="(item) => !canTasks(item, 'delete')"
     >
         <!-- Body -->
         <template #td-name="{ value, item: {id} }" >

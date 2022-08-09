@@ -14,7 +14,7 @@ const { load, save, state } = store;
 const { user } = useAuth();
 
 // Id might be a string or ref<string>
-const props = defineProps({ model: String, id: [String, Object] });
+const props = defineProps({ model: String, id: [String, Object], disabled: { type: Boolean, default: false } });
 
 const emit = defineEmits(['comment']);
 
@@ -94,20 +94,18 @@ await getComments();
             <Avatar :image="user.avatar" />
           </div>
           <div class="min-w-0 flex-1">
-            <form action="#">
-              <div>
-                <label for="comment" class="sr-only">Комментарий</label>
-                <TextArea placeholder="Текст вашего комментария..." rows="3" v-model="content" />
-              </div>
-              <div class="mt-3 flex items-center justify-between">
-                <span class="group inline-flex items-start text-sm space-x-2 text-gray-500 hover:text-gray-900">
-                  <QuestionMarkCircleIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
+            <div>
+              <label for="comment" class="sr-only">Комментарий</label>
+              <TextArea :disabled="props.disabled" placeholder="Текст вашего комментария..." rows="3" v-model="content" />
+            </div>
+            <div class="mt-3 flex items-center justify-between">
+              <span class="group inline-flex items-start text-sm space-x-2 text-gray-500 hover:text-gray-900">
+                <QuestionMarkCircleIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
 
-                  <span>Только текст, HTML запрещён</span>
-                </span>
-                <Button color="blue" @click="() => submitComment(content)">Отправить</Button>
-              </div>
-            </form>
+                <span>Только текст, HTML запрещён</span>
+              </span>
+              <Button :disabled="props.disabled" color="blue" @click="() => submitComment(content)">Отправить</Button>
+            </div>
           </div>
         </div>
       </div>

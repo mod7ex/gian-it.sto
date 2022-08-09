@@ -60,7 +60,8 @@ export default () => effectScope().run(() => {
     await fill({ ...filter, storage_id: route.params.id });
   };
 
-  const redirectToForm = async (id, product) => {
+  const redirectToForm = async (product) => {
+    const { id } = route.params;
     if (!id || !product) return;
     await redirectTo({ name: 'EditStorage', params: { product, id } });
   };

@@ -25,12 +25,16 @@ await Promise.all([load(), loadOrders({ department_id: current.value }), atMount
           v-model="finance.order_id"
           :options="orderOptions"
           :required="true"
-          :error="v$.order_id.$errors[0]?.$message"
-          @blured="v$.order_id.$touch"
+
         />
 
+<!--
+  :error="v$.order_id.$errors[0]?.$message"
+  @blured="v$.order_id.$touch"
+-->
+
         <Input
-          label="Hазвание финансовая сделка"
+          label="Название финансовой сделки"
           v-model="finance.name"
           :required="true"
           :error="v$.name.$errors[0]?.$message"

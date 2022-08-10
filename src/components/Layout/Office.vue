@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { MenuButton } from '@headlessui/vue';
 
 import {
@@ -33,11 +33,13 @@ import store from '~/store/departments';
 const { setCurrent, links, load } = store;
 
 onMounted(async () => {
-  if (!load.called) await load();
-  if (!setCurrent.called) setCurrent();
+  // Fix call rate
+  if (!load.called_from_office) await load();
+  // if (!setCurrent.called_from_office) setCurrent();
+  setCurrent();
 
-  load.called = true;
-  setCurrent.called = true;
+  // load.called_from_office = true;
+  // setCurrent.called_from_office = true;
 });
 
 const { user, logOut } = useAuth();
@@ -55,7 +57,7 @@ const props = defineProps({
   },
 });
 
-setTitle(props.title);
+watch(() => props.title, (v) => setTitle(v));
 
 const sidebarOpen = ref(false);
 

@@ -14,8 +14,8 @@ const state = reactive({
 
 const current = ref();
 
-const setCurrent = (id) => {
-  const curr = id ?? localStorage.getItem(LOCAL_STORAGE_DEPARTMENT) ?? userDepartment.value;
+const setCurrent = (id, work = false) => {
+  const curr = work ? userDepartment.value : (id ?? localStorage.getItem(LOCAL_STORAGE_DEPARTMENT) ?? userDepartment.value);
   current.value = Number(curr);
   localStorage.setItem(LOCAL_STORAGE_DEPARTMENT, `${curr}`);
 };

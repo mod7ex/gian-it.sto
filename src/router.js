@@ -73,7 +73,7 @@ const routes = [
   { path: '/elements', component: () => import(/* webpackChunkName: "ElementsPage" */ '@/Pages/Office/Elements.vue'), name: 'ElementsPage' },
 
   { path: '/w/tasks', component: () => import(/* webpackChunkName: "WorkerTasks" */ '@/Pages/Work/Tasks.vue'), name: 'WorkerTasks' },
-  { path: '/w/tasks/1', component: () => import(/* webpackChunkName: "WorkerTask" */ '@/Pages/Work/Task.vue'), name: 'WorkerTask' },
+  { path: '/w/tasks/:id', component: () => import(/* webpackChunkName: "WorkerTask" */ '@/Pages/Work/Task.vue'), name: 'WorkerTask' },
   { path: '/w/profile', component: () => import(/* webpackChunkName: "WorkerProfile" */ '@/Pages/Work/Profile.vue'), name: 'WorkerProfile' },
   { path: '/w/times', component: () => import(/* webpackChunkName: "WorkerTimes" */ '@/Pages/Work/Times.vue'), name: 'WorkerTimes' },
   { path: '/w/change', component: () => import(/* webpackChunkName: "ChangeWorker" */ '@/Pages/Work/ChangeWorker.vue'), name: 'ChangeWorker' },

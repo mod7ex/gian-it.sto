@@ -1,11 +1,21 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { MenuIcon, XIcon } from '@heroicons/vue/outline';
 import { setTitle } from '~/lib/meta.js';
 import Logo from '@/Partials/Logo.vue';
 import Button from '@/UI/Button.vue';
-
 import useAppRouter from '~/composables/useAppRouter';
+import store from '~/store/departments';
+
+const { setCurrent } = store;
+
+onMounted(async () => {
+  // Fix call rate
+  setCurrent(undefined, true);
+  // if (!setCurrent.called_from_work) setCurrent(undefined, true);
+
+  // setCurrent.called_from_work = true;
+});
 
 const props = defineProps({
   title: { type: String, required: false },
@@ -13,7 +23,7 @@ const props = defineProps({
 
 const { isCurrentFullPath } = useAppRouter();
 
-setTitle(props.title);
+watch(() => props.title, (v) => setTitle(v));
 
 const menu = [
   { label: 'Профиль', href: { name: 'WorkerProfile' } },
@@ -41,7 +51,6 @@ const isShowMenu = ref(false);
                 :to="item.href"
                 class="px-3 py-2 text-gray-900 text-sm"
                 :class="{'font-medium': item.current}"
-
               >
                 {{ item.label }}
               </router-link>

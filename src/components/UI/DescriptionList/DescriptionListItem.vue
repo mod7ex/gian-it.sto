@@ -20,7 +20,7 @@ const props = defineProps({
     required: false,
     default: 'rows', // rows, columns
   },
-  columns: {
+  cols: {
     type: String,
     required: false,
     default: '1', // 1, 2
@@ -29,11 +29,10 @@ const props = defineProps({
 
 const isArrayValue = computed(() => Array.isArray(props.value));
 
-const style = computed(() => (props.type === 'columns' ? `sm:col-span-${props.columns}` : 'py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6'));
 </script>
 
 <template>
-  <div :class="style">
+  <div :class="[props.type === 'columns' ? `sm:col-span-${props.cols}` : 'py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6', 'col-span-1']">
     <slot name="label">
       <div class="text-sm font-medium text-gray-500" v-if="props.label">
         {{ props.label }}

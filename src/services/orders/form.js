@@ -77,7 +77,8 @@ const setForm = async (payload) => {
   Object.keys(fields).forEach(setField, payload ?? {});
 };
 
-export const setOrder = async (order_id) => {
+export const setOrder = async (order_id, check = false) => {
+  if (check && fields.id) return;
   const order = await $.order(order_id);
   setForm(order);
 };

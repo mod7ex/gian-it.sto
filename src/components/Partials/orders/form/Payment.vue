@@ -5,6 +5,10 @@ import Table from '@/Layout/Table.vue';
 import service from '~/services/orders/payment';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
+import useAppRouter from '~/composables/useAppRouter';
+
+const { route } = useAppRouter();
+
 const { drop } = useConfirmDialog();
 
 const { render } = service();
@@ -33,17 +37,17 @@ const fields = [
         @delete="(id) => drop(() => void(id))"
         @edit="(id) => void(id)"
       >
-          <!-- Body -->
+        <!-- Body -->
 
-          <template #td-client="{ item }" > {{ item }} </template>
+        <template #td-client="{ item }" > {{ item }} </template>
 
-          <template #td-payment_method="{ value }" > {{ { value } }} </template>
+        <template #td-payment_method="{ value }" > {{ { value } }} </template>
 
-          <template #td-comment="{ value }" > {{ value }} </template>
+        <template #td-comment="{ value }" > {{ value }} </template>
 
-          <template #td-created_at="{ value }" > {{ value }} </template>
+        <template #td-created_at="{ value }" > {{ value }} </template>
 
-          <!-- ****** -->
+        <!-- ****** -->
       </Table>
     </div>
 </template>

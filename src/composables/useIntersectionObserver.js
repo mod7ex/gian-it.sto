@@ -52,7 +52,7 @@ export default function (cb, condition) {
         observer.observe(target.value);
       });
 
-      return () => h('div', { class: 'bg-white p-1', ref: (v) => { target.value = v; } });
+      return () => h('div', { class: 'bg-transparent p-1', ref: (v) => { target.value = v; } });
     },
   });
 

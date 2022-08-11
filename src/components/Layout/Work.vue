@@ -11,10 +11,9 @@ const { setCurrent } = store;
 
 onMounted(async () => {
   // Fix call rate
-  setCurrent(undefined, true);
-  // if (!setCurrent.called_from_work) setCurrent(undefined, true);
+  if (!setCurrent.called_from_work) setCurrent(undefined, true);
 
-  // setCurrent.called_from_work = true;
+  setCurrent.called_from_work = true;
 });
 
 const props = defineProps({

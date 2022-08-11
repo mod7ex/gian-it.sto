@@ -10,7 +10,7 @@ const SuspenseArea = useSuspense(Table);
 </script>
 
 <template>
-  <OfficeLayout title="Диагностические карты">
+  <OfficeLayout title="Шаблоны диагностических карт">
     <template #actions>
       <Button type="secondary" :link="{ name: 'Processes' }">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>К процессам

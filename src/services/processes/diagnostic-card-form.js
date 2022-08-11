@@ -1,71 +1,66 @@
 import { reactive, effectScope } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import save from '~/helpers/save';
+// import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import store from '~/store/processes/diagnostic-card';
 import useAppRouter from '~/composables/useAppRouter';
-import formRules from '~/validationsRules/process';
-import departmentStore from '~/store/departments';
+import { whyRules as formRules } from '~/validationsRules/process';
 
-const { current } = departmentStore;
 const { drop } = store;
 
-let question;
+let dc_template;
 let v$;
 
 const clearMemory = () => {
-  question = undefined;
+  dc_template = undefined;
   v$ = undefined;
 };
 
-const setField = function (key) { // function should be reviewed
+const setField = function (key) {
   if (key === 'answers_and_recommendations') {
-    question[key] = this.map_answers ?? [{}];
+    dc_template[key] = this.map_answers ?? [{}];
     return;
   }
-  question[key] = this[key] ?? '';
+  dc_template[key] = this[key] ?? '';
 };
 
-const setForm = (payload = {}) => {
-  Object.getOwnPropertyNames(question).forEach(setField, payload);
-};
+const setForm = (payload = {}) => { Object.getOwnPropertyNames(dc_template).forEach(setField, payload); };
 
 export default () => effectScope().run(() => {
   const { back, isThePage: isUpdate, route } = useAppRouter('DiagnosticCardEdit');
 
-  if (!question) {
-    question = reactive({
+  if (!dc_template) {
+    dc_template = reactive({
       id: '',
-      department_id: current,
-
       name: '',
-      options: [''],
-
-      params: [{ options: [''] }], // {title: '', options: ['lorum ipsom']}
-      comment: { title: '', content: '' },
       note: '',
     });
 
-    v$ = useVuelidate(formRules(), question, { $lazy: true });
+    v$ = useVuelidate(formRules(), dc_template, { $lazy: true });
   }
 
   const saveForm = async () => {
+    console.log(dc_template);
+    /*
+
     const isValideForm = await v$.value.$validate();
 
     if (!isValideForm) return;
 
     v$.value.$reset();
 
-    const { success } = await save.map_question(question, undefined, true);
+    const { success } = await save.map_question(dc_template, undefined, true);
 
     try {
       return { success };
     } finally {
       if (success) back();
     }
+
+    */
   };
 
-  const dropQuestion = async () => {
+  const dropDc = async () => {
     const { success, message } = await drop(route.params.id);
     success && back();
     return { success, message };
@@ -82,11 +77,11 @@ export default () => effectScope().run(() => {
   };
 
   return {
-    question,
+    dc_template,
     atMounted,
     isUpdate,
     saveForm,
-    dropQuestion,
+    dropDc,
     v$,
     clearMemory,
   };

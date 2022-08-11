@@ -33,13 +33,11 @@ import store from '~/store/departments';
 const { setCurrent, links, load } = store;
 
 onMounted(async () => {
-  // Fix call rate
   if (!load.called_from_office) await load();
-  // if (!setCurrent.called_from_office) setCurrent();
-  setCurrent();
+  if (!setCurrent.called_from_office) setCurrent();
 
-  // load.called_from_office = true;
-  // setCurrent.called_from_office = true;
+  load.called_from_office = true;
+  setCurrent.called_from_office = true;
 });
 
 const { user, logOut } = useAuth();

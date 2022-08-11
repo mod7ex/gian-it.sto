@@ -16,6 +16,7 @@ const current = ref();
 
 const setCurrent = (id, work = false) => {
   const curr = work ? userDepartment.value : (id ?? localStorage.getItem(LOCAL_STORAGE_DEPARTMENT) ?? userDepartment.value);
+  if (!curr) return;
   current.value = Number(curr);
   localStorage.setItem(LOCAL_STORAGE_DEPARTMENT, `${curr}`);
 };

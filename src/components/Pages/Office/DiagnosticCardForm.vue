@@ -6,16 +6,16 @@ import Button from '@/UI/Button.vue';
 import service from '~/services/processes/diagnostic-card-form';
 import useSuspense from '~/composables/useSuspense';
 import VForm from '@/Partials/processes/DiagnosticCardForm.vue';
-import Preview from '@/Partials/processes/DiagnosticCardPreview.vue';
+// import Preview from '@/Partials/processes/DiagnosticCardPreview.vue';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 const { drop } = useConfirmDialog();
 
 const SuspenseArea = useSuspense();
 
-const { saveForm, isUpdate, dropQuestion, question, clearMemory } = service();
+const { dc_template, isUpdate, saveForm, dropDc, clearMemory } = service();
 
-const previewing = ref(false);
+// const previewing = ref(false);
 
 onScopeDispose(clearMemory);
 
@@ -27,11 +27,11 @@ onScopeDispose(clearMemory);
       <Button type="secondary" :link="{ name: 'DiagnosticCard' }">
         <ArrowLeftIcon class="w-5 h-5 mr-1" />Вернуться
       </Button>
-
+<!--
       <Button color="blue" @click="previewing = !previewing">
         <component :is="previewing ? PencilIcon : EyeIcon" class="w-5 h-5 mr-1" /> {{ previewing ? 'Редактировать' : 'Предварительный просмотр' }}
       </Button>
-
+-->
       <Button color="green" @click="()=>saveForm()">
         <CheckIcon class="w-5 h-5 mr-1" />Сохранить
       </Button>
@@ -39,15 +39,15 @@ onScopeDispose(clearMemory);
       <Button
         color="red"
         v-if="isUpdate"
-        @click="() => drop(dropQuestion)"
+        @click="() => drop(dropDc)"
       >
         <XIcon class="w-5 h-5 mr-1"/>Удалить
       </Button>
     </template>
 
-    <preview v-if="previewing" :payload="question" />
+    <!-- <preview v-if="previewing" :payload="dc_template" /> -->
 
-    <suspense-area v-else>
+    <suspense-area>
       <keep-alive>
         <component :is="VForm" />
       </keep-alive>

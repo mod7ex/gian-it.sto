@@ -6,6 +6,7 @@ const state = reactive({
   raw: [],
   templates: [],
   selectedTemplates: [],
+  links: [],
 });
 
 const selecteTemplate = (i) => {
@@ -25,6 +26,11 @@ const loadTemplates = async (payload) => {
   state.templates = await $.document_templates(payload);
 };
 
+const loadLinks = async (order) => {
+  const data = await $({ key: `documents/${order}/generate` });
+  console.log(data);
+};
+
 const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));
 
 const dropTemplate = async (id) => _$.document_template(id, (v) => state.templates.deleteById(v));
@@ -37,6 +43,7 @@ export default {
   dropTemplate,
   reset,
   selecteTemplate,
+  loadLinks,
 
   // options: computed(() => state.raw.map(({ id, title }) => ({
   //   value: id,

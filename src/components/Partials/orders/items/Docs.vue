@@ -3,12 +3,9 @@ import { EyeIcon, TrashIcon, DownloadIcon } from '@heroicons/vue/outline';
 import Link from '@/UI/Link.vue';
 import Table from '@/Layout/Table.vue';
 import Badge from '@/UI/Badge.vue';
-import store from '~/store/orders/documents';
-import useConfirmDialog from '~/composables/useConfirmDialog';
+import service from '~/services/orders/template';
 
-const { state, loadTemplates, dropTemplate } = store;
-
-const { drop } = useConfirmDialog();
+const { prepare } = service();
 
 const fields = [
   { label: 'Название', key: 'name' },
@@ -17,7 +14,7 @@ const fields = [
   // { label: 'Удалить', key: 'drop' }, // fake keys
 ];
 
-await loadTemplates();
+await prepare();
 
 defineEmits(['preveiw', 'download']);
 
@@ -47,12 +44,12 @@ defineEmits(['preveiw', 'download']);
       </Link>
     </template>
 
-<!-- 
+<!--
       <template #td-drop="{ item }" >
       <Link @click="() => drop(() => dropTemplate(item.id))">
         <TrashIcon class="text-blue-600 h-6 hover:text-blue-900" />
       </Link>
-    </template> 
+    </template>
 -->
 
     <!-- ****** -->

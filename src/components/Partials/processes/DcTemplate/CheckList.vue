@@ -1,38 +1,106 @@
 <script setup>
-import { reactive } from 'vue';
+import { PlusIcon } from '@heroicons/vue/outline';
+import { ref } from 'vue';
+import Draggable from 'vuedraggable';
 import InputText from '@/Partials/processes/DcTemplate/InputText.vue';
 import ItemVue from '@/Partials/processes/DcTemplate/Item.vue';
 
-const payload = reactive({
-  title: 'some randome title for the field',
-  fields: [
-    'Lorem ipsum dolor sit amet consectetur.',
-    'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores?',
-    'Lorem ipsum dolor sit amet.',
-    'Lorem ipsum dolor sit amet consectetur.',
-    'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores?',
-    'Lorem ipsum dolor sit amet.',
-    'Lorem ipsum dolor sit amet consectetur.',
-    'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores?',
-    'Lorem ipsum dolor sit amet.',
-    'Lorem ipsum dolor sit amet consectetur.',
-    'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores?',
-  ],
-});
+const title = ref('some randome title for the field');
+
+const items = ref([
+  { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 1' },
+  { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 2' },
+  { id: Math.random(), c: 'Lorem ipsum dolor sit amet. 3' },
+  { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 4' },
+  { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 5' },
+  { id: Math.random(), c: 'Lorem ipsum dolor sit amet. 6' },
+  { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 7' },
+  { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 8' },
+  { id: Math.random(), c: 'Lorem ipsum dolor sit amet. 9' },
+  { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 10' },
+  { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 11' },
+]);
+
+const add = () => {
+  items.value.push({ id: Date.now(), c: '...' });
+};
+
+/*
+const log = async (e) => {
+  const { oldIndex, newIndex } = e;
+  const oldItem = { ...items.value[oldIndex] };
+  const newItem = { ...items.value[newIndex] };
+
+  items.value[oldIndex] = newItem;
+  items.value[newIndex] = oldItem;
+};
+*/
 
 </script>
 
 <template>
-  <div class="">
-      <!-- <input-text
-        v-model="payload.title"
-        tag="h3"
-        tag-class="text-center text-lg mt-1 mb-3"
-        class="mt-1 mb-3 w-full"
-      /> -->
-      <item-vue >
-        <template #header></template>
-        <template #body></template>
+  <div>
+    <div class="flex justify-between items-center">
+      <item-vue :draggable="false" >
+        <template #header>The block title goes here</template>
+        <template #body>
+          <input-text
+            v-model="title"
+            tag="p"
+            tag-class="text-center text-lg p-2"
+            class="w-full p-2"
+          />
+        </template>
       </item-vue>
+
+      <PlusIcon
+        @click="add"
+        class="hover:shadow-lg mx-auto w-9 h-9 font-bold rounded-full bg-gray-300 text-gray-800 hover:bg-gray-400 hover:text-gray-50 transition-colors duration-200 ease-in cursor-pointer p-1"
+      />
+    </div>
+
+    <draggable
+      item-key="id"
+      ghost-class="ghost"
+      :list="items"
+      class="grid grid-cols-12 gap-3 mt-4"
+    >
+      <template #item="{index}">
+        <item-vue class="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3" :key="items[index].id" >
+          <template #header>Checklist</template>
+          <template #body>
+            <input-text
+              tag="p"
+              class="w-full p-2"
+              v-model="items[index].c"
+              tag-class="text-center text-lg p-2"
+            />
+          </template>
+        </item-vue>
+      </template>
+    </draggable>
+
+<!--
+    <div class="grid grid-cols-12 gap-3 mt-4">
+      <item-vue v-for="(item, i) in items" :key="`${id}-checklist-item-${i}`" class="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3" >
+        <template #header>Item {{ i + 1 }}</template>
+        <template #body>
+          <input-text
+            v-model="items[i]"
+            tag="p"
+            tag-class="text-center text-lg p-2"
+            class="w-full p-2"
+          />
+        </template>
+      </item-vue>
+    </div>
+-->
+
   </div>
 </template>
+
+<style scoped>
+.ghost {
+  opacity: 0.1;
+}
+</style>

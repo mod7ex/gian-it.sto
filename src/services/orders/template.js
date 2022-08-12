@@ -1,16 +1,19 @@
-import { computed, reactive, effectScope, onScopeDispose } from 'vue';
-import RawForm from '~/components/Partials/orders/form/Raw/Template.vue';
-import communicate from '~/helpers/communicate';
-import useModalForm from '~/composables/useModalForm';
-import useToast from '~/composables/useToast.js';
-import save from '~/helpers/save';
-import $ from '~/helpers/fetch';
-import { getFileContent } from '~/helpers';
+import { onScopeDispose } from 'vue';
+// import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+// import RawForm from '~/components/Partials/orders/form/Raw/Template.vue';
+// import communicate from '~/helpers/communicate';
+// import useModalForm from '~/composables/useModalForm';
+// import useToast from '~/composables/useToast.js';
+// import save from '~/helpers/save';
+// import $ from '~/helpers/fetch';
+// import { getFileContent } from '~/helpers';
 import store from '~/store/orders/documents';
 
-const toaster = useToast();
+const { loadLinks, state } = store;
 
-const { loadTemplates } = store;
+/*
+
+const toaster = useToast();
 
 let template;
 
@@ -84,3 +87,32 @@ export default function () {
     log,
   };
 }
+
+*/
+
+let prepare;
+
+const foo = (i) => {
+  // https://stackoverflow.com/questions/2909645/open-new-popup-window-without-address-bars-in-firefox-ie
+  // Fix: center --> https://stackoverflow.com/questions/6754260/window-open-on-the-second-monitor-in-chrome
+  window.open('https://stackoverflow.com', `Doc-${i}`, 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,left=300,top=100');
+};
+
+const clearMemo = () => onScopeDispose(() => {
+  prepare = undefined;
+});
+
+export default (order) => {
+  if (!prepare) {
+    prepare = async () => {
+      await loadLinks(order);
+    };
+  }
+
+  return {
+    clearMemo,
+    foo,
+    state,
+    prepare,
+  };
+};

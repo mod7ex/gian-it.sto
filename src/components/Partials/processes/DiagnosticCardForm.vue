@@ -1,14 +1,24 @@
 <script setup>
 
+import { ref, defineAsyncComponent } from 'vue';
 import Input from '@/UI/Input.vue';
 import TextArea from '@/UI/TextArea.vue';
 import service from '~/services/processes/diagnostic-card-form';
-import CheckList from './DcTemplate/CheckList.vue';
-import TextField from './DcTemplate/Text.vue';
-import Indication from './DcTemplate/Indication.vue';
 import DividerVue from './DcTemplate/Divider.vue';
 
 const { dc_template, atMounted, v$ } = service();
+
+const FIELD_TYPES = {
+  check_list: { code: 1, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/CheckList.vue')) },
+  text: { code: 2, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/Text.vue')) },
+  indication: { code: 3, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/Indication.vue')) },
+};
+
+const payload = ref([
+  {
+    type: 'check_list',
+  },
+]);
 
 // await atMounted();
 
@@ -29,8 +39,8 @@ const { dc_template, atMounted, v$ } = service();
 
         <div class="border my-3 col-span-12 bg-gray-50 rounded p-6">
 
-            <divider-vue />
-            <check-list />
+            <divider-vue v-model="payload[0].type" />
+            <component :is="FIELD_TYPES[payload[0].type].comp" />
         </div>
 
         <TextArea class="col-span-12 mt-2" label="Примечание" v-model="dc_template.note" />

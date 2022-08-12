@@ -30,15 +30,14 @@ const hadelDbClick = () => {
 
 <template>
   <div :class="$attrs.class">
-    <input
-      :ref="(el) => { inputRef = el }"
-      type="text"
-      v-if="editMode"
-      @blur="editMode = false"
-      class="p-2 w-full h-full switch-input"
-      :value="modelValue"
-      @input="e => $emit('update:modelValue', e.target.value)"
-    >
+    <textarea
+        :ref="(el) => { inputRef = el }"
+        type="text"
+        v-if="editMode"
+        @blur="editMode = false"
+        class="p-2 w-full h-full switch-input"
+        @input="e => $emit('update:modelValue', e.target.value)"
+    >{{ modelValue }}</textarea>
     <component
       :is="tag"
       :class="['w-full h-full', tagClass]"
@@ -56,4 +55,14 @@ const hadelDbClick = () => {
   outline: none !important;
   border: none !important;
 }
+
+div * {
+  overflow-wrap: break-word;
+}
+
+textarea::-webkit-scrollbar {
+  display: none;
+  resize: none !important;
+}
+
 </style>

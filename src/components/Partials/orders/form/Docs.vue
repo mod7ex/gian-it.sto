@@ -3,24 +3,19 @@ import { ref } from 'vue';
 // import { DocumentTextIcon } from '@heroicons/vue/outline';
 // import Button from '@/UI/Button.vue';
 import DocPreview from '@/Layout/modal/DocPreview.vue';
-// import service from '~/services/orders/template';
-import store from '~/store/orders/documents';
+import service from '~/services/orders/template';
 import useSuspense from '~/composables/useSuspense';
 import DocsTable from '@/Partials/orders/items/Docs.vue';
+import useAppRouter from '~/composables/useAppRouter';
 
 const SuspenseArea = useSuspense();
 
-// const { render } = service();
+const { route } = useAppRouter();
+const { clearMemo, foo, state } = service(route.params.id);
 
-const { state } = store;
+clearMemo();
 
 const toVisualize = ref();
-
-const foo = (i) => {
-  // https://stackoverflow.com/questions/2909645/open-new-popup-window-without-address-bars-in-firefox-ie
-  // Fix: center --> https://stackoverflow.com/questions/6754260/window-open-on-the-second-monitor-in-chrome
-  window.open('https://stackoverflow.com', `Doc-${i}`, 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,left=300,top=100');
-};
 
 </script>
 

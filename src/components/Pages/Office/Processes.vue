@@ -17,7 +17,7 @@ const SuspenseArea = useSuspense(Table);
       <template #actions>
 
         <Button type="secondary" :link="{ name: 'DiagnosticCard' }">
-          <MapIcon class="w-5 h-5 mr-1"/>Создать шаблон диагностической карты
+          <MapIcon class="w-5 h-5 mr-1"/>Шаблоны диагностических карт
         </Button>
 
         <Button type="secondary" :link="{ name: 'Why' }">

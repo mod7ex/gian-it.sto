@@ -79,7 +79,7 @@ await atMounted();
 }
 
 .ghost {
-  opacity: 0.5;
+  opacity: 0.1;
 }
 
 .tasks-container {

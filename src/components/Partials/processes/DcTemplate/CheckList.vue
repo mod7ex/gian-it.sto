@@ -5,25 +5,15 @@ import Draggable from 'vuedraggable';
 import InputText from '@/Partials/processes/DcTemplate/InputText.vue';
 import ItemVue from '@/Partials/processes/DcTemplate/Item.vue';
 
-const title = ref('some randome title for the field');
+const title = ref('...');
 
 const items = ref([
-  { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 1' },
-  { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 2' },
-  { id: Math.random(), c: 'Lorem ipsum dolor sit amet. 3' },
-  { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 4' },
-  { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 5' },
-  { id: Math.random(), c: 'Lorem ipsum dolor sit amet. 6' },
-  { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 7' },
-  { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 8' },
-  { id: Math.random(), c: 'Lorem ipsum dolor sit amet. 9' },
-  { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 10' },
-  { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 11' },
+  { id: Math.random(), c: '...' },
+  // { id: Math.random(), c: 'Lorem ipsum dolor sit amet consectetur. 1' },
+  // { id: Math.random(), c: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores? 2' },
 ]);
 
-const add = () => {
-  items.value.push({ id: Date.now(), c: '...' });
-};
+const add = () => { items.value.push({ id: Date.now(), c: '...' }); };
 
 /*
 const log = async (e) => {
@@ -42,7 +32,7 @@ const log = async (e) => {
   <div>
     <div class="flex justify-between items-center">
       <item-vue :draggable="false" >
-        <template #header>The block title goes here</template>
+        <template #header>Название блока вопросов</template>
         <template #body>
           <input-text
             v-model="title"
@@ -66,8 +56,13 @@ const log = async (e) => {
       class="grid grid-cols-12 gap-3 mt-4"
     >
       <template #item="{index}">
-        <item-vue class="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3" :key="items[index].id" >
-          <template #header>Checklist</template>
+        <item-vue
+          class="col-span-12 sm:col-span-6 md:col-span-4 lg:col-span-3"
+          :key="items[index].id"
+          :removable="true"
+          @remove="() => {items.splice(index, 1)}"
+        >
+          <template #header>Вопрос чекпоинт</template>
           <template #body>
             <input-text
               tag="p"

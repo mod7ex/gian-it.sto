@@ -1,4 +1,5 @@
 <script setup>
+import { PlusIcon } from '@heroicons/vue/outline';
 
 import { ref, defineAsyncComponent } from 'vue';
 import Input from '@/UI/Input.vue';
@@ -14,11 +15,9 @@ const FIELD_TYPES = {
   indication: { code: 3, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/Indication.vue')) },
 };
 
-const payload = ref([
-  {
-    type: 'check_list',
-  },
-]);
+const payload = ref([]);
+
+const add = () => { payload.value.push({ type: 'check_list' }); };
 
 // await atMounted();
 
@@ -39,8 +38,18 @@ const payload = ref([
 
         <div class="border my-3 col-span-12 bg-gray-50 rounded p-6">
 
-            <divider-vue v-model="payload[0].type" />
-            <component :is="FIELD_TYPES[payload[0].type].comp" />
+            <div v-for="(item, i) in payload" :key="`block-${i}`" class="mb-20" >
+              <divider-vue v-model="payload[i].type" @field-dropped="() => {payload.splice(i, 1)}" />
+              <component :is="FIELD_TYPES[payload[i].type].comp" />
+            </div>
+
+            <div class="mx-auto flex items-center justify-center border-t border-dashed border-gray-400 my-16">
+              <PlusIcon
+                @click="add"
+                class="mx-auto w-8 h-8 -mt-4 hover:shadow-lg shadow-md rounded-full bg-gray-300 text-gray-800 hover:bg-gray-400 hover:text-gray-50 transition-colors duration-200 ease-in cursor-pointer p-1"
+              />
+            </div>
+
         </div>
 
         <TextArea class="col-span-12 mt-2" label="Примечание" v-model="dc_template.note" />

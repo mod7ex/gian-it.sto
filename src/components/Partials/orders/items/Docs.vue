@@ -9,14 +9,13 @@ const { prepare, state } = service();
 
 const fields = [
   { label: 'Название', key: 'label' },
-  { label: 'Посмотреть', key: 'view' }, // fake keys
-  { label: 'Скачать', key: 'download' }, // fake keys
+  { label: 'Посмотреть', key: 'link' }, // fake keys
   // { label: 'Удалить', key: 'drop' }, // fake keys
 ];
 
 await prepare();
 
-defineEmits(['preveiw', 'download']);
+defineEmits(['preview']);
 
 </script>
 
@@ -24,25 +23,30 @@ defineEmits(['preveiw', 'download']);
 
   <Table
     :fields="fields"
-    :items="satet.links"
+    :items="state.links"
     :actions="false"
   >
     <!-- Body -->
-    <template #td-name="{ value }" >
-      <span class="max-w-md w-full inline-block"><Badge :point="true" color="blue" class="text-sm">{{ value }}</Badge></span>
+    <template #td-label="{ value }" >
+      <span class="max-w-md w-full inline-block">
+        <Badge :point="true" color="blue" class="text-sm">{{ value }}</Badge>
+      </span>
     </template>
 
-    <template #td-view="{ index }" >
-      <Link @click="$emit('preveiw', index)">
+    <template #td-link="{ value }" >
+      <Link @click="$emit('preview', value)">
         <EyeIcon class="text-blue-600 h-6 hover:text-blue-900" />
       </Link>
     </template>
 
-    <template #td-download="{ index }" >
-      <Link @click="$emit('download', index)">
-        <DownloadIcon class="text-blue-600 h-6 hover:text-blue-900" />
-      </Link>
-    </template>
+<!--
+      <template #td-download="{ index }" >
+        <Link @click="$emit('download', index)">
+          <DownloadIcon class="text-blue-600 h-6 hover:text-blue-900" />
+        </Link>
+      </template>
+-->
+
 <!--
       <template #td-drop="{ item }" >
       <Link @click="() => drop(() => dropTemplate(item.id))">

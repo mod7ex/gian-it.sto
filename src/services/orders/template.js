@@ -92,10 +92,10 @@ export default function () {
 
 let prepare;
 
-const foo = (i) => {
+const foo = (link) => {
   // https://stackoverflow.com/questions/2909645/open-new-popup-window-without-address-bars-in-firefox-ie
   // Fix: center --> https://stackoverflow.com/questions/6754260/window-open-on-the-second-monitor-in-chrome
-  window.open('https://stackoverflow.com', `Doc-${i}`, 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,left=300,top=100');
+  window.open(link, link, 'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,left=300,top=100');
 };
 
 const clearMemo = () => onScopeDispose(() => {

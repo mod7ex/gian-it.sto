@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+// import { ref } from 'vue';
 // import { DocumentTextIcon } from '@heroicons/vue/outline';
 // import Button from '@/UI/Button.vue';
-import DocPreview from '@/Layout/modal/DocPreview.vue';
+// import DocPreview from '@/Layout/modal/DocPreview.vue';
 import service from '~/services/orders/template';
 import useSuspense from '~/composables/useSuspense';
 import DocsTable from '@/Partials/orders/items/Docs.vue';
@@ -11,11 +11,11 @@ import useAppRouter from '~/composables/useAppRouter';
 const SuspenseArea = useSuspense();
 
 const { route } = useAppRouter();
-const { clearMemo, foo, state } = service(route.params.id);
+const { clearMemo, foo } = service(route.params.id);
 
 clearMemo();
 
-const toVisualize = ref();
+// const toVisualize = ref();
 
 </script>
 
@@ -30,15 +30,14 @@ const toVisualize = ref();
 -->
 
       <!-- Document preview  -->
-      <Teleport to="#sto-modal-teleport">
+      <!-- <Teleport to="#sto-modal-teleport">
         <doc-preview :open="toVisualize != null" @close="toVisualize = null" >
           <div class="max-h-screen" :key="toVisualize" v-html="state.templates[toVisualize].template" />
         </doc-preview>
-      </Teleport>
+      </Teleport> -->
 
       <suspense-area >
-        <!-- <docs-table @preveiw="(i) => (toVisualize = i)" @download="(i) => {}" /> -->
-        <!-- <docs-table @preveiw="(i) => foo(i)" @download="(i) => {}" /> -->
+        <docs-table @preview="(link) => foo(link)" />
       </suspense-area>
   </div>
 </template>

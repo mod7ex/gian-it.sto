@@ -48,6 +48,14 @@
   position: absolute;
 }
 
+.sto-flex-grow-1 {
+  flex-grow: 1;
+}
+
+.sto-flex-col {
+  flex-direction: column;
+}
+
 .sto-relative {
   position: relative;
 }
@@ -80,8 +88,32 @@
   width: 240px;
 }
 
+.sto-max-w-20 {
+  width: 20%;
+}
+
+.sto-max-w-75 {
+  width: 75%;
+}
+
+.sto-border-l {
+  border-left: 1px solid black;
+}
+
+.sto-justify-center {
+  justify-content: center;
+}
+
 .sto-p-1 {
   padding: 0.5em;
+}
+
+.sto-block {
+  display: block;
+}
+
+.sto-p-2 {
+  padding: 1em;
 }
 
 .sto-pb-3 {
@@ -114,6 +146,18 @@
 
 .sto-dotted {
   border: 1px dotted black;
+}
+
+.sto-border {
+  border: 1px solid black;
+}
+
+.sto-border-b {
+  border-bottom: 1px solid black;
+}
+
+.sto-mb-px-15 {
+  margin-bottom: 15px;
 }
 
 .sto-box {

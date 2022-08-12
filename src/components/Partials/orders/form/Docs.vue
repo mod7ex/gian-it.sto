@@ -38,7 +38,7 @@ const toVisualize = ref();
 
       <suspense-area >
         <!-- <docs-table @preveiw="(i) => (toVisualize = i)" @download="(i) => {}" /> -->
-        <docs-table @preveiw="(i) => foo(i)" @download="(i) => {}" />
+        <!-- <docs-table @preveiw="(i) => foo(i)" @download="(i) => {}" /> -->
       </suspense-area>
   </div>
 </template>

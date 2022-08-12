@@ -5,10 +5,10 @@ import Table from '@/Layout/Table.vue';
 import Badge from '@/UI/Badge.vue';
 import service from '~/services/orders/template';
 
-const { prepare } = service();
+const { prepare, state } = service();
 
 const fields = [
-  { label: 'Название', key: 'name' },
+  { label: 'Название', key: 'label' },
   { label: 'Посмотреть', key: 'view' }, // fake keys
   { label: 'Скачать', key: 'download' }, // fake keys
   // { label: 'Удалить', key: 'drop' }, // fake keys
@@ -21,13 +21,13 @@ defineEmits(['preveiw', 'download']);
 </script>
 
 <template>
+
   <Table
     :fields="fields"
-    :items="state.templates"
+    :items="satet.links"
     :actions="false"
   >
     <!-- Body -->
-
     <template #td-name="{ value }" >
       <span class="max-w-md w-full inline-block"><Badge :point="true" color="blue" class="text-sm">{{ value }}</Badge></span>
     </template>
@@ -43,7 +43,6 @@ defineEmits(['preveiw', 'download']);
         <DownloadIcon class="text-blue-600 h-6 hover:text-blue-900" />
       </Link>
     </template>
-
 <!--
       <template #td-drop="{ item }" >
       <Link @click="() => drop(() => dropTemplate(item.id))">
@@ -51,7 +50,6 @@ defineEmits(['preveiw', 'download']);
       </Link>
     </template>
 -->
-
     <!-- ****** -->
   </Table>
 </template>

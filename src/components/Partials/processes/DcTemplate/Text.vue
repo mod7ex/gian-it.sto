@@ -30,7 +30,7 @@ const id = Math.random();
         class="mb-2 p-3 block"
         :class="[i == 1 ? 'pl-12' : '']"
       >
-      <span class="block border-b border-gray-400"></span>
+        <span class="block border-b border-gray-400"></span>
       </span>
     </div>
   </div>

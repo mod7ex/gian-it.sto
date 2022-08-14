@@ -1,49 +1,61 @@
-import { computed, reactive, effectScope, onScopeDispose, ref } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import RawForm from '@/Partials/orders/form/Raw/Payment.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
+import store from '~/store/orders/payment';
+import useToast from '~/composables/useToast.js';
+import save from '~/helpers/save';
+import $ from '~/helpers/fetch.js';
 
-// import useToast from '~/composables/useToast.js';
-// import save from '~/helpers/save';
-// import $ from '~/helpers/fetch.js';
+const paymentWaysOptions = [{ label: 'Наличный', value: 'cache' }, { label: 'Безналичный', value: 'cashless' }];
 
-// const toaster = useToast();
+const toaster = useToast();
+
+const { state, load, drop } = store;
 
 let invoice;
+let fetchPayments;
+let saveForm;
 
 const setForm = (payload = {}) => {
   invoice.id = payload?.id;
   invoice.client_id = payload?.client?.id;
-  invoice.payment_method = payload?.payment_method;
+  invoice.order_id = payload?.order?.id;
+  invoice.type = payload?.type;
   invoice.comment = payload?.comment;
-};
-
-const saveForm = async () => {
-  console.log(invoice);
-  return { message: 'shit', success: true };
-
-  // const { message, success } = await save.department(department);
-
-  // try {
-  //   return { message, success };
-  // } finally {
-  //   if (success) {
-  //     await load();
-  //     toaster.success(message);
-  //   }
-  // }
+  invoice.status = payload?.status;
+  invoice.sum = payload?.sum;
 };
 
 const atMounted = async () => {
   const { id } = invoice;
 
   if (id) {
-    // const dep = await $.department(id);
-    // setForm(dep || {});
+    const dep = await $.payment(id);
+    setForm(dep || {});
   }
 };
 
-export default function () {
+export default function (order_id) {
+  if (!fetchPayments) {
+    fetchPayments = async () => {
+      await load({ order_id });
+    };
+
+    saveForm = async () => {
+      const { message, success } = await save.payment(invoice);
+
+      try {
+        return { message, success };
+      } finally {
+        if (success) {
+          await load({ order_id });
+          toaster.success(message);
+        }
+      }
+    };
+  }
+
   const modalUp = (...args) => {
     const scope = effectScope();
 
@@ -53,28 +65,35 @@ export default function () {
       const { render } = useModalForm({
         title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].invoice),
         RawForm,
-        atSubmit: saveForm,
+        atSubmit: () => saveForm(order_id),
         atClose: () => scope.stop(),
         atOpen: (id) => {
           invoice = reactive({
             id: id ?? '',
-            client_id: '',
-            payment_method: '',
+            type: '',
+            status: '',
+            sum: '',
             comment: '',
+            client_id: '',
+            order_id: '',
           });
         },
       });
 
       render(...args);
 
-      // onScopeDispose(() => { invoice = undefined; });
+      onScopeDispose(() => { invoice = undefined; });
     });
   };
 
   return {
+    fetchPayments,
     saveForm,
     invoice,
     atMounted,
     render: modalUp,
+    state,
+    paymentWaysOptions,
+    dropPayment: drop,
   };
 }

@@ -7,7 +7,7 @@ import TextArea from '@/UI/TextArea.vue';
 import service from '~/services/processes/diagnostic-card-form';
 import DividerVue from './DcTemplate/Divider.vue';
 
-const { dc_template, atMounted, v$ } = service();
+const { dc_template, atMounted, v$, fields } = service();
 
 const FIELD_TYPES = {
   check_list: { code: 1, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/CheckList.vue')) },
@@ -15,9 +15,7 @@ const FIELD_TYPES = {
   indication: { code: 3, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/Indication.vue')) },
 };
 
-const payload = ref([]);
-
-const add = () => { payload.value.push({ type: 'check_list' }); };
+const add = () => { fields.value.push({ type: 'check_list' }); };
 
 // await atMounted();
 
@@ -38,9 +36,9 @@ const add = () => { payload.value.push({ type: 'check_list' }); };
 
         <div class="border my-3 col-span-12 bg-gray-50 rounded p-6">
 
-            <div v-for="(item, i) in payload" :key="`block-${i}`" class="mb-20" >
-              <divider-vue v-model="payload[i].type" @field-dropped="() => {payload.splice(i, 1)}" />
-              <component :is="FIELD_TYPES[payload[i].type].comp" />
+            <div v-for="(item, i) in fields" :key="`block-${i}`" class="mb-20" >
+              <divider-vue v-model="fields[i].type" @field-dropped="() => {fields.splice(i, 1)}" />
+              <component :is="FIELD_TYPES[fields[i].type].comp" v-model="fields[i]" />
             </div>
 
             <div class="mx-auto flex items-center justify-center border-t border-dashed border-gray-400 my-16">

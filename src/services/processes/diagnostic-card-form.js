@@ -1,4 +1,4 @@
-import { reactive, effectScope } from 'vue';
+import { reactive, effectScope, ref } from 'vue';
 import useVuelidate from '@vuelidate/core';
 // import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -10,6 +10,8 @@ const { drop } = store;
 
 let dc_template;
 let v$;
+
+const fields = ref([]);
 
 const clearMemory = () => {
   dc_template = undefined;
@@ -84,5 +86,6 @@ export default () => effectScope().run(() => {
     dropDc,
     v$,
     clearMemory,
+    fields,
   };
 });

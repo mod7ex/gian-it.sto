@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import InputText from '@/Partials/processes/DcTemplate/InputText.vue';
 import ItemVue from '@/Partials/processes/DcTemplate/Item.vue';
 
-const payload = ref('');
+const payload = ref('...');
 
 </script>
 

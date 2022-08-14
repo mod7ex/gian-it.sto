@@ -15,7 +15,9 @@ const { drop } = orderStore;
 const toaster = useToast();
 
 let fields;
+let rawFields;
 let files;
+let orderId;
 
 const defaults = {
   id: '',
@@ -47,6 +49,7 @@ const generateDefault = () => ({ ...deepCopyObj(defaults), ...refDefaults, ...{ 
 const clearMemory = () => {
   fields = undefined;
   files = undefined;
+  rawFields = undefined;
 };
 
 // **********************************************************************  Form
@@ -75,17 +78,16 @@ const setField = function (key) {
 
 const setForm = async (payload) => {
   Object.keys(fields).forEach(setField, payload ?? {});
+  if (payload) Object.keys(payload).forEach((key) => { rawFields[key] = payload[key]; });
 };
 
 export const setOrder = async (order_id, check = false) => {
   if (check && fields.id) return;
-  const order = await $.order(order_id);
+  const order = await $.order(order_id ?? orderId);
   setForm(order);
 };
 
-const log = (e) => {
-  files.value = e.target.files;
-};
+const log = (e) => { files.value = e.target.files; };
 
 export default () => effectScope().run(() => {
   const { route, isThePage, redirectTo, router } = useAppRouter('OrderEdit');
@@ -94,7 +96,11 @@ export default () => effectScope().run(() => {
     // Trying to make a deep copy of defaults, ISSUE : doesn't work for checkboxes
     fields = reactive(generateDefault());
 
+    rawFields = reactive({});
+
     files = ref();
+
+    orderId = route.params.id;
   }
 
   /* ************ Order form ************ */
@@ -160,5 +166,6 @@ export default () => effectScope().run(() => {
     route,
     setOrder,
     router,
+    rawFields,
   };
 });

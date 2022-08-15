@@ -1,5 +1,6 @@
 import { computed, reactive, effectScope, onScopeDispose } from 'vue';
 import RawForm from '@/Partials/orders/form/Raw/Payment.vue';
+import PayModal from '@/Partials/orders/form/Raw/PayModal.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
 import store from '~/store/orders/payment';
@@ -16,6 +17,8 @@ const { state, load, drop } = store;
 let invoice;
 let fetchPayments;
 let saveForm;
+
+const clearMemo = () => onScopeDispose(() => { fetchPayments = undefined; });
 
 const setForm = (payload = {}) => {
   invoice.id = payload?.id;
@@ -38,22 +41,7 @@ const atMounted = async () => {
 
 export default function (order_id) {
   if (!fetchPayments) {
-    fetchPayments = async () => {
-      await load({ order_id });
-    };
-
-    saveForm = async () => {
-      const { message, success } = await save.payment(invoice);
-
-      try {
-        return { message, success };
-      } finally {
-        if (success) {
-          await load({ order_id });
-          toaster.success(message);
-        }
-      }
-    };
+    fetchPayments = async () => { await load({ order_id }); };
   }
 
   const modalUp = (...args) => {
@@ -77,12 +65,51 @@ export default function (order_id) {
             client_id: '',
             order_id: '',
           });
+
+          saveForm = async () => {
+            const { message, success } = await save.payment(invoice);
+
+            try {
+              return { message, success };
+            } finally {
+              if (success) {
+                await load({ order_id });
+                toaster.success(message);
+              }
+            }
+          };
         },
       });
 
       render(...args);
 
-      onScopeDispose(() => { invoice = undefined; });
+      onScopeDispose(() => { invoice = undefined; saveForm = undefined; });
+    });
+  };
+
+  const pay = (...args) => {
+    const scope = effectScope();
+
+    scope.run(() => {
+      const { render } = useModalForm({
+        title: 'Оплатить',
+        RawForm: PayModal,
+        atSubmit: () => ({ success: true }),
+        atClose: () => scope.stop(),
+        atOpen: (id) => {
+          invoice = reactive({
+            id: id ?? '',
+            type: '',
+            status: '',
+            sum: '',
+            comment: '',
+            client_id: '',
+            order_id: '',
+          });
+        },
+      }, { left: 'Отменить', right: 'Оплатить' });
+
+      render(...args);
     });
   };
 
@@ -95,5 +122,7 @@ export default function (order_id) {
     state,
     paymentWaysOptions,
     dropPayment: drop,
+    pay,
+    clearMemo,
   };
 }

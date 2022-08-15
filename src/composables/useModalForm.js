@@ -5,7 +5,7 @@ import { sleep } from '~/helpers';
 import Modal from '@/Layout/modal/Modal.vue';
 
 // atSubmit is a function that has an object return containing the success and message result
-export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } = {}) => ({
+export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } = {}, { left, right } = {}) => ({
   render: async (...args) => {
     let app;
 
@@ -54,7 +54,7 @@ export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } =
           { onClose, open: show.value, title: isRef(title) ? title.value : title, message: message.value }, // onOutclick: onClose
           {
             default: () => h(SuspenseArea, {}, { default: () => (show.value ? h(RawForm) : null) }),
-            actions: () => h(Actions, { onClose, onSubmited, loading: loading.value }),
+            actions: () => h(Actions, { onClose, onSubmited, loading: loading.value, left, right }),
           },
         );
       },

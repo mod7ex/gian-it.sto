@@ -7,6 +7,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  left: {
+    type: String,
+    default: null,
+  },
+  right: {
+    type: String,
+    default: null,
+  },
 });
 
 defineEmits(['close', 'submited']);
@@ -23,13 +31,13 @@ defineEmits(['close', 'submited']);
             :class="{ 'cursor-not-allowed opacity-60': props.loading }"
         >
             <Spinner class="h-1" v-if="props.loading" />
-            <span v-else>Сохранить</span>
+            <span v-else>{{ props.right ?? 'Сохранить' }}</span>
         </Button>
 
         <Button
             color="gray"
             @click.prevent="$emit('close')"
             class="mt-3 w-full inline-flex justify-center px-4 py-2 sm:mt-0 sm:col-start-1"
-        >Закрыть</Button>
+        >{{ props.left ?? 'Закрыть' }}</Button>
     </div>
 </template>

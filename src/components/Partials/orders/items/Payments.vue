@@ -1,16 +1,15 @@
-<script setup>
+<script setup> 
 import Table from '@/Layout/Table.vue';
 import Link from '@/UI/Link.vue';
+import Badge from '@/UI/Badge.vue';
 import service from '~/services/orders/payment';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 const { drop } = useConfirmDialog();
 
-const { render, state, fetchPayments, paymentWaysOptions, dropPayment } = service();
+const { render, state, fetchPayments, paymentWaysOptions, dropPayment, pay, clearMemo } = service();
 
-const paymentWaysMapper = paymentWaysOptions.reduce((obj, item) => {
-  return { ...obj, [item.value]: item.label }
-}, {})
+const paymentWaysMapper = paymentWaysOptions.reduce((obj, item) => ({ ...obj, [item.value]: item.label }), {});
 
 const fields = [
   { label: 'Плательщик', key: 'client' },
@@ -22,6 +21,8 @@ const fields = [
 ];
 
 await fetchPayments();
+
+clearMemo()
 
 </script>
 
@@ -46,10 +47,9 @@ await fetchPayments();
 
     <template #td-created_at="{ value }" > {{ value }} </template>
 
-    <template #td-status="{ value }" >
-      <Link :disabled="true" > Платить </Link>
-      <!-- {{ value }} -->
+    <template #td-status="{ value, item: { id } }" >
+      <Link v-if="value === 'wait'" @click="() => pay(id)" > Оплатить </Link>
+      <Badge color="green" :point="true" v-else > Done </Badge>
     </template>
-
   </Table>
 </template>

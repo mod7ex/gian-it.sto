@@ -6,8 +6,10 @@ import TextArea from '@/UI/TextArea.vue';
 import service from '~/services/orders/payment';
 import departmentStore from '~/store/departments';
 import index from '~/services/orders/form';
+import store from '~/store/orders/payment';
 
 const { current } = departmentStore;
+const { state } = store;
 
 const { invoice, atMounted, paymentWaysOptions } = service();
 const { rawFields, setOrder } = index();
@@ -15,17 +17,8 @@ const { rawFields, setOrder } = index();
 await Promise.all([setOrder(), atMounted()]).then(() => { 
   invoice.client_id = rawFields?.client?.id;
   invoice.order_id = rawFields?.id;
+  if( !invoice.id ) invoice.sum = rawFields.total_sum - state.raw.reduce((prev, { sum }) => prev + sum, 0);
 });
-
-/*
-
-const options = [
-  { label: 'Терминал', value: 'terminal' },
-  { label: 'Cсылĸа эĸвайрнинга', value: 'link' },
-  { label: 'Банк', value: 'bank' },
-];
-
-*/
 
 const statusOptions = [
   { label: 'done', value: 'done' },
@@ -33,8 +26,6 @@ const statusOptions = [
 ];
 
 const clientOptions = computed(() => ({ value: rawFields?.client?.id, label: `${rawFields?.client?.name ?? ''} ${rawFields?.client?.surname ?? ''} ${rawFields?.client?.middlename ?? ''} ` }));
-
-
 
 </script>
 
@@ -51,6 +42,8 @@ const clientOptions = computed(() => ({ value: rawFields?.client?.id, label: `${
           label="Сумма"
           :required="true"
           type="number"
+          :min="0"
+          :step="1"
           v-model="invoice.sum"
         />
 
@@ -59,13 +52,6 @@ const clientOptions = computed(() => ({ value: rawFields?.client?.id, label: `${
           :options="paymentWaysOptions"
           :required="true"
           v-model="invoice.type"
-        />
-
-        <Select
-          label="Способ оплаты"
-          :options="statusOptions"
-          :required="true"
-          v-model="invoice.status"
         />
 
         <TextArea

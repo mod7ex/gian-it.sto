@@ -35,6 +35,17 @@ const fields = ref([
     type: 'indication',
     data: ['До', 'Что остановили'],
   },
+  {
+    type: 'check_list',
+    data: {
+      title: 'some randome text yh ',
+      items: [
+        'some randome text goes 1 soem other stuff ',
+        'some  text goes  again2',
+        'some randome text goes 1 soem stuff ',
+      ],
+    },
+  },
 ]);
 
 const clearMemory = () => {

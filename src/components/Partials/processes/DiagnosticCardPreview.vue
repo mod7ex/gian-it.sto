@@ -20,11 +20,16 @@ const { fields, dc_template } = service();
 
         <div v-if="block.type === 'check_list'" class="flex justify-center flex-col" >
           <h3 class="font-bold text-xl mb-3">{{ block.data?.title }}</h3>
-          <div class="border-t border-l border-black grid grid-cols-12 mx-auto">
+          <div class="border-t border-l border-black mx-auto grid grid-cols-12">
             <div
               v-for="(item, i) in block?.data.items"
               :key="`${i}-item`"
-              class="checklist-item border-b border-r border-black relative col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 flex"
+              class="checklist-item border-b border-r border-black relative col-span-12 flex"
+              :class="[
+                block?.data.items.length < 3 ? 'sm:col-span-6' : '',
+                block?.data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
+                block?.data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '',
+              ]"
             >
               <span class="p-2 text-left w-full">{{ item }}</span>
               <span class="border-l border-black w-16">
@@ -67,9 +72,27 @@ const { fields, dc_template } = service();
 
 #card-preview .checklist-item { max-width: 450px; }
 
-@media (min-width: 768px) {
-  .md\:col-span-4 {
-    grid-column: span 4 / span 4;
+/*
+.dk-table {
+  grid-template-columns: repeat( 1, minmax(300px, 1fr) );
+}
+
+@media (min-width: 640px) {
+  .dk-table {
+    grid-template-columns: repeat( 2, minmax(300px, 1fr) );
   }
 }
+
+@media (min-width: 768px) {
+  .dk-table {
+    grid-template-columns: repeat( 3, minmax(300px, 1fr) );
+  }
+}
+
+@media (min-width: 1280px) {
+  .dk-table {
+    grid-template-columns: repeat( 4, minmax(300px, 1fr) );
+  }
+}
+*/
 </style>

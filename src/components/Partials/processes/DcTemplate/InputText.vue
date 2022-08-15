@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 defineProps({
   modelValue: {
-    type: [String, Number],
+    type: [String, Number, Object],
   },
   tag: {
     type: String,
@@ -20,12 +20,7 @@ defineEmits(['update:modelValue']);
 const editMode = ref(false);
 const inputRef = ref();
 
-const hadelDbClick = () => {
-  editMode.value = true;
-  console.log(inputRef.value);
-  // inputRef.value.focus();
-};
-
+const hadelDbClick = () => { editMode.value = true; };
 </script>
 
 <template>
@@ -37,13 +32,13 @@ const hadelDbClick = () => {
         @blur="editMode = false"
         class="p-2 w-full h-full switch-input"
         @input="e => $emit('update:modelValue', e.target.value)"
-    >{{ modelValue }}</textarea>
+    >{{ typeof modelValue === 'string' ? modelValue : '...' }}</textarea>
     <component
       :is="tag"
       :class="['w-full h-full', tagClass]"
       @dblclick="hadelDbClick"
       v-else
-    >{{ modelValue }}</component>
+    >{{ typeof modelValue === 'string' ? modelValue : '...' }}</component>
   </div>
 </template>
 

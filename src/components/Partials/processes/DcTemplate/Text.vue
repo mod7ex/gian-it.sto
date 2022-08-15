@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue';
 import InputText from '@/Partials/processes/DcTemplate/InputText.vue';
 import ItemVue from '@/Partials/processes/DcTemplate/Item.vue';
 
-const payload = ref('...');
+const props = defineProps({ modelValue: [Object, String, Number, Array] });
+
+defineEmits(['update:modelValue']);
 
 </script>
 
@@ -15,7 +16,8 @@ const payload = ref('...');
         <input-text
           tag="p"
           class="w-full p-2"
-          v-model="payload"
+          :modelValue="props.modelValue ?? '...'"
+          @update:modelValue="v => { $emit('update:modelValue', v) }"
           tag-class="text-center text-lg p-2"
         />
       </template>

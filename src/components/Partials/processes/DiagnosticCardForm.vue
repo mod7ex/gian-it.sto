@@ -1,7 +1,6 @@
 <script setup>
 import { PlusIcon } from '@heroicons/vue/outline';
-
-import { ref, defineAsyncComponent } from 'vue';
+import { defineAsyncComponent, watch } from 'vue';
 import Input from '@/UI/Input.vue';
 import TextArea from '@/UI/TextArea.vue';
 import service from '~/services/processes/diagnostic-card-form';
@@ -9,13 +8,19 @@ import DividerVue from './DcTemplate/Divider.vue';
 
 const { dc_template, atMounted, v$, fields } = service();
 
+// https://github.com/falur/sto-backend/blob/dev/app/Models/Map.php
 const FIELD_TYPES = {
   check_list: { code: 1, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/CheckList.vue')) },
   text: { code: 2, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/Text.vue')) },
   indication: { code: 3, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/Indication.vue')) },
 };
 
-const add = () => { fields.value.push({ type: 'check_list' }); };
+const add = () => { fields.value.push({}); };
+// const add = () => { fields.value.push({ type: 'check_list' }); };
+
+watch(fields, (v) => {
+  console.log(v);
+}, { deep: true });
 
 // await atMounted();
 
@@ -38,7 +43,7 @@ const add = () => { fields.value.push({ type: 'check_list' }); };
 
             <div v-for="(item, i) in fields" :key="`block-${i}`" class="mb-20" >
               <divider-vue v-model="fields[i].type" @field-dropped="() => {fields.splice(i, 1)}" />
-              <component :is="FIELD_TYPES[fields[i].type].comp" v-model="fields[i]" />
+              <component v-if="fields[i].type" :is="FIELD_TYPES[fields[i].type].comp" v-model="fields[i].data" />
             </div>
 
             <div class="mx-auto flex items-center justify-center border-t border-dashed border-gray-400 my-16">

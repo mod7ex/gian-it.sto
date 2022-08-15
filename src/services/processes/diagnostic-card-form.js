@@ -11,7 +11,31 @@ const { drop } = store;
 let dc_template;
 let v$;
 
-const fields = ref([]);
+const fields = ref([
+  {
+    type: 'check_list',
+    data: {
+      title: 'some randome text goes here',
+      items: [
+        'some randome text goes 1 soem other stuff ',
+        'some randome text goes 3 last but not least game over ...',
+        'some  text goes  again2',
+        'some randome text goes 1 soem other stuff ',
+        'some  text goes  again2',
+        'some randome text goes 3 last but not least game over ...',
+        'some  text goes  again 2 mqfo qf',
+      ],
+    },
+  },
+  {
+    type: 'text',
+    data: 'some randome text goes here',
+  },
+  {
+    type: 'indication',
+    data: ['До', 'Что остановили'],
+  },
+]);
 
 const clearMemory = () => {
   dc_template = undefined;
@@ -35,6 +59,7 @@ export default () => effectScope().run(() => {
     dc_template = reactive({
       id: '',
       name: '',
+      body: '',
       note: '',
     });
 

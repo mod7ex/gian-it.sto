@@ -3,7 +3,7 @@ import { TrashIcon } from '@heroicons/vue/outline';
 
 defineProps({
   modelValue: {
-    type: String,
+    type: [String, undefined],
   },
 });
 </script>

@@ -1,44 +1,75 @@
 <script setup>
-defineProps({
-  payload: Object,
-});
+import service from '~/services/processes/diagnostic-card-form';
 
-/*
-  id: '',
-  department_id: current,
-
-  name: '',
-  options: [''],
-
-  params: [{ options: [''] }], // { title: '', options: ['lorum ipsom'] }
-  comment: { title: '', content: '' },
-  note: '',
-*/
-
-const my_paylaod = {
-  name: 'lorum ipsom problem',
-  options: ['some ran optio', 'the othe fake option', 'the third random one', 'and again one more', 'almost done one else'],
-
-  params: [
-    { title: 'Lorem title dolor', options: ['some ran optio', 'the othe fake option', 'the third random one', 'and again one more', 'almost done one else'] },
-  ],
-
-  comment: { title: 'The comment title goes here', content: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia, distinctio?' },
-
-  note: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quia, distinctio? adipisicing elit. Quia, distinctio?',
-};
+const { fields, dc_template } = service();
 
 </script>
 
 <template>
-  <div id="card-preview" class="text-center border-gray-300 border-2">
-    <h2 class="text-center mb-6">Диагностическая карта <span>&#8470;</span> <span>&#95;&#95;&#95;&#95;&#95;</span></h2>
+  <div id="card-preview" class="text-center border-gray-300 border rounded shadow p-3 mx-auto">
+    <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>&#95;&#95;&#95;&#95;&#95;</span></h2>
 
-    <div class="grid grid-cols-12 border-black border-2">
-      <span class="col-span-4"><b>Дата: </b>some lorum data</span>
-      <span class="col-span-4"><b>Авто: </b>some lorum data</span>
-      <span class="col-span-4"><b>&#8470;: </b>some lorum data</span>
+    <div class="grid grid-cols-12 border-black border mb-6">
+      <span class="text-left px-9 col-span-4"><b>Дата: </b></span>
+      <span class="text-left px-9 col-span-4 border-l border-black"><b>Авто: </b></span>
+      <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;: </b></span>
+    </div>
+
+    <div>
+      <div v-for="(block, i) in fields" :key="i" class="mb-6" >
+
+        <div v-if="block.type === 'check_list'" class="flex justify-center flex-col" >
+          <h3 class="font-bold text-xl mb-3">{{ block.data?.title }}</h3>
+          <div class="border-t border-l border-black grid grid-cols-12 mx-auto">
+            <div
+              v-for="(item, i) in block?.data.items"
+              :key="`${i}-item`"
+              class="checklist-item border-b border-r border-black relative col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 flex"
+            >
+              <span class="p-2 text-left w-full">{{ item }}</span>
+              <span class="border-l border-black w-16">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div v-else>
+          <div v-if="block.type === 'text'" class="flex flex-col">
+            <h3 class="font-bold text-xl text-left mb-6">{{ block.data }}</h3>
+            <p class="border-b border-gray-500 mb-6 w-full"></p>
+            <p class="border-b border-gray-500 mb-6 w-full"></p>
+            <p class="border-b border-gray-500 mb-6 w-full"></p>
+          </div>
+
+          <div v-else class="border border-black flex">
+            <span class="px-4 p-1">Показания</span>
+            <ul class="grid grid-cols-2 flex-grow">
+              <li class="col-span-1 flex">
+                <span class="border-l border-r border-black  px-4 p-1" >{{ block?.data[0] }}</span>
+              </li>
+              <li class="col-span-1 flex">
+                <span class="border-l border-r border-black  px-4 p-1" >{{ block?.data[1] }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
 </template>
+
+<style scoped>
+#card-preview{
+  max-width: 100%;
+}
+
+#card-preview .checklist-item { max-width: 450px; }
+
+@media (min-width: 768px) {
+  .md\:col-span-4 {
+    grid-column: span 4 / span 4;
+  }
+}
+</style>

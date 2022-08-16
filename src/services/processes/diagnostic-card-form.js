@@ -1,6 +1,6 @@
 import { reactive, effectScope, ref } from 'vue';
 import useVuelidate from '@vuelidate/core';
-// import save from '~/helpers/save';
+import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import store from '~/store/processes/diagnostic-card';
 import useAppRouter from '~/composables/useAppRouter';
@@ -75,15 +75,9 @@ export default () => effectScope().run(() => {
   }
 
   const saveForm = async () => {
-    console.log(dc_template);
+    dc_template.data = fields.value;
 
-    /*
-
-    dc_template.data = fields.value.map(({ title, data }) => {
-      if (typeof data === 'string') {
-        return {};
-      }
-    });
+    // console.log(dc_template);
 
     const isValideForm = await v$.value.$validate();
 
@@ -91,15 +85,13 @@ export default () => effectScope().run(() => {
 
     v$.value.$reset();
 
-    const { success } = await save.map_question(dc_template, undefined, true);
+    const { success } = await save.map(dc_template, undefined, true);
 
     try {
       return { success };
     } finally {
       if (success) back();
     }
-
-    */
   };
 
   const dropDc = async () => {
@@ -112,7 +104,7 @@ export default () => effectScope().run(() => {
     if (isUpdate.value) {
       const { id } = route.params;
       if (id) {
-        const ar = await $.map_question(id);
+        const ar = await $.map(id);
         setForm(ar);
       }
     }

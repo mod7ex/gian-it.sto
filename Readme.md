@@ -22,6 +22,9 @@
 
 ## . A store class or controller class (OOP) could have been created to avoid repetition
 
-### -----> Todo: when permissions are editable uncomment tabs and permission for orders
-### -----> сумма работ + суммы запчастей = Сумма: 100 000 ₽
+### -----> Todo: when permissions are editable uncomment tabs and permission for orders (done *)
+### -----> сумма работ + суммы запчастей = Сумма: 100 000 ₽ (done *)
+
+#### ** ** ** ISSUE: repetition of services & store logic (it would have been better if we used OOP)
+#### ** ** ** ISSUE: Deep concept isn't well handled (no issues but there is better approach)
 

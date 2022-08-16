@@ -27,10 +27,10 @@ const add = () => { fields.value.push({}); };
         <div class="col-span-6 sm:col-span-6">
             <Input
                 label="Название"
-                v-model="dc_template.name"
+                v-model="dc_template.title"
                 :required="true"
-                :error="v$.name.$errors[0]?.$message"
-                @blured="v$.name.$touch"
+                :error="v$.title.$errors[0]?.$message"
+                @blured="v$.title.$touch"
             />
         </div>
 

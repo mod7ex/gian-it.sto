@@ -16,11 +16,15 @@ const SuspenseArea = useSuspense(Table);
   <OfficeLayout :title="`${ route.params.name ?? 'Процесс' } / Список задач`">
     <template #actions>
         <Button type="secondary" :link="{name: 'Processes'}">
-            <ArrowLeftIcon class="w-5 h-5 mr-1"/>К списку процессов
+          <ArrowLeftIcon class="w-5 h-5 mr-1"/>К списку процессов
+        </Button>
+
+        <Button color="blue" :link="{ name: 'DcForm', params: {id: route.params.id} }" >
+          <PlusCircleIcon class="w-5 h-5 mr-1" />Добавить Диагностическую карту
         </Button>
 
         <Button color="blue" :link="{ name: 'ProcessTaskForm', params: {id: route.params.id} }" >
-            <PlusCircleIcon class="w-5 h-5 mr-1" />Создать
+          <PlusCircleIcon class="w-5 h-5 mr-1" />Добавить задачу
         </Button>
     </template>
 

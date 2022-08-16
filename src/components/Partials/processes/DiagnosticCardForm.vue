@@ -1,8 +1,8 @@
 <script setup>
 import { PlusIcon } from '@heroicons/vue/outline';
-import { defineAsyncComponent, watch } from 'vue';
+import { defineAsyncComponent } from 'vue';
 import Input from '@/UI/Input.vue';
-import TextArea from '@/UI/TextArea.vue';
+// import TextArea from '@/UI/TextArea.vue';
 import service from '~/services/processes/diagnostic-card-form';
 import DividerVue from './DcTemplate/Divider.vue';
 
@@ -16,11 +16,6 @@ const FIELD_TYPES = {
 };
 
 const add = () => { fields.value.push({}); };
-// const add = () => { fields.value.push({ type: 'check_list' }); };
-
-watch(fields, (v) => {
-  console.log(v);
-}, { deep: true });
 
 // await atMounted();
 
@@ -55,6 +50,6 @@ watch(fields, (v) => {
 
         </div>
 
-        <TextArea class="col-span-12 mt-2" label="Примечание" v-model="dc_template.note" />
+        <!-- <TextArea class="col-span-12 mt-2" label="Примечание" v-model="dc_template.note" /> -->
     </div>
 </template>

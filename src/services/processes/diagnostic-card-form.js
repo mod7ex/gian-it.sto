@@ -54,11 +54,8 @@ const clearMemory = () => {
 };
 
 const setField = function (key) {
-  if (key === 'answers_and_recommendations') {
-    dc_template[key] = this.map_answers ?? [{}];
-    return;
-  }
-  dc_template[key] = this[key] ?? '';
+  // dc_template[key] = this[key] ?? '';
+  console.log(this[key]);
 };
 
 const setForm = (payload = {}) => { Object.getOwnPropertyNames(dc_template).forEach(setField, payload); };
@@ -69,9 +66,9 @@ export default () => effectScope().run(() => {
   if (!dc_template) {
     dc_template = reactive({
       id: '',
-      name: '',
-      body: '',
-      note: '',
+      title: '',
+      data: '',
+      // note: '',
     });
 
     v$ = useVuelidate(formRules(), dc_template, { $lazy: true });
@@ -79,7 +76,14 @@ export default () => effectScope().run(() => {
 
   const saveForm = async () => {
     console.log(dc_template);
+
     /*
+
+    dc_template.data = fields.value.map(({ title, data }) => {
+      if (typeof data === 'string') {
+        return {};
+      }
+    });
 
     const isValideForm = await v$.value.$validate();
 

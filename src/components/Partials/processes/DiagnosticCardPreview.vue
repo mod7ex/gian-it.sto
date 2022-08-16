@@ -10,13 +10,13 @@ const { fields, dc_template } = service();
     <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>&#95;&#95;&#95;&#95;&#95;</span></h2>
 
     <div class="grid grid-cols-12 border-black border mb-6">
-      <span class="text-left px-9 col-span-4"><b>Дата: </b></span>
-      <span class="text-left px-9 col-span-4 border-l border-black"><b>Авто: </b></span>
-      <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;: </b></span>
+      <span class="text-left px-9 col-span-4"><b>Дата:</b></span>
+      <span class="text-left px-9 col-span-4 border-l border-black"><b>Авто:</b></span>
+      <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;:</b></span>
     </div>
 
     <div>
-      <div v-for="(block, i) in fields" :key="i" class="mb-6" >
+      <div v-for="(block, i) in fields" :key="i" class="mb-9" >
 
         <div v-if="block.type === 'check_list'" class="flex justify-center flex-col" >
           <h3 class="font-bold text-xl mb-3">{{ block.data?.title }}</h3>
@@ -71,28 +71,4 @@ const { fields, dc_template } = service();
 }
 
 #card-preview .checklist-item { max-width: 450px; }
-
-/*
-.dk-table {
-  grid-template-columns: repeat( 1, minmax(300px, 1fr) );
-}
-
-@media (min-width: 640px) {
-  .dk-table {
-    grid-template-columns: repeat( 2, minmax(300px, 1fr) );
-  }
-}
-
-@media (min-width: 768px) {
-  .dk-table {
-    grid-template-columns: repeat( 3, minmax(300px, 1fr) );
-  }
-}
-
-@media (min-width: 1280px) {
-  .dk-table {
-    grid-template-columns: repeat( 4, minmax(300px, 1fr) );
-  }
-}
-*/
 </style>

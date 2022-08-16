@@ -10,9 +10,7 @@ const emit = defineEmits(['update:modelValue']);
 
 const payload = ref(['...', '...']);
 
-watch(payload, debounce((v) => {
-  emit('update:modelValue', v);
-}));
+watch(payload, debounce((v) => { emit('update:modelValue', v); }), { deep: true });
 
 onMounted(() => { if (Array.isArray(props.modelValue)) { payload.value = props.modelValue; } });
 

@@ -2,7 +2,7 @@
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import MultiSelect from '@/UI/MultiSelect.vue';
-import service from '~/services/processes/task-form';
+import service from '~/services/processes/dk-form';
 import orderStagesStore from '~/store/orders/stages';
 import processStore from '~/store/processes/index';
 import rolesStore from '~/store/roles';
@@ -11,7 +11,7 @@ import dcTemplatesStore from '~/store/processes/diagnostic-card';
 const { load: loadOrderStages, options: OrderStagesOptions } = orderStagesStore;
 const { load: loadProcesses, options: processOptions } = processStore;
 const { options, load } = rolesStore;
-const { t_options, loadTemplates } = dcTemplatesStore;
+const { options: t_options, load: loadTemplates } = dcTemplatesStore;
 
 const { fields, atMounted } = service();
 
@@ -44,7 +44,7 @@ await Promise.all([load(), atMounted(), loadOrderStages(), loadProcesses(), load
         </div>
 
         <div class="col-span-12 sm:col-span-4">
-            <Select label="Шаблон диагностической карты" :options="t_options" v-model="fields.dc_id" />
+            <Select label="Шаблон диагностической карты" :options="t_options" v-model="fields.map_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-4">

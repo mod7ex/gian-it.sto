@@ -7,11 +7,11 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 
 const { drop } = useConfirmDialog();
 
-const { state, load, drop: dropQuestion } = store;
+const { state, load, drop: dropTmpl } = store;
 const { redirectTo } = useAppRouter();
 
 const fields = [
-  { label: 'Название', key: 'question' },
+  { label: 'Название', key: 'title' },
   { label: 'Дата создания', key: 'created_at' },
 ];
 
@@ -27,11 +27,11 @@ await load();
     <Table
         :fields="fields"
         :items="state.raw"
-        @delete="(id)=>drop(()=>dropQuestion(id))"
+        @delete="(id)=>drop(()=>dropTmpl(id))"
         @edit="edit"
     >
         <!-- Body -->
-        <template #td-question="{ value, item: {id} }" >
+        <template #td-title="{ value, item: {id} }" >
             <Link @click="() => edit(id)"> {{ value }} </Link>
         </template>
 

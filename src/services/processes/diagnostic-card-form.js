@@ -1,4 +1,4 @@
-import { reactive, effectScope, ref } from 'vue';
+import { reactive, effectScope, ref, onScopeDispose } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -8,9 +8,11 @@ import { whyRules as formRules } from '~/validationsRules/process';
 
 const { drop } = store;
 
+let fields;
 let dc_template;
 let v$;
 
+/*
 const fields = ref([
   {
     type: 'check_list',
@@ -47,15 +49,19 @@ const fields = ref([
     },
   },
 ]);
+*/
 
 const clearMemory = () => {
   dc_template = undefined;
+  fields = undefined;
   v$ = undefined;
 };
 
 const setField = function (key) {
   // dc_template[key] = this[key] ?? '';
-  console.log(this[key]);
+  dc_template.id = this.id;
+  dc_template.title = this.title;
+  fields.value = this.data;
 };
 
 const setForm = (payload = {}) => { Object.getOwnPropertyNames(dc_template).forEach(setField, payload); };
@@ -67,17 +73,16 @@ export default () => effectScope().run(() => {
     dc_template = reactive({
       id: '',
       title: '',
-      data: '',
       // note: '',
     });
+
+    fields = ref([]);
 
     v$ = useVuelidate(formRules(), dc_template, { $lazy: true });
   }
 
   const saveForm = async () => {
     dc_template.data = fields.value;
-
-    // console.log(dc_template);
 
     const isValideForm = await v$.value.$validate();
 
@@ -101,6 +106,9 @@ export default () => effectScope().run(() => {
   };
 
   const atMounted = async () => {
+    console.log(dc_template?.id);
+    if (fields?.value?.length && dc_template?.title) return;
+
     if (isUpdate.value) {
       const { id } = route.params;
       if (id) {

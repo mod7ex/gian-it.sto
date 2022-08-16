@@ -13,7 +13,7 @@ const { drop } = useConfirmDialog();
 
 const SuspenseArea = useSuspense();
 
-const { dc_template, isUpdate, saveForm, dropDc, clearMemory } = service();
+const { isUpdate, saveForm, dropDc, clearMemory } = service();
 
 const previewing = ref(false);
 

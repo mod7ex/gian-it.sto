@@ -17,7 +17,7 @@ const FIELD_TYPES = {
 
 const add = () => { fields.value.push({}); };
 
-// await atMounted();
+await atMounted();
 
 </script>
 

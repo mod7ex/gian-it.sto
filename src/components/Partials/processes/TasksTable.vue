@@ -13,6 +13,7 @@ const { state, fill, reset, drop } = store;
 
 const fields = [
   { label: 'Название', key: 'name' },
+  { label: 'Тип', key: 'type' },
   { label: 'Ответственная роль', key: 'role' },
   { label: 'Порядок', key: 'position' },
   { label: 'Дата создания', key: 'created_at' },
@@ -36,8 +37,9 @@ await fetchTasks(true);
         @edit="(task) => redirectTo({ name: 'ProcessTaskEdit', params: { task, id } })"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id: task} }" >
-            <Link :href="{ name: 'ProcessTaskEdit', params: { task, id } }"> {{ value }} </Link>
+        <template #td-name="{ value, item: {id: task, is_map} }" >
+          <Link v-if="is_map" :href="{ name: 'DcEdit', params: { dk: task, id } }"> {{ value }} </Link>
+          <Link v-else :href="{ name: 'ProcessTaskEdit', params: { task, id } }"> {{ value }} </Link>
         </template>
 
         <template #td-role="{ value }" >
@@ -46,12 +48,19 @@ await fetchTasks(true);
           </Badge>
         </template>
 
+        <template #td-type="{ item }" >
+          <Badge :point="true" :color="item?.is_map ? 'green' : 'purple'">
+            {{ item?.is_map ? 'Диагностическая карта' : 'Задачи' }}
+          </Badge>
+         
+        </template>
+
         <template #td-position="{ value }" >
-            {{ value }}
+          {{ value }}
         </template>
 
         <template #td-created_at="{ value }" >
-            {{ value?.split(' ')[0] ?? '_' }}
+          {{ value?.split(' ')[0] ?? '_' }}
         </template>
         <!-- ****** -->
     </Table>

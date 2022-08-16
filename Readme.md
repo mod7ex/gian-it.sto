@@ -27,4 +27,5 @@
 
 #### ** ** ** ISSUE: repetition of services & store logic (it would have been better if we used OOP)
 #### ** ** ** ISSUE: Deep concept isn't well handled (no issues but there is better approach)
+#### ** ** ** ISSUE: onScopeDispose used in clearMemo should be used in components or inside function(service)
 

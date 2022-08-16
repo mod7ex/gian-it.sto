@@ -8,7 +8,7 @@ import service from '~/services/orders/template';
 const { prepare, state } = service();
 
 const fields = [
-  { label: 'Название', key: 'label' },
+  { label: 'Название', key: 'name' },
   { label: 'Посмотреть', key: 'link' }, // fake keys
   // { label: 'Удалить', key: 'drop' }, // fake keys
 ];

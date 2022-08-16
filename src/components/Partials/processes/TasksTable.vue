@@ -50,9 +50,8 @@ await fetchTasks(true);
 
         <template #td-type="{ item }" >
           <Badge :point="true" :color="item?.is_map ? 'green' : 'purple'">
-            {{ item?.is_map ? 'Диагностическая карта' : 'Задачи' }}
+            {{ item?.is_map ? 'Диагностическая карта' : 'Задачa' }}
           </Badge>
-         
         </template>
 
         <template #td-position="{ value }" >

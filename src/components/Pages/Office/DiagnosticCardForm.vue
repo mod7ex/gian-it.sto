@@ -13,16 +13,16 @@ const { drop } = useConfirmDialog();
 
 const SuspenseArea = useSuspense();
 
-const { isUpdate, saveForm, dropDc, clearMemory } = service();
+const { isUpdate, saveForm, dropDc, clearMemory, dc_template } = service();
 
-const previewing = ref(true);
+const previewing = ref(false);
 
 onScopeDispose(clearMemory);
 
 </script>
 
 <template>
-  <OfficeLayout :title="isUpdate ? 'Обновить вопрос' : 'Создать вопрос'">
+  <OfficeLayout :title="`${isUpdate ? `Обновить шаблон (${dc_template?.title})` : 'Создать шаблон'} ${previewing ? '- Предварительный просмотр' : ''}`">
     <template #actions>
       <Button type="secondary" :link="{ name: 'DiagnosticCard' }">
         <ArrowLeftIcon class="w-5 h-5 mr-1" />Вернуться

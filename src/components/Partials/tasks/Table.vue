@@ -20,16 +20,20 @@ const { fetchTasks, removeTask, edit } = service();
 
 const fields = [
   { label: 'Название', key: 'name' },
+  // ...[props.order_id ? { label: 'Тип', key: 'type' } :  new Array()],
+   { label: 'Тип', key: 'type' },
   { label: 'Ответственный', key: 'author' },
   { label: 'Статус', key: 'status' },
   { label: 'Крайний срок', key: 'deadline_at' },
+  ...[!props.order_id ? { label: 'Заказ-наряд', key: 'order' } :  new Array()],
+  { label: 'Дата создания', key: 'created_at' }
 ];
 
 if (!props.order_id) {
-  fields.push({ label: 'Заказ-наряд', key: 'order' });
+  fields.push();
 }
 
-fields.push({ label: 'Дата создания', key: 'created_at' });
+fields.push();
 
 const { state } = store;
 
@@ -49,8 +53,14 @@ await fetchTasks(true, props.order_id);
         :noDelete="(item) => !canTasks(item, 'delete')"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id} }" >
-            <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
+        <template #td-name="{ value, item: {id, is_map} }" >
+            <Link :disabled="!!is_map" :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
+        </template>
+
+        <template #td-type="{ item: {is_map} }" >
+          <Badge :point="true" :color="is_map ? 'green' : 'purple'">
+            {{ is_map ? 'Диагностическая карта' : 'Задачa' }}
+          </Badge>
         </template>
 
         <template #td-author="{ value }" >

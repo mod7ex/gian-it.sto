@@ -25,7 +25,7 @@ const tabs = [
   { tab: 'docs', permissions: ['crud documents', 'crud document templates'], label: 'Документы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Docs.vue')) },
   { tab: 'storages', permissions: [], label: 'Склад', component: defineAsyncComponent(() => import('@/Partials/orders/form/Storages.vue')) },
   { tab: 'works', permissions: ['crud works', 'read works'], label: 'Работы', component: defineAsyncComponent(() => import('@/Partials/orders/form/Works.vue')) },
-  // { tab: 'diagnostic-card',permissions: [], label: 'Диагностическая карта', component: defineAsyncComponent(() => import('@/Partials/orders/form/DiagnosticCards.vue')) },
+  { tab: 'diagnostic-card', permissions: [], label: 'Диагностическая карта', component: defineAsyncComponent(() => import('@/Partials/orders/form/DiagnosticCards.vue')) },
   { tab: 'comments', permissions: [], label: 'Комментарии', component: defineAsyncComponent(() => import('@/Partials/Comments.vue')), props: { model: 'order', id: computed(() => `${route.params?.id ?? ''}`) } },
   { tab: 'payment', permissions: [], label: 'Оплаты', component: defineAsyncComponent(() => import('@/Partials/orders/form/Payment.vue')) },
 ];

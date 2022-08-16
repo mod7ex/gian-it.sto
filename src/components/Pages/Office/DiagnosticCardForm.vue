@@ -15,7 +15,7 @@ const SuspenseArea = useSuspense();
 
 const { isUpdate, saveForm, dropDc, clearMemory } = service();
 
-const previewing = ref(false);
+const previewing = ref(true);
 
 onScopeDispose(clearMemory);
 

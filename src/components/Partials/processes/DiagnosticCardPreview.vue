@@ -1,13 +1,14 @@
 <script setup>
 import service from '~/services/processes/diagnostic-card-form';
+import { generateShapedIdfromId } from '~/helpers';
 
 const { fields, dc_template } = service();
 
 </script>
 
 <template>
-  <div id="card-preview" class="text-center border-gray-300 border rounded shadow p-3 mx-auto">
-    <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>&#95;&#95;&#95;&#95;&#95;</span></h2>
+  <div id="card-preview" class="text-center border-gray-300 border rounded shadow p-3 mx-auto max-w-6xl">
+    <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ dc_template?.id ?  generateShapedIdfromId(dc_template?.id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
 
     <div class="grid grid-cols-12 border-black border mb-6">
       <span class="text-left px-9 col-span-4"><b>Дата:</b></span>
@@ -66,9 +67,5 @@ const { fields, dc_template } = service();
 </template>
 
 <style scoped>
-#card-preview{
-  max-width: 100%;
-}
-
 #card-preview .checklist-item { max-width: 450px; }
 </style>

@@ -2,6 +2,7 @@
 import { CheckIcon, PlusCircleIcon } from '@heroicons/vue/outline';
 import { computed, watch, onMounted, ref } from 'vue';
 import Button from '@/UI/Button.vue';
+import TextArea from '@/UI/TextArea.vue';
 import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
 import StoSelect from '@/UI/StoSelect.vue';
@@ -99,18 +100,16 @@ const handelBlackListedFile = (id) =>  {
         </div>
 
         <div class="col-span-12 sm:col-span-4">
-          <Select label="Процесс" :options="processOptions" v-model="fields.process_id" />
+          <Select label="Процесс" :options="processOptions" v-model="fields.process_category_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-4">
           <Select label="Этап заказа" :options="orderStagesOptions" v-model="fields.order_stage_id" />
         </div>
 
-<!--
           <div class="col-span-12 sm:col-span-12">
             <TextArea label="Комментарий" v-model="fields.comment" />
           </div>
--->
 
         <div class="col-span-12">
             <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>

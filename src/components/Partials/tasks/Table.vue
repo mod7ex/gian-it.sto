@@ -14,7 +14,17 @@ const props = defineProps({
     type: [String, Number],
     default: undefined,
   },
+  is_map: {
+    type: Boolean,
+    default: false
+  },
+  modelValue: {
+    type: [String, Number],
+    required: false
+  }
 });
+
+defineEmits(['update:modelValue']);
 
 const { fetchTasks, removeTask, edit } = service();
 
@@ -22,7 +32,7 @@ const fields = [
   { label: 'Название', key: 'name' },
   // ...[props.order_id ? { label: 'Тип', key: 'type' } :  new Array()],
    { label: 'Тип', key: 'type' },
-  { label: 'Ответственный', key: 'author' },
+  { label: 'Ответственный', key: 'user' },
   { label: 'Статус', key: 'status' },
   { label: 'Крайний срок', key: 'deadline_at' },
   ...[!props.order_id ? { label: 'Заказ-наряд', key: 'order' } :  new Array()],
@@ -35,7 +45,7 @@ if (!props.order_id) {
 
 fields.push();
 
-const { state } = store;
+const { state,  map_options } = store;
 
 await fetchTasks(true, props.order_id);
 
@@ -43,7 +53,25 @@ await fetchTasks(true, props.order_id);
 
 <template>
 
+    <div v-if="props.is_map">
+      <!-- <div class="flex"> -->
+        <div class="mx-auto max-w-5xl p-3 bg-gray-50 flex flex-wrap justify-center items-center shadow-inner rounded-md">
+          <p v-if="map_options.length === 0">Нет задач</p>
+          <Badge
+            @click="$emit('update:modelValue', item.value)"
+            v-show="item.value != modelValue"
+            v-for="item in map_options"
+            :key="item.value"
+            :point="true"
+            color="blue"
+            class="m-2 p-1 cursor-pointer hover:shadow-lg shadow transition-shadow duration-300 ease-out"
+          > {{ item.label }} </Badge>
+        </div>
+      <!-- </div> -->
+    </div>
+
     <Table
+        v-else
         @bottom-touched="()=>fetchTasks(false, props.order_id)"
         :fields="fields"
         :items="state.raw"
@@ -63,7 +91,7 @@ await fetchTasks(true, props.order_id);
           </Badge>
         </template>
 
-        <template #td-author="{ value }" >
+        <template #td-user="{ value }" >
             <Avatar
               :title="`${value.name} ${value.surname}`"
               :subtitle="value.office_position"

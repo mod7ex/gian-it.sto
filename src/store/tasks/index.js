@@ -1,4 +1,4 @@
-import { reactive, readonly } from 'vue';
+import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
 import useAuth from '~/composables/useAuth';
@@ -62,4 +62,6 @@ export default {
   reset,
   sort,
   fill,
+  options: computed(() => state.raw.map(({ id: value, name: label }) => ({ label, value }))),
+  map_options: computed(() => state.raw.filter(({ is_map }) => is_map).map(({ id: value, name: label }) => ({ label, value }))),
 };

@@ -32,11 +32,11 @@ const defaults = {
 
   appeal_reason_id: '',
 
-  process_id: '',
+  process_category_id: '',
 
   total_sum: '',
 
-  // comment: '',
+  comment: '',
 };
 
 const refDefaults = {

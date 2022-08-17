@@ -13,7 +13,7 @@ const props = defineProps({
 });
 </script>
 <template>
-  <div class="flex items-center">
+  <div class="flex items-center justify-center">
     <div
       :class="[
         'mx-3 border-4 border-blue-400 borderTopColorTransparent border-solid rounded-full animate-spin',

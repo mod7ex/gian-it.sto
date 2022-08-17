@@ -52,9 +52,9 @@ export default () => effectScope().run(() => {
     reset(true);
   };
 
-  const fetchTasks = async (bool = false, order_id) => {
+  const fetchTasks = async (bool = false, order_id, is_map) => {
     if (order_id) {
-      await load({ order_id });
+      await load({ order_id, is_map });
       return;
     }
     if (!filter.department_id) return;

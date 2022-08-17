@@ -4,6 +4,10 @@ import { generateShapedIdfromId } from '~/helpers';
 const props = defineProps({
   fields: Object,
   dc_template: Object,
+  noHead: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 </script>
@@ -70,9 +74,9 @@ const props = defineProps({
 -->
 
   <div id="card-preview" class="text-center border-gray-300 border rounded shadow p-6 px-9 mx-auto max-w-6xl">
-    <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ dc_template?.id ?  generateShapedIdfromId(dc_template?.id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
+    <h2 v-if="!noHead" class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ dc_template?.id ?  generateShapedIdfromId(dc_template?.id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
 
-    <div class="grid grid-cols-12 border-black border mb-9">
+    <div class="grid grid-cols-12 border-black border mb-9" v-if="!noHead">
       <span class="text-left px-9 col-span-4"><b>Дата:</b></span>
       <span class="text-left px-9 col-span-4 border-l border-black"><b>Авто:</b></span>
       <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;:</b></span>

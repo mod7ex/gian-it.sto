@@ -2,6 +2,10 @@
 import { computed } from 'vue';
 
 const props = defineProps({
+  hideText: {
+    type: Boolean,
+    default: false,
+  },
   label: {
     type: String,
     required: false,
@@ -28,7 +32,7 @@ const props = defineProps({
     default: false,
   },
   modelValue: {
-    type: [String, Number, Array],
+    type: [String, Number, Array, Boolean],
     required: false,
     default: '',
   },
@@ -79,7 +83,7 @@ const options = computed(() => props.options?.map((e) => {
       @blur="$emit('blured')"
       :disabled="!!props.disabled"
     >
-      <option :selected="!modelValue" value="">-- {{options.length === 0 ? 'пустой' : 'выберите'}} --</option>
+      <option v-if="!props.hideText" :selected="modelValue == null" value="">-- {{options.length === 0 ? 'пустой' : 'выберите'}} --</option>
       <option
           v-for="item in options"
           :value="item.value"

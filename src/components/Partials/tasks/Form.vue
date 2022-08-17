@@ -1,8 +1,8 @@
 <script setup>
-import { computed, watch, defineComponent, h } from 'vue';
+import { computed, watch } from 'vue';
 import Button from '@/UI/Button.vue';
 import Wysiwyg from '@/UI/Wysiwyg.vue';
-import StoFiles from '@/Partials/Files.vue'
+import StoFiles from '@/Partials/Files.vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/tasks/form';
@@ -15,6 +15,7 @@ import orderStore from '~/store/orders/orders';
 import useConfirmDialog from '~/composables/useConfirmDialog';
 import proxiedSelect from '@/StoSelect';
 import useAppRouter from '~/composables/useAppRouter.js';
+import dcTemplatesStore from '~/store/processes/diagnostic-card';
 
 const { route } = useAppRouter();
 const { simple } = useConfirmDialog();
@@ -22,10 +23,11 @@ const { simple } = useConfirmDialog();
 const { current } = departmentStore;
 const { load, options } = userStore;
 const { options: orderOptions, load: loadOrders } = orderStore;
-const { state, load: loadFunnels, options: pipelinesOptions } = pipelineStore;
 const { load: loadStages, options: stagesOptions } = stagesStore;
+const { state, load: loadFunnels, options: pipelinesOptions } = pipelineStore;
+const { options: t_options, load: loadTemplates } = dcTemplatesStore;
 
-const { fields, atMounted, log, isEditPage, selectedFunnelsIds } = service(route.query.order_id);
+const { fields, atMounted, log, isEditPage } = service(route.query.order_id);
 
 const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
@@ -37,26 +39,47 @@ await Promise.all([
     loadOrders({ department_id: current.value ?? '' }),
     load({ department_id: current.value ?? '' }),
     loadFunnels(),
+    loadTemplates(),
     atMounted()
 ]).then(() => {
     removeCheckbox = removeItem(fields.checkboxes);
     removeFunnel = removeItem(fields.pipelines);
 });
 
+watch(() => fields.is_map, (v) => {
+  fields.checkboxes = [{ description: '' }];
+//   fields.pipelines = [{}];
+  fields.temp_file_ids = [];
+  fields.delete_file_ids = [];
+  fields.files = [];
+  fields.description = '';
+});
+
 const StagesSelection = proxiedSelect(state, fields);
 
-const cannotAdd = computed(() => pipelinesOptions.value.map(({ value }) => value).length === (new Set(selectedFunnelsIds.value)).size);
-const notSelectedFunnels = computed(() => pipelinesOptions.value.filter(({ value }) => !selectedFunnelsIds.value.includes(Number(value))));
+// const cannotAdd = computed(() => pipelinesOptions.value.map(({ value }) => value).length === (new Set(selectedFunnelsIds.value)).size);
+// const notSelectedFunnels = computed(() => pipelinesOptions.value.filter(({ value }) => !selectedFunnelsIds.value.includes(Number(value))));
 
-const handelBlackListedFile = (id) =>  {
-    fields.delete_file_ids.push(id)
-    fields.files.deleteById(id)
-}
+const handelBlackListedFile = (id) => {
+  fields.delete_file_ids.push(id);
+  fields.files.deleteById(id);
+};
+
+const taskTypeOptions = [{label: 'Задача', value: 'false'}, {label: 'Диагностическая карта', value: 'true'}]
 
 </script>
 
 <template>
     <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-12 sm:col-span-3">
+            <Select
+                :hide-text="true"
+                label="Тип"
+                v-model="fields.is_map"
+                :options="taskTypeOptions"
+            />
+        </div>
+
         <div class="col-span-12 sm:col-span-3">
             <Input label="Название задачи" v-model="fields.name" />
         </div>
@@ -89,7 +112,11 @@ const handelBlackListedFile = (id) =>  {
             <Input label="Конец в" type="date" v-model="fields.end_at" />
         </div>
 
-<!--  -->
+        <div class="col-span-12 sm:col-span-4"  v-if="fields.is_map == 'true'">
+            <Select label="Шаблон диагностической карты" :options="t_options" v-model="fields.map_id" />
+        </div>
+
+<!-- Funnels -->
         <div class="col-span-12 sm:col-span-12">
             <!-- <label class="block text-sm font-medium text-gray-700 mb-2">Воронки</label> -->
             <ul>
@@ -99,38 +126,41 @@ const handelBlackListedFile = (id) =>  {
                     <Button color="red" size="sm" @click="removeFunnel(i)">Удалить</Button>
                 </li>
             </ul>
-            <Button v-if="!cannotAdd" size="xs" class="mt-4" @click="fields.pipelines.push({})">Добавить</Button>
+            <Button size="xs" class="mt-4" @click="fields.pipelines.push({})">Добавить</Button>
         </div>
 <!--  -->
 
-        <hr class="col-span-12" />
+        <div class="grid grid-cols-12 gap-6 col-span-12" v-if="fields.is_map == 'false'">
+            <hr class="col-span-12" />
 
-        <div class="col-span-12 sm:col-span-12">
-            <Wysiwyg label="Текст задачи" v-model="fields.description" />
+            <div class="col-span-12 sm:col-span-12">
+                <Wysiwyg label="Текст задачи" v-model="fields.description" />
+            </div>
+
+            <hr class="col-span-12" />
+
+            <div class="col-span-12 sm:col-span-12">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>
+                <ul>
+                    <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
+                        <span class="w-5 pt-2">{{ i + 1 }}</span>
+                        <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i].description" />
+                        <Button color="red" size="sm" @click="removeCheckbox(i)">Удалить</Button>
+                    </li>
+                </ul>
+                <Button size="xs" class="mt-4" @click="fields.checkboxes.push({ description: '' })">Добавить</Button>
+            </div>
+
+            <hr class="col-span-12" />
+
+            <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" />
         </div>
 
-        <hr class="col-span-12" />
-
-        <div class="col-span-12 sm:col-span-12">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>
-            <ul>
-                <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
-                    <span class="w-5 pt-2">{{ i + 1 }}</span>
-                    <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i].description" />
-                    <Button color="red" size="sm" @click="removeCheckbox(i)">Удалить</Button>
-                </li>
-            </ul>
-            <Button size="xs" class="mt-4" @click="fields.checkboxes.push({ description: '' })">Добавить</Button>
-        </div>
-
-        <hr class="col-span-12" />
-
-        <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" />
     </div>
 </template>
 
 <style scoped>
 .pipeline {
     max-width: 300px;
-} 
+}
 </style>

@@ -53,8 +53,8 @@ await fetchTasks(true, props.order_id);
         :noDelete="(item) => !canTasks(item, 'delete')"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id, is_map} }" >
-            <Link :disabled="!!is_map" :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
+        <template #td-name="{ value, item: {id} }" >
+            <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
         </template>
 
         <template #td-type="{ item: {is_map} }" >

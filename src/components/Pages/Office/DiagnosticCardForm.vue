@@ -13,7 +13,7 @@ const { drop } = useConfirmDialog();
 
 const SuspenseArea = useSuspense();
 
-const { isUpdate, saveForm, dropDc, clearMemory, dc_template } = service();
+const { isUpdate, saveForm, dropDc, clearMemory, dc_template, fields } = service();
 
 const previewing = ref(false);
 
@@ -45,7 +45,7 @@ onScopeDispose(clearMemory);
       </Button>
     </template>
 
-    <preview v-if="previewing" />
+    <preview v-if="previewing" :fields="fields" :dc_template="dc_template" />
 
     <suspense-area v-else>
       <keep-alive><component :is="VForm" /></keep-alive>

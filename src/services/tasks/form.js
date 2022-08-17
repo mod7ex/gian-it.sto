@@ -19,18 +19,18 @@ const defaults = {
   position: '',
   status: '',
 
-  files: '',
-
   start_at: '',
   end_at: '',
+
+  is_map: 'false',
 };
 
 const deepDefaults = {
-  department_id: current,
   checkboxes: [{ description: '' }],
   pipelines: [{}],
   temp_file_ids: [],
   delete_file_ids: [],
+  files: [],
 };
 
 let fields;
@@ -43,6 +43,11 @@ const setField = function (key) {
     if (key === 'delete_file_ids') return;
 
     fields[key] = this[key.replace('_id', '')]?.id;
+    return;
+  }
+
+  if (key === 'is_map') {
+    fields.is_map = this.is_map ? 'true' : 'false';
     return;
   }
 
@@ -108,7 +113,17 @@ export default () => effectScope().run(() => {
       }
     }
 
-    const { data, success } = await save.task(fields, null, true);
+    // fields.is_map = (fields.is_map == 'true');
+
+    // if (fields.is_map) {
+    //   delete fields.checkboxes;
+    //   delete fields.pipelines;
+    //   delete fields.temp_file_ids;
+    //   delete fields.delete_file_ids;
+    //   delete fields.files;
+    // }
+
+    const { data, success } = await save.task({ ...fields, is_map: fields.is_map == 'true', department_id: current.value }, null, true);
 
     if (success) {
       if (order_id != null) {
@@ -139,11 +154,12 @@ export default () => effectScope().run(() => {
     deepDefaults.pipelines = [{}];
     deepDefaults.temp_file_ids = [];
     deepDefaults.delete_file_ids = [];
+    deepDefaults.files = [];
   });
 
   return {
     fields,
-    selectedFunnelsIds: computed(() => fields.pipelines.map(({ pipeline_id }) => Number(pipeline_id))),
+    // selectedFunnelsIds: computed(() => fields.pipelines.map(({ pipeline_id }) => Number(pipeline_id))),
     isEditPage: isThePage,
     saveTask,
     atMounted,

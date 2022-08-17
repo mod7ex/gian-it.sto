@@ -1,8 +1,10 @@
 <script setup>
-import service from '~/services/processes/diagnostic-card-form';
 import { generateShapedIdfromId } from '~/helpers';
 
-const { fields, dc_template } = service();
+const props = defineProps({
+  fields: Object,
+  dc_template: Object,
+});
 
 </script>
 
@@ -76,6 +78,7 @@ const { fields, dc_template } = service();
       <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;:</b></span>
     </div>
 
+    <!-- Fields -->
     <div>
       <div v-for="(block, i) in fields" :key="i" class="mb-9" >
 
@@ -92,7 +95,7 @@ const { fields, dc_template } = service();
                 block?.data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '',
               ]"
             >
-              <input type="checkbox" class="rounded mr-2 mt-2 bg-gray-50" disabled>
+              <input type="checkbox" class="rounded mr-2 sto-mt-7 bg-gray-50" disabled>
               <span class="text-left w-full">{{ item }}</span>
             </div>
           </div>
@@ -124,4 +127,7 @@ const { fields, dc_template } = service();
 
 <style scoped>
 #card-preview .checklist-item { max-width: 450px; }
+.sto-mt-7{
+  margin-top: 7px;
+}
 </style>

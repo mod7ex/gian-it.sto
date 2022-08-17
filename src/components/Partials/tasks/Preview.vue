@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import { ClockIcon, PaperClipIcon } from '@heroicons/vue/outline';
 import Card from '@/UI/Card.vue';
 import Avatar from '@/UI/Avatar.vue';
@@ -7,10 +8,19 @@ import Badge from '@/UI/Badge.vue';
 import Comments from '@/Partials/Comments.vue';
 import { tasksColorMap } from '~/helpers';
 import service from '~/services/tasks/preview';
+import Preview from '@/Partials/processes/DiagnosticCardPreview.vue';
+import $ from '~/helpers/fetch'
 
 const { task, atMounted, route, checkBox, canTasks } = service();
 
-await atMounted();
+const dc_template = ref({})
+
+await atMounted().then(async () => {
+    if(task.value.is_map) {
+        dc_template.value = await $.map(task.value.task_map.map_id)
+        console.log(dc_template.value)
+    }
+})
 
 </script>
 
@@ -37,13 +47,13 @@ await atMounted();
             </div>
         </template>
 
-        <template #footer v-if="task.files?.length">
+        <template #footer v-if="task.files?.length && !task.is_map">
             <h2 class="font-bold">Прикреплённые файлы</h2>
             <ul class="mt-2">
                 <li
-                    class="p-3 text-sm border rounded my-2 flex items-center font-medium text-blue-600 hover:text-blue-500"
-                    v-for="file in task.files"
                     :key="file.name"
+                    v-for="file in task.files"
+                    class="p-3 text-sm border rounded my-2 flex items-center font-medium text-blue-600 hover:text-blue-500"
                 >
                     <PaperClipIcon class="w-4 h-4 mr-1"/>
                     <a :href="file.url" target="_blank" >{{ file.name }}</a>
@@ -51,12 +61,12 @@ await atMounted();
             </ul>
         </template>
 
-        <div>
+        <div v-if="!task.is_map">
             <h2 class="font-bold">Текст задачи</h2>
             <p v-html="task.description" />
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4" v-if="!task.is_map">
             <h2 class="font-bold">Чек лист</h2>
             <ul>
                 <li
@@ -76,6 +86,8 @@ await atMounted();
                 Выполнено: {{ task?.checkboxes?.filter(e => e.is_checked).length }} из {{ task?.checkboxes?.length }}
             </span>
         </div>
+
+        <preview v-else :fields="dc_template.data ?? []" :dc_template="dc_template" />
     </Card>
 
     <Comments model="task" :id="route.params.id" class="mt-2" :disabled="!canTasks(task, 'update')" />

@@ -93,8 +93,8 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
 
       <template #td-user="{ value }" >
           <Avatar
-            :title="`${value?.name ?? '_'} ${value?.surname ?? ''}`"
-            :subtitle="value?.office_position"
+            :title="`${value?.name ?? '_'} ${value?.surname ?? '_'}`"
+            :subtitle="value?.office_position ?? '...'"
             :image="value?.avatar"
           />
       </template>

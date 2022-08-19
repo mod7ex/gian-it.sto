@@ -122,8 +122,8 @@ onMounted(() => {
     answers.task_id = ts_id;
   }
 
-  console.log(props.fields);
-  console.log(answers.data);
+  // console.log(props.fields);
+  // console.log(answers.data);
 
   setTimeout(() => {
     ready.value = true;
@@ -234,7 +234,10 @@ onMounted(() => {
 
 @media print {
   body #printable {
-    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
   }
 
   body #printable .print-mode-show {

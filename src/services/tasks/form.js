@@ -133,11 +133,11 @@ export default () => effectScope().run(() => {
 
     if (success) {
       if (order_id != null) {
-        // redirectTo({ name: 'OrderEdit', params: { id: order_id }, query: { tab: 'tasks' } });
-        // return;
+        redirectTo({ name: 'OrderEdit', params: { id: order_id }, query: { tab: 'tasks' } });
+        return;
       }
 
-      // redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+      redirectTo({ name: 'Task', params: { id: data?.task?.id } });
     }
   };
 

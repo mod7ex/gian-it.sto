@@ -31,6 +31,10 @@ watch(dk_task, async (v) => {
 const SuspenseArea = useSuspense();
 const { route } = useAppRouter();
 
+const printOut = () => {
+  window.print();
+};
+
 </script>
 
 <template>
@@ -44,9 +48,14 @@ const { route } = useAppRouter();
         <Spinner w="4" h="4" >Загрузка шаблона...</Spinner>
       </div>
 
-      <div class="my-9" v-else >
-        <div class="mb-3" v-if="dc_template">
-          <Link class="flex">распечатать <DownloadIcon class="ml-6 text-blue-600 w-6 h-6" /></Link>
+      <div id="printable" class="my-9" v-else >
+        <div class="printing-btn mb-3 flex justify-between items-center" v-if="dc_template">
+          <Link class="flex" @click="e => printOut()">распечатать <DownloadIcon class="ml-6 text-blue-600 w-6 h-6" /></Link>
+          <Badge
+            :point="true"
+            color="blue"
+            class="m-2 p-1 cursor-pointer hover:shadow-lg shadow transition-shadow duration-300 ease-out"
+          > {{ dk_task.name }} </Badge>
         </div>
 
         <div class="flex gap-3 flex-wrap justify-between items-center border-gray-300 border rounded shadow p-6 px-9 mb-3" v-if="dk_task">
@@ -72,7 +81,31 @@ const { route } = useAppRouter();
             </div>
         </div>
 
-        <preview v-if="dc_template" :fields="dc_template.data ?? []" :dc_template="dc_template" :no-head="true" />
+        <preview
+          v-if="dc_template"
+          :no-head="true"
+          :task_id="dk_task.id"
+          :map_answer="dk_task.map_answer"
+          :fields="dc_template.data ?? []"
+          :dc_template="dc_template"
+          :disabled="true"
+        />
       </div>
     </div>
 </template>
+
+<style>
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+
+    body #printable * {
+      visibility: visible;
+    }
+
+    body #printable .printing-btn * {
+      visibility: hidden;
+    }
+  }
+</style>

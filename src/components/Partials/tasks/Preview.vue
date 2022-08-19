@@ -18,7 +18,6 @@ const dc_template = ref({})
 await atMounted().then(async () => {
     if(task.value.is_map) {
         dc_template.value = await $.map(task.value.task_map.map_id)
-        console.log(dc_template.value)
     }
 })
 
@@ -87,7 +86,14 @@ await atMounted().then(async () => {
             </span>
         </div>
 
-        <preview v-else :fields="dc_template.data ?? []" :dc_template="dc_template" />
+        <preview
+            v-else
+            :task_id="task.id"
+            :map_answer="task.map_answer"
+            :fields="dc_template.data ?? []"
+            :dc_template="dc_template"
+        />
+
     </Card>
 
     <Comments model="task" :id="route.params.id" class="mt-2" :disabled="!canTasks(task, 'update')" />

@@ -1,128 +1,215 @@
 <script setup>
-import { generateShapedIdfromId } from '~/helpers';
+import { computed, onMounted, reactive, watch, ref } from 'vue';
+// import { RefreshIcon, CloudIcon } from '@heroicons/vue/outline';
+import { generateShapedIdfromId, debounce } from '~/helpers';
+// import $ from '~/helpers/fetch';
+import save from '~/helpers/save';
 
 const props = defineProps({
-  fields: Object,
+  fields: Array,
   dc_template: Object,
+
+  map_answer: [Object, undefined, null],
+
+  task_id: [Number, String, undefined, null],
+
   noHead: {
+    type: Boolean,
+    default: false,
+  },
+
+  disabled: {
     type: Boolean,
     default: false,
   },
 });
 
+const ready = ref(false);
+
+const blocked = computed(() => props.disabled || ((props.task_id == null) && (props.map_answer == null)));
+
+/**
+ *
+ * @param {{type: string, data: object | string | string[]}[]} paylaod
+ */
+const simulateAnswer = (paylaod) => {
+  const answr = [];
+
+  paylaod.forEach(({ type, data, token }) => {
+    const item = { token, type };
+    if (type === 'check_list') {
+      // data.items ==> string[]
+      item.data = [...data.items].fill(false);
+    } else if (type === 'text') {
+      item.data = '';
+    } else if (type === 'indication') {
+      // data ==> [string, string]
+      item.data = [...data].fill('');
+    }
+
+    answr.push(item);
+  });
+
+  return answr;
+};
+
+/*
+const isDirty = (payload) => {
+  // https://codepen.io/modex98/pen/WNzYeMX?editors=0010
+  for (let i = 0; i < payload.length; i++) {
+    const target = payload[i];
+
+    if (typeof target === 'string') {
+      if (target !== '') return true;
+    } else if (Array.isArray(target)) {
+      if (typeof target[0] === 'string') {
+        if (target[0] !== '' | target[1] !== '') return true;
+      } else if (!target.every((v) => !v)) return true;
+    }
+  }
+
+  return false;
+};
+*/
+
+const answers = reactive({
+  id: undefined,
+  task_id: undefined,
+  data: [],
+});
+
+const findFieldInexIn = (arr, tk, tp) => arr.findIndex(({ type, token }) => token === tk && type === tp);
+
+// const findFieldIndex = (tk, tp) => answers.data.findIndex(({ type, token }) => token === tk && type === tp);
+const findFieldIndex = (tk, tp) => findFieldInexIn(answers.data, tk, tp);
+
+const shapeAnswers = (payload) => {
+  if (!payload) return undefined;
+
+  const shappedAnswer = [];
+
+  props.fields.forEach(({ type, data, token }) => {
+    const item = { token, type };
+    const i = findFieldInexIn(payload, token, type);
+
+    if (type === 'check_list') {
+      // Fix: might be an issue of Template edited index might change
+      if (i < 0) { item.data = [...data.items].fill(false); } else { item.data = data.items.map((v, j) => !!payload[i].data[j]); }
+    } else if (type === 'text') {
+      if (i < 0) { item.data = ''; } else { item.data = payload[i].data; }
+    } else if (type === 'indication') {
+      if (i < 0) { item.data = [...data].fill(''); } else { item.data = [payload[i].data[0], payload[i].data[1]]; }
+    }
+
+    shappedAnswer.push(item);
+  });
+
+  return shappedAnswer;
+};
+
+onMounted(() => {
+  const { task_id: ts_id } = props;
+
+  if (props.map_answer) {
+    const { id, data, task_id } = props.map_answer;
+    answers.data = data ? shapeAnswers(data) : simulateAnswer(props.fields); // already formatted
+    answers.id = id;
+    answers.task_id = task_id;
+  } else {
+    answers.data = simulateAnswer(props.fields);
+    answers.task_id = ts_id;
+  }
+
+  console.log(props.fields);
+  console.log(answers.data);
+
+  setTimeout(() => {
+    ready.value = true;
+  });
+
+  if (!answers.task_id && answers.task_id != 0) return;
+
+  watch(() => answers.data, debounce(async () => {
+    const { data: { map_answer } } = await save.map_answer(answers);
+    if (map_answer?.id && !answers.id) answers.id = map_answer?.id;
+  }), { deep: true });
+});
+
 </script>
 
 <template>
-<!--
-  <div id="card-preview" class="text-center border-gray-300 border rounded shadow p-3 mx-auto max-w-6xl">
-    <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ dc_template?.id ?  generateShapedIdfromId(dc_template?.id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
+  <div v-if="ready" id="card-preview" class="relative text-center border-gray-300 border rounded shadow p-6 px-9 mx-auto max-w-6xl select-none">
+    <header v-if="!noHead" class="mb-6 py-3">
+      <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ dc_template?.id ?  generateShapedIdfromId(dc_template?.id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
 
-    <div class="grid grid-cols-12 border-black border mb-6">
-      <span class="text-left px-9 col-span-4"><b>Дата:</b></span>
-      <span class="text-left px-9 col-span-4 border-l border-black"><b>Авто:</b></span>
-      <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;:</b></span>
-    </div>
-
-    <div>
-      <div v-for="(block, i) in fields" :key="i" class="mb-9" >
-
-        <div v-if="block.type === 'check_list'" class="flex justify-center flex-col" >
-          <h3 class="font-bold text-xl mb-3">{{ block.data?.title }}</h3>
-          <div class="border-t border-l border-black mx-auto grid grid-cols-12">
-            <div
-              v-for="(item, i) in block?.data.items"
-              :key="`${i}-item`"
-              class="checklist-item border-b border-r border-black relative col-span-12 flex"
-              :class="[
-                block?.data.items.length < 3 ? 'sm:col-span-6' : '',
-                block?.data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
-                block?.data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '',
-              ]"
-            >
-              <span class="p-2 text-left w-full">{{ item }}</span>
-              <span class="border-l border-black w-16">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div v-else>
-          <div v-if="block.type === 'text'" class="flex flex-col">
-            <h3 class="font-bold text-xl text-left mb-6">{{ block.data }}</h3>
-            <p class="border-b border-gray-500 mb-6 w-full"></p>
-            <p class="border-b border-gray-500 mb-6 w-full"></p>
-            <p class="border-b border-gray-500 mb-6 w-full"></p>
-          </div>
-
-          <div v-else class="border border-black flex">
-            <span class="px-4 p-1">Показания</span>
-            <ul class="grid grid-cols-2 flex-grow">
-              <li class="col-span-1 flex">
-                <span class="border-l border-r border-black  px-4 p-1" >{{ block?.data[0] }}</span>
-              </li>
-              <li class="col-span-1 flex">
-                <span class="border-l border-r border-black  px-4 p-1" >{{ block?.data[1] }}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <div class="grid grid-cols-12 border-black border">
+        <span class="text-left px-9 col-span-4"><b>Дата:</b></span>
+        <span class="text-left px-9 col-span-4 border-l border-black"><b>Авто:</b></span>
+        <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;:</b></span>
       </div>
-    </div>
+    </header>
 
-  </div>
+<!--
+    <span class="sticky top-0 bg-green-600">
+      <RefreshIcon class="w-4 h-4 text-gray-600" />
+      <CloudIcon class="w-4 h-4 text-gray-600" />
+    </span>
 -->
-
-  <div id="card-preview" class="text-center border-gray-300 border rounded shadow p-6 px-9 mx-auto max-w-6xl">
-    <h2 v-if="!noHead" class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ dc_template?.id ?  generateShapedIdfromId(dc_template?.id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
-
-    <div class="grid grid-cols-12 border-black border mb-9" v-if="!noHead">
-      <span class="text-left px-9 col-span-4"><b>Дата:</b></span>
-      <span class="text-left px-9 col-span-4 border-l border-black"><b>Авто:</b></span>
-      <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;:</b></span>
-    </div>
 
     <!-- Fields -->
     <div>
-      <div v-for="(block, i) in fields" :key="i" class="mb-9" >
+      <div v-for="({ data, type, token }, i) in fields" :key="i" class="mb-9" >
 
-        <div v-if="block.type === 'check_list'" class="flex justify-center flex-col" >
-          <h3 class="font-bold text-xl mb-3">{{ block.data?.title }}</h3>
-          <div class="mx-auto grid grid-cols-12 gap-3">
+        <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
+          <!-- {{ answers.data[findFieldIndex(token, type)] }} -->
+          <h3 class="font-bold text-xl mb-3">{{ data?.title }}</h3>
+          <div class="mx-auto grid grid-cols-12 gap-3 print-mode-checklist">
             <div
-              v-for="(item, i) in block?.data.items"
-              :key="`${i}-item`"
+              v-for="(item, j) in data.items"
+              :key="`${j}-item`"
               class="checklist-item relative col-span-12 flex items-start justify-start"
               :class="[
-                block?.data.items.length < 3 ? 'sm:col-span-6' : '',
-                block?.data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
-                block?.data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '',
+                data.items.length < 3 ? 'sm:col-span-6' : '',
+                data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
+                data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '',
               ]"
             >
-              <input type="checkbox" class="rounded mr-2 sto-mt-7 bg-gray-50" disabled>
+              <span class="print-mode-show flex items-center justify-center w-10 p-1 text-3xl">
+                {{ answers.data[findFieldIndex(token, type)].data[j] ? '&#10003;' : ' ' }}
+              </span>
+              <input type="checkbox" class="print-mode-hide rounded mr-2 sto-mt-7 bg-gray-50 p-1" v-model="answers.data[findFieldIndex(token, type)].data[j]" :disabled="blocked" >
               <span class="text-left w-full">{{ item }}</span>
             </div>
           </div>
         </div>
 
-        <div v-else :class="[block.type === 'indication' ? 'pt-6' : '']">
-          <div v-if="block.type === 'text'" class="flex flex-col" >
-            <h3 class="font-bold text-xl text-left mb-3">{{ block.data }}</h3>
-            <textarea name="" id="" class="w-full rounded-md bg-gray-50" disabled rows="5"></textarea>
-          </div>
-
-          <div v-else class="border border-black flex bg-gray-50">
-            <span class="px-4 p-1 bg-white">Показания</span>
-            <ul class="grid grid-cols-2 flex-grow">
-              <li class="col-span-1 flex">
-                <span class="border-l border-r border-black  px-4 p-1 bg-white" >{{ block?.data[0] }}</span>
-              </li>
-              <li class="col-span-1 flex">
-                <span class="border-l border-r border-black  px-4 p-1 bg-white" >{{ block?.data[1] }}</span>
-              </li>
-            </ul>
-          </div>
+        <div v-if="type === 'text'" class="flex flex-col" >
+          <h3 class="font-bold text-xl text-left mb-3">{{ data }}</h3>
+          <p class="print-mode-show text-left pl-2" >{{ answers.data[findFieldIndex(token, type)].data }}</p>
+          <textarea
+            rows="5"
+            :disabled="blocked"
+            class="print-mode-hide w-full rounded-md bg-gray-50 select-none"
+            v-model="answers.data[findFieldIndex(token, type)].data"
+          ></textarea>
         </div>
+
+        <div v-if="type === 'indication'" class="border border-black flex mt-6">
+          <span class="px-4 p-1 flex items-center justify-start">Показания</span>
+          <ul class="grid grid-cols-2 flex-grow">
+            <li class="col-span-1 flex">
+              <span class="border-l border-r border-black px-4 p-1 flex items-center justify-start" >{{ data[0] }}</span>
+              <span class="print-mode-show text-left pl-1 flex items-center flex-grow bg-gray-50" >{{ answers.data[findFieldIndex(token, type)].data[0] }}</span>
+              <input type="text" class="print-mode-hide flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
+            </li>
+            <li class="col-span-1 flex">
+              <span class="border-l border-r border-black px-4 p-1 flex items-center justify-start" >{{ data[1] }}</span>
+              <span class="print-mode-show text-left pl-1 flex items-center flex-grow bg-gray-50" >{{ answers.data[findFieldIndex(token, type)].data[1] }}</span>
+              <input type="text" class="print-mode-hide flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
+            </li>
+          </ul>
+        </div>
+
       </div>
     </div>
 
@@ -133,5 +220,62 @@ const props = defineProps({
 #card-preview .checklist-item { max-width: 450px; }
 .sto-mt-7{
   margin-top: 7px;
+}
+
+.print-mode-show {
+  display: none;
+}
+
+.print-mode-hide {
+  display: inline-block;
+}
+
+@media print {
+  /*
+  body #card-preview * {
+
+  }
+  */
+
+  .print-mode-show {
+    display: inline-block;
+  }
+
+  .print-mode-hide {
+    display: none;
+  }
+
+  .print-mode-checklist {
+    gap: 0;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+  }
+
+  .print-mode-checklist div {
+    flex-direction: row-reverse;
+
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+
+    display: flex;
+    align-items: center;
+
+    margin: 0 !important;
+  }
+
+  /*
+  .print-mode-checklist div span {
+    padding: .3em 1em;
+  }
+  */
+
+  .print-mode-checklist div span:first-of-type {
+    border-left: 1px solid black;
+    align-self: stretch;
+  }
+
+  .print-mode-checklist div span:last-of-type {
+    padding: .3em;
+  }
 }
 </style>

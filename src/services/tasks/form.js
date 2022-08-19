@@ -22,6 +22,8 @@ const defaults = {
   end_at: '',
 
   is_map: 'false',
+
+  map_id: '',
 };
 
 const deepDefaults = {
@@ -41,6 +43,11 @@ const setField = function (key) {
     if (key === 'temp_file_ids') return;
     if (key === 'delete_file_ids') return;
 
+    if (key === 'map_id') {
+      fields.map_id = this.task_map?.map_id;
+      return;
+    }
+
     fields[key] = this[key.replace('_id', '')]?.id;
     return;
   }
@@ -51,7 +58,7 @@ const setField = function (key) {
   }
 
   if (key === 'pipelines') {
-    fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage: { id: stage_id } }) => ({ pipeline_id, stage_id })) ?? [{}];
+    fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage }) => ({ pipeline_id, stage_id: stage?.id })) ?? [{}];
     return;
   }
 
@@ -126,11 +133,11 @@ export default () => effectScope().run(() => {
 
     if (success) {
       if (order_id != null) {
-        redirectTo({ name: 'OrderEdit', params: { id: order_id }, query: { tab: 'tasks' } });
-        return;
+        // redirectTo({ name: 'OrderEdit', params: { id: order_id }, query: { tab: 'tasks' } });
+        // return;
       }
 
-      redirectTo({ name: 'Task', params: { id: data?.task?.id } });
+      // redirectTo({ name: 'Task', params: { id: data?.task?.id } });
     }
   };
 

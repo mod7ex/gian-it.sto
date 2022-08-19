@@ -1,13 +1,16 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import Link from '@/UI/Link.vue';
+import Button from '@/UI/Button.vue';
 import Badge from '@/UI/Badge.vue';
 import Avatar from '@/UI/Avatar.vue';
 import store from '~/store/tasks';
 import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
+import DocPreview from '@/Layout/modal/DocPreview.vue';
 import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
 import { canTasks } from '~/lib/permissions';
+import FormActions from '@/Layout/modal/FormActions.vue';
 
 const props = defineProps({
   order_id: {
@@ -45,9 +48,13 @@ if (!props.order_id) {
 
 fields.push();
 
-const { state,  options } = store;
+const { state,  options, no_owner } = store;
 
 await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
+
+onMounted(() => {
+  console.log(no_owner.value)
+})
 
 </script>
 
@@ -117,4 +124,40 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
       <!-- ****** -->
   </Table>
 
+<!-- 
+  <Teleport to="#sto-modal-teleport">
+    <Transition name="docs-modal">
+      <div
+        v-if="no_owner.length"
+        class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50"
+      >
+
+        <div class="bg-white rounded-md p-3 mt-12 shadow-2xl">
+
+          <div class="p-1">
+            let's go
+          </div>
+          
+          <form-actions />
+
+        </div>
+
+      </div>
+    </Transition>
+  </Teleport>
+-->
+
 </template>
+
+<style scoped>
+.docs-modal-enter-active,
+.docs-modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.docs-modal-enter-from,
+.docs-modal-leave-to {
+  opacity: 0;
+}
+
+</style>

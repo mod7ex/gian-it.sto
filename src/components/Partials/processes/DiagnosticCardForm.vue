@@ -15,7 +15,10 @@ const FIELD_TYPES = {
   indication: { code: 3, comp: defineAsyncComponent(() => import('@/Partials/processes/DcTemplate/Indication.vue')) },
 };
 
-const add = () => { fields.value.push({}); };
+const add = () => {
+  let token = `${fields.value.length}-${Date.now()}`
+  fields.value.push({token});
+};
 
 await atMounted();
 
@@ -25,13 +28,13 @@ await atMounted();
     <div class="grid grid-cols-12 gap-6">
 
         <div class="col-span-6 sm:col-span-6">
-            <Input
-                label="Название"
-                v-model="dc_template.title"
-                :required="true"
-                :error="v$.title.$errors[0]?.$message"
-                @blured="v$.title.$touch"
-            />
+          <Input
+            label="Название"
+            v-model="dc_template.title"
+            :required="true"
+            :error="v$.title.$errors[0]?.$message"
+            @blured="v$.title.$touch"
+          />
         </div>
 
         <div class="border my-3 col-span-12 bg-gray-50 rounded p-6">

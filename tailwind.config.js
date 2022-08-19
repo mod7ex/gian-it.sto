@@ -75,6 +75,10 @@ module.exports = {
 
   theme: {
     extend: {},
+
+    screen: {
+      print: 'print',
+    },
   },
 
   variants: {

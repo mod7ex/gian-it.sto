@@ -38,7 +38,3 @@ const props = defineProps({
     </ul>
   </div>
 </template>
-
-<style scoped>
-
-</style>

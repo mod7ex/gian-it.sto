@@ -3,5 +3,5 @@ import DescriptionListItem from './DescriptionListItem.vue';
 import DescriptionListItems from './DescriptionListItems.vue';
 
 export {
-    DescriptionList, DescriptionListItem, DescriptionListItems
+  DescriptionList, DescriptionListItem, DescriptionListItems,
 };

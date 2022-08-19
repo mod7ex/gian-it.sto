@@ -1,6 +1,6 @@
 import { ref, effectScope, onScopeDispose } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
-import { debounce, hyphenatedDateFormat } from '~/helpers';
+import { debounce } from '~/helpers';
 import $ from '~/helpers/fetch.js';
 import save from '~/helpers/save';
 import useToast from '~/composables/useToast';
@@ -33,12 +33,12 @@ export default () => effectScope().run(() => {
 
   const task_id = route.params.id;
 
-  const ping = async (start) => {
-    const path = `tasks/${task_id}/to/${start ? 'process' : 'done'}`;
-    const { success, message, data } = await save({ path, data: { [`${start ? 'start' : 'end'}_at`]: hyphenatedDateFormat(new Date()) } });
-    if (success) {
-      task.value.status = data?.task?.status;
-    }
+  const ping = async (status) => {
+    if (status === task.value.status) return;
+    const path = `tasks/${task_id}/to/${status}`;
+    const { success, message, data } = await save({ path });
+    // const { success, message, data } = await save({ path, data: { [`${status ? 'start' : 'end'}_at`]: hyphenatedDateFormat(new Date()) } });
+    if (success) task.value.status = data?.task?.status;
     const msg = message ?? (success ? 'Статус успешно изменен' : 'Не удалось изменить статус задача');
     toaster[success ? 'success' : 'danger'](msg);
   };

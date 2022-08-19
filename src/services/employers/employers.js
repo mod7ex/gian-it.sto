@@ -25,6 +25,7 @@ export default function () {
 
     order.active.value = false;
 
+    // await load({ order: order.criteria.value, name }); // Test
     await load({ order: order.criteria.value, name, department_id: current.value });
 
     order.trigger();

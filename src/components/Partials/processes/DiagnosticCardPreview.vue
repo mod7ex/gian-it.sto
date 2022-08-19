@@ -202,12 +202,12 @@ onMounted(() => {
             <li class="col-span-1 flex">
               <span class="border-l border-r border-black px-4 p-1 flex items-center justify-start" >{{ data[0] }}</span>
               <span class="print-mode-show text-left pl-1 flex items-center flex-grow bg-gray-50" >{{ answers.data[findFieldIndex(token, type)].data[0] }}</span>
-              <input type="text" class="print-mode-hide flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
+              <input type="text" class=" w-full print-mode-hide flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
             </li>
             <li class="col-span-1 flex">
               <span class="border-l border-r border-black px-4 p-1 flex items-center justify-start" >{{ data[1] }}</span>
               <span class="print-mode-show text-left pl-1 flex items-center flex-grow bg-gray-50" >{{ answers.data[findFieldIndex(token, type)].data[1] }}</span>
-              <input type="text" class="print-mode-hide flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
+              <input type="text" class=" w-full print-mode-hide flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
             </li>
           </ul>
         </div>

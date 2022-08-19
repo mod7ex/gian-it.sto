@@ -34,25 +34,33 @@ if (props.type === 'columns') {
 </script>
 
 <template>
-  <div :class="['bg-white overflow-hidden sm:rounded-lg', {'shadow': props.bordered},]">
+  <div :class="['bg-white overflow-hidden sm:rounded-lg', {'shadow': props.bordered}]">
     <slot name="header">
-      <div class="px-4 py-5 sm:px-6" v-if="props.title || props.subtitle">
-        <slot name="title">
-          <h3 class="text-lg leading-6 font-medium text-gray-900" v-if="props.title">
-            {{ props.title }}
-          </h3>
-        </slot>
 
-        <slot name="subtitle">
-          <p class="mt-1 max-w-2xl text-sm text-gray-500" v-if="props.subtitle">
-            {{ props.subtitle }}
-          </p>
-        </slot>
-      </div>
+      <header class="flex items-center justify-between px-4 py-5 sm:px-6">
+        <div v-if="props.title || props.subtitle">
+          <slot name="title">
+            <h3 class="text-lg leading-6 font-medium text-gray-900" v-if="props.title">
+              {{ props.title }}
+            </h3>
+          </slot>
+
+          <slot name="subtitle">
+            <p class="mt-1 max-w-2xl text-sm text-gray-500" v-if="props.subtitle">
+              {{ props.subtitle }}
+            </p>
+          </slot>
+        </div>
+
+        <slot name="right-title"></slot>
+      </header>
+
     </slot>
+
     <div :class="style">
       <slot></slot>
     </div>
+
   </div>
 </template>
 

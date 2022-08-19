@@ -1,14 +1,24 @@
 <script setup>
-import { PaperClipIcon } from '@heroicons/vue/outline';
+import { ref } from 'vue';
+import { ClockIcon, PaperClipIcon } from '@heroicons/vue/outline';
 import Comments from '@/Partials/Comments.vue';
 import { DescriptionList, DescriptionListItems, DescriptionListItem } from '@/UI/DescriptionList/index.js';
 import service from '~/services/tasks/worker-preview';
 import Checkbox from '@/UI/Checkbox.vue';
-import { generateShapedIdfromId } from '~/helpers'
+import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
+import Preview from '@/Partials/processes/DiagnosticCardPreview.vue';
+import $ from '~/helpers/fetch';
+import Badge from '@/UI/Badge.vue';
 
 const { task, atMounted, route, checkBox, canTasks } = service();
 
-await atMounted();
+const dc_template = ref({});
+
+await atMounted().then(async () => {
+    if(task.value.is_map) {
+        dc_template.value = await $.map(task.value.task_map.map_id)
+    }
+})
 
 </script>
 
@@ -17,6 +27,19 @@ await atMounted();
     <!-- Description list-->
     <section>
       <DescriptionList :title="task?.name" :subtitle="`Заказ-наряд #${generateShapedIdfromId(task?.order?.id)}`" type="columns">
+
+        <template #right-title>
+          <div class="text-right">
+              <div class="text-sm flex items-center mb-3">
+                  <ClockIcon class="w-4 h-4 mr-1"/>
+                  <span class="mr-1">Крайний срок:</span>
+                  <span class="text-gray-500">{{ task.deadline_at }}</span>
+              </div>
+
+              <Badge :point="true" :color="tasksColorMap[task.status].color">{{ tasksColorMap[task.status].label }}</Badge>
+          </div>
+        </template>
+
         <DescriptionListItems type="columns" :cols="3">
 
           <DescriptionListItem cols="1" label="Автомобиль" :value="task?.order?.car?.car_model?.name ?? ''" type="columns" />
@@ -24,14 +47,24 @@ await atMounted();
           <DescriptionListItem cols="1" label="ГОС номер" :value="task?.order?.car?.number ?? ''" type="columns" />
 
           <DescriptionListItem cols="1" label="Клиент" :value="`${task?.order?.client?.name} ${task?.order?.client?.surname} ${task?.order?.client?.middle_name ?? ''}`" type="columns" />
-        
+
           <!-- not yet -->
-        
-          <DescriptionListItem cols="3" label="Задача" type="columns" columns="2">
+
+          <DescriptionListItem cols="3" label="Задача" type="columns" columns="2" v-if="!task.is_map">
             <p v-html="task.description" />
           </DescriptionListItem>
 
-          <DescriptionListItem cols="3" label="Чек лист" type="columns" columns="2" v-if="task?.checkboxes?.length">
+          <DescriptionListItem cols="3" label="" type="columns" columns="2" v-else>
+            <preview
+              :task_id="task.id"
+              :map_answer="task.map_answer"
+              :fields="dc_template.data ?? []"
+              :dc_template="dc_template"
+              :no-head="true"
+            />
+          </DescriptionListItem>
+
+          <DescriptionListItem cols="3" label="Чек лист" type="columns" columns="2" v-if="task?.checkboxes?.length && !task.is_map">
             <ul>
                 <li
                     v-for="(item, i) in task.checkboxes"
@@ -51,7 +84,7 @@ await atMounted();
             </span>
           </DescriptionListItem>
 
-          <DescriptionListItem cols="3" label="Вложения" type="columns" columns="2" v-if="task.files?.length">
+          <DescriptionListItem cols="3" label="Вложения" type="columns" columns="2" v-if="task.files?.length && !task.is_map">
             <ul role="list" class="border border-gray-200 rounded-md divide-y divide-gray-200">
               <li v-for="file in task.files" :key="`${file.id}-file`" class="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
                 <div class="w-0 flex-1 flex items-center">

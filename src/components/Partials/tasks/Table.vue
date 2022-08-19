@@ -1,16 +1,19 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Link from '@/UI/Link.vue';
 import Button from '@/UI/Button.vue';
+import Select from '@/UI/Select.vue';
 import Badge from '@/UI/Badge.vue';
 import Avatar from '@/UI/Avatar.vue';
 import store from '~/store/tasks';
+import employeeStore from '~/store/employees';
 import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
-import DocPreview from '@/Layout/modal/DocPreview.vue';
 import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
 import { canTasks } from '~/lib/permissions';
 import FormActions from '@/Layout/modal/FormActions.vue';
+import save from '~/helpers/save'
+import { updateTaskUserId } from '~/services/tasks/form'
 
 const props = defineProps({
   order_id: {
@@ -29,7 +32,7 @@ const props = defineProps({
 
 defineEmits(['update:modelValue']);
 
-const { fetchTasks, removeTask, edit } = service();
+const { fetchTasks, removeTask, edit, current } = service();
 
 const fields = [
   { label: 'Название', key: 'name' },
@@ -48,12 +51,30 @@ if (!props.order_id) {
 
 fields.push();
 
-const { state,  options, no_owner } = store;
+const { state,  options, noOwnerTask } = store;
+const { options: employees, load } = employeeStore;
 
 await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
 
-onMounted(() => {
-  console.log(no_owner.value)
+const no_ownerRef = ref(true)
+const user_id = ref();
+const loading = ref(false);
+const updateMsg = ref();
+
+const updateTask = async () => {
+  updateMsg.value = ''
+  loading.value = true
+  const { message, success} = await updateTaskUserId(noOwnerTask.value, user_id.value)
+  if(success) user_id.value = undefined
+  else updateMsg.value = message ?? 'Something went wrong'
+  loading.value = false
+}
+
+onMounted(async () => {
+
+  if(noOwnerTask.value) {
+    await load({ department_id: current.value })
+  }
 })
 
 </script>
@@ -99,11 +120,11 @@ onMounted(() => {
       </template>
 
       <template #td-user="{ value }" >
-          <Avatar
-            :title="`${value?.name ?? '_'} ${value?.surname ?? '_'}`"
-            :subtitle="value?.office_position ?? '...'"
-            :image="value?.avatar"
-          />
+        <Avatar
+          :title="`${value?.name ?? '_'} ${value?.surname ?? '_'}`"
+          :subtitle="value?.office_position ?? '...'"
+          :image="value?.avatar"
+        />
       </template>
 
       <template #td-status="{ value }" >
@@ -124,28 +145,37 @@ onMounted(() => {
       <!-- ****** -->
   </Table>
 
-<!-- 
   <Teleport to="#sto-modal-teleport">
     <Transition name="docs-modal">
       <div
-        v-if="no_owner.length"
+        v-if="noOwnerTask && no_ownerRef"
         class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50"
       >
-
-        <div class="bg-white rounded-md p-3 mt-12 shadow-2xl">
+        <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl w-full max-w-sm">
 
           <div class="p-1">
-            let's go
+            <h1 class="text-lg mb-m text-center">Задача без ответственных</h1>
+
+            <p v-if="updateMsg" class="text-red-600 text-sm text-center my-2">{{ updateMsg }}</p>
+            <p v-else class="select-none text-sm text-center my-2 text-transparent">some</p>
+
+            <div class="text-center mb-6 flex justify-between">
+              <Badge :point="true" :color="noOwnerTask.is_map ? 'green' : 'purple'">
+                {{ noOwnerTask.is_map ? 'Диагностическая карта' : 'Задачa' }}
+              </Badge>
+              <p>{{ noOwnerTask.name }}</p>
+            </div>
+
+            <Select label="" :options="employees" v-model="user_id" />
           </div>
           
-          <form-actions />
+          <form-actions :loading="loading" @close="() => { no_ownerRef = false }" @submited="() => updateTask()" />
 
         </div>
 
       </div>
     </Transition>
   </Teleport>
--->
 
 </template>
 
@@ -159,5 +189,4 @@ onMounted(() => {
 .docs-modal-leave-to {
   opacity: 0;
 }
-
 </style>

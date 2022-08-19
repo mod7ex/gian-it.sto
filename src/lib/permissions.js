@@ -77,7 +77,6 @@ const navigationGuards = (to, from, next) => {
 export default navigationGuards;
 
 export const PERMISSIONS = {
-
   TASKS: {
     READ: () => userHasAtLeastOnePermission(['read tasks', 'read department tasks', 'read own tasks']),
     READ_DEPARTMENT: () => userHasPermission('read department tasks') && !isAdmin.value,

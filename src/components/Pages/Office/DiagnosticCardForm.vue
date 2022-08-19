@@ -45,7 +45,7 @@ onScopeDispose(clearMemory);
       </Button>
     </template>
 
-    <preview v-if="previewing" :fields="fields" :dc_template="dc_template" />
+    <preview v-if="previewing" :fields="fields" :dc_template="dc_template" :no-head="true" />
 
     <suspense-area v-else>
       <keep-alive><component :is="VForm" /></keep-alive>

@@ -13,6 +13,12 @@ const state = reactive({
   pending: false,
 });
 
+const setTask = (payload) => {
+  const i = state.raw.findIndex(({ id }) => id === payload.id);
+  if (i < 0) return;
+  state.raw[i] = payload;
+};
+
 const reset = () => {
   state.raw = [];
   state.pages = 100;
@@ -54,15 +60,20 @@ const drop = async (id) => _$.task(id, (v) => {
   state.raw.deleteById(v);
 });
 
+const findTask = (_id) => state.raw.find(({ id }) => id == _id);
+
 export default {
   state: readonly(state),
 
+  findTask,
   load,
   drop,
   reset,
   sort,
   fill,
-  no_owner: computed(() => state.raw.filter(({ user: responsible }) => !responsible).map(({ id }) => id)),
+  setTask,
+  // noOwnerTask: computed(() => (state.raw[0])),
+  noOwnerTask: computed(() => (state.raw.filter(({ user: responsible }) => !responsible))[0]),
   options: computed(() => state.raw.map(({ id: value, name: label }) => ({ label, value }))),
   map_options: computed(() => state.raw.filter(({ is_map }) => is_map).map(({ id: value, name: label }) => ({ label, value }))),
 };

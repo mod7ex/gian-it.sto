@@ -92,6 +92,7 @@ await atMounted().then(async () => {
             :map_answer="task.map_answer"
             :fields="dc_template.data ?? []"
             :dc_template="dc_template"
+            :no-head="true"
         />
 
     </Card>

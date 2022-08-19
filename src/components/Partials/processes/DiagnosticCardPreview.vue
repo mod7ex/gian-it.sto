@@ -6,8 +6,10 @@ import { generateShapedIdfromId, debounce } from '~/helpers';
 import save from '~/helpers/save';
 
 const props = defineProps({
+  id: String,
   fields: Array,
   dc_template: Object,
+  task: Object,
 
   map_answer: [Object, undefined, null],
 
@@ -138,14 +140,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="ready" id="card-preview" class="relative text-center border-gray-300 border rounded shadow p-6 px-9 mx-auto max-w-6xl select-none">
+  <div v-if="ready" :id="props.id" class="relative text-center border-gray-300 border rounded shadow p-6 px-9 mx-auto max-w-6xl select-none">
     <header v-if="!noHead" class="mb-6 py-3">
-      <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ dc_template?.id ?  generateShapedIdfromId(dc_template?.id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
+      <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ task_id ?  generateShapedIdfromId(task_id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
 
       <div class="grid grid-cols-12 border-black border">
-        <span class="text-left px-9 col-span-4"><b>Дата:</b></span>
-        <span class="text-left px-9 col-span-4 border-l border-black"><b>Авто:</b></span>
-        <span class="text-left px-9 col-span-4 border-l border-black"><b>&#8470;:</b></span>
+        <span class="text-left px-9 col-span-4"><b class="mr-6">Дата:</b>{{ task?.end_at }}</span>
+        <span class="text-left px-9 col-span-4 border-l border-black"><b class="mr-6">Авто:</b>{{ task?.order?.car?.car_model?.car_mark?.name }}</span>
+        <span class="text-left px-9 col-span-4 border-l border-black"><b class="mr-6">&#8470;:</b>{{ ' ' }}</span>
       </div>
     </header>
 
@@ -231,27 +233,25 @@ onMounted(() => {
 }
 
 @media print {
-  /*
-  body #card-preview * {
-
+  body #printable {
+    width: 100%;
   }
-  */
 
-  .print-mode-show {
+  body #printable .print-mode-show {
     display: inline-block;
   }
 
-  .print-mode-hide {
+  body #printable .print-mode-hide {
     display: none;
   }
 
-  .print-mode-checklist {
+  body #printable .print-mode-checklist {
     gap: 0;
     border-top: 1px solid black;
     border-left: 1px solid black;
   }
 
-  .print-mode-checklist div {
+  body #printable .print-mode-checklist div {
     flex-direction: row-reverse;
 
     border-right: 1px solid black;
@@ -264,17 +264,17 @@ onMounted(() => {
   }
 
   /*
-  .print-mode-checklist div span {
+  body #printable .print-mode-checklist div span {
     padding: .3em 1em;
   }
   */
 
-  .print-mode-checklist div span:first-of-type {
+  body #printable .print-mode-checklist div span:first-of-type {
     border-left: 1px solid black;
     align-self: stretch;
   }
 
-  .print-mode-checklist div span:last-of-type {
+  body #printable .print-mode-checklist div span:last-of-type {
     padding: .3em;
   }
 }

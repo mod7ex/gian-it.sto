@@ -5,7 +5,11 @@ import { hyphenatedDateFormat, deepCopyObj } from '~/helpers';
 import save, { upload } from '~/helpers/save';
 import useToast from '~/composables/useToast.js';
 import depStore from '~/store/departments';
+import store from '~/store/tasks';
 
+const { setTask } = store;
+
+const toaster = useToast();
 const { current } = depStore;
 
 const defaults = {
@@ -38,43 +42,89 @@ let fields;
 let files;
 
 // **********************************************************************  Form
-const setField = function (key) {
+const setFieldFor = (target, key, from) => {
   if (key.includes('_id')) {
     if (key === 'temp_file_ids') return;
     if (key === 'delete_file_ids') return;
 
     if (key === 'map_id') {
-      fields.map_id = this.task_map?.map_id;
+      target.map_id = from.task_map?.map_id;
       return;
     }
 
-    fields[key] = this[key.replace('_id', '')]?.id;
+    target[key] = from[key.replace('_id', '')]?.id;
     return;
   }
 
   if (key === 'is_map') {
-    fields.is_map = this.is_map ? 'true' : 'false';
+    target.is_map = from.is_map ? 'true' : 'false';
     return;
   }
 
   if (key === 'pipelines') {
-    fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage }) => ({ pipeline_id, stage_id: stage?.id })) ?? [{}];
+    if (!from.pipelines || from.pipelines?.length === 0) {
+      target.pipeline = [{}];
+    } else {
+      target.pipelines = from.pipelines?.map(({ pipeline: { id: pipeline_id }, stage }) => ({ pipeline_id, stage_id: stage?.id }));
+    }
     return;
   }
 
   if (key === 'checkboxes') {
-    fields.checkboxes = this.checkboxes ?? defaults.checkboxes;
-    if (fields.checkboxes.length === 0) fields.checkboxes.push('');
+    target.checkboxes = from.checkboxes ?? defaults.checkboxes;
+    if (target.checkboxes.length === 0) target.checkboxes.push('');
     return;
   }
 
   if (['end_at', 'start_at', 'deadline_at'].includes(key)) {
-    fields[key] = hyphenatedDateFormat(this[key]);
+    target[key] = hyphenatedDateFormat(from[key]);
     return;
   }
 
-  fields[key] = (this[key] ?? defaults[key]) ?? deepDefaults[key];
+  target[key] = (from[key] ?? defaults[key]) ?? deepDefaults[key];
 };
+
+const setField = function (key) {
+  setFieldFor(fields, key, this);
+};
+
+// export const setField = function (key) {
+//   if (key.includes('_id')) {
+//     if (key === 'temp_file_ids') return;
+//     if (key === 'delete_file_ids') return;
+
+//     if (key === 'map_id') {
+//       fields.map_id = this.task_map?.map_id;
+//       return;
+//     }
+
+//     fields[key] = this[key.replace('_id', '')]?.id;
+//     return;
+//   }
+
+//   if (key === 'is_map') {
+//     fields.is_map = this.is_map ? 'true' : 'false';
+//     return;
+//   }
+
+//   if (key === 'pipelines') {
+//     fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage }) => ({ pipeline_id, stage_id: stage?.id })) ?? [{}];
+//     return;
+//   }
+
+//   if (key === 'checkboxes') {
+//     fields.checkboxes = this.checkboxes ?? defaults.checkboxes;
+//     if (fields.checkboxes.length === 0) fields.checkboxes.push('');
+//     return;
+//   }
+
+//   if (['end_at', 'start_at', 'deadline_at'].includes(key)) {
+//     fields[key] = hyphenatedDateFormat(this[key]);
+//     return;
+//   }
+
+//   fields[key] = (this[key] ?? defaults[key]) ?? deepDefaults[key];
+// };
 
 const setForm = async (payload) => {
   Object.keys(fields).forEach(setField, payload ?? {});
@@ -84,15 +134,49 @@ const log = (e) => {
   files.value = e.target.files;
 };
 
-export default () => effectScope().run(() => {
-  const toaster = useToast();
+const rawTask = () => ({
+  id: '',
+  name: '',
+  description: '',
+  order_id: '',
+  user_id: '',
+  deadline_at: '',
+  position: '',
+  status: '',
+  start_at: '',
+  end_at: '',
+  is_map: 'false',
+  map_id: '',
+  checkboxes: [{ description: '' }],
+  pipelines: [{}],
+  temp_file_ids: [],
+  delete_file_ids: [],
+  files: [],
+});
 
+export const updateTaskUserId = async (payload, user_id) => {
+  const raw = rawTask();
+
+  Object.keys(raw).forEach(function (key) {
+    setFieldFor(raw, key, this);
+  }, payload);
+
+  const { data, success, message } = await save.task({ ...raw, user_id, department_id: current.value, is_map: raw.is_map == 'true' });
+
+  try {
+    return { success, message };
+  } finally {
+    setTask(data.task);
+  }
+};
+
+export default () => effectScope().run(() => {
   const { route, isThePage, redirectTo, back } = useAppRouter('TaskEdit');
 
   const { order_id } = route.query;
 
   if (!fields) {
-    fields = reactive({ ...deepCopyObj(defaults), ...deepDefaults });
+    fields = reactive(rawTask());
     files = ref();
   }
 
@@ -156,11 +240,11 @@ export default () => effectScope().run(() => {
     fields = undefined;
     files = undefined;
 
-    deepDefaults.checkboxes = [{ description: '' }];
-    deepDefaults.pipelines = [{}];
-    deepDefaults.temp_file_ids = [];
-    deepDefaults.delete_file_ids = [];
-    deepDefaults.files = [];
+    // deepDefaults.checkboxes = [{ description: '' }];
+    // deepDefaults.pipelines = [{}];
+    // deepDefaults.temp_file_ids = [];
+    // deepDefaults.delete_file_ids = [];
+    // deepDefaults.files = [];
   });
 
   return {

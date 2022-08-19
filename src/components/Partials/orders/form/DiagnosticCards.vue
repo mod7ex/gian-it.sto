@@ -48,8 +48,8 @@ const printOut = () => {
         <Spinner w="4" h="4" >Загрузка шаблона...</Spinner>
       </div>
 
-      <div id="printable" class="my-9" v-else >
-        <div class="printing-btn mb-3 flex justify-between items-center" v-if="dc_template">
+      <div class="my-9" v-else >
+        <div class="mb-3 flex justify-between items-center" v-if="dc_template">
           <Link class="flex" @click="e => printOut()">распечатать <DownloadIcon class="ml-6 text-blue-600 w-6 h-6" /></Link>
           <Badge
             :point="true"
@@ -60,9 +60,9 @@ const printOut = () => {
 
         <div class="flex gap-3 flex-wrap justify-between items-center border-gray-300 border rounded shadow p-6 px-9 mb-3" v-if="dk_task">
             <Avatar
-                :title="`${dk_task.author.name} ${dk_task.author.surname}`"
-                :subtitle="dk_task.author.office_position"
-                :image="dk_task.author.avatar"
+              :title="`${dk_task.author.name} ${dk_task.author.surname}`"
+              :subtitle="dk_task.author.office_position"
+              :image="dk_task.author.avatar"
             />
 
             <div class="text-center">
@@ -82,12 +82,13 @@ const printOut = () => {
         </div>
 
         <preview
+          id="printable"
           v-if="dc_template"
-          :no-head="true"
           :task_id="dk_task.id"
           :map_answer="dk_task.map_answer"
           :fields="dc_template.data ?? []"
           :dc_template="dc_template"
+          :task="dk_task"
           :disabled="true"
         />
       </div>
@@ -102,10 +103,6 @@ const printOut = () => {
 
     body #printable * {
       visibility: visible;
-    }
-
-    body #printable .printing-btn * {
-      visibility: hidden;
     }
   }
 </style>

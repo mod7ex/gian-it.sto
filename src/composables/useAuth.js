@@ -8,9 +8,17 @@ const defaultUserFields = {
   roles: [],
 };
 
+const rawToken = ref();
+
 const token = computed({
-  get: () => localStorage.getItem(TOKEN_STORE_NAME), // for this we have to refresh the page on login
-  set: (v) => localStorage.setItem(TOKEN_STORE_NAME, v),
+  get: () => {
+    if (rawToken.value) return rawToken.value;
+    return localStorage.getItem(TOKEN_STORE_NAME); // for this we have to refresh the page on login
+  },
+  set: (v) => {
+    rawToken.value = v;
+    localStorage.setItem(TOKEN_STORE_NAME, v);
+  },
 });
 
 const user = ref(defaultUserFields);
@@ -29,7 +37,7 @@ const setUser = (userData) => {
   if (!localStorage.getItem('department')) {
     localStorage.setItem('department', `${userData?.department?.id}`);
   }
-  if (!userData?.avatar) user.value.avatar = 'src/assets/noAvatar.svg';
+  if (!userData?.avatar) user.value.avatar = '/src/assets/noAvatar.svg';
   return !!userData;
 };
 

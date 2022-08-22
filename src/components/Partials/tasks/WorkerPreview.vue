@@ -14,17 +14,10 @@ const { task, atMounted, route, checkBox, canTasks } = service();
 
 const dc_template = ref({});
 
-// const createTimeLine = (logs =) => {
-//   console.log(logs);
-// };
-
 await atMounted().then(async () => {
     if(task.value.is_map) {
       dc_template.value = await $.map(task.value.task_map.map_id)
     }
-
-    console.log(task.value.logs.map(({data}) => ({ ...data })))
-    // console.log(task.value.logs.map(({created_at, created_user: { id, name, surname, middle_name }, data}) => ({ created_at, triggerer: {id, full_name: `${name} ${surname} ${middle_name}`}, data })))
 })
 
 </script>

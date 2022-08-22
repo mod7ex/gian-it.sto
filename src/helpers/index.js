@@ -197,3 +197,5 @@ export const distructCamelOrPascalCaseWord = (word, toLower = false) => {
   }
   return [word];
 };
+
+export const ruMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь', 'Месяц', 'Год'];

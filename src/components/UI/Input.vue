@@ -71,6 +71,10 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
+  autocomplete: {
+    type: String,
+    default: 'off',
+  },
 });
 
 const styles = props.classMap.concat([
@@ -126,6 +130,7 @@ if (props.icon) {
 
       <input
         v-if="mask"
+        :autocomplete="autocomplete"
         :type="type"
         :class="styles"
         :placeholder="placeholder"
@@ -142,6 +147,7 @@ if (props.icon) {
 
       <input
         v-else
+        :autocomplete="autocomplete"
         :type="type"
         :class="styles"
         :placeholder="placeholder"

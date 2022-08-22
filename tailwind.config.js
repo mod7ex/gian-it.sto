@@ -12,7 +12,6 @@ module.exports = {
         'bg-blue-600',
         'bg-blue-400',
         'bg-red-500',
-        'bg-yellow-500',
         'bg-green-500',
         'bg-purple-500',
         'bg-purple-600',
@@ -36,6 +35,9 @@ module.exports = {
         'bg-red-500',
         'bg-red-600',
         'bg-red-700',
+        'bg-yellow-500',
+        'bg-yellow-600',
+        'bg-yellow-700',
 
         'h-24',
         'sm:col-span-1',

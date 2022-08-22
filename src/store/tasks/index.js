@@ -26,22 +26,20 @@ const reset = () => {
 };
 
 const load = async (payload = {}) => {
-  if (!PERMISSIONS.TASKS.READ()) return;
   state.raw = await $.tasks(payload);
 };
 
 const fill = async (payload = {}) => {
   if (state.pending) return;
-  if (!PERMISSIONS.TASKS.READ()) return;
   if (state.page > state.pages) return;
 
-  if (PERMISSIONS.TASKS.READ_DEPARTMENT()) {
+  if (PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
     if (payload.department_id != userDepartment.value) return;
   }
 
   state.pending = true;
   const data = await $({ key: 'tasks', params: { ...payload, page: state.page } });
-  if (PERMISSIONS.TASKS.READ_OWN()) {
+  if (PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
     const only_my_tasks = data?.tasks?.filter(({ author: { id } }) => id === user.value.id);
     state.raw = state.raw.concat(only_my_tasks ?? []);
   } else {

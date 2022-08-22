@@ -14,9 +14,12 @@ const routesPermissionsMap = {
 
   Processes: 'crud processes',
 
-  Tasks: ['read tasks', 'read department tasks', 'read own tasks'],
-  Task: ['read tasks', 'read department tasks', 'read own tasks'],
-  TaskEdit: ['update tasks', 'update department tasks', 'update own tasks'],
+  // Tasks: ['read tasks', 'read department tasks', 'read own tasks'],
+  // Task: ['read tasks', 'read department tasks', 'read own tasks'],
+  // TaskEdit: ['update tasks', 'update department tasks', 'update own tasks'],
+  // TaskCreate: 'create tasks',
+
+  TaskEdit: 'update tasks',
   TaskCreate: 'create tasks',
 
   Employers: ['read users', 'crud users'],
@@ -78,17 +81,13 @@ export default navigationGuards;
 
 export const PERMISSIONS = {
   TASKS: {
-    READ: () => userHasAtLeastOnePermission(['read tasks', 'read department tasks', 'read own tasks']),
-    READ_DEPARTMENT: () => userHasPermission('read department tasks') && !isAdmin.value,
-    READ_OWN: () => userHasPermission('read own tasks') && !isAdmin.value,
+    READ: () => userHasPermission('read tasks'),
+    READ_DEPARTMENT: () => userHasPermission('read department tasks') && !userHasPermission('read tasks'),
+    READ_OWN: () => !userHasPermission('read department tasks') && !userHasPermission('read tasks'),
 
-    UPDATE: () => userHasAtLeastOnePermission(['update tasks', 'update department tasks', 'update own tasks']),
-    UPDATE_DEPARTMENT: () => userHasPermission('update department tasks') && !isAdmin.value,
-    UPDATE_OWN: () => userHasPermission('update own tasks') && !isAdmin.value,
+    UPDATE: () => userHasPermission('update tasks'),
 
-    DELETE: () => userHasAtLeastOnePermission(['delete tasks', 'delete department tasks', 'delete own tasks']),
-    DELETE_DEPARTMENT: () => userHasPermission('delete department tasks') && !isAdmin.value,
-    DELETE_OWN: () => userHasPermission('delete own tasks') && !isAdmin.value,
+    DELETE: () => userHasPermission('delete tasks'),
   },
 };
 
@@ -99,16 +98,18 @@ export const PERMISSIONS = {
  * @returns {boolean}
  */
 export const canTasks = (item, action = 'update') => {
-  if (PERMISSIONS.TASKS[`${action.toUpperCase()}_OWN`]()) {
-    const theAuthor = typeof item.author === 'object' ? item.author?.id : item.author_id;
-    if (theAuthor != user.value?.id) return false;
-    return true;
-  }
+  if (action === 'read') {
+    if (PERMISSIONS.TASKS[`${action.toUpperCase()}_OWN`]()) {
+      const theAuthor = typeof item.author === 'object' ? item.author?.id : item.author_id;
+      if (theAuthor != user.value?.id) return false;
+      return true;
+    }
 
-  if (PERMISSIONS.TASKS[`${action.toUpperCase()}_DEPARTMENT`]()) {
-    const theDepartment = typeof item.department === 'object' ? item.department?.id : item.department_id;
-    if (theDepartment != userDepartment.value) return false;
-    return true;
+    if (PERMISSIONS.TASKS[`${action.toUpperCase()}_DEPARTMENT`]()) {
+      const theDepartment = typeof item.department === 'object' ? item.department?.id : item.department_id;
+      if (theDepartment != userDepartment.value) return false;
+      return true;
+    }
   }
 
   // you're an admin --->

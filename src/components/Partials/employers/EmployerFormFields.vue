@@ -64,6 +64,7 @@ await (async () => {
 
     <template #email>
       <Input
+        autocomplete="email"
         label="Почта"
         type="email"
         v-model="userFields.email"
@@ -83,6 +84,7 @@ await (async () => {
 
     <template #password>
       <Input
+        autocomplete="new-password"
         label="Новый пароль"
         type="password"
         v-model="userFields.password"
@@ -145,3 +147,5 @@ await (async () => {
     </template>
   </edit-user>
 </template>
+
+ 

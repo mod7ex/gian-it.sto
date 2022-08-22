@@ -30,7 +30,7 @@ const logWorker = async (email) => {
     setUser(data.value.user)
     setToken(data.value.api_token)
     setTimeout(() => {
-      router.push({ name: 'WorkerProfile' }) // better to use go then push, in order to pull up the token from local storage
+      router.push({ name: 'WorkerTasks' }) // better to use go then push, in order to pull up the token from local storage
     });
   }
 

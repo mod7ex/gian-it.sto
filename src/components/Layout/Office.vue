@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { MenuButton } from '@headlessui/vue';
 
 import {
+  CogIcon,
   UserGroupIcon,
   PuzzleIcon,
   PresentationChartLineIcon,
@@ -61,12 +62,12 @@ const sidebarOpen = ref(false);
 
 const userMenu = [
   [{ label: 'Профиль', name: 'Profile', icon: UserIcon }],
-  [{ label: 'Работа', name: 'WorkerProfile', icon: TicketIcon }],
+  [{ label: 'Работа', name: 'WorkerTasks', icon: TicketIcon }],
   [{ label: 'Выход', name: 'Login', click: () => logOut(router), icon: LogoutIcon }],
 ];
 
 const menu = [
-  // { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon },
+  { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon },
   { label: 'Заказ-наряды', name: 'Orders', icon: ChipIcon },
   { label: 'Задачи', name: 'Tasks', icon: TableIcon },
   { label: 'Рабочие процессы', name: 'Processes', icon: PuzzleIcon },
@@ -74,7 +75,7 @@ const menu = [
   { label: 'Клиенты', name: 'Clients', icon: UserGroupIcon },
   { label: 'Сотрудники', name: 'Employers', icon: UserGroupIcon },
   { label: 'Финансы', name: 'Finances', icon: CurrencyDollarIcon },
-  // { label: 'Настройки', name: 'Settings', icon: CogIcon },
+  { label: 'Настройки', name: 'Settings', icon: CogIcon },
   { label: 'Отделы', name: 'Departments', icon: OfficeBuildingIcon },
 ].filter(({ name }) => isRouteAccessableForCurrentUser(name))
   .map(({ label, name, icon }) => ({ label, name, icon, current: isCurrentFullPath({ name }) }));

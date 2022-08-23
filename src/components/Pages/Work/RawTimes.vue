@@ -1,86 +1,79 @@
 <script setup>
 import { computed } from 'vue';
 import service from '~/services/tasks/worker';
-import { todayAs, ruMonths } from '~/helpers'
+import { ruMonths } from '~/helpers';
 import Table from '@/Layout/Table.vue';
 
 const { fetchTasks, state, edge } = service();
 
-await fetchTasks(true); 
+const calcMinsDiff = (end, start) => ((new Date(end)).getTime() - (new Date(start)).getTime()) / (1000 * 60);
 
-const calcMinsDiff = (end, start) => {
-  return ((new Date(end)).getTime() - (new Date(start)).getTime()) / (1000 * 60)
-}
+const getClosedTasksNumberIn = (day) => state.raw.filter(({ logs }) => {
+  for (let i = 0; i < logs.length; i++) {
+    const { created_at, data } = logs[i];
+    const d = (new Date(created_at.split(' ')[0])).getTime();
+    if (data?.status === 'done' && d === day) return true;
+  }
 
-const getClosedTasksNumberIn = (day) => {
-  return state.raw.filter(({ logs }) => {
-
-    for(let i = 0; i<logs.length; i++) {
-      let { created_at, data } = logs[i]
-      let d = (new Date(created_at.split(' ')[0])).getTime()
-      if( data?.status === 'done' && d === day) return true
-    }
-
-    return false
-  }).length
-}
+  return false;
+}).length;
 
 const getWorkedHoursNumberIn = (day) => {
-  let workedHours = 0
+  let workedHours = 0;
 
   state.raw.forEach(({ logs }) => {
-    let taskWorkedHours = []
+    const taskWorkedHours = [];
 
-    for(let i = 0; i<logs.length; i++) {
-      let { created_at, data } = logs[i]
-      let d = (new Date(created_at.split(' ')[0])).getTime()
-      if( 'status' in data && d === day){ // tasks that had the status changed today (worker touched it)
-        taskWorkedHours.push({at: created_at, mode: data.status}) // we suppose they are sorted from server otherwise we sort them
-      } 
+    for (let i = 0; i < logs.length; i++) {
+      const { created_at, data } = logs[i];
+      const d = (new Date(created_at.split(' ')[0])).getTime();
+      if ('status' in data && d === day) { // tasks that had the status changed today (worker touched it)
+        taskWorkedHours.push({ at: created_at, mode: data.status }); // we suppose they are sorted from server otherwise we sort them
+      }
     }
 
-    if(taskWorkedHours.length) {
+    if (taskWorkedHours.length) {
       // worker didn't pause or finish the task yesterday
-      let { mode: mode_0, at: at_0 } = taskWorkedHours[0]
-      if(mode_0 !== 'process') workedHours += calcMinsDiff(at_0, day)
+      const { mode: mode_0, at: at_0 } = taskWorkedHours[0];
+      if (mode_0 !== 'process') workedHours += calcMinsDiff(at_0, day);
 
       // worker didn't pause or finish the task today
-      let { mode_l, at_l } = taskWorkedHours[taskWorkedHours.length - 1]
-      if(mode_l === 'process') workedHours += calcMinsDiff(at_l, new Date().getTime())
+      const { mode_l, at_l } = taskWorkedHours[taskWorkedHours.length - 1];
+      if (mode_l === 'process') workedHours += calcMinsDiff(at_l, new Date().getTime());
 
-      if(taskWorkedHours.length > 1) {
+      if (taskWorkedHours.length > 1) {
         let i = 0;
 
-        while(i + 1 < taskWorkedHours.length) {
-          let { mode: mode_f, at: at_f } = taskWorkedHours[i]
-          let { mode: mode_l, at: at_l } = taskWorkedHours[i+1]
+        while (i + 1 < taskWorkedHours.length) {
+          const { mode: mode_p, at: at_p } = taskWorkedHours[i];
+          const { mode: mode_n, at: at_n } = taskWorkedHours[i + 1];
 
-          if(mode_f === 'process' && mode_l !== 'process') workedHours += calcMinsDiff(at_l, at_f)
+          if (mode_p === 'process' && mode_n !== 'process') workedHours += calcMinsDiff(at_n, at_p);
 
-          i++
+          i++;
         }
       }
     }
-  })
+  });
 
-  return workedHours
-}
+  return workedHours;
+};
 
-const createDays = (_from, _to) => {
-  let start = (new Date(edge.from)).getTime()
-  let end = (new Date(edge.to)).getTime()
+const createDays = () => {
+  let start = (new Date(edge.from)).getTime();
+  const end = (new Date(edge.to)).getTime();
 
-  let days = []
+  const days = [];
 
   while (start <= end) {
-    let mins = getWorkedHoursNumberIn(start)
-    let worked_hours = `${Math.floor(mins / 60)}ч ${Math.floor(mins % 60)}мин`
-    days.push({day: start, worked_hours, closed_tasks: getClosedTasksNumberIn(start)});
-    start += 24 * 60 * 60 * 1000 // next day
+    const mins = getWorkedHoursNumberIn(start);
+    const worked_hours = `${Math.floor(mins / 60)}ч ${Math.floor(mins % 60)}мин`;
+    days.push({ day: start, worked_hours, closed_tasks: getClosedTasksNumberIn(start) });
+    start += 24 * 60 * 60 * 1000; // next day
   }
 
-  return days
-}
+  return days;
+};
 
 const times = computed(() => createDays(edge.from, edge.to));
 
@@ -89,6 +82,8 @@ const fields = [
   { label: 'Количество отработанного времени', key: 'worked_hours' },
   { label: 'Количество закрытых задач', key: 'closed_tasks' },
 ];
+
+await fetchTasks(true);
 
 </script>
 

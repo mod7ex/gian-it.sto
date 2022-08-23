@@ -23,6 +23,8 @@ let edge;
 
 const clearMemo = () => { filter = undefined; edge = undefined; };
 
+/*
+
 const createRefEdges = () => {
   let value = (new Date()).getTime();
   return customRef((track, trigger) => ({
@@ -36,6 +38,8 @@ const createRefEdges = () => {
     },
   }));
 };
+
+*/
 
 export default () => effectScope().run(() => {
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
@@ -57,17 +61,11 @@ export default () => effectScope().run(() => {
 
   const fetchTasks = async (bool = false) => {
     if (bool) resetStore();
-    await fill(cleanUp(filter));
-    // await fill({ user_id: user.value.id, ...cleanUp(filter) });
+    await fill({ user_id: user.value.id, ...cleanUp(filter) });
   };
 
   const initTimeEdges = () => {
     if (!edge) {
-      // edge = {
-      //   from: createRefEdges(),
-      //   to: createRefEdges(),
-      // };
-
       edge = reactive({
         from: hyphenatedDateFormat(new Date()),
         to: hyphenatedDateFormat(new Date()),

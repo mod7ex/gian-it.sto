@@ -34,7 +34,7 @@ export default function (inModal) {
 
     emails: {
       mails: helpers.withMessage('Укажите верный email', mails),
-      ...inModal ? undefined : { requiredArr: helpers.withMessage('Укажите email', requiredArr) },
+      // ...inModal ? undefined : { requiredArr: helpers.withMessage('Укажите email', requiredArr) },
     },
 
     phones: {

@@ -1,8 +1,8 @@
-import { reactive, effectScope, onScopeDispose } from 'vue';
+import { reactive, effectScope, customRef } from 'vue';
+import { hyphenatedDateFormat, cleanUp } from '~/helpers';
 import useOrder from '~/composables/useOrder.js';
 import departmentStore from '~/store/departments';
 import store from '~/store/tasks';
-import { cleanUp } from '~/helpers';
 import useAuth from '~/composables/useAuth';
 
 const { sort, fill, reset: resetStore, state } = store;
@@ -19,8 +19,23 @@ const pivot = {
 };
 
 let filter;
+let edge;
 
-const clearMemo = () => onScopeDispose(() => { filter = undefined; });
+const clearMemo = () => { filter = undefined; edge = undefined; };
+
+const createRefEdges = () => {
+  let value = (new Date()).getTime();
+  return customRef((track, trigger) => ({
+    get() {
+      track();
+      return hyphenatedDateFormat(value);
+    },
+    set(newValue) {
+      value = (new Date(newValue)).getTime();
+      trigger();
+    },
+  }));
+};
 
 export default () => effectScope().run(() => {
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
@@ -42,7 +57,24 @@ export default () => effectScope().run(() => {
 
   const fetchTasks = async (bool = false) => {
     if (bool) resetStore();
-    await fill({ user_id: user.value.id, ...cleanUp(filter) });
+    await fill(cleanUp(filter));
+    // await fill({ user_id: user.value.id, ...cleanUp(filter) });
+  };
+
+  const initTimeEdges = () => {
+    if (!edge) {
+      // edge = {
+      //   from: createRefEdges(),
+      //   to: createRefEdges(),
+      // };
+
+      edge = reactive({
+        from: hyphenatedDateFormat(new Date()),
+        to: hyphenatedDateFormat(new Date()),
+      });
+    }
+
+    return edge;
   };
 
   return {
@@ -53,5 +85,7 @@ export default () => effectScope().run(() => {
     current,
     clearMemo,
     state,
+    initTimeEdges,
+    edge,
   };
 });

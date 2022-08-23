@@ -60,11 +60,11 @@ const props = defineProps({
     type: [String, Number],
   },
   min: {
-    type: Number,
+    type: [Number, String],
     required: false,
   },
   max: {
-    type: Number,
+    type: [Number, String],
     required: false,
   },
   step: {

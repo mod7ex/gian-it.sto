@@ -1,6 +1,6 @@
 <script setup>
 import { RefreshIcon } from '@heroicons/vue/outline';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, onScopeDispose } from 'vue';
 import Layout from '@/Layout/Work.vue';
 import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
@@ -31,7 +31,7 @@ const filterSignature = ref('-');
 
 watch(filter, debounce(() => { filterSignature.value = objectSignature(filter); }));
 
-clearMemo();
+onScopeDispose(clearMemo);
 
 </script>
 

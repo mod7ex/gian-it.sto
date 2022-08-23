@@ -34,7 +34,7 @@ const getWorkedHoursNumberIn = (day) => {
     for(let i = 0; i<logs.length; i++) {
       let { created_at, data } = logs[i]
       let d = (new Date(created_at.split(' ')[0])).getTime()
-      if( 'status' in data && d === day){ // tasks that had the status changed today (worker touched them)
+      if( 'status' in data && d === day){ // tasks that had the status changed today (worker touched it)
         taskWorkedHours.push({at: created_at, mode: data.status}) // we suppose they are sorted from server otherwise we sort them
       } 
     }

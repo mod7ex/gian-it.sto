@@ -107,13 +107,17 @@ export default function (order_id) {
             department_id: current.value,
           });
 
-          if (success) setStatus(invoice.id, 'done'); // this is not accurate
+          if (!success) return { success, message };
+
+          // this is not accurate
+          const { success: suc, message: msg } = await save.payment({ ...invoice, status: 'done' });
+          if (suc) setStatus(invoice.id, 'done');
 
           try {
-            return { message, success };
+            return { message: message || msg, success: success && suc };
           } finally {
-            if (success) {
-              toaster.success(message);
+            if (success && suc) {
+              toaster.success(message || msg);
             }
           }
         },

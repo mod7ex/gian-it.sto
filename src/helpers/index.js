@@ -20,19 +20,6 @@ export const maybeRunSync = (cb, allow, ctx = window) => async function (...args
   }
 };
 
-export const hyphenatedDateFormat = (strDate) => {
-  if (typeof strDate === 'string') {
-    const [d, m, y] = strDate.split('.');
-    return `${y}-${m}-${d}`;
-  }
-
-  if (strDate instanceof Date) {
-    return strDate.toISOString().split('T')[0];
-  }
-
-  return strDate;
-};
-
 // cleaned up shallow copy
 export const cleanUp = (obj, ...fields) => {
   const data = {};
@@ -199,3 +186,31 @@ export const distructCamelOrPascalCaseWord = (word, toLower = false) => {
 };
 
 export const ruMonths = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь', 'Месяц', 'Год'];
+
+export const todayAs = (d = new Date(), ms = true) => {
+  let today = d;
+
+  if (!(d instanceof Date)) today = new Date(d);
+
+  if (ms) return today.getTime();
+
+  const dd = String(today.getDate() + 1).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+  const yyyy = today.getFullYear();
+  return `${mm}-${dd}-${yyyy}`;
+};
+
+export const hyphenatedDateFormat = (strDate) => {
+  if (typeof strDate === 'string') {
+    const [d, m, y] = strDate.split('.');
+    return `${y}-${m}-${d}`;
+  }
+
+  if (strDate instanceof Date) {
+    return strDate.toISOString().split('T')[0];
+  }
+
+  if (typeof strDate === 'number') return hyphenatedDateFormat(new Date(strDate));
+
+  return strDate;
+};

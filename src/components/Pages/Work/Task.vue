@@ -31,7 +31,7 @@ const timeline = computed(() => {
     const { type, content } = createContent(data);
 
     const d = new Date(created_at.split(' ')[0]);
-    const date = `${d.getDate()} ${ruMonths[d.getMonth()]}`;
+    const date = `${d.getDate()} ${ruMonths[d.getMonth()]} ${created_at.split(' ')[1].substr(0, 5)}`;
 
     const dot = {
       id,

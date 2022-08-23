@@ -24,7 +24,7 @@ await fetchTasks(true);
 <template>
 
   <Table
-      @bottom-touched="()=>fetchTasks()"
+      @bottom-touched="() => fetchTasks()"
       :fields="fields"
       :items="state.raw"
       :noEdit="() => true"

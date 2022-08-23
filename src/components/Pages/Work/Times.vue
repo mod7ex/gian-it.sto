@@ -1,30 +1,22 @@
 <script setup>
+import { onScopeDispose } from 'vue';
 import Layout from '@/Layout/Work.vue';
 import Header from '@/UI/Header.vue';
 import Input from '@/UI/Input.vue';
 import WorkerBadge from '~/components/Partials/WorkerBadge.vue';
-import { Table, THead, TBody, Tr, Td, Th } from '@/UI/Table';
+import useSuspense from '~/composables/useSuspense';
+import RawTimes from '@/Pages/Work/RawTimes.vue';
+import service from '~/services/tasks/worker';
+import { hyphenatedDateFormat } from '~/helpers';
 
-const items = [
-  {
-    id: 1,
-    date: '20.09.2021',
-    workTime: '8 часов',
-    countTasks: '6',
-  },
-  {
-    id: 2,
-    date: '21.09.2021',
-    workTime: '8 часов 10 минут',
-    countTasks: '7',
-  },
-  {
-    id: 3,
-    date: '22.09.2021',
-    workTime: '7 часов',
-    countTasks: '4',
-  },
-];
+const { clearMemo, initTimeEdges } = service();
+
+const SuspenseArea = useSuspense(RawTimes);
+
+onScopeDispose(clearMemo);
+
+const edge = initTimeEdges();
+
 </script>
 
 <template>
@@ -32,30 +24,14 @@ const items = [
 
     <worker-badge />
 
-    <Header>
-      Рабочее время
-    </Header>
+    <Header>Рабочее время</Header>
 
     <div class="flex flex-wrap gap-2 items-end mt-4">
-      <Input label="Дата от" type="date" />
-      <Input label="Дата до" type="date" />
+      <Input label="Дата от" v-model="edge.from" type="date" :max="hyphenatedDateFormat(new Date(edge.to))" />
+      <Input label="Дата до" v-model="edge.to" type="date" :max="hyphenatedDateFormat(new Date())" :min="hyphenatedDateFormat(new Date(edge.from))" />
     </div>
 
-    <Table class="mt-6">
-      <THead>
-      <Tr>
-        <Th>Дата</Th>
-        <Th>Количество отработанного времени</Th>
-        <Th>Количество закрытых задач</Th>
-      </Tr>
-      </THead>
-      <TBody>
-      <Tr v-for="(item, index) in items" :key="item.id" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-100'">
-        <Td>{{ item.date }}</Td>
-        <Td>{{ item.workTime }}</Td>
-        <Td>{{ item.countTasks }}</Td>
-      </Tr>
-      </TBody>
-    </Table>
+    <suspense-area />
+
   </Layout>
 </template>

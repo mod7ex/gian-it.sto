@@ -38,11 +38,11 @@ await atMounted();
 
                   <div>
                     <Link class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'OrderEdit', params: {id: element.id} }" >
-                      Заказ-наряды #{{ generateShapedIdfromId(element.id) }}
+                      Заказ-наряд #{{ generateShapedIdfromId(element.id) }}
                     </Link>
 
                     <div class="text-xs">
-                      <Link>Задач: {{ /* 'element.count_tasks' */ 0 }}</Link>
+                      <Link>Задач: {{ element.count_tasks }}</Link>
                     </div>
                   </div>
 

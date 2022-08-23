@@ -11,6 +11,12 @@ const reset = () => {
   state.raw = [];
 };
 
+const setStatus = (id, st) => {
+  for (let i = 0; i < state.raw.length; i++) {
+    if (id === state.raw[i].id) state.raw[i].status = st;
+  }
+};
+
 const load = async (payload) => {
   state.raw = await $.payments(payload);
 };
@@ -25,4 +31,5 @@ export default {
   load,
   drop,
   reset,
+  setStatus,
 };

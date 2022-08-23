@@ -27,6 +27,7 @@ const createContent = (payload) => {
 };
 
 const timeline = computed(() => {
+  console.log(task?.value?.logs);
   const v = task?.value?.logs?.map(({ created_at, created_user, data }, id) => {
     const { type, content } = createContent(data);
 
@@ -112,12 +113,13 @@ const timeline = computed(() => {
       </Button>
     </template>
 
-    <div class="grid grid-cols-1 gap-6 lg:grid-flow-col-dense lg:grid-cols-3 ">
-      <div class="space-y-6 lg:col-start-1 lg:col-span-2">
+    <!-- <div class="grid grid-cols-1 gap-6 lg:grid-flow-col-dense lg:grid-cols-3 "> -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-flow-col-dense lg:grid-cols-6 ">
+      <div class="space-y-6 lg:col-start-1 lg:col-span-4">
         <suspense-area />
       </div>
 
-      <section aria-labelledby="timeline-title" class="lg:col-start-3 lg:col-span-1">
+      <section aria-labelledby="timeline-title" class="lg:col-start-5 lg:col-span-2">
         <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
           <h2 id="timeline-title" class="text-lg font-medium text-gray-900">Выполнено по текущему процессу</h2>
 

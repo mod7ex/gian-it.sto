@@ -7,18 +7,21 @@ import store from '~/store/orders/payment';
 import useToast from '~/composables/useToast.js';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
+import departments from '~/store/departments';
+import { generateShapedIdfromId } from '~/helpers';
 
 const paymentWaysOptions = [{ label: 'Наличный', value: 'cache' }, { label: 'Безналичный', value: 'cashless' }];
 
 const toaster = useToast();
 
-const { state, load, drop } = store;
+const { state, load, drop, setStatus } = store;
+const { current } = departments;
 
 let invoice;
 let fetchPayments;
 let saveForm;
 
-const clearMemo = () => onScopeDispose(() => { fetchPayments = undefined; });
+const clearMemo = () => { fetchPayments = undefined; };
 
 const setForm = (payload = {}) => {
   invoice.id = payload?.id;
@@ -59,7 +62,7 @@ export default function (order_id) {
           invoice = reactive({
             id: id ?? '',
             type: '',
-            status: '',
+            status: 'wait',
             sum: '',
             comment: '',
             client_id: '',
@@ -94,7 +97,26 @@ export default function (order_id) {
       const { render } = useModalForm({
         title: 'Оплатить',
         RawForm: PayModal,
-        atSubmit: () => ({ success: true }),
+        atSubmit: async () => {
+          const { message, success } = await save.finance({
+            name: `Оплата #${generateShapedIdfromId(invoice.id)}`,
+            operation_type: 'in',
+            sum: invoice.sum,
+            // finance_group_id: 1,
+            order_id: args[1],
+            department_id: current.value,
+          });
+
+          if (success) setStatus(invoice.id, 'done'); // this is not accurate
+
+          try {
+            return { message, success };
+          } finally {
+            if (success) {
+              toaster.success(message);
+            }
+          }
+        },
         atClose: () => scope.stop(),
         atOpen: (id) => {
           invoice = reactive({

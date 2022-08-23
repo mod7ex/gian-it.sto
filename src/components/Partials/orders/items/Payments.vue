@@ -47,9 +47,9 @@ clearMemo()
 
     <template #td-created_at="{ value }" > {{ value }} </template>
 
-    <template #td-status="{ value, item: { id } }" >
-      <Link v-if="value === 'wait'" @click="() => pay(id)" > Оплатить </Link>
-      <Badge color="green" :point="true" v-else > Done </Badge>
+    <template #td-status="{ value, item: { id, order: { id: order_id }} }" >
+      <Link v-if="value === 'wait'" @click="() => pay(id, order_id)" > Оплатить </Link>
+      <Badge color="green" :point="true" v-else > Оплаченный </Badge>
     </template>
   </Table>
 </template>

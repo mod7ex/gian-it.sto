@@ -1,5 +1,6 @@
 <script setup>
 import { CurrencyDollarIcon } from '@heroicons/vue/outline';
+import { onScopeDispose } from 'vue';
 import Button from '@/UI/Button.vue';
 import service from '~/services/orders/payment';
 import Payments from '@/Partials/orders/items/Payments.vue';
@@ -10,7 +11,9 @@ const SuspenseArea = useSuspense(Payments);
 
 const { route } = useAppRouter();
 
-const { render } = service(route.params.id);
+const { render, clearMemo } = service(route.params.id);
+
+onScopeDispose(clearMemo);
 
 </script>
 

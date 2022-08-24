@@ -14,6 +14,7 @@ import { canTasks } from '~/lib/permissions';
 import FormActions from '@/Layout/modal/FormActions.vue';
 import save from '~/helpers/save'
 import { updateTaskUserId } from '~/services/tasks/form'
+import { userHasAtLeastOnePermission } from '~/lib/permissions'
 
 const props = defineProps({
   order_id: {
@@ -99,50 +100,52 @@ onMounted(async () => {
   </div>
 
   <Table
-      v-else
-      @bottom-touched="()=>fetchTasks(false, props.order_id)"
-      :fields="fields"
-      :items="state.raw"
-      @delete="removeTask"
-      @edit="edit"
-      :noEdit="(item) => !canTasks(item, 'update')"
-      :noDelete="(item) => !canTasks(item, 'delete')"
+    v-else
+    @bottom-touched="()=>fetchTasks(false, props.order_id)"
+    :fields="fields"
+    :items="state.raw"
+    @delete="removeTask"
+    @edit="edit"
+    :noEdit="(item) => !canTasks(item, 'update')"
+    :noDelete="(item) => !canTasks(item, 'delete')"
+    :actions="userHasAtLeastOnePermission(['update tasks', 'delete tasks'])"
   >
-      <!-- Body -->
-      <template #td-name="{ value, item: {id} }" >
-          <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
-      </template>
+    <!-- :actions="!canTasks(item, 'update') && !canTasks(item, 'delete')" -->
+    <!-- Body -->
+    <template #td-name="{ value, item: {id} }" >
+        <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
+    </template>
 
-      <template #td-type="{ item: {is_map} }" >
-        <Badge :point="true" :color="is_map ? 'green' : 'purple'">
-          {{ is_map ? 'Диагностическая карта' : 'Задачa' }}
-        </Badge>
-      </template>
+    <template #td-type="{ item: {is_map} }" >
+      <Badge :point="true" :color="is_map ? 'green' : 'purple'">
+        {{ is_map ? 'Диагностическая карта' : 'Задачa' }}
+      </Badge>
+    </template>
 
-      <template #td-user="{ value }" >
-        <Avatar
-          :title="`${value?.name ?? '_'} ${value?.surname ?? '_'}`"
-          :subtitle="value?.office_position ?? '...'"
-          :image="value?.avatar"
-        />
-      </template>
+    <template #td-user="{ value }" >
+      <Avatar
+        :title="`${value?.name ?? '_'} ${value?.surname ?? '_'}`"
+        :subtitle="value?.office_position ?? '...'"
+        :image="value?.avatar"
+      />
+    </template>
 
-      <template #td-status="{ value }" >
-          <Badge :point="true" :color="tasksColorMap[value].color">{{ tasksColorMap[value].label }}</Badge>
-      </template>
+    <template #td-status="{ value }" >
+        <Badge :point="true" :color="tasksColorMap[value].color">{{ tasksColorMap[value].label }}</Badge>
+    </template>
 
-      <template #td-created_at="{ value }" >
-          {{ value.split(' ')[0] }}
-      </template>
+    <template #td-created_at="{ value }" >
+        {{ value.split(' ')[0] }}
+    </template>
 
-      <template #td-deadline_at="{ value }" >
-          {{ value }}
-      </template>
+    <template #td-deadline_at="{ value }" >
+        {{ value }}
+    </template>
 
-      <template #td-order="{ value }" >
-          <Link :href="{name: 'OrderEdit', params: {id: value?.id ?? 0}}" >#{{ generateShapedIdfromId(value?.id) }}</Link>
-      </template>
-      <!-- ****** -->
+    <template #td-order="{ value }" >
+        <Link :href="{name: 'OrderEdit', params: {id: value?.id ?? 0}}" >#{{ generateShapedIdfromId(value?.id) }}</Link>
+    </template>
+    <!-- ****** -->
   </Table>
 
   <Teleport to="#sto-modal-teleport">

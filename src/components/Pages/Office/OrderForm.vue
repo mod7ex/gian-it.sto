@@ -40,6 +40,7 @@ if (isEditPage.value) {
 
 const theTab = computed(() => tabs.find(({ tab }) => tab === current.value));
 
+// Filter by permissions
 const getTabs = () => tabs.filter(({ permissions }) => userHasAtLeastOnePermission(permissions, true)).map(({ tab, label }) => ({ label, tab }));
 const labels = computed(() => (!isEditPage.value ? [{ label: tabs[0].label, tab: tabs[0].tab }] : getTabs()));
 

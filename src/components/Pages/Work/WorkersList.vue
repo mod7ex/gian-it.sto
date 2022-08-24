@@ -9,6 +9,7 @@ import save from '~/helpers/save'
 import useApi from '~/composables/useApi.js';
 import Spinner from '@/UI/Spinner.vue';
 import { ArrowLeftIcon } from '@heroicons/vue/solid';
+import { computed } from '@vue/reactivity';
 
 const { apiRequest } = useApi();
 const { logOut, userDepartment, setToken, setUser, user } = useAuth();
@@ -33,8 +34,9 @@ const logWorker = async (email) => {
       router.push({ name: 'WorkerTasks' }) // better to use go then push, in order to pull up the token from local storage
     });
   }
-
 }
+
+const workers = computed(() => state.employees.filter(({roles}) => !((roles[0].title === 'Администратор') || roles[0].title === 'Директор')));
 
 </script>
 
@@ -56,7 +58,7 @@ const logWorker = async (email) => {
     </template>
 
     <div class="max-h-96 overflow-y-scroll z-50 relative">
-      <div v-for="(worker, i) in state.employees" :key="i" :class="[user.id == worker.id ? 'bg-gray-200' : '', 'py-4 px-4 border-b block']">
+      <div v-for="(worker, i) in workers" :key="i" :class="[user.id == worker.id ? 'bg-gray-200' : '', 'py-4 px-4 border-b block']">
         <Avatar
           @click="() => logWorker(worker.email)"
           :title="`${worker.name} ${worker.surname} ${worker.middlename ?? ''}`"

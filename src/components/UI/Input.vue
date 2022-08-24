@@ -142,7 +142,7 @@ if (props.icon) {
         @blur="() => $emit('blured')"
         @focus="() => $emit('focused')"
         :disabled="disabled"
-        v-maska="mask"
+        v-mask="mask"
       />
 
       <input

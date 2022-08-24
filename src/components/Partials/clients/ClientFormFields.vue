@@ -70,7 +70,7 @@ const notifyClientCars = (v) => { clientFields.cars = clientFields.cars.filter((
             <!-- <Input label="Паспорт" :mask="props.inModal ? undefined : '#### #######'" v-model="clientFields.passport" /> -->
         </div>
 
-        <v-can ability="crud departments" class="col-span-12 sm:col-span-3">
+        <v-can ability="crud departments" class="col-span-12 sm:col-span-4">
             <Select
                 :disabled="inModal"
                 label="Отделение"
@@ -82,16 +82,17 @@ const notifyClientCars = (v) => { clientFields.cars = clientFields.cars.filter((
             />
         </v-can>
 
-        <div class="col-span-12 sm:col-span-6">
+        <div class="col-span-12 sm:col-span-8">
             <Input label="Адрес" v-model="clientFields.address" />
         </div>
 
         <div class="col-span-12 sm:col-span-12">
             <div class="flex flex-row gap-4 flex-wrap items-center">
                 <div v-for="(phone, i) in clientFields.phones" class="flex items-center" :key="`phones-${i}`">
+                <!-- :mask="props.inModal ? undefined : '+7 ### ###-##-##'" -->
                     <Input
                         :label="`Телефон ${i + 1}`"
-                        :mask="props.inModal ? undefined : '+7 ### ###-##-##'"
+                        :mask="'+7 ### ###-##-##'"
                         v-model="clientFields.phones[i]"
                         :error="clientFields.phones.invalide == i ?  v$.phones.$errors[0]?.$message : ''"
                         @input="v$.phones.$touch"

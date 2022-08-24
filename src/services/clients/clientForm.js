@@ -29,7 +29,7 @@ const defaultClientFields = {
   passport: '',
   notes: '',
   born_at: '',
-  phones: [''],
+  phones: ['+7'],
   emails: [''],
   department_id: '',
   cars: [],
@@ -81,7 +81,7 @@ const setClientField = function (key) {
         clientFields[key] = this[key];
         return;
       }
-      clientFields[key] = [''];
+      clientFields[key] = key === 'phones' ? ['+7'] : [''];
       return;
     }
 
@@ -122,7 +122,7 @@ const addItem = (item) => () => {
     }
     v$.value[item].$touch();
     if (v$.value[item].$error) return;
-    clientFields[item].push('');
+    clientFields[item].push(item === 'phones' ? '+7' : '');
     v$.value[item].$reset();
     return;
   }

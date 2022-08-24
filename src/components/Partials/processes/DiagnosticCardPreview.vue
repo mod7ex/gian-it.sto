@@ -4,6 +4,7 @@ import { computed, onMounted, reactive, watch, ref } from 'vue';
 import { generateShapedIdfromId, debounce } from '~/helpers';
 // import $ from '~/helpers/fetch';
 import save from '~/helpers/save';
+import { userHasPermission } from '~/lib/permissions';
 
 const props = defineProps({
   id: String,
@@ -162,7 +163,7 @@ onMounted(() => {
     <div>
       <div v-for="({ data, type, token }, i) in fields" :key="i" class="mb-9" >
 
-        <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
+        <div v-if="type === 'check_list' && userHasPermission('crud processes')" class="flex justify-center flex-col" >
           <!-- {{ answers.data[findFieldIndex(token, type)] }} -->
           <h3 class="font-bold text-xl mb-3">{{ data?.title }}</h3>
           <div class="mx-auto grid grid-cols-12 gap-3 print-mode-checklist">

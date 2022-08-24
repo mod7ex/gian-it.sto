@@ -27,7 +27,7 @@ const createContent = (payload) => {
 };
 
 const timeline = computed(() => {
-  console.log(task?.value?.logs);
+  // console.log(task?.value?.logs?.map(({ data, created_at }) => ({ ...data, created_at }))[task?.value?.logs.length - 1]);
   const v = task?.value?.logs?.map(({ created_at, created_user, data }, id) => {
     const { type, content } = createContent(data);
 

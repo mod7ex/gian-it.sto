@@ -148,10 +148,10 @@ const handelBlur = (e, force = false) => {
             v-if="filteredOptions.length > 0"
           >
             <span
-              class="block text-sm p-2 hover:bg-gray-300 cursor-pointer"
-              v-for="item in filteredOptions"
-              @click="$emit('update:modelValue', item.value)"
+              v-for="(item, i) in filteredOptions"
               :key="item.value"
+              @click="$emit('update:modelValue', item.value)"
+              :class="['block text-sm p-2 hover:bg-gray-300 cursor-pointer', 1 + i === filteredOptions.length ? '' : 'border-b border-gray-300']"
             >{{ item.label }}
             </span>
             <span class="block h-px bg-white">

@@ -71,8 +71,18 @@ export default function () {
     scope.run(() => {
       const isUpdate = computed(() => !!finance.id);
 
+      const title = computed(() => {
+        if (isUpdate.value) {
+          if (finance.name) {
+            return finance.name.startsWith('Оплата') ? 'Подробности' : communicate.modal.update.finance;
+          }
+          return '';
+        }
+        return communicate.modal.create.finance;
+      });
+
       const { render } = useModalForm({
-        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].finance),
+        title,
         RawForm,
         atSubmit: saveForm,
         atClose: () => scope.stop(),

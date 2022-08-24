@@ -1,5 +1,7 @@
 <script setup>
 import { ExclamationCircleIcon } from '@heroicons/vue/solid';
+import { mask } from 'maska';
+import { ref, watch } from 'vue';
 
 // Fix ISSUE --> https://github.com/vuejs-tips/vue-the-mask/issues/82
 
@@ -100,6 +102,30 @@ if (props.error.length > 0) {
 if (props.icon) {
   styles.push('pl-10');
 }
+
+const emit = defineEmits(['update:modelValue', 'blured', 'focused']);
+
+// https://github.com/vuejs-tips/vue-the-mask/issues/82#issuecomment-1225868435
+
+const inputRef = ref();
+
+const maskInput = (v) => {
+  if (props.mask) return mask(v, props.mask);
+  return v;
+};
+
+const handelInput = (e) => {
+  const v = maskInput(e.target.value);
+  emit('update:modelValue', v);
+  inputRef.value.value = v;
+};
+
+const vMask = {
+  updated(el, binding) {
+    console.log(binding.vlaue);
+  },
+};
+
 </script>
 
 <template>
@@ -121,15 +147,8 @@ if (props.icon) {
         </div>
       </slot>
 
-      <!--
-            The reason we have an if statement
-            is that we have a conflict with maska
-            inside the useModalFoem composable
-            the v-maska directive is an unknown directive
-       -->
-
       <input
-        v-if="mask"
+        ref="inputRef"
         :autocomplete="autocomplete"
         :type="type"
         :class="styles"
@@ -137,28 +156,12 @@ if (props.icon) {
         :min="props.min"
         :max="props.max"
         :step="props.step"
-        :value="modelValue"
-        @input="(e) => $emit('update:modelValue', e.target.value)"
+        :value="props.modelValue"
+        @input="handelInput"
         @blur="() => $emit('blured')"
         @focus="() => $emit('focused')"
         :disabled="disabled"
-        v-mask="mask"
-      />
-
-      <input
-        v-else
-        :autocomplete="autocomplete"
-        :type="type"
-        :class="styles"
-        :placeholder="placeholder"
-        :min="props.min"
-        :max="props.max"
-        :step="props.step"
-        :value="modelValue"
-        @input="(e) => $emit('update:modelValue', e.target.value)"
-        @blur="() => $emit('blured')"
-        @focus="() => $emit('focused')"
-        :disabled="disabled"
+        v-mask="props.mask"
       />
 
       <slot name="after">
@@ -173,5 +176,3 @@ if (props.icon) {
     </p>
   </div>
 </template>
-
-<style scoped></style>

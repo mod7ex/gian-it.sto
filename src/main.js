@@ -1,4 +1,4 @@
-import Maska from 'maska';
+// import Maska from 'maska';
 import { createApp } from 'vue';
 import router from './router';
 import App from './App.vue';
@@ -26,7 +26,7 @@ app.component('v-can', Can);
   } finally {
     // app.use(uiImporteur);
     app.use(router);
-    app.use(Maska);
+    // app.use(Maska);
     app.mount('#app');
   }
 })();

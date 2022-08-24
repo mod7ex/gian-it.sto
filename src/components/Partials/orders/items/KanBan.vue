@@ -10,6 +10,8 @@ const { columns, log, atMounted } = service();
 
 await atMounted();
 
+console.log(columns.value)
+
 </script>
 
 <template>
@@ -60,8 +62,9 @@ await atMounted();
 
                 <div class="flex mt-4 justify-between items-center">
                   <span class="text-sm text-gray-600">{{ element.created_at.split(' ')[0] }}</span>
-                  <!-- <Badge color="blue" :point="true" v-if="element.type">{{ 'element.type' }}</Badge> -->
-                  <Badge color="blue" :point="true" >{{ 'element.type' }}</Badge>
+                  <Badge color="blue" :point="true" >
+                    {{ `${element?.car_model?.car_mark?.name ?? 'element?.car_model?.car_mark?.name'} ${element?.car_model?.name ?? 'element?.car_model?.name'}`.substr(0, 20) }}
+                  </Badge>
                 </div>
 
               </div>

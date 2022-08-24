@@ -25,7 +25,7 @@ await Promise.all([load(), loadOrders({ department_id: current.value }), atMount
           v-model="finance.order_id"
           :options="orderOptions"
           :required="true"
-
+          :disabled="finance.name.startsWith('Оплата')"
         />
 
 <!--
@@ -39,6 +39,7 @@ await Promise.all([load(), loadOrders({ department_id: current.value }), atMount
           :required="true"
           :error="v$.name.$errors[0]?.$message"
           @blured="v$.name.$touch"
+          :disabled="finance.name.startsWith('Оплата')"
         />
 
         <Input
@@ -48,6 +49,7 @@ await Promise.all([load(), loadOrders({ department_id: current.value }), atMount
           :required="true"
           :error="v$.sum.$errors[0]?.$message"
           @blured="v$.sum.$touch"
+          :disabled="finance.name.startsWith('Оплата')"
         />
 
         <Select
@@ -57,15 +59,18 @@ await Promise.all([load(), loadOrders({ department_id: current.value }), atMount
           :required="true"
           :error="v$.operation_type.$errors[0]?.$message"
           @blured="v$.operation_type.$touch"
+          :disabled="finance.name.startsWith('Оплата')"
         />
 
         <Select
+          v-if="!finance.name.startsWith('Оплата')"
           label="Группа"
           v-model="finance.finance_group_id"
           :options="options"
           :required="true"
           :error="v$.finance_group_id.$errors[0]?.$message"
           @blured="v$.finance_group_id.$touch"
+          :disabled="finance.name.startsWith('Оплата')"
         />
         <v-can ability="crud departments">
           <Select
@@ -73,6 +78,7 @@ await Promise.all([load(), loadOrders({ department_id: current.value }), atMount
             v-model="finance.department_id"
             :required="true"
             :options="depOptions"
+            :disabled="finance.name.startsWith('Оплата')"
           />
         </v-can>
     </div>

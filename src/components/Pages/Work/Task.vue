@@ -22,7 +22,7 @@ const EVENTS = {
 };
 
 const createContent = (payload) => {
-  if ('user_id' in payload) return { type: 'USER_ACTION', content: 'Поставлено' };
+  if ('user_id' in payload) return { type: 'USER_ACTION', content: 'Поставлено на' };
   if ('status' in payload) return { type: 'STATUS_CHANGED', content: `Статус изменен (${tasksColorMap[payload.status].label})` };
 };
 
@@ -126,29 +126,16 @@ const timeline = computed(() => {
           <Feeds :items="timeline" class="mt-5 max-h-vh overflow-y-scroll" />
 
           <div class="mt-6 grid grid-cols-3 gap-x-2" :key="task.status">
-<!--
-            <Button class="col-span-1 flex justify-center" color="purple" @click="() => ping('process')" blur v-if="((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) && canTasks(task, 'update')">
-              <ClockIcon class="w-5 h-5 mr-1"/>Начать
-            </Button>
-
-            <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" v-if="canTasks(task, 'update')">на паузу</Button>
-
-            <Button class="col-span-1 flex justify-center" color="green" @click="() => ping('done')" blur v-if="((task?.status === 'process') || (task?.status ==(task?.status === 'process') || (task?.status === 'pause')== 'pause')) && canTasks(task, 'update')">
-              Завершить
-            </Button>
--->
-
             <Button class="col-span-1 flex justify-center" color="purple" @click="() => ping('process')" blur :disabled="!((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) && canTasks(task, 'update')" >
-              <ClockIcon class="w-5 h-5 mr-1"/>Начать
+              <!-- <ClockIcon class="w-5 h-5 mr-1"/> -->
+              Начать
             </Button>
 
             <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" :disabled="(!canTasks(task, 'update')) || (task?.status === 'pause') || (task?.status === 'done')" >на паузу</Button>
 
             <Button class="col-span-1 flex justify-center" color="green" @click="() => ping('done')" blur :disabled="!((task?.status === 'process') || (task?.status === 'process') || (task?.status === 'pause')) && canTasks(task, 'update')" >
-            <!-- <Button class="col-span-1 flex justify-center" color="green" @click="() => ping('done')" blur :disabled="!(((task?.status === 'process') || (task?.status ==(task?.status === 'process') || (task?.status === 'pause')== 'pause')) && canTasks(task, 'update'))" > -->
               Завершить
             </Button>
-
           </div>
         </div>
       </section>

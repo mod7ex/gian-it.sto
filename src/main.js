@@ -28,7 +28,5 @@ app.component('v-can', Can);
     app.use(router);
     app.use(Maska);
     app.mount('#app');
-
-    console.log(Maska);
   }
 })();

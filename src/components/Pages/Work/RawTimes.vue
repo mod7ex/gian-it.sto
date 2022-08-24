@@ -35,11 +35,11 @@ const getWorkedHoursNumberIn = (day) => {
     if (taskWorkedHours.length) {
       // worker didn't pause or finish the task yesterday
       const { mode: mode_0, at: at_0 } = taskWorkedHours[0];
-      if (mode_0 !== 'process') workedHours += calcMinsDiff(at_0, day);
+      if (mode_0 !== 'process' && mode_0 !== 'wait') workedHours += calcMinsDiff(at_0, day);
 
-      // worker didn't pause or finish the task today
-      const { mode_l, at_l } = taskWorkedHours[taskWorkedHours.length - 1];
-      if (mode_l === 'process') workedHours += calcMinsDiff(at_l, new Date().getTime());
+      // worker didn't pause or finish the task today (till now)
+      const { mode: mode_l, at: at_l } = taskWorkedHours[taskWorkedHours.length - 1];
+      if (mode_l === 'process') workedHours += calcMinsDiff(new Date().getTime(), at_l);
 
       if (taskWorkedHours.length > 1) {
         let i = 0;

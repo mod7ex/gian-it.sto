@@ -23,7 +23,7 @@ const { pixel, container } = useIntersectionObserver(() => emit('bottomTouched')
 const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Количество', key: 'count' },
-  // { label: 'Место', key: 'place' },
+  { label: 'Место', key: 'place' },
 ];
 
 if(isThePage.value) {
@@ -76,13 +76,13 @@ onScopeDispose(() => reset(true));
             </template>
 
             <template #td-count="{ value }" >
-                <p :key="item?.count">{{ value }}</p>
+                <p>{{ value }}</p>
             </template>
-<!--
+
             <template #td-place="{ value }" >
                 {{ value }}
             </template>
--->
+
         </Table>
         <pixel />
     </div>

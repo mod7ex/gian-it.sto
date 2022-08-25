@@ -30,7 +30,7 @@ onScopeDispose(clearMemo);
 </script>
 
 <template>
-    <OfficeLayout :title="currentStorage" main-classes="flex-1 flex flex-col overflow-hidden">
+    <OfficeLayout :title="`${currentStorage} ${state.pending ? ' загрузка...' : ''}`" main-classes="flex-1 flex flex-col overflow-hidden">
 
       <template #actions>
         <Button type="secondary" :link="{ name: 'Storages' }">

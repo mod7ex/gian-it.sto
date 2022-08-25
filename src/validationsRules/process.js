@@ -11,7 +11,7 @@ export default function () {
 
 export function whyRules() {
   return computed(() => ({
-    title: { required: helpers.withMessage('Укажите вопрос', required) },
+    name: { required: helpers.withMessage('Укажите вопрос', required) },
     // data: { required: helpers.withMessage('Заполняете содержание диагностической карты', required) },
   }));
 }

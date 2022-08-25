@@ -32,6 +32,7 @@ clearMemo()
     :items="state.raw"
     @edit="(id) => render(id)"
     @delete="(id) => drop(() => dropPayment(id))"
+    :noEdit="({ status }) => status === 'done'"
   >
     <template #td-client="{ value }" >
       <Link :href="{ name: 'EditClient', params: { id: value?.id } }" >

@@ -113,13 +113,13 @@ onMounted(async () => {
     <!-- :actions="!canTasks(item, 'update') && !canTasks(item, 'delete')" -->
     <!-- Body -->
     <template #td-name="{ value, item: {id, author, department, user} }" >
-        <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
+      <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
+      <br>
+        creator: {{ author.name }}, 
         <br>
-          creator: {{ author.name }}, 
-          <br>
-          department: {{ department.name }}
-          <br>
-          executor: {{ user.name }}
+        department: {{ department.name }}
+        <br>
+        executor: {{ user.name }}
     </template>
 
     <template #td-type="{ item: {is_map} }" >
@@ -149,7 +149,9 @@ onMounted(async () => {
     </template>
 
     <template #td-order="{ value }" >
-        <Link :href="{name: 'OrderEdit', params: {id: value?.id ?? 0}}" >#{{ generateShapedIdfromId(value?.id) }}</Link>
+        <Link :disabled="value == null" :href="{name: 'OrderEdit', params: {id: value?.id ?? 0}}" >
+          {{ value ? `#${generateShapedIdfromId(value?.id)}` : '_' }}
+        </Link>
     </template>
     <!-- ****** -->
   </Table>

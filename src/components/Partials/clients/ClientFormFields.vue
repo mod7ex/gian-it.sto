@@ -66,8 +66,7 @@ const notifyClientCars = (v) => { clientFields.cars = clientFields.cars.filter((
         </div>
 
         <div class="col-span-12 sm:col-span-4 ">
-            <Input label="Паспорт" v-model="clientFields.passport" />
-            <!-- <Input label="Паспорт" :mask="props.inModal ? undefined : '#### #######'" v-model="clientFields.passport" /> -->
+            <Input label="Паспорт" mask="XXXX XXXXXX" v-model="clientFields.passport" />
         </div>
 
         <v-can ability="crud departments" class="col-span-12 sm:col-span-4">
@@ -89,7 +88,6 @@ const notifyClientCars = (v) => { clientFields.cars = clientFields.cars.filter((
         <div class="col-span-12 sm:col-span-12">
             <div class="flex flex-row gap-4 flex-wrap items-center">
                 <div v-for="(phone, i) in clientFields.phones" class="flex items-center" :key="`phones-${i}`">
-                <!-- :mask="props.inModal ? undefined : '+7 ### ###-##-##'" -->
                     <Input
                         :label="`Телефон ${i + 1}`"
                         :mask="'+7 ### ###-##-##'"

@@ -53,6 +53,7 @@ await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClient
                 :required="true"
                 :error="v$.vin.$errors[0]?.$message"
                 @input="v$.vin.$touch"
+                mask="XXXXXXXXXXXXXXXXXXXX"
             />
         </div>
 
@@ -61,7 +62,7 @@ await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClient
         </div>
 
         <div class="col-span-12 sm:col-span-6 md:col-span-4">
-            <Input label="Год выпуска" type="number" :min="1950" :max="new Date().getFullYear()" :mask="props.inModal ? undefined : '####'" :step="2" v-model="carFields.year" />
+            <Input label="Год выпуска" type="number" :min="1950" :max="new Date().getFullYear()" mask="####" :step="2" v-model="carFields.year" />
         </div>
         <div class="col-span-12 sm:col-span-6 md:col-span-4">
             <Select label="Марка" :options="markOptions" v-model="theSelectedCarMark" />

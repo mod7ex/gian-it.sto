@@ -54,7 +54,7 @@ export default function (order_id) {
       const isUpdate = computed(() => !!invoice.id);
 
       const { render } = useModalForm({
-        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].invoice),
+        title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].payment),
         RawForm,
         atSubmit: () => saveForm(order_id),
         atClose: () => scope.stop(),

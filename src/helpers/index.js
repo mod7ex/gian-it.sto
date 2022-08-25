@@ -166,7 +166,7 @@ export const getFileContent = (file, cb, onFail) => {
 export const tasksColorMap = {
   wait: { color: 'yellow', label: 'Ожидает' },
   process: { color: 'green', label: 'В работе' },
-  pause: { color: 'red', label: 'В паузе' },
+  pause: { color: 'red', label: 'На паузе' },
   done: { color: 'indigo', label: 'Завершена' },
   cancel: { color: 'red', label: 'Отменено' },
 };

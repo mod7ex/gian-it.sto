@@ -34,7 +34,7 @@ cleanUp();
 const reducers = {
   balance: (b, curr) => b + (curr.sum * (curr.operation_type === 'in' ? 1 : -1)),
   loss: (b, curr) => b + (curr.sum * (curr.operation_type === 'out' ? 1 : 0)),
-  wait: (b, curr) => '(Comming soon)',
+  wait: (b, curr) => '0',
 };
 
 const reducedState = (reducer, initial) => Array.prototype.reduce.apply(state.raw, [reducer, initial]);

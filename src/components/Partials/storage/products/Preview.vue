@@ -181,7 +181,7 @@ onMounted(() => { close(); reset(); });
             </div>
 <!-- -->
             <div class="flex justify-between">
-                <Button color="blue" class="flex-1 justify-center" @click="() => redirectToForm(target.id)">Изменить</Button>
+                <Button color="blue" class="flex-1 justify-center" @click="() => redirectToForm(target.id, target)">Изменить</Button>
                 <Button color="red" class="flex-1 ml-3 justify-center" @click="()=>dropProduct(target.id, isThePage)">Удалить</Button>
             </div>
         </div>

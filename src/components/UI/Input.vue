@@ -115,14 +115,18 @@ const maskInput = (v) => {
 };
 
 const handelInput = (e) => {
-  const v = maskInput(e.target.value);
-  emit('update:modelValue', v);
-  inputRef.value.value = v;
+  if (e.inputType === 'deleteContentBackward') {
+    emit('update:modelValue', e.target.value);
+  } else {
+    const v = maskInput(e.target.value);
+    emit('update:modelValue', v);
+    inputRef.value.value = v;
+  }
 };
 
 const vMask = {
   updated(el, binding) {
-    console.log(binding.vlaue);
+    // console.log(binding.vlaue);
   },
 };
 

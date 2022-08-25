@@ -25,6 +25,7 @@ const user = ref(defaultUserFields);
 const isUserLogged = computed(() => !!user.value.id);
 const isAdmin = computed(() => user.value.roles[0].name === 'admin');
 const userDepartment = computed(() => user.value?.department?.id);
+const userRole = computed(() => user.value?.roles[0]);
 
 const setToken = ((payload) => {
   if (!payload) return localStorage.removeItem(TOKEN_STORE_NAME);
@@ -74,5 +75,6 @@ export default function useAuth() {
     logOut,
     userDepartment,
     isAdmin,
+    userRole,
   };
 }

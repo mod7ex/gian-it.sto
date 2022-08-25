@@ -93,6 +93,7 @@ await atMounted().then(async () => {
             :fields="dc_template.data ?? []"
             :dc_template="dc_template"
             :no-head="true"
+            :disabled="!canTasks(task, 'update')"
         />
 
     </Card>

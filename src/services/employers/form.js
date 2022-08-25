@@ -18,7 +18,7 @@ const { current, setCurrent } = departmentStore;
 
 const { select } = store;
 
-const { userDepartment } = useAuth();
+const { userDepartment, user: moi } = useAuth();
 const { apiRequest } = useApi();
 const toaster = useToast();
 const hasCRUDdepartments = userHasPermission('crud departments');
@@ -104,7 +104,6 @@ export default function () {
   };
 
   const saveUser = async () => {
-    console.log(userFields);
     let isValideForm = await v$.value.$validate();
 
     isValideForm &&= isValideAvatarFileSize.value;
@@ -126,6 +125,12 @@ export default function () {
 
     // ********* Password update request
     if (isThePage.value && userFields.password) { success = await updatePassword(user?.id); }
+
+    if (isThePage.value && user.id == moi.value.id && moi.value.roles[0].id != user?.roles[0].id) {
+      window.location = '/';
+      // moi.value.roles = user.roles;
+      // moi.value.permissions = user.permissions;
+    }
 
     if (user?.department?.id) setCurrent(user?.department?.id);
 

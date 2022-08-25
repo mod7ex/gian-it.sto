@@ -26,7 +26,22 @@ const reset = () => {
 };
 
 const load = async (payload = {}) => {
-  state.raw = await $.tasks(payload);
+  if (state.pending) return;
+
+  if (PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
+    if (payload.department_id != userDepartment.value) return;
+  }
+
+  state.pending = true;
+  const data = await $.tasks(payload);
+  state.pending = false;
+
+  if (PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
+    const only_my_tasks = data?.filter(({ author: { id } }) => id === user.value.id) ?? [];
+    state.raw = only_my_tasks;
+  } else {
+    state.raw = data ?? [];
+  }
 };
 
 const fill = async (payload = {}) => {

@@ -5,9 +5,12 @@ import useAppRouter from '~/composables/useAppRouter.js';
 import useToggles from '~/composables/useToggles.js';
 import $ from '~/helpers/fetch.js';
 import save from '~/helpers/save';
+import useAuth from '~/composables/useAuth';
 
 let rawRolePermissions;
 let role;
+
+const { userRole, user } = useAuth();
 
 /* ************ Role Raw Permissions ************ */
 const fetchRawRolePermissions = async () => {
@@ -17,7 +20,7 @@ const fetchRawRolePermissions = async () => {
 };
 
 export default () => effectScope().run(() => {
-  const { route, isThePage, redirectTo } = useAppRouter('EditRole');
+  const { route, isThePage, redirectTo, router } = useAppRouter('EditRole');
 
   const { toggles: permissions, setToggles, truthyTogglesArray } = useToggles();
 
@@ -65,9 +68,16 @@ export default () => effectScope().run(() => {
 
     v$.value.$reset();
 
-    const { success } = await save.role({ ...role, permissions: truthyTogglesArray.value }, null, true);
+    const { success, data } = await save.role({ ...role, permissions: truthyTogglesArray.value }, null, true);
 
-    success && await redirectTo({ name: 'Roles' });
+    if (isThePage.value && userRole.value.id == role.id) {
+      // router.go({ name: 'Roles' });
+      // window.location = '/roles';
+      user.value.permissions = data.role.permissions;
+      success && await redirectTo({ name: 'Roles' });
+    } else {
+      success && await redirectTo({ name: 'Roles' });
+    }
 
     return success;
   };

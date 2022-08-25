@@ -67,7 +67,7 @@ const userMenu = [
 ];
 
 const menu = [
-  { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon },
+  // { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon },
   { label: 'Заказ-наряды', name: 'Orders', icon: ChipIcon },
   { label: 'Задачи', name: 'Tasks', icon: TableIcon },
   { label: 'Рабочие процессы', name: 'Processes', icon: PuzzleIcon },

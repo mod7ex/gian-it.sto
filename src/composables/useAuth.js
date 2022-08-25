@@ -38,7 +38,7 @@ const setUser = (userData) => {
   if (!localStorage.getItem('department')) {
     localStorage.setItem('department', `${userData?.department?.id}`);
   }
-  if (!userData?.avatar) user.value.avatar = '/src/assets/noAvatar.svg';
+  if (!userData?.avatar) user.value.avatar = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Font_Awesome_5_solid_user-circle.svg/991px-Font_Awesome_5_solid_user-circle.svg.png';
   return !!userData;
 };
 

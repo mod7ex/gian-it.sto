@@ -68,13 +68,11 @@ export default () => effectScope().run(() => {
 
     v$.value.$reset();
 
-    const { success, data } = await save.role({ ...role, permissions: truthyTogglesArray.value }, null, true);
+    const { success } = await save.role({ ...role, permissions: truthyTogglesArray.value }, null, true);
 
     if (isThePage.value && userRole.value.id == role.id) {
       // router.go({ name: 'Roles' });
-      // window.location = '/roles';
-      user.value.permissions = data.role.permissions;
-      success && await redirectTo({ name: 'Roles' });
+      window.location = '/roles';
     } else {
       success && await redirectTo({ name: 'Roles' });
     }

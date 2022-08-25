@@ -127,14 +127,14 @@ export default function () {
     if (isThePage.value && userFields.password) { success = await updatePassword(user?.id); }
 
     if (isThePage.value && user.id == moi.value.id && moi.value.roles[0].id != user?.roles[0].id) {
-      window.location = '/';
+      window.location = '/dashboard';
       // moi.value.roles = user.roles;
       // moi.value.permissions = user.permissions;
+    } else {
+      if (user?.department?.id) setCurrent(user?.department?.id);
+
+      success && await previousPage(user?.id);
     }
-
-    if (user?.department?.id) setCurrent(user?.department?.id);
-
-    success && await previousPage(user?.id);
   };
 
   const setEmployerForm = async (payload) => {

@@ -1,6 +1,9 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
+import { userHasPermission } from '~/lib/permissions';
+
+const hasCrud = userHasPermission('crud pipelines');
 
 const state = reactive({
   raw: [],
@@ -27,6 +30,7 @@ const load_orders_funnel = async () => {
 };
 
 const load = async (payload = {}) => {
+  if (!hasCrud) return;
   state.raw = await $.pipelines(payload);
 };
 

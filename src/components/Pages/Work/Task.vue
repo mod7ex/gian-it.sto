@@ -17,38 +17,53 @@ const { task, clearMemo, ping, canTasks } = service();
 clearMemo();
 
 const EVENTS = {
-  USER_ACTION: { iconBackground: 'bg-gray-400', icon: UserIcon },
-  STATUS_CHANGED: { iconBackground: 'bg-green-500', icon: CheckIcon },
+  TASK_CREATED: { iconBackground: 'bg-gray-400', icon: UserIcon },
+  TASK_STATUS: { iconBackground: 'bg-green-500', icon: CheckIcon },
+  TASK_UPDATED: { iconBackground: 'bg-blue-500', icon: ThumbUpIcon },
 };
 
-const createContent = (payload) => {
-  if ('user_id' in payload) return { type: 'USER_ACTION', content: 'Поставлено на' };
-  if ('status' in payload) return { type: 'STATUS_CHANGED', content: `Статус изменен (${tasksColorMap[payload.status].label})` };
+const createContent = ({ type, status }) => {
+  const r = {};
+  if (type === 'task_created') { r.ev = 'TASK_CREATED'; r.content = 'Поставлено на'; }
+  if (type === 'task_updated') { r.ev = 'TASK_UPDATED'; r.content = 'Задача обновлена'; }
+  if (type === 'task_status') { r.ev = 'TASK_STATUS'; r.content = `Статус изменен (${tasksColorMap[status].label})`; }
+  return r;
 };
 
 const timeline = computed(() => {
-  // console.log(task?.value?.logs?.map(({ data, created_at }) => ({ ...data, created_at }))[task?.value?.logs.length - 1]);
-  const v = task?.value?.logs?.map(({ created_at, created_user, data }, id) => {
-    const { type, content } = createContent(data);
+  // console.log(task?.value?.logs?.map(({ type, data, created_at }) => ({ type, details: { ...data }, created_at })));
+
+  const v = [];
+
+  task?.value?.logs?.forEach(({ created_at, created_user, data, type }, id) => {
+    if (type === 'task_updated' && 'status' in data) return; // handel duplication from server
+
+    const { ev, content } = createContent({ type, ...data });
+
+    if (!ev || !content) return;
 
     const d = new Date(created_at.split(' ')[0]);
+
     const date = `${d.getDate()} ${ruMonths[d.getMonth()]} ${created_at.split(' ')[1].substr(0, 5)}`;
+
+    if (type === 'task_created') created_user = task.value.user;
 
     const dot = {
       id,
       content,
-      target: `${created_user.name ?? ''} ${created_user.username ?? ''} ${created_user.middle_name ?? ''}`,
+      target: `${created_user.name ?? ''} ${created_user.surname ?? ''}`,
+      // target: `${created_user.name ?? ''} ${created_user.username ?? ''} ${created_user.middle_name ?? ''}`,
       date,
       datetime: created_at,
       data: { ...data },
-      icon: EVENTS[type].icon,
-      iconBackground: EVENTS[type].iconBackground,
+      icon: EVENTS[ev].icon,
+      iconBackground: EVENTS[ev].iconBackground,
     };
 
-    return dot;
+    v.push(dot);
   });
 
-  return v ?? [];
+  return v;
 });
 
 // const tm = [
@@ -131,7 +146,7 @@ const timeline = computed(() => {
               Начать
             </Button>
 
-            <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" :disabled="(!canTasks(task, 'update')) || (task?.status === 'pause') || (task?.status === 'done')" >на паузу</Button>
+            <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" :disabled="(!canTasks(task, 'update')) || (task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')" >на паузу</Button>
 
             <Button class="col-span-1 flex justify-center" color="green" @click="() => ping('done')" blur :disabled="!((task?.status === 'process') || (task?.status === 'process') || (task?.status === 'pause')) && canTasks(task, 'update')" >
               Завершить

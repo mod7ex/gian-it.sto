@@ -37,7 +37,7 @@ await fetchTasks(true);
       </template>
 
       <template #td-order="{ value }" >
-        <Link :disabled="true" :href="{name: 'OrderEdit', params: {id: value?.id}}" >#{{ generateShapedIdfromId(value?.id) }}</Link>
+        <Link v-if="value?.id" :disabled="true" :href="{name: 'OrderEdit', params: {id: value?.id}}" >#{{ generateShapedIdfromId(value?.id) }}</Link>
       </template>
 
       <template #td-author="{ value }" >

@@ -25,17 +25,22 @@ const getWorkedHoursNumberIn = (day) => {
     const taskWorkedHours = [];
 
     for (let i = 0; i < logs.length; i++) {
-      const { created_at, data } = logs[i];
-      const d = (new Date(created_at.split(' ')[0])).getTime();
-      if ('status' in data && d === day) { // tasks that had the status changed today (worker touched it)
-        taskWorkedHours.push({ at: created_at, mode: data.status }); // we suppose they are sorted from server otherwise we sort them
+      const { created_at, data, type } = logs[i];
+      if (type === 'task_status') {
+        const d = (new Date(created_at.split(' ')[0])).getTime();
+        // no need to check if 'status' in data
+        if (d === day) { // tasks that had the status changed today (worker touched it)
+          taskWorkedHours.push({ at: created_at, mode: data.status }); // we suppose they are sorted from server otherwise we sort them
+        }
       }
     }
+
+    console.log(taskWorkedHours)
 
     if (taskWorkedHours.length) {
       // worker didn't pause or finish the task yesterday
       const { mode: mode_0, at: at_0 } = taskWorkedHours[0];
-      if (mode_0 !== 'process' && mode_0 !== 'wait') workedHours += calcMinsDiff(at_0, day);
+      if (mode_0 !== 'process') workedHours += calcMinsDiff(at_0, day);
 
       // worker didn't pause or finish the task today (till now)
       const { mode: mode_l, at: at_l } = taskWorkedHours[taskWorkedHours.length - 1];

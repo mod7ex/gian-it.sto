@@ -1,6 +1,9 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
+import { userHasPermission } from '~/lib/permissions';
+
+const hasCrud = userHasPermission('crud processes');
 
 const state = reactive({
   raw: [],
@@ -12,6 +15,7 @@ const reset = () => {
 };
 
 const load = async () => {
+  if (!hasCrud) return;
   state.raw = await $.maps();
 };
 

@@ -25,5 +25,5 @@ export default {
   load,
   drop,
   reset,
-  options: computed(() => state.raw.map(({ id }) => ({ label: generateShapedIdfromId(id), value: id }))),
+  options: computed(() => state.raw.map(({ id }) => ({ label: `#${generateShapedIdfromId(id)}`, value: id }))),
 };

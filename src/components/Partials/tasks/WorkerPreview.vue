@@ -61,6 +61,7 @@ await atMounted().then(async () => {
               :fields="dc_template.data ?? []"
               :dc_template="dc_template"
               :no-head="true"
+              :disabled="!canTasks(task, 'update') || task.status !== 'process'"
             />
           </DescriptionListItem>
 
@@ -71,12 +72,12 @@ await atMounted().then(async () => {
                     :key="item.id"
                     :class="['py-2', {'line-through': item.is_checked}]"
                 >
-                    <Checkbox
-                        :disabled="!canTasks(task, 'update')"
-                        :label="item.description"
-                        v-model="item.is_checked"
-                        @clicked="() => checkBox(item.id, !item.is_checked, i)"
-                    />
+                  <Checkbox
+                    :disabled="!canTasks(task, 'update') || task.status !== 'process'"
+                    :label="item.description"
+                    v-model="item.is_checked"
+                    @clicked="() => checkBox(item.id, !item.is_checked, i)"
+                  />
                 </li>
             </ul>
             <span class="mt-4 text-sm text-gray-400">

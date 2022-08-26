@@ -38,7 +38,7 @@ onMounted(loadCars);
         <sto-select
           label="Автомобиль"
           v-model="filter.car_id"
-          :options="carOptions"
+          :options="[]"
           class="w-full"
         />
       </div>

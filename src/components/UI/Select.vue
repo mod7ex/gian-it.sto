@@ -81,7 +81,7 @@ const options = computed(() => props.options?.map((e) => {
       :multiple="props.multiple"
       @input="$emit('update:modelValue', $event.target.value)"
       @blur="$emit('blured')"
-      :disabled="!!props.disabled"
+      :disabled="!!props.disabled || options.length === 0"
     >
       <option v-if="!props.hideText" :selected="modelValue == null" value="">-- {{options.length === 0 ? 'пустой' : 'выберите'}} --</option>
       <option

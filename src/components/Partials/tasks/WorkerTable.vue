@@ -35,11 +35,11 @@ await fetchTasks(true);
       <template #td-name="{ value, item: {id, author, department, user} }" >
           <Link :href="{name: 'WorkerTask', params: { id }}" >{{ value }}</Link>
           <br>
-          creator: {{ author.name }}, 
+          creator: {{ author?.name }}, 
           <br>
-          department: {{ department.name }}
+          department: {{ department?.name }}
           <br>
-          executor: {{ user.name }}
+          executor: {{ user?.name }}
       </template>
 
       <template #td-order="{ value }" >

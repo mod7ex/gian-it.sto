@@ -52,80 +52,80 @@ await Promise.all([
 const { simple } = useConfirmDialog();
 
 const handelBlackListedFile = (id) =>  {
-    fields.delete_file_ids.push(id)
-    fields.files.deleteById(id)
+  fields.delete_file_ids.push(id)
+  fields.files.deleteById(id)
 }
 </script>
 
 <template>
 
   <div>
-      <div class="mb-5">
-        <Button color="blue" @click="saveOrder"><CheckIcon class="w-5 h-5 mr-1"/>Сохранить</Button>
+    <div class="mb-5">
+      <Button color="blue" @click="saveOrder"><CheckIcon class="w-5 h-5 mr-1"/>Сохранить</Button>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 sm:col-span-4" v-if="isEditPage">
+        <Input label="Номер заказ-наряда" disabled v-model="ID" />
       </div>
 
-      <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 sm:col-span-4" v-if="isEditPage">
-          <Input label="Номер заказ-наряда" disabled v-model="ID" />
-        </div>
+      <div class="col-span-12 sm:col-span-4">
+        <Select label="Ответственный" :options="userOptions" v-model="fields.user_id" />
+      </div>
 
-        <div class="col-span-12 sm:col-span-4">
-          <Select label="Ответственный" :options="userOptions" v-model="fields.user_id" />
-        </div>
+      <div class="col-span-12 sm:col-span-4 flex items-center">
+        <sto-select :search="true" class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" />
+        <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => modalUp()" />
+      </div>
 
-        <div class="col-span-12 sm:col-span-4 flex items-center">
-          <sto-select :search="true" class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" />
-          <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => modalUp()" />
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 flex items-center">
-          <sto-select
-            :search="true"
-            class="flex-grow mr-1"
-            label="Автомобиль"
-            :options="carOptions"
-            v-model="fields.car_id"
-            :disabled="!fields.client_id"
-            :key="fields.client_id"
-          />
-          <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => render()" />
-        </div>
+      <div class="col-span-12 sm:col-span-4 flex items-center">
+        <sto-select
+          :search="true"
+          class="flex-grow mr-1"
+          label="Автомобиль"
+          :options="carOptions"
+          v-model="fields.car_id"
+          :disabled="!fields.client_id"
+          :key="fields.client_id"
+        />
+        <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => render(fields.client_id)" />
+      </div>
 <!--
-        <div class="col-span-12 sm:col-span-4">
-          <Input label="Дата создания" type="datetime-local"/>
-        </div>
--->
-        <div class="col-span-12 sm:col-span-4">
-          <Select label="Причина обращения" :options="appealReasonOptions" v-model="fields.appeal_reason_id" />
-        </div>
-
-        <div class="col-span-12 sm:col-span-4">
-          <Select label="Процесс" :options="processOptions" v-model="fields.process_category_id" />
-        </div>
-
-        <div class="col-span-12 sm:col-span-4">
-          <Select label="Этап заказа" :options="orderStagesOptions" v-model="fields.order_stage_id" />
-        </div>
-
-          <div class="col-span-12 sm:col-span-12">
-            <TextArea label="Комментарий" v-model="fields.comment" />
-          </div>
-
-        <div class="col-span-12">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>
-            <ul>
-                <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
-                    <span class="w-5 pt-2">{{ i + 1 }}</span>
-                    <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i]" />
-                    <Button color="red" size="sm" @click="removeItem(i)">Удалить</Button>
-                </li>
-            </ul>
-            <Button size="xs" class="mt-4" @click="fields.checkboxes.push('')">Добавить</Button>
-        </div>
-
-        <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" />
-
+      <div class="col-span-12 sm:col-span-4">
+        <Input label="Дата создания" type="datetime-local"/>
       </div>
+-->
+      <div class="col-span-12 sm:col-span-4">
+        <Select label="Причина обращения" :options="appealReasonOptions" v-model="fields.appeal_reason_id" />
+      </div>
+
+      <div class="col-span-12 sm:col-span-4">
+        <Select label="Процесс" :options="processOptions" v-model="fields.process_category_id" />
+      </div>
+
+      <div class="col-span-12 sm:col-span-4">
+        <Select label="Этап заказа" :options="orderStagesOptions" v-model="fields.order_stage_id" />
+      </div>
+
+      <div class="col-span-12 sm:col-span-12">
+        <TextArea label="Комментарий" v-model="fields.comment" />
+      </div>
+
+      <div class="col-span-12">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>
+        <ul>
+            <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
+                <span class="w-5 pt-2">{{ i + 1 }}</span>
+                <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i]" />
+                <Button color="red" size="sm" @click="removeItem(i)">Удалить</Button>
+            </li>
+        </ul>
+        <Button size="xs" class="mt-4" @click="fields.checkboxes.push('')">Добавить</Button>
+      </div>
+
+      <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" />
+
+    </div>
   </div>
 
 </template>

@@ -35,8 +35,6 @@ const getWorkedHoursNumberIn = (day) => {
       }
     }
 
-    console.log(taskWorkedHours)
-
     if (taskWorkedHours.length) {
       // worker didn't pause or finish the task yesterday
       const { mode: mode_0, at: at_0 } = taskWorkedHours[0];

@@ -7,7 +7,7 @@ import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import useModalForm from '~/composables/useModalForm';
 import communicate from '~/helpers/communicate';
-import service from '~/services/cars/cars';
+import carStore from '~/store/cars/cars';
 
 let routeInstance;
 let isEditCarPage;
@@ -26,15 +26,15 @@ const saveCar = async (_modal = false) => {
 
   v$.value.$reset();
 
-  const { success, message } = await save.car(carFields, null, true);
+  const { success, message, data } = await save.car(carFields, null, true);
 
   if (_modal) {
-    const { fetchCars } = service();
+    const { load } = carStore;
     try {
       return { message, success };
     } finally {
       if (success) {
-        await fetchCars(true);
+        await load({ client_id: data.car.client?.id });
       }
     }
   } else {
@@ -58,7 +58,7 @@ const setCarField = function (key) {
 
 const setCarForm = async (payload) => { Object.keys(carFields).forEach(setCarField, payload); };
 
-const prepare = () => {
+const prepare = (clientId) => {
   if (carFields) return;
 
   const { route, isThePage, back } = useAppRouter('EditCar');
@@ -75,7 +75,7 @@ const prepare = () => {
     notes: '',
     fuel_id: '',
     engine_volume_id: '',
-    client_id: '',
+    client_id: clientId ?? '',
     car_model_id: '',
   });
 
@@ -122,7 +122,7 @@ export default function (_modal = false) {
           RawForm,
           atSubmit: () => saveCar(true),
           atClose: () => scope.stop(),
-          atOpen: () => prepare(),
+          atOpen: () => prepare(...args),
         });
 
         render(...args);

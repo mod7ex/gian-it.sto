@@ -73,12 +73,10 @@ const { pixel, container } = useIntersectionObserver(() => {
   emit('bottomTouched');
 }, computed(() => filteredOptions.value.length > 0));
 
-const dis = computed(() => props.disabled);
-
 const theLabel = computed(() => (computedOptions.value.length === 0
   ? '-- пустой --'
   : props.modelValue
-    ? (computedOptions.value.find(({ value }) => value == props.modelValue)?.label ?? 'try change department')
+    ? (computedOptions.value.find(({ value }) => value == props.modelValue)?.label ?? '- значение отсутствует в списке -')
     : '-- выберите --'));
 
 const ping = (bool) => {
@@ -104,6 +102,8 @@ const handelBlur = (e, force = false) => {
   });
 };
 
+const dis = computed(() => props.disabled || filteredOptions.value.length === 0);
+
 </script>
 
 <template>
@@ -115,12 +115,16 @@ const handelBlur = (e, force = false) => {
       <Button
         :disabled="dis"
         type="secondary"
-        :class="['modex-select mt-1 w-full text-base font-thin focus:outline-none sm:text-sm rounded-md shadow-sm flex justify-between items-center', dis ? 'bg-gray-100' : 'cursor-pointer']"
+        class="modex-select mt-1 w-full text-base font-thin focus:outline-none sm:text-sm rounded-md shadow-sm"
+        :class="[dis ? 'bg-gray-100' : 'cursor-pointer']"
         @click="() =>ping(!up)"
         @blur="handelBlur"
       >
-        <span :class="['font-normal', dis ? 'text-gray-400' : '']">{{ theLabel }}</span>
-        <span class="font-light h-1 w-5 -mt-4">
+        <span :class="['font-normal w-11/12 overflow-hidden', dis ? 'text-gray-400' : '']" >
+          <p class="sto-select-text whitespace-nowrap text-left">{{ theLabel }}</p>
+        </span>
+
+        <span class="ml-auto font-light h-1 w-5 -mt-4">
 
           <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path v-if="up" d="m16.843 13.789c.108.141.157.3.157.456 0 .389-.306.755-.749.755h-8.501c-.445 0-.75-.367-.75-.755 0-.157.05-.316.159-.457 1.203-1.554 3.252-4.199 4.258-5.498.142-.184.36-.29.592-.29.23 0 .449.107.591.291 1.002 1.299 3.044 3.945 4.243 5.498z"/>
@@ -197,4 +201,8 @@ const handelBlur = (e, force = false) => {
   transform: translateY(-20px);
   opacity: 0;
 }
+
+/* .sto-select-text {
+  white-space: nowrap;
+} */
 </style>

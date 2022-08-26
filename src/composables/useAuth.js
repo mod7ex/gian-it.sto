@@ -64,7 +64,7 @@ export const logOut = async (router) => {
   }
 };
 
-export default function useAuth() {
+export default function () {
   return {
     token,
     setUser,

@@ -63,7 +63,7 @@ console.log(columns.value)
                 <div class="flex mt-4 justify-between items-center">
                   <span class="text-sm text-gray-600">{{ element.created_at.split(' ')[0] }}</span>
                   <Badge color="blue" :point="true" >
-                    {{ `${element?.car?.car_model?.name} ${ element?.car?.car_model?.car_mark?.name }`.substr(0, 20) }}
+                    {{ `${element?.car?.car_model?.car_mark?.name} ${element?.car?.car_model?.name}`.substr(0, 20) }}
                   </Badge>
                 </div>
 

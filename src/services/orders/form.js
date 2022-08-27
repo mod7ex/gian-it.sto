@@ -1,4 +1,5 @@
 import { reactive, ref, effectScope } from 'vue';
+import useVuelidate from '@vuelidate/core';
 import useAppRouter from '~/composables/useAppRouter.js';
 import $ from '~/helpers/fetch.js';
 import save, { upload } from '~/helpers/save';
@@ -8,6 +9,7 @@ import useToast from '~/composables/useToast.js';
 // import pipelineStore from '~/store/pipelines';
 import orderStore from '~/store/orders/orders';
 import departmentStore from '~/store/departments';
+import validationRules from '~/validationsRules/order';
 // const { orderFunnelOption } = pipelineStore;
 const { current } = departmentStore;
 const { drop } = orderStore;
@@ -18,6 +20,7 @@ let fields;
 let rawFields;
 let files;
 let orderId;
+let v$;
 
 const defaults = {
   id: '',
@@ -50,6 +53,7 @@ const clearMemory = () => {
   fields = undefined;
   files = undefined;
   rawFields = undefined;
+  v$ = undefined;
 };
 
 // **********************************************************************  Form
@@ -101,11 +105,20 @@ export default () => effectScope().run(() => {
     files = ref();
 
     orderId = route.params.id;
+
+    const rules = validationRules();
+    v$ = useVuelidate(rules, fields, { $lazy: true });
   }
 
   /* ************ Order form ************ */
 
   const saveOrder = async () => {
+    const isValideForm = await v$.value.$validate();
+
+    if (!isValideForm) return;
+
+    v$.value.$reset();
+
     const len = files.value?.length ?? 0;
     if (len) {
       const fileSet = new FormData();
@@ -167,5 +180,6 @@ export default () => effectScope().run(() => {
     setOrder,
     router,
     rawFields,
+    v$,
   };
 });

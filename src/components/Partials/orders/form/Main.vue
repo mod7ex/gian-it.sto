@@ -28,7 +28,7 @@ const { load: loadCars, options: carOptions, reset: resetCars } = carStore;
 const { load: loadAppealReasons, options: appealReasonOptions } = appealReasonStore;
 const { load: loadProcesses, options: processOptions } = processStore;
 
-const { fields, atMounted, saveOrder, current, log, isEditPage, route } = service();
+const { fields, atMounted, saveOrder, current, log, isEditPage, route, v$ } = service();
 const { render } = carForm(true);
 const { modalUp } = clientForm(true);
 
@@ -104,7 +104,13 @@ const handelBlackListedFile = (id) =>  {
       </div>
 
       <div class="col-span-12 sm:col-span-4">
-        <Select label="Этап заказа" :options="orderStagesOptions" v-model="fields.order_stage_id" />
+        <Select
+          label="Этап заказ наряда"
+          :options="orderStagesOptions"
+          v-model="fields.order_stage_id"
+          :error="v$.order_stage_id.$errors[0]?.$message"
+          @blured="v$.order_stage_id.$touch"
+        />
       </div>
 
       <div class="col-span-12 sm:col-span-12">

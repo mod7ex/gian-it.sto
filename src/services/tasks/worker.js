@@ -61,7 +61,7 @@ export default () => effectScope().run(() => {
 
   const fetchTasks = async (bool = false) => {
     if (bool) resetStore();
-    await fill({ user_id: user.value.id, ...cleanUp(filter) });
+    await fill({ user_id: user.value.id, ...cleanUp(filter) }, false);
   };
 
   const initTimeEdges = () => {

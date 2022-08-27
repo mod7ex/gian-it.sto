@@ -37,7 +37,6 @@ export default () => effectScope().run(() => {
     if (status === task.value.status) return;
     const path = `tasks/${task_id}/to/${status}`;
     const { success, message, data } = await save({ path });
-    console.log(data?.task.logs);
     // const { success, message, data } = await save({ path, data: { [`${status ? 'start' : 'end'}_at`]: hyphenatedDateFormat(new Date()) } });
     if (success) task.value = data?.task;
     const msg = message ?? (success ? 'Статус успешно изменен' : 'Не удалось изменить статус задача');

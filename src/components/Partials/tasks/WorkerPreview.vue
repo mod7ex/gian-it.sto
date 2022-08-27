@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { ClockIcon, PaperClipIcon } from '@heroicons/vue/outline';
 import Comments from '@/Partials/Comments.vue';
 import { DescriptionList, DescriptionListItems, DescriptionListItem } from '@/UI/DescriptionList/index.js';
@@ -9,16 +9,20 @@ import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
 import Preview from '@/Partials/processes/DiagnosticCardPreview.vue';
 import $ from '~/helpers/fetch';
 import Badge from '@/UI/Badge.vue';
+import useAuth from '~/composables/useAuth.js';
 
+const { user } = useAuth();
 const { task, atMounted, route, checkBox, canTasks } = service();
 
 const dc_template = ref({});
 
 await atMounted().then(async () => {
-    if(task.value.is_map) {
-      dc_template.value = await $.map(task.value.task_map.map_id)
-    }
+  if(task.value.is_map) {
+    dc_template.value = await $.map(task.value.task_map.map_id)
+  }
 })
+
+// const imNswed = computed(() => !(canTasks(task.value, 'update')) && (task.value.user.id == user.value.id))
 
 </script>
 
@@ -61,7 +65,7 @@ await atMounted().then(async () => {
               :fields="dc_template.data ?? []"
               :dc_template="dc_template"
               :no-head="true"
-              :disabled="!canTasks(task, 'update') || task.status !== 'process'"
+              :disabled="(!canTasks(task.value, 'update') && task.user.id != user.id) || task.status !== 'process'"
             />
           </DescriptionListItem>
 
@@ -73,7 +77,7 @@ await atMounted().then(async () => {
                     :class="['py-2', {'line-through': item.is_checked}]"
                 >
                   <Checkbox
-                    :disabled="!canTasks(task, 'update') || task.status !== 'process'"
+                    :disabled="(!canTasks(task.value, 'update') && task.user.id != user.id) || task.status !== 'process'"
                     :label="item.description"
                     v-model="item.is_checked"
                     @clicked="() => checkBox(item.id, !item.is_checked, i)"
@@ -103,6 +107,6 @@ await atMounted().then(async () => {
       </DescriptionList>
     </section>
 
-    <Comments model="task" :id="route.params.id" class="mt-2" :disabled="!canTasks(task, 'update')" />
+    <Comments model="task" :id="route.params.id" class="mt-2" :disabled="(!canTasks(task.value, 'update') && task.user.id != user.id)" />
   </div>
 </template>

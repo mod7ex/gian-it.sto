@@ -1,10 +1,10 @@
-import { reactive, effectScope, ref, onScopeDispose } from 'vue';
+import { reactive, effectScope, ref } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import store from '~/store/processes/diagnostic-card';
 import useAppRouter from '~/composables/useAppRouter';
-import { whyRules as formRules } from '~/validationsRules/process';
+import { dc_template as formRules } from '~/validationsRules/process';
 
 const { drop } = store;
 

@@ -29,7 +29,7 @@ const { options: orderOptions, load: loadOrders } = orderStore;
 const fillDep = async (department_id) => {
   if (!department_id) return;
   await Promise.all([
-    loadFunnels({ type: 'task' }),
+    loadFunnels(),
     loadUsers({ department_id }),
     loadOrders({ department_id }),
   ]);

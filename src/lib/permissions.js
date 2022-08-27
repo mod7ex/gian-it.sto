@@ -1,7 +1,7 @@
 // import { computed } from 'vue';
 import useAuth from '~/composables/useAuth.js';
 
-const { isUserLogged, user, isAdmin, userDepartment } = useAuth();
+const { isUserLogged, user, userDepartment } = useAuth();
 
 const routesPermissionsMap = {
   // Todo: copy all pages from router and add permissions the router can catch some forgotten things

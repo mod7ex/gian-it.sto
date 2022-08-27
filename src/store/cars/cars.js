@@ -49,5 +49,5 @@ export default {
   fill,
   drop,
   cars: computed(() => state.raw.map(extractor)),
-  options: computed(() => state.raw.map(({ id, vin }) => ({ label: vin, value: id }))),
+  options: computed(() => state.raw.map(({ id, car_model }) => ({ label: `${car_model.name ?? ''} ${car_model.car_mark.name ?? ''}`, value: id }))),
 };

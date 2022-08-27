@@ -15,3 +15,9 @@ export function whyRules() {
     // data: { required: helpers.withMessage('Заполняете содержание диагностической карты', required) },
   }));
 }
+
+export function dc_template() {
+  return computed(() => ({
+    title: { required: helpers.withMessage('Укажите заголовок шаблона', required) },
+  }));
+}

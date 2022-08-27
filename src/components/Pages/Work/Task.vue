@@ -146,7 +146,7 @@ const timeline = computed(() => {
               Начать
             </Button>
 
-            <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" :disabled="(!canTasks(task, 'update')) || (task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')" >на паузу</Button>
+            <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" :disabled="(!canTasks(task, 'update')) || (task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')" >На паузу</Button>
 
             <Button class="col-span-1 flex justify-center" color="green" @click="() => ping('done')" blur :disabled="!((task?.status === 'process') || (task?.status === 'process') || (task?.status === 'pause')) && canTasks(task, 'update')" >
               Завершить

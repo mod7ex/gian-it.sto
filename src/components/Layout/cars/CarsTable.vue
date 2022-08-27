@@ -56,7 +56,7 @@ if (props.showOwner) { fields.push({ label: 'Владелец', key: 'client' })
 
         <!-- Body -->
         <template #td-car_model="{ value }" >
-          {{ typeof value === 'object' ? value?.name : value }}
+          {{ typeof value === 'object' ? `${value.car_mark.name} ${value?.name}` : value }}
         </template>
 
         <template #td-client="{ value }" >

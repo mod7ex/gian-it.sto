@@ -6,7 +6,7 @@ import StoFiles from '@/Partials/Files.vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import service from '~/services/tasks/form';
-import { tasksColorMap, maybeRun } from '~/helpers';
+import { tasksColorMap, maybeRun, hyphenatedDateFormat } from '~/helpers';
 import userStore from '~/store/employees';
 import departmentStore from '~/store/departments';
 import pipelineStore from '~/store/pipelines';
@@ -85,7 +85,7 @@ const taskTypeOptions = [{label: 'Задача', value: 'false'}, {label: 'Ди�
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-            <Input label="Крайний срок" type="date" v-model="fields.deadline_at" />
+            <Input label="Крайний срок" type="date" v-model="fields.deadline_at" :min="hyphenatedDateFormat(new Date())" />
         </div>
 
         <div class="col-span-12 sm:col-span-3">
@@ -105,11 +105,22 @@ const taskTypeOptions = [{label: 'Задача', value: 'false'}, {label: 'Ди�
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-            <Input label="Начать с" type="date" v-model="fields.start_at" />
+            <Input
+                label="Начать с"
+                type="date"
+                v-model="fields.start_at"
+                :min="hyphenatedDateFormat(new Date())"
+                :max="hyphenatedDateFormat(new Date(fields.end_at ? fields.end_at : null))"
+            />
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-            <Input label="Конец в" type="date" v-model="fields.end_at" />
+            <Input
+                label="Конец в"
+                type="date"
+                v-model="fields.end_at"
+                :min="hyphenatedDateFormat(new Date())"
+            />
         </div>
 
         <div class="col-span-12 sm:col-span-4"  v-if="fields.is_map == 'true'">
@@ -128,7 +139,7 @@ const taskTypeOptions = [{label: 'Задача', value: 'false'}, {label: 'Ди�
             </ul>
             <Button size="xs" class="mt-4" @click="fields.pipelines.push({})">Добавить</Button>
         </div>
-<!--  -->
+<!-- ******* -->
 
         <div class="grid grid-cols-12 gap-6 col-span-12" v-if="fields.is_map == 'false'">
             <hr class="col-span-12" />

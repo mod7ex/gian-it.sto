@@ -23,7 +23,7 @@ const SuspenseArea = useSuspense(Form);
   <OfficeLayout :title="isEditPage ? 'Обновление задачи' : 'Создание новой задачи'">
     <template #actions>
       <Button type="secondary" @click="back">
-        <ArrowLeftIcon class="w-5 h-5 mr-1"/>Bернуться
+        <ArrowLeftIcon class="w-5 h-5 mr-1"/>Назад
       </Button>
 
       <Button color="green" @click="saveTask">

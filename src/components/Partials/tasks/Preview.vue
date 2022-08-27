@@ -74,7 +74,7 @@ await atMounted().then(async () => {
                     :class="['py-2', {'line-through': item.is_checked}]"
                 >
                     <Checkbox
-                        :disabled="!canTasks(task, 'update')"
+                        :disabled="!canTasks(task, 'update') || task.status !== 'process'"
                         :label="item.description"
                         v-model="item.is_checked"
                         @clicked="() => checkBox(item.id, !item.is_checked, i)"

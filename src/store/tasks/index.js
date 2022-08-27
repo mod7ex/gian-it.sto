@@ -25,10 +25,10 @@ const reset = () => {
   state.page = 1;
 };
 
-const load = async (payload = {}) => {
+const load = async (payload = {}, trackPermissions = true) => {
   if (state.pending) return;
 
-  if (PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
+  if (trackPermissions && PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
     if (payload.department_id != userDepartment.value) return;
   }
 
@@ -36,7 +36,7 @@ const load = async (payload = {}) => {
   const data = await $.tasks(payload);
   state.pending = false;
 
-  if (PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
+  if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
     const only_my_tasks = data?.filter(({ author: { id } }) => id === user.value.id) ?? [];
     state.raw = only_my_tasks;
   } else {
@@ -44,17 +44,17 @@ const load = async (payload = {}) => {
   }
 };
 
-const fill = async (payload = {}) => {
+const fill = async (payload = {}, trackPermissions = true) => {
   if (state.pending) return;
   if (state.page > state.pages) return;
 
-  if (PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
+  if (trackPermissions && PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
     if (payload.department_id != userDepartment.value) return;
   }
 
   state.pending = true;
   const data = await $({ key: 'tasks', params: { ...payload, page: state.page } });
-  if (PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
+  if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
     const only_my_tasks = data?.tasks?.filter(({ author: { id } }) => id === user.value.id);
     state.raw = state.raw.concat(only_my_tasks ?? []);
   } else {

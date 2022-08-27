@@ -13,7 +13,7 @@ const { previousPage, saveProduct, isEditProductPage, dropProduct } = form();
 </script>
 
 <template>
-  <OfficeLayout title="Добавление новой позиции на склад">
+  <OfficeLayout :title="isEditProductPage ? 'Обновить позиции на склад' : 'Добавление новой позиции на склад'">
     <template #actions>
       <Button type="secondary" @click="() => previousPage()">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>Вернуться

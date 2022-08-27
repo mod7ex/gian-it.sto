@@ -17,9 +17,7 @@ const SuspenseTable = useSuspense(Table);
 
 const pipeline = ref();
 
-onMounted(async () => {
-  pipeline.value = await $.pipeline(id);
-});
+onMounted(async () => { pipeline.value = await $.pipeline(id); });
 
 </script>
 

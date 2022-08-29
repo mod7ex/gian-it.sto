@@ -14,6 +14,7 @@ import useSuspense from '~/composables/useSuspense';
 import Table from '@/Partials/tasks/WorkerTable.vue';
 import { debounce, objectSignature } from '~/helpers';
 import WorkerBadge from '~/components/Partials/WorkerBadge.vue';
+import StoSelect from '@/UI/StoSelect.vue';
 
 const WorkerTasks = useSuspense(Table);
 
@@ -67,7 +68,8 @@ onScopeDispose(clearMemo);
       </div>
 
       <div>
-        <Select
+        <sto-select
+          @bottom-touched="() => {}"
           label="Заказ-наряд"
           :options="orderOptions"
           v-model="filter.order_id"

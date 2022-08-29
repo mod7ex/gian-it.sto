@@ -214,3 +214,13 @@ export const hyphenatedDateFormat = (strDate) => {
 
   return strDate;
 };
+
+export const callsCounter = (cb) => {
+  let count = 0;
+
+  return (someArg, reset = false) => {
+    if (reset) count = 0;
+    count++;
+    return cb(someArg, count);
+  };
+};

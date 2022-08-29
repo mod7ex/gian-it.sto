@@ -16,6 +16,7 @@ import useConfirmDialog from '~/composables/useConfirmDialog';
 import proxiedSelect from '@/StoSelect';
 import useAppRouter from '~/composables/useAppRouter.js';
 import dcTemplatesStore from '~/store/processes/diagnostic-card';
+import StoSelect from '@/UI/StoSelect.vue'; 
 
 const { route } = useAppRouter();
 const { simple } = useConfirmDialog();
@@ -89,11 +90,11 @@ const taskTypeOptions = [{label: 'Задача', value: 'false'}, {label: 'Ди�
         </div>
 
         <div class="col-span-12 sm:col-span-3">
-            <Select label="Исполнитель" :options="options" v-model="fields.user_id" />
-        </div>
+            <sto-select @bottom-touched="() => {}" label="Исполнитель" :options="options" v-model="fields.user_id" />
+        </div> 
 
         <div class="col-span-12 sm:col-span-3">
-            <Select label="Заказ наряд" :options="orderOptions" v-model="fields.order_id" :disabled="route.query.order_id" />
+            <sto-select @bottom-touched="() => {}" label="Заказ наряд" :options="orderOptions" v-model="fields.order_id" :disabled="route.query.order_id" />
         </div>
 
         <div class="col-span-12 sm:col-span-3">
@@ -132,7 +133,7 @@ const taskTypeOptions = [{label: 'Задача', value: 'false'}, {label: 'Ди�
             <!-- <label class="block text-sm font-medium text-gray-700 mb-2">Воронки</label> -->
             <ul>
                 <li v-for="(p, i) in fields.pipelines" :key="'input-'+i" class="flex items-center">
-                    <Select class="mr-3 pipeline w-full" :label="`Воронка ${i + 1}`" :options="pipelinesOptions" v-model="fields.pipelines[i].pipeline_id" />
+                    <sto-select @bottom-touched="() => {}" class="mr-3 pipeline w-full" :label="`Воронка ${i + 1}`" :options="pipelinesOptions" v-model="fields.pipelines[i].pipeline_id" />
                     <StagesSelection :index="i" :pipeline_id="fields.pipelines[i].pipeline_id" v-model="fields.pipelines[i].stage_id" />
                     <Button color="red" size="sm" @click="removeFunnel(i)">Удалить</Button>
                 </li>

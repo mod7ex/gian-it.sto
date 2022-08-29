@@ -1,4 +1,4 @@
-import { onScopeDispose, reactive, effectScope, computed, h } from 'vue';
+import { reactive, effectScope, computed, h, onScopeDispose } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import clientFormValidationsRules from '~/validationsRules/clientForm';
 import useAppRouter from '~/composables/useAppRouter.js';
@@ -8,11 +8,12 @@ import departmentStore from '~/store/departments';
 import save from '~/helpers/save';
 import useModalForm from '~/composables/useModalForm';
 import communicate from '~/helpers/communicate';
-import service from '~/services/clients/clients';
 import RawForm from '~/components/Partials/clients/ClientFormFields.vue';
+import clientStore from '~/store/clients';
 
 const { current, setCurrent } = departmentStore;
 
+let clientFields;
 let routeInstance;
 let isEditClientPage;
 let redirectBack;
@@ -35,8 +36,6 @@ const defaultClientFields = {
   cars: [],
 };
 
-let clientFields;
-
 /* ************ client form ************ */
 
 const saveClient = async (inModal) => {
@@ -49,12 +48,13 @@ const saveClient = async (inModal) => {
   const { data, success, message } = await save.client(clientFields, null, true);
 
   if (inModal) {
-    const { fetchClients } = service();
+    const { reset, fill } = clientStore;
     try {
       return { message, success };
     } finally {
       if (success) {
-        await fetchClients(true);
+        reset();
+        await fill({ department_id: current.value });
       }
     }
   } else {
@@ -129,38 +129,54 @@ const addItem = (item) => () => {
   clientFields[item] = [''];
 };
 
-const clearMemo = () => onScopeDispose(() => {
+const clearMemo = () => {
   clientFields = undefined;
   routeInstance = undefined;
   isEditClientPage = undefined;
   redirectBack = undefined;
   modalUp = undefined;
   v$ = undefined;
-});
+};
 
 const prepare = (inModal) => {
   if (clientFields) return;
 
-  clientFields = reactive(defaultClientFields);
+  clientFields = reactive({
+    id: '',
+    name: '',
+    surname: '',
+    middle_name: '',
+    gender: '',
+    address: '',
+    passport: '',
+    notes: '',
+    born_at: '',
+    phones: ['+7'],
+    emails: [''],
+    department_id: '',
+    cars: [],
+  });
+
+  const rules = clientFormValidationsRules(inModal);
+
+  v$ = useVuelidate(rules, clientFields, { $lazy: true });
 
   clientFields.department_id = current.value;
 
   const { route, isThePage, back } = useAppRouter('EditClient');
 
   [routeInstance, isEditClientPage, redirectBack] = [route, isThePage, back];
-
-  const rules = clientFormValidationsRules(inModal);
-
-  v$ = useVuelidate(rules, clientFields, { $lazy: true });
 };
 
 export default function (inModal) {
   if (!inModal) {
     prepare(false);
-    clearMemo();
+    onScopeDispose(clearMemo);
   } else {
     modalUp = (...args) => {
       const scope = effectScope();
+
+      scope.cleanups.push(clearMemo);
 
       scope.run(() => {
         const isUpdate = computed(() => !!clientFields.id);
@@ -174,8 +190,6 @@ export default function (inModal) {
         });
 
         render(...args);
-
-        clearMemo();
       });
     };
   }
@@ -189,5 +203,6 @@ export default function (inModal) {
     atMountedClientForm,
     addItem,
     redirectBack,
+    clearMemo,
   };
 }

@@ -7,14 +7,17 @@ import service from '~/services/orders';
 import clientStore from '~/store/clients';
 import carStore from '~/store/cars/cars';
 
-const { options, load } = clientStore;
-const { options: carOptions, load: loadCars } = carStore;
+const { options, fill, reset: resetClients } = clientStore;
+const { options: carOptions, fill: loadCars, reset } = carStore;
 
 const { filter, current } = service();
 
-watch(current, (department_id) => { load({ department_id }); }, { immediate: true });
+watch(current, (department_id) => { resetClients(); fill({ department_id }, true); }, { immediate: true });
 
-onMounted(loadCars);
+onMounted(async () => {
+  reset();
+  await loadCars();
+});
 
 </script>
 
@@ -31,6 +34,7 @@ onMounted(loadCars);
           v-model="filter.client_id"
           :options="options"
           class="w-full"
+          @bottom-touched="() => fill({ department_id: current })"
         />
       </div>
 
@@ -40,6 +44,7 @@ onMounted(loadCars);
           v-model="filter.car_id"
           :options="carOptions"
           class="w-full"
+          @bottom-touched="() => loadCars()"
         />
       </div>
 

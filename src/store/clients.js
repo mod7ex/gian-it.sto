@@ -1,12 +1,12 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
-import { alphaGroupper } from '~/helpers';
+import { alphaGroupper, callsCounter } from '~/helpers';
 
 const state = reactive({
   raw: [],
-  pages: 100,
-  page: 1,
+  pages: undefined,
+  // page: 1,
   pending: false,
 });
 
@@ -16,7 +16,7 @@ const sort = (v) => {
 
 const reset = () => {
   state.raw = [];
-  state.pages = 100;
+  state.pages = undefined;
   state.page = 1;
 };
 
@@ -35,6 +35,16 @@ const fill = async (payload) => {
   state.page += 1;
   state.pending = false;
 };
+
+// const fill = callsCounter(async (payload, page) => {
+//   if (state.pending) return;
+//   if (state.pages != null && page > state.pages) return;
+//   state.pending = true;
+//   const data = await $({ key: 'clients', params: { ...payload, page } });
+//   state.raw = state.raw.concat(data?.clients ?? []);
+//   state.pages = data?.meta?.last_page;
+//   state.pending = false;
+// });
 
 const drop = async (id) => _$.client(id, (v) => {
   state.raw.deleteById(v);

@@ -9,6 +9,8 @@ import modelStore from '~/store/cars/models';
 import engineStore from '~/store/cars/engines';
 import fuelStore from '~/store/cars/fuels';
 import clientStore from '~/store/clients';
+import departmentStore from '~/store/departments';
+import StoSelect from '@/UI/StoSelect.vue'; 
 
 const props = defineProps({
   inModal: {
@@ -17,6 +19,7 @@ const props = defineProps({
   },
 });
 
+const { current } = departmentStore;
 const { options: markOptions, load: loadMarks } = markStore;
 const { getMarkModels, load: loadModels } = modelStore;
 const { options: engineOptions, load: loadEngines } = engineStore;
@@ -28,7 +31,7 @@ const { atMountedCarForm, carFields, theSelectedCarMark, v$, routeInstance } = f
 const extractor = ({ id, name }) => ({ value: id, label: name });
 const modelOptions = computed(() => getMarkModels(theSelectedCarMark.value).map(extractor));
 
-await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClients(),atMountedCarForm(props.inModal)]);
+await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClients({department_id: props.inModal ? current.value : undefined }),atMountedCarForm(props.inModal)]);
 
 </script>
 
@@ -75,13 +78,13 @@ await Promise.all([loadMarks(),loadModels(),loadEngines(),loadFuels(),loadClient
             />
         </div>
         <div class="col-span-12 sm:col-span-6 md:col-span-4">
-            <Select label="Марка" :options="markOptions" v-model="theSelectedCarMark" />
+            <sto-select @bottom-touched="() => {}" label="Марка" :options="markOptions" v-model="theSelectedCarMark" />
         </div>
 
         <div class="col-span-12 sm:col-span-6 md:col-span-4">
             <Select
-                :disabled="!theSelectedCarMark"
                 label="Модель"
+                :disabled="!theSelectedCarMark"
                 :options="modelOptions"
                 v-model="carFields.car_model_id"
                 :required="true"

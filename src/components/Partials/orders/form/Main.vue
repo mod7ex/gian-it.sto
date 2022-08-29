@@ -70,7 +70,7 @@ const handelBlackListedFile = (id) =>  {
       </div>
 
       <div class="col-span-12 sm:col-span-4">
-        <Select label="Ответственный" :options="userOptions" v-model="fields.user_id" />
+        <sto-select @bottom-touched="() => {}" label="Ответственный" :options="userOptions" v-model="fields.user_id" />
       </div>
 
       <div class="col-span-12 sm:col-span-4 flex items-center">
@@ -96,15 +96,15 @@ const handelBlackListedFile = (id) =>  {
       </div>
 -->
       <div class="col-span-12 sm:col-span-4">
-        <Select label="Причина обращения" :options="appealReasonOptions" v-model="fields.appeal_reason_id" />
+        <sto-select @bottom-touched="() => {}" label="Причина обращения" :options="appealReasonOptions" v-model="fields.appeal_reason_id" />
       </div>
 
       <div class="col-span-12 sm:col-span-4">
-        <Select label="Процесс" :options="processOptions" v-model="fields.process_category_id" />
+        <sto-select @bottom-touched="() => {}" label="Процесс" :options="processOptions" v-model="fields.process_category_id" />
       </div>
 
       <div class="col-span-12 sm:col-span-4">
-        <Select
+        <sto-select @bottom-touched="() => {}"
           label="Этап заказ наряда"
           :options="orderStagesOptions"
           v-model="fields.order_stage_id"

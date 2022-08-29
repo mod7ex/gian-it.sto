@@ -6,7 +6,7 @@ import TextArea from '@/UI/TextArea.vue';
 import service from '~/services/clients/clientForm.js';
 import Button from '@/UI/Button.vue';
 import CarsTable from '~/components/Layout/cars/CarsTable.vue';
-import departmentStore from '~/store/departments';
+import departmentStore from '~/store/departments'; 
 
 const props = defineProps({
   inModal: {

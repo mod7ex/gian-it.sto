@@ -47,14 +47,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'bottomTouched']);
 
 const computedOptions = computed(() => props.options?.map((e) => {
-  if (e instanceof Object) {
-    return e;
-  }
+  if (e instanceof Object) return e;
 
-  return {
-    label: e,
-    value: e,
-  };
+  return { label: e, value: e };
 }));
 
 const up = ref(false);

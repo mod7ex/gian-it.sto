@@ -11,7 +11,7 @@ const { fetchTasks, state } = service();
 const fields = [
   { label: 'Заказ-наряд', key: 'order' },
   { label: 'Название', key: 'name' },
-  { label: 'Ответственный', key: 'author' },
+  { label: 'Ответственный', key: 'user' },
   { label: 'Статус', key: 'status' },
   { label: 'Дата создания', key: 'created_at' },
   { label: 'Крайний срок', key: 'deadline_at' },
@@ -46,11 +46,11 @@ await fetchTasks(true);
         <Link v-if="value?.id" :disabled="true" :href="{name: 'OrderEdit', params: {id: value?.id}}" >#{{ generateShapedIdfromId(value?.id) }}</Link>
       </template>
 
-      <template #td-author="{ value }" >
+      <template #td-user="{ value }" >
           <Avatar
-            :title="`${value.name} ${value.surname}`"
-            :subtitle="value.office_position"
-            :image="value.avatar"
+            :title="`${value?.name ?? ''} ${value?.surname ?? ''}`"
+            :subtitle="value?.office_position"
+            :image="value?.avatar"
           />
       </template>
 

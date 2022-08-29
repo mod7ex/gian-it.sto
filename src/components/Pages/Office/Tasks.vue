@@ -15,6 +15,7 @@ import useSuspense from '~/composables/useSuspense.js';
 import pipelineStore from '~/store/pipelines';
 import userStore from '~/store/employees';
 import orderStore from '~/store/orders/orders';
+import StoSelect from '@/UI/StoSelect.vue';
 
 const SuspenseArea = useSuspense(Table);
 
@@ -95,7 +96,8 @@ onScopeDispose(clearMemo);
       </div>
 
       <div>
-        <Select
+        <sto-select
+          @bottom-touched="() => {}"
           label="Исполнитель"
           :options="userOptions"
           v-model="filter.author_id"
@@ -104,7 +106,8 @@ onScopeDispose(clearMemo);
       </div>
 
       <div>
-        <Select
+        <sto-select
+          @bottom-touched="() => {}"
           label="Заказ-наряд"
           :options="orderOptions"
           v-model="filter.order_id"
@@ -113,7 +116,8 @@ onScopeDispose(clearMemo);
       </div>
 
       <div>
-        <Select
+        <sto-select
+          @bottom-touched="() => {}"
           label="Воронка"
           :options="options"
           v-model="filter.pipeline_id"

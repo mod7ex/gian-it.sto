@@ -34,7 +34,6 @@ cleanUp();
 const reducers = {
   balance: (b, curr) => b + (curr.sum * (curr.operation_type === 'in' ? 1 : -1)),
   loss: (b, curr) => b + (curr.sum * (curr.operation_type === 'out' ? 1 : 0)),
-  wait: (b, curr) => '0',
 };
 
 const reducedState = (reducer, initial) => Array.prototype.reduce.apply(state.raw, [reducer, initial]);
@@ -50,6 +49,7 @@ onMounted(async () => {
   let page = 1;
 
   while (!filled) {
+    // eslint-disable-next-line no-await-in-loop
     const data = await $({ key: 'payments', params: { status: 'wait', page } });
     payments.value = payments.value.concat(data?.payments ?? []);
     if (data?.meta?.last_page == page) filled = true;

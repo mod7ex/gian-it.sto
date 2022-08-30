@@ -36,7 +36,7 @@ const removeItem = maybeRun((i) => fields.checkboxes.splice(i, 1), computed(() =
 
 onMounted(resetCars);
 
-watch(() => fields.client_id, (client_id) => loadCars({ client_id }));
+watch(() => fields.client_id, async (client_id) => {resetCars(); await loadCars({ client_id })});
 
 const ID = ref('');
 

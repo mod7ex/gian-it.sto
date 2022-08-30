@@ -75,7 +75,7 @@ const menu = [
   { label: 'Клиенты', name: 'Clients', icon: UserGroupIcon },
   { label: 'Сотрудники', name: 'Employers', icon: UserGroupIcon },
   { label: 'Финансы', name: 'Finances', icon: CurrencyDollarIcon },
-  { label: 'Настройки', name: 'Settings', icon: CogIcon },
+  // { label: 'Настройки', name: 'Settings', icon: CogIcon },
   { label: 'Отделы', name: 'Departments', icon: OfficeBuildingIcon },
 ].filter(({ name }) => isRouteAccessableForCurrentUser(name))
   .map(({ label, name, icon }) => ({ label, name, icon, current: isCurrentFullPath({ name }) }));

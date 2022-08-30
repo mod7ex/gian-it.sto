@@ -23,10 +23,10 @@ import { maybeRun, generateShapedIdfromId } from '~/helpers';
 
 const { options: orderStagesOptions, load: loadOrderStages } = orderStagesStore;
 const { load: loadUsers, options: userOptions } = userStore;
-const { load: loadClients, options: clientOptions } = clientStore;
-const { load: loadCars, options: carOptions, reset: resetCars } = carStore;
-const { load: loadAppealReasons, options: appealReasonOptions } = appealReasonStore;
-const { load: loadProcesses, options: processOptions } = processStore;
+const { reset: resetClients ,fill: loadClients, options: clientOptions } = clientStore;
+const { fill: loadCars, options: carOptions, reset: resetCars } = carStore;
+const { reset: resetCAppealReasons ,fill: loadAppealReasons, options: appealReasonOptions } = appealReasonStore;
+const { reset: resetProcesses ,fill: loadProcesses, options: processOptions } = processStore;
 
 const { fields, atMounted, saveOrder, current, log, isEditPage, route, v$ } = service();
 const { render } = carForm(true);
@@ -41,6 +41,7 @@ watch(() => fields.client_id, (client_id) => loadCars({ client_id }));
 const ID = ref('');
 
 await Promise.all([
+  async () => {resetClients(); resetCAppealReasons(); resetProcesses(), resetCars()},
   loadOrderStages(),
   loadAppealReasons(),
   loadProcesses(),
@@ -74,12 +75,13 @@ const handelBlackListedFile = (id) =>  {
       </div>
 
       <div class="col-span-12 sm:col-span-4 flex items-center">
-        <sto-select :search="true" class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" />
+        <sto-select :search="true" class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" @bottom-touched="() => loadClients({ department_id: current })" />
         <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => modalUp()" />
       </div>
 
       <div class="col-span-12 sm:col-span-4 flex items-center">
         <sto-select
+          @bottom-touched="() => loadCars({ client_id: fields.client_id })"
           :search="true"
           class="flex-grow mr-1"
           label="Автомобиль"
@@ -96,15 +98,15 @@ const handelBlackListedFile = (id) =>  {
       </div>
 -->
       <div class="col-span-12 sm:col-span-4">
-        <sto-select @bottom-touched="() => {}" label="Причина обращения" :options="appealReasonOptions" v-model="fields.appeal_reason_id" />
+        <sto-select @bottom-touched="() => loadAppealReasons()" label="Причина обращения" :options="appealReasonOptions" v-model="fields.appeal_reason_id" />
       </div>
 
       <div class="col-span-12 sm:col-span-4">
-        <sto-select @bottom-touched="() => {}" label="Процесс" :options="processOptions" v-model="fields.process_category_id" />
+        <sto-select @bottom-touched="() => loadProcesses()" label="Процесс" :options="processOptions" v-model="fields.process_category_id" />
       </div>
 
       <div class="col-span-12 sm:col-span-4">
-        <sto-select @bottom-touched="() => {}"
+        <sto-select @bottom-touched="() => loadOrderStages()"
           label="Этап заказ наряда"
           :options="orderStagesOptions"
           v-model="fields.order_stage_id"

@@ -12,7 +12,7 @@ const { options: carOptions, fill: loadCars, reset } = carStore;
 
 const { filter, current } = service();
 
-watch(current, (department_id) => { resetClients(); fill({ department_id }, true); }, { immediate: true });
+watch(current, (department_id) => { resetClients(); fill({ department_id }); }, { immediate: true });
 
 onMounted(async () => {
   reset();

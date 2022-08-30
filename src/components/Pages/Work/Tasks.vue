@@ -25,7 +25,8 @@ const { filter, resetFilter, order: { criteriaOptions }, current, clearMemo } = 
 onMounted(async () => {
   const department_id = current.value;
   if (!department_id) return;
-  await loadOrders({ department_id });
+  // await loadOrders({ department_id });
+  await loadOrders();
 });
 
 const filterSignature = ref('-');

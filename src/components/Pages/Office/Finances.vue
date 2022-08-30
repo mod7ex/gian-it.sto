@@ -1,6 +1,6 @@
 <script setup>
 import { PlusCircleIcon, CollectionIcon, RefreshIcon, CheckCircleIcon, CurrencyDollarIcon } from '@heroicons/vue/outline';
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
@@ -13,6 +13,7 @@ import Table from '@/Partials/finances/Table.vue';
 import form from '~/services/finances/form';
 import service from '~/services/finances/index';
 import { debounce, objectSignature } from '~/helpers';
+import $ from '~/helpers/fetch.js';
 
 const { render } = form();
 
@@ -25,7 +26,6 @@ const SuspenseArea = useSuspense(Table);
 const filterSignature = ref('');
 
 watch(filter, debounce(() => {
-  // if (filter.department_id) { // Fix
   if (current.value) { filterSignature.value = objectSignature(filter); }
 }), { deep: true }); // will work without deep because values are primary
 
@@ -41,7 +41,23 @@ const reducedState = (reducer, initial) => Array.prototype.reduce.apply(state.ra
 
 const balance = computed(() => reducedState(reducers.balance, 0));
 const loss = computed(() => reducedState(reducers.loss, 0));
-const wating = computed(() => reducedState(reducers.wait, 0));
+
+const payments = ref([]);
+const wating = computed(() => payments.value.reduce((prev, { status, sum }) => ((status === 'wait' ? sum : 0) + prev), 0));
+
+onMounted(async () => {
+  let filled = false;
+  let page = 1;
+
+  while (!filled) {
+    const data = await $({ key: 'payments', params: { status: 'wait', page } });
+    payments.value = payments.value.concat(data?.payments ?? []);
+    if (data?.meta?.last_page == page) filled = true;
+    else page++;
+  }
+
+  console.log(payments.value);
+});
 
 </script>
 

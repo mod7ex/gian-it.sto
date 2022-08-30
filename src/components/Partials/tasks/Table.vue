@@ -112,14 +112,8 @@ onMounted(async () => {
   >
     <!-- :actions="!canTasks(item, 'update') && !canTasks(item, 'delete')" -->
     <!-- Body -->
-    <template #td-name="{ value, item: {id, author, department, user} }" >
+    <template #td-name="{ value, item: {id} }" >
       <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
-      <br>
-        creator: {{ author.name }}, 
-        <br>
-        department: {{ department.name }}
-        <br>
-        executor: {{ user.name }}
     </template>
 
     <template #td-type="{ item: {is_map} }" >

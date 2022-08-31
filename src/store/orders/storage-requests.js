@@ -35,7 +35,7 @@ const setRequestStatus = async (productRequest_id, status) => {
   if (!productRequest_id) return;
   const { success, message } = await save({ path: `products-requests/${productRequest_id}/status`, data: { status } });
   if (success) {
-    return toaster.success('Product assigned');
+    return toaster.success('Товар выдан');
   }
   return toaster.danger(message ?? 'что-то пошло не так');
 };

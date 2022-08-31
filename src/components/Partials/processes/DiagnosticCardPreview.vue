@@ -25,6 +25,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+
+  for_worker: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const ready = ref(false);
@@ -166,22 +171,23 @@ onMounted(() => {
         <div v-if="type === 'check_list' && userHasPermission('crud processes')" class="flex justify-center flex-col" >
           <!-- {{ answers.data[findFieldIndex(token, type)] }} -->
           <h3 class="font-bold text-xl mb-3">{{ data?.title }}</h3>
-          <div class="mx-auto grid grid-cols-12 gap-3 print-mode-checklist">
+          <div :class="['mx-auto print-mode-checklist gap-3', for_worker ? 'flex flex-col' : 'grid grid-cols-12']">
             <div
               v-for="(item, j) in data.items"
               :key="`${j}-item`"
-              class="checklist-item relative col-span-12 flex items-start justify-start"
               :class="[
+                'checklist-item relative col-span-12 flex items-start justify-center',
                 data.items.length < 3 ? 'sm:col-span-6' : '',
                 data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
                 data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '',
+                for_worker ? 'for_worker' : ''
               ]"
             >
               <span class="print-mode-show flex items-center justify-center w-10 p-1 text-3xl">
                 {{ answers.data[findFieldIndex(token, type)].data[j] ? '&#10003;' : ' ' }}
               </span>
-              <input type="checkbox" class="print-mode-hide rounded mr-2 sto-mt-7 bg-gray-50 p-1" v-model="answers.data[findFieldIndex(token, type)].data[j]" :disabled="blocked" >
-              <span class="text-left w-full">{{ item }}</span>
+              <input type="checkbox" class="print-mode-hide rounded mr-2 sto-mt-7 bg-gray-50 p-2" v-model="answers.data[findFieldIndex(token, type)].data[j]" :disabled="blocked" >
+              <span class="text-left w-full -mb-2">{{ item }}</span>
             </div>
           </div>
         </div>
@@ -199,14 +205,14 @@ onMounted(() => {
 
         <div v-if="type === 'indication'" class="border border-black flex mt-6">
           <span class="px-4 p-1 flex items-center justify-start">Показания</span>
-          <ul class="grid grid-cols-2 flex-grow">
-            <li class="col-span-1 flex">
-              <span class="border-l border-r border-black px-4 p-1 flex items-center justify-start" >{{ data[0] }}</span>
+          <ul :class="['flex-grow', for_worker ? 'flex-col' : 'grid grid-cols-2']">
+            <li class="col-span-1 flex" :class="[for_worker ? 'border-b border-black' : '']">
+              <span :class="[for_worker ? 'w-64' : '', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
               <span class="print-mode-show text-left pl-1 flex items-center flex-grow bg-gray-50" >{{ answers.data[findFieldIndex(token, type)].data[0] }}</span>
               <input type="text" class=" w-full print-mode-hide flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
             </li>
             <li class="col-span-1 flex">
-              <span class="border-l border-r border-black px-4 p-1 flex items-center justify-start" >{{ data[1] }}</span>
+              <span :class="[for_worker ? 'w-64' : '', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
               <span class="print-mode-show text-left pl-1 flex items-center flex-grow bg-gray-50" >{{ answers.data[findFieldIndex(token, type)].data[1] }}</span>
               <input type="text" class=" w-full print-mode-hide flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
             </li>
@@ -220,6 +226,16 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
+.for_worker {
+  align-items: center !important;
+}
+
+.for_worker input {
+  padding: 1em;
+  border-radius: 50%;
+}
+
 #card-preview .checklist-item { max-width: 450px; }
 .sto-mt-7{
   margin-top: 7px;

@@ -15,7 +15,7 @@ await Promise.all([atMounted()]);
 <template>
     <div>
         <Input
-          label="Название процесса"
+          label="Название"
           v-model="storage.name"
           :required="true"
           :error="v$.name.$errors[0]?.$message"

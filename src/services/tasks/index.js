@@ -34,7 +34,7 @@ export default () => effectScope().run(() => {
     filter = reactive({
       name: '',
       status: '',
-      author_id: '',
+      user_id: '',
       // user_id: '',
       order_id: '',
       pipeline_id: '',

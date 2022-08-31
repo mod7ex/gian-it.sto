@@ -93,7 +93,7 @@ onMounted(() => { close(); reset(); });
                 <dl class="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
                     <div class="py-3 flex justify-between text-sm font-medium">
                         <dt class="text-gray-500">Добавил</dt>
-                        <dd class="text-gray-900">{{ `${target.user?.name ?? ''} ${target.user?.surname ?? 'Unknown'}` }}</dd>
+                        <dd class="text-gray-900">{{ `${target.user?.name ?? ''} ${target.user?.surname ?? ''}` }}</dd>
                     </div>
 
                     <div class="py-3 flex justify-between text-sm font-medium">
@@ -163,7 +163,7 @@ onMounted(() => { close(); reset(); });
                             <button @click="() => ping(request, target?.id)" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
                         </div>
                         <div class="flex justify-between items-center">
-                            <p class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
+                            <p v-if="request?.order?.id" class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
                             <p class="text-xs">Kоличество: {{ request?.count }}</p>
                         </div>
                     </li>

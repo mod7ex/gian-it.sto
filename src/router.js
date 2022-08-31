@@ -7,7 +7,7 @@ const routes = [
   { path: '/forgot-password', component: () => import(/* webpackChunkName: "ForgotPassword" */ '@/Pages/Login/ForgotPassword.vue'), name: 'ForgotPassword', meta: { guest: true } },
   { path: '/password/reset/:token', component: () => import(/* webpackChunkName: "RefreshPassword" */ '@/Pages/Login/RefreshPassword.vue'), name: 'RefreshPassword', meta: { guest: true } },
 
-  { path: '/dashboard', component: () => import(/* webpackChunkName: "Dashboard" */ '@/Pages/Office/Dashboard.vue'), name: 'Dashboard' },
+  // { path: '/dashboard', component: () => import(/* webpackChunkName: "Dashboard" */ '@/Pages/Office/Dashboard.vue'), name: 'Dashboard' },
 
   { path: '/orders', component: () => import(/* webpackChunkName: "Orders" */ '@/Pages/Office/Orders.vue'), name: 'Orders' },
   { path: '/orders/create', component: () => import(/* webpackChunkName: "OrderForm" */ '@/Pages/Office/OrderForm.vue'), name: 'OrderForm' },
@@ -91,7 +91,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.name === '404') {
-    if (from.name === undefined) return next({ name: 'Dashboard' });
+    // if (from.name === undefined) return next({ name: 'Dashboard' });
+    if (from.name === undefined) return next({ name: 'Orders' });
     return;
   }
 

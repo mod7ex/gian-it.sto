@@ -40,7 +40,8 @@ export default function loginHandler() {
     setToken(data.value.api_token);
     setUser(data.value.user);
 
-    router.go({ name: 'Dashboard' }); // better to use go then push, in order to pull up the token from local storage
+    // router.go({ name: 'Dashboard' }); // better to use go then push, in order to pull up the token from local storage
+    router.go({ name: 'Orders' });
   };
 
   return {
@@ -63,5 +64,6 @@ export const authByTokenFromLocalstorage = async (routerInstance) => {
 
   setUser(data.value.user);
 
-  routerInstance.push({ name: 'Dashboard' });
+  // routerInstance.push({ name: 'Dashboard' });
+  routerInstance.push({ name: 'Orders' });
 };

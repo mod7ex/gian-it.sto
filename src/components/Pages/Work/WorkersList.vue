@@ -61,7 +61,7 @@ const workers = computed(() => state.employees.filter(({roles}) => !((roles[0].t
       <div v-for="(worker, i) in workers" :key="i" :class="[user.id == worker.id ? 'bg-gray-200' : '', 'py-4 px-4 border-b block']">
         <Avatar
           @click="() => logWorker(worker.email)"
-          :title="`${worker.name} ${worker.surname} ${worker.middlename ?? ''}`"
+          :title="`${worker.name ?? ''} ${worker.surname ?? ''} ${worker.middlename ?? ''}`"
           :image="worker.avatar"
         ><template #subtitle >{{ worker.email }}</template>
         </Avatar>

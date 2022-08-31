@@ -100,7 +100,7 @@ onScopeDispose(clearMemo);
           @bottom-touched="() => {}"
           label="Исполнитель"
           :options="userOptions"
-          v-model="filter.author_id"
+          v-model="filter.user_id"
           class="w-44"
         />
       </div>

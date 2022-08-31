@@ -60,6 +60,7 @@ await atMounted().then(async () => {
 
           <DescriptionListItem cols="3" label="" type="columns" columns="2" v-else>
             <preview
+              :for_worker="true"
               :task_id="task.id"
               :map_answer="task.map_answer"
               :fields="dc_template.data ?? []"

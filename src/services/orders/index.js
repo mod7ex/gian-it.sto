@@ -1,4 +1,4 @@
-import { effectScope, onScopeDispose, ref, reactive, computed } from 'vue';
+import { effectScope, ref, reactive, computed } from 'vue';
 import save from '~/helpers/save';
 import store from '~/store/orders/orders';
 import orderStagesStore from '~/store/orders/stages';
@@ -14,10 +14,7 @@ const { state: StagesState, load: loadStages } = orderStagesStore;
 
 let columns;
 
-const filter = reactive({
-  client_id: '',
-  car_id: '',
-});
+let filter;
 
 const getKanBanPayload = () => {
   const kanban = state.raw.reduce((payload, curr) => {
@@ -78,11 +75,9 @@ const atMounted = async () => {
 export default () => effectScope().run(() => {
   if (!columns) {
     columns = ref({});
-  }
 
-  onScopeDispose(() => {
-    columns = undefined;
-  });
+    filter = reactive({});
+  }
 
   return {
     atMounted,
@@ -91,5 +86,15 @@ export default () => effectScope().run(() => {
     log,
     current,
     sig: computed(() => objectSignature(filter)),
+    clearMemo: () => {
+      columns = undefined;
+      filter = undefined;
+    },
+    resetFilter: () => {
+      filter.client_id = '';
+      filter.car_id = '';
+      filter.created_before = '';
+      filter.created_after = '';
+    },
   };
 });

@@ -66,13 +66,13 @@ const updateTask = async () => {
   updateMsg.value = ''
   loading.value = true
   const { message, success} = await updateTaskUserId(noOwnerTask.value, user_id.value)
+  console.log(message, success)
   if(success) user_id.value = undefined
   else updateMsg.value = message ?? 'Something went wrong'
   loading.value = false
 }
 
 onMounted(async () => {
-
   if(noOwnerTask.value) {
     await load({ department_id: current.value })
   }
@@ -124,8 +124,8 @@ onMounted(async () => {
 
     <template #td-user="{ value }" >
       <Avatar
-        :title="`${value?.name ?? '_'} ${value?.surname ?? '_'}`"
-        :subtitle="value?.office_position ?? '...'"
+        :title="`${value?.name ?? ''} ${value?.surname ?? ''}`"
+        :subtitle="value?.office_position ?? ''"
         :image="value?.avatar"
       />
     </template>

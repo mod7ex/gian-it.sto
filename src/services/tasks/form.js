@@ -166,7 +166,7 @@ export const updateTaskUserId = async (payload, user_id) => {
   try {
     return { success, message };
   } finally {
-    setTask(data.task);
+    if (success) setTask(data?.task);
   }
 };
 

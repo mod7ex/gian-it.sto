@@ -76,7 +76,7 @@ const handelBlackListedFile = (id) =>  {
 
       <div class="col-span-12 sm:col-span-4 flex items-center">
         <sto-select :search="true" class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" @bottom-touched="() => loadClients({ department_id: current })" />
-        <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => modalUp()" />
+        <PlusCircleIcon class="w-6 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => modalUp()" />
       </div>
 
       <div class="col-span-12 sm:col-span-4 flex items-center">
@@ -90,7 +90,7 @@ const handelBlackListedFile = (id) =>  {
           :disabled="!fields.client_id"
           :key="fields.client_id"
         />
-        <PlusCircleIcon class="w-9 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => render(fields.client_id)" />
+        <PlusCircleIcon class="w-6 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => render(fields.client_id)" />
       </div>
 <!--
       <div class="col-span-12 sm:col-span-4">

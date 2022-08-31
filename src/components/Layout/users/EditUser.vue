@@ -45,6 +45,7 @@ const finalOptions = [
 </script>
 
 <template>
+<form autocomplete="chrome-off">
 
     <div>
         <div class="flex flex-col lg:flex-row">
@@ -114,5 +115,5 @@ const finalOptions = [
             </List>
         </div>
     </div>
-
+</form>
 </template>

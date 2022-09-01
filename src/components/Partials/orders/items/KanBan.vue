@@ -21,11 +21,12 @@ const clearTimer = () => { clearInterval(timer) }
 const scrollTo = (right = false) => {
   let i = 0
   timer = setInterval(() => {
+    let target = kanbanRef.value ?? document.getElementById('orders-kanban')
     let step = 10 * i++
-    let left = right ? kanbanRef.value.scrollLeft + step : kanbanRef.value.scrollLeft - step
+    let left = right ? target.scrollLeft + step : target.scrollLeft - step
 
     requestAnimationFrame(() => {
-      kanbanRef.value.scroll({
+      target.scroll({
         left,
         behavior: 'smooth'
       })
@@ -38,7 +39,7 @@ const scrollTo = (right = false) => {
 <template>
   <div class="my-16 relative">
 
-    <div id="kanban" ref="kanbanRef" class="flex gap-5 items-stretch overflow-x-scroll pb-5">
+    <div id="orders-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5">
       <div
         v-for="[id, {name, color}] in Object.entries(columns)"
         :key="id"

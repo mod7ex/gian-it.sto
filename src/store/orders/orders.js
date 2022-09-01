@@ -13,9 +13,10 @@ const reset = () => {
 };
 
 const load = async (payload) => {
-  userHasAtLeastOnePermission(['crud orders', 'read orders']);
-  if (!payload.department_id) return;
-  state.raw = await $.orders(payload);
+  if (userHasAtLeastOnePermission(['crud orders', 'read orders'])) {
+    if (!payload.department_id) return;
+    state.raw = await $.orders(payload);
+  }
 };
 
 const drop = async (id) => _$.order(id, (v) => state.raw.deleteById(v));

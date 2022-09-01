@@ -27,7 +27,7 @@ const fill = async (payload) => {
   if (!hasPermission) return;
   if (state.page > state.pages) return;
   state.pending = true;
-  const data = await $({ key: 'process_categories', ...payload, page: state.page });
+  const data = await $({ key: 'process_categories', params: { ...payload, page: state.page } });
   state.raw = state.raw.concat(data?.process_categories ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;

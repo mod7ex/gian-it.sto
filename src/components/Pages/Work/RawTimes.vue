@@ -8,11 +8,21 @@ const { fetchTasks, state, edge } = service();
 
 const calcMinsDiff = (end, start) => ((new Date(end)).getTime() - (new Date(start)).getTime()) / (1000 * 60);
 
+// const getClosedTasksNumberIn = (day) => state.raw.filter(({ logs }) => {
+//   for (let i = 0; i < logs.length; i++) {
+//     const { created_at, data } = logs[i];
+//     const d = (new Date(created_at.split(' ')[0])).getTime();
+//     if (data?.status === 'done' && d === day) return true;
+//   }
+
+//   return false;
+// }).length;
+
 const getClosedTasksNumberIn = (day) => state.raw.filter(({ logs }) => {
   for (let i = 0; i < logs.length; i++) {
     const { created_at, data } = logs[i];
     const d = (new Date(created_at.split(' ')[0])).getTime();
-    if (data?.status === 'done' && d === day) return true;
+    if(data?.status === 'done') return d === day 
   }
 
   return false;

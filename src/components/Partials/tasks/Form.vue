@@ -111,7 +111,6 @@ const taskTypeOptions = [{label: 'Задача', value: 'false'}, {label: 'Ди�
                 type="date"
                 v-model="fields.start_at"
                 :min="hyphenatedDateFormat(new Date())"
-                :max="hyphenatedDateFormat(new Date(fields.end_at ? fields.end_at : null))"
             />
         </div>
 

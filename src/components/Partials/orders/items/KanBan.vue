@@ -1,5 +1,7 @@
 <script setup>
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid';
 import Draggable from 'vuedraggable';
+import { shallowRef } from 'vue';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import service from '~/services/orders';
@@ -10,13 +12,24 @@ const { columns, log, atMounted } = service();
 
 await atMounted();
 
-console.log(columns.value)
+// const kanbanRef = shallowRef();
+
+// const scrollTo = (right = false) => {
+//   setInterval(() => {
+//     kanbanRef.value.scroll({
+//       left: right ? 100 : 0,
+//       // left: right ? kanbanRef.value.scrollWidth : 0,
+//       behavior: 'smooth',
+//     });
+//   }, 1000)
+// };
 
 </script>
 
 <template>
-      <div class="flex items-stretch overflow-x-scroll pb-3 my-16">
-      <!-- <div class="grid grid-cols-12 grid-rows-6 sm:grid-rows-4 xl:grid-rows-3 gap-2"> -->
+  <div class="relative">
+
+    <div id="kanban" ref="kanbanRef" class="flex items-stretch overflow-x-scroll pb-3 my-16 relative">
         <div
           v-for="[id, {name, color}] in Object.entries(columns)"
           :key="id"
@@ -70,12 +83,43 @@ console.log(columns.value)
               </div>
             </template>
           </Draggable>
-
         </div>
-      </div>
+<!--
+        <div class="overlay absolute my-auto z-50 right-0 left-0 bottom-0 top-0 flex justify-between items-center bg-green-300 opacity-30">
+          <span @mouseenter="() => scrollTo()" class="chevron chevron-left bg-gray-600 opacity-60 py-5 rounded-r-full top-1/4 left-0 flex items-center" >
+            <ChevronLeftIcon  class="text-white w-16" />
+          </span>
+
+          <span @mouseenter="() => scrollTo(true)" class="chevron chevron-right bg-gray-600 opacity-60 py-5 rounded-l-full top-1/4 right-0 flex items-center" >
+            <ChevronRightIcon  class="text-white w-16" />
+          </span>
+        </div>
+-->
+    </div>
+
+  </div>
+
 </template>
 
 <style scoped>
+/*
+#kanban .overlay{
+  pointer-events: none;
+}
+
+#kanban .overlay span{
+  pointer-events: all;
+}
+
+.chevron {
+  min-height: 200px;
+}
+
+.chevron-left {
+
+}
+*/
+
 .stage{
   min-width: 300px;
   min-height: 400px;

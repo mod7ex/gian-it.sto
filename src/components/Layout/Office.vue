@@ -83,7 +83,7 @@ const menu = [
 const userFullName = computed(() => {
   const userData = user.value;
 
-  if (userData?.id) return `${userData.name} ${userData.surname}`;
+  if (userData?.id) return `${userData.name ?? ''} ${userData.surname ?? ''}`;
 
   return 'Гость';
 });

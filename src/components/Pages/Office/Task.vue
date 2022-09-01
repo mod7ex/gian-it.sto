@@ -19,7 +19,7 @@ onScopeDispose(clearMemo);
   <OfficeLayout title="Название задачи">
     <template #actions>
         <Button type="secondary" @click="back">
-          <ArrowLeftIcon class="w-5 h-5 mr-1"/>Bернуться
+          <ArrowLeftIcon class="w-5 h-5 mr-1"/>Назад
         </Button>
 
         <Button color="purple" @click="() => ping(true)" blur v-if="((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) && canTasks(task, 'update')">

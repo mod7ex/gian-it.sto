@@ -156,14 +156,14 @@ onMounted(() => { close(); reset(); });
                         <div class="mb-2 flex justify-between items-center">
                             <Avatar
                                 :image="request?.user?.avatar"
-                                :title="`${request?.user?.name} ${request?.user?.surname}`"
+                                :title="`${request?.user?.name ?? ''} ${request?.user?.surname ?? ''}`"
                                 :subtitle="request?.user?.office_position"
                             />
 
                             <button @click="() => ping(request, target?.id)" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
                         </div>
                         <div class="flex justify-between items-center">
-                            <p v-if="request?.order?.id" class="text-xs">Заказ-наряд: #{{ generateShapedIdfromId(request?.order?.id) }}</p>
+                            <p class="text-xs">Заказ-наряд: #{{ request?.order?.id != null ? generateShapedIdfromId(request?.order?.id) : '' }}</p>
                             <p class="text-xs">Kоличество: {{ request?.count }}</p>
                         </div>
                     </li>

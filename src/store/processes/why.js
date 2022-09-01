@@ -22,7 +22,7 @@ const fill = async (payload) => {
   if (state.pending) return;
   if (state.page > state.pages) return;
   state.pending = true;
-  const data = await $({ key: 'appeal_reasons', ...payload, page: state.page });
+  const data = await $({ key: 'appeal_reasons', params: { ...payload, page: state.page } });
   state.raw = state.raw.concat(data?.appeal_reasons ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;

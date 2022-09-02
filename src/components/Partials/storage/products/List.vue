@@ -26,11 +26,11 @@ const fields = [
   { label: 'Место', key: 'place' },
 ];
 
-if(isThePage.value) {
-    watch(products, async (v) => {
-        if(v.length < 8) await fetchProducts()
-    })
-}
+// if(isThePage.value) {
+//     watch(products, async (v) => {
+//         if(v.length < 8) await fetchProducts()
+//     })
+// }
 
 await fetchProducts(true);
 
@@ -84,6 +84,7 @@ onScopeDispose(() => reset(true));
             </template>
 
         </Table>
+        
         <pixel />
     </div>
 </template>

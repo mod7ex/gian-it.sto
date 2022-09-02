@@ -1,7 +1,7 @@
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid';
 import Draggable from 'vuedraggable';
-import { shallowRef } from 'vue';
+import { computed, shallowRef } from 'vue';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import service from '~/services/orders';
@@ -14,15 +14,22 @@ await atMounted();
 
 const kanbanRef = shallowRef();
 
+const show = shallowRef(0)
+
 let timer;
 
-const clearTimer = () => { clearInterval(timer) }
+const clearTimer = () => {
+  if(timer != null) {
+    clearInterval(timer)
+    timer = undefined
+  }
+}
 
 const scrollTo = (right = false) => {
-  let i = 0
+  clearTimer()
   timer = setInterval(() => {
     let target = kanbanRef.value ?? document.getElementById('orders-kanban')
-    let step = 10 * i++
+    let step = 70
     let left = right ? target.scrollLeft + step : target.scrollLeft - step
 
     requestAnimationFrame(() => {
@@ -31,15 +38,32 @@ const scrollTo = (right = false) => {
         behavior: 'smooth'
       })
     })
-  }, 100)
+  }, 60)
 };
+
+const foo = () => {
+  let target = kanbanRef.value ?? document.getElementById('orders-kanban')
+  if(target.scrollLeft === 0) {
+    clearTimer()
+    show.value = 0
+    return
+  }
+
+  if(target.scrollLeft + target.clientWidth >= target.scrollWidth - 1) {
+    clearTimer()
+    show.value = 1
+    return
+  }
+
+  show.value = 2
+}
 
 </script>
 
 <template>
   <div class="my-16 relative">
 
-    <div id="orders-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5">
+    <div @scroll="() => foo()" id="orders-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5">
       <div
         v-for="[id, {name, color}] in Object.entries(columns)"
         :key="id"
@@ -96,14 +120,18 @@ const scrollTo = (right = false) => {
       </div>
     </div>
 
-    <div class="overlay absolute my-auto z-50 right-0 left-0 bottom-0 top-0 flex justify-between items-center opacity-30">
-      <span @mouseenter="() => scrollTo()" @mouseleave="clearTimer" class="chevron chevron-left bg-gray-900 opacity-75 py-5 rounded-r-full top-1/4 left-0 flex items-center" >
-        <ChevronLeftIcon  class="text-white w-16" />
-      </span>
+    <div class="overflow-hidden overlay absolute my-auto z-50 right-0 left-0 bottom-0 top-0 flex items-center opacity-30">
+      <Transition tag="div" name="slide-fade-left">
+        <span v-if="show !== 0" @mouseenter.prevent="() => scrollTo()" @mouseleave="clearTimer" class="chevron chevron-left bg-gray-900 opacity-75 py-5 rounded-r-full top-1/4 left-0 flex items-center" >
+          <ChevronLeftIcon class="text-white w-16" />
+        </span>
+      </Transition>
 
-      <span @mouseenter="() => scrollTo(true)" @mouseleave="clearTimer" class="chevron chevron-right bg-gray-900 opacity-75 py-5 rounded-l-full top-1/4 right-0 flex items-center" >
-        <ChevronRightIcon  class="text-white w-16" />
-      </span>
+      <Transition tag="div" name="slide-fade-right">
+        <span v-if="show !== 1" @mouseenter="() => scrollTo(true)" @mouseleave="clearTimer" class="ml-auto chevron chevron-right bg-gray-900 opacity-75 py-5 rounded-l-full top-1/4 right-0 flex items-center" >
+          <ChevronRightIcon class="text-white w-16" />
+        </span>
+      </Transition>
     </div>
 
   </div>
@@ -123,6 +151,7 @@ const scrollTo = (right = false) => {
 .chevron {
   min-height: 200px;
 }
+
 /*
 .chevron-left {
 
@@ -140,5 +169,41 @@ const scrollTo = (right = false) => {
 
 .tasks-container {
   height: calc(100% - 30px);
+}
+
+/* **************************************** */
+
+.slide-fade-left-enter-active {
+  transition: all .3s ease-in;
+}
+
+.slide-fade-left-leave-active {
+  transition: all .3s ease-in;
+}
+
+.slide-fade-left-leave-to {
+  transform: translateX(-100px);
+}
+
+.slide-fade-left-enter-from{
+  transform: translateX(-100px);
+}
+
+/* Right */
+
+.slide-fade-right-enter-active {
+  transition: all .3s ease-in;
+}
+
+.slide-fade-right-leave-active {
+  transition: all .3s ease-in;
+}
+
+.slide-fade-right-leave-to {
+  transform: translateX(100px);
+}
+
+.slide-fade-right-enter-from{
+  transform: translateX(100px);
 }
 </style>

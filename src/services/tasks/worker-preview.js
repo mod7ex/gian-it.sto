@@ -1,19 +1,29 @@
-import { ref, effectScope, onScopeDispose } from 'vue';
+import { ref, effectScope, computed } from 'vue';
 import useAppRouter from '~/composables/useAppRouter.js';
 import { debounce } from '~/helpers';
 import $ from '~/helpers/fetch.js';
 import save from '~/helpers/save';
 import useToast from '~/composables/useToast';
 import { canTasks } from '~/lib/permissions';
+import useAuth from '~/composables/useAuth.js';
+
+const { user } = useAuth();
 
 const toaster = useToast();
 
 let task;
+let allowed;
+let imExecuter;
 
 export default () => effectScope().run(() => {
   const { route, back } = useAppRouter();
 
-  if (!task) { task = ref({}); }
+  if (!task) {
+    task = ref({});
+
+    imExecuter = computed(() => task.value.user?.id == user.value.id);
+    allowed = computed(() => (task.value.status === 'process') && imExecuter.value);
+  }
 
   const atMounted = async () => {
     const { id } = route.params;
@@ -52,6 +62,8 @@ export default () => effectScope().run(() => {
     route,
     ping,
     task_id,
-    clearMemo: () => onScopeDispose(() => { task = undefined; }),
+    allowed,
+    imExecuter,
+    clearMemo: () => { task = undefined; allowed = undefined; },
   };
 });

@@ -11,7 +11,7 @@ const { render } = form();
 
 const fields = [
   { label: 'Название', key: 'name' },
-  { label: 'Количество задач', key: 'tasks_count' },
+  { label: 'Количество задач', key: 'count_tasks' },
   { label: 'Дата создания', key: 'created_at' },
 ];
 
@@ -39,7 +39,7 @@ await fetchProcesses(true);
             <Link :href="{ name: 'Process', params: {id, name} }"> {{ value }} </Link>
         </template>
 
-        <template #td-tasks_count="{ value }" >
+        <template #td-count_tasks="{ value }" >
             <Badge :point="true" color="blue">
               {{ value ?? '(Unknown)' }} задач
             </Badge>

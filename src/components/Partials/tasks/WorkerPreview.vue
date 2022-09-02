@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { ClockIcon, PaperClipIcon } from '@heroicons/vue/outline';
 import Comments from '@/Partials/Comments.vue';
 import { DescriptionList, DescriptionListItems, DescriptionListItem } from '@/UI/DescriptionList/index.js';
@@ -9,10 +9,8 @@ import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
 import Preview from '@/Partials/processes/DiagnosticCardPreview.vue';
 import $ from '~/helpers/fetch';
 import Badge from '@/UI/Badge.vue';
-import useAuth from '~/composables/useAuth.js';
 
-const { user } = useAuth();
-const { task, atMounted, route, checkBox, canTasks } = service();
+const { task, atMounted, route, checkBox, canTasks, allowed } = service();
 
 const dc_template = ref({});
 
@@ -22,7 +20,6 @@ await atMounted().then(async () => {
   }
 })
 
-// const imNswed = computed(() => !(canTasks(task.value, 'update')) && (task.value.user.id == user.value.id))
 
 </script>
 
@@ -46,7 +43,7 @@ await atMounted().then(async () => {
 
         <DescriptionListItems type="columns" :cols="3">
 
-          <DescriptionListItem cols="1" label="Автомобиль" :value="task?.order?.car?.car_model?.name ?? ''" type="columns" />
+          <DescriptionListItem cols="1" label="Автомобиль" :value="`${task?.order?.car?.car_model?.car_mark?.name ?? ''} ${task?.order?.car?.car_model?.name ?? '_'}`" type="columns" />
 
           <DescriptionListItem cols="1" label="ГОС номер" :value="task?.order?.car?.number ?? ''" type="columns" />
 
@@ -66,7 +63,7 @@ await atMounted().then(async () => {
               :fields="dc_template.data ?? []"
               :dc_template="dc_template"
               :no-head="true"
-              :disabled="(!canTasks(task.value, 'update') && task.user.id != user.id) || task.status !== 'process'"
+              :disabled="!allowed"
             />
           </DescriptionListItem>
 
@@ -78,7 +75,7 @@ await atMounted().then(async () => {
                     :class="['py-2', {'line-through': item.is_checked}]"
                 >
                   <Checkbox
-                    :disabled="(!canTasks(task.value, 'update') && task.user.id != user.id) || task.status !== 'process'"
+                    :disabled="!allowed"
                     :label="item.description"
                     v-model="item.is_checked"
                     @clicked="() => checkBox(item.id, !item.is_checked, i)"
@@ -98,7 +95,7 @@ await atMounted().then(async () => {
                   <span class="ml-2 flex-1 w-0 truncate">{{ file.name }}</span>
                 </div>
                 <div class="ml-4 flex-shrink-0">
-                  <a :href="file.url" target="_blank" class="font-medium text-blue-600 hover:text-blue-500" >Скачать</a>
+                  <a :disabled="!allowed" :href="file.url" target="_blank" class="font-medium text-blue-600 hover:text-blue-500" >Скачать</a>
                 </div>
               </li>
             </ul>
@@ -108,6 +105,6 @@ await atMounted().then(async () => {
       </DescriptionList>
     </section>
 
-    <Comments model="task" :id="route.params.id" class="mt-2" :disabled="(!canTasks(task.value, 'update') && task.user.id != user.id)" />
+    <Comments model="task" :id="route.params.id" class="mt-2" />
   </div>
 </template>

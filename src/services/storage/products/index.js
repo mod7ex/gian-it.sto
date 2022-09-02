@@ -57,7 +57,7 @@ export default () => effectScope().run(() => {
 
   const fetchProducts = async (bool = false) => {
     if (bool) reset();
-    await fill({ ...filter, storage_id: route.params.id });
+    await fill({ ...filter, storage_id: route.params.id, status: isThePage.value ? 'wait' : undefined });
   };
 
   const redirectToForm = async (product, theTarget) => {

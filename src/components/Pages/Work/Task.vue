@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onScopeDispose } from 'vue';
 import { CheckIcon, ThumbUpIcon, UserIcon } from '@heroicons/vue/solid';
 import { ArrowLeftIcon, ClockIcon } from '@heroicons/vue/outline';
 import Layout from '@/Layout/Work.vue';
@@ -12,9 +12,9 @@ import { tasksColorMap, ruMonths } from '~/helpers';
 
 const SuspenseArea = useSuspense(WorkerPreview);
 
-const { task, clearMemo, ping, canTasks } = service();
+const { task, clearMemo, ping, imExecuter } = service();
 
-clearMemo();
+onScopeDispose(clearMemo);
 
 const EVENTS = {
   TASK_CREATED: { iconBackground: 'bg-gray-400', icon: UserIcon },
@@ -141,14 +141,14 @@ const timeline = computed(() => {
           <Feeds :items="timeline" class="mt-5 max-h-vh overflow-y-scroll" />
 
           <div class="mt-6 grid grid-cols-3 gap-x-2" :key="task.status">
-            <Button class="col-span-1 flex justify-center" color="purple" @click="() => ping('process')" blur :disabled="!((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) && canTasks(task, 'update')" >
+            <Button class="col-span-1 flex justify-center" color="purple" @click="() => ping('process')" blur :disabled="!((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) || !imExecuter" >
               <!-- <ClockIcon class="w-5 h-5 mr-1"/> -->
               Начать
             </Button>
 
-            <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" :disabled="(!canTasks(task, 'update')) || (task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')" >На паузу</Button>
+            <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" :disabled="(task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')  || !imExecuter" >На паузу</Button>
 
-            <Button class="col-span-1 flex justify-center" color="green" @click="() => ping('done')" blur :disabled="!((task?.status === 'process') || (task?.status === 'process') || (task?.status === 'pause')) && canTasks(task, 'update')" >
+            <Button class="col-span-1 flex justify-center" color="green" @click="() => ping('done')" blur :disabled="!((task?.status === 'process') || (task?.status === 'pause'))  || !imExecuter" >
               Завершить
             </Button>
           </div>

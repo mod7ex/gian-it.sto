@@ -36,8 +36,7 @@ const logWorker = async (email) => {
   }
 }
 
-const workers = computed(() => state.employees.filter(({roles}) => !((roles[0].title === 'Администратор') || roles[0].title === 'Директор')));
-// const workers = computed(() => state.employees.filter(({roles}) => true));
+const workers = computed(() => state.employees.filter(({roles}) => !((roles[0].name === 'admin') || roles[0].name === 'director')));
 
 </script>
 

@@ -25,6 +25,7 @@ const getComments = async () => {
 };
 
 const submitComment = async (description) => {
+  if(!content.value) return
   if (!unref(props.id)) return;
   const success = await save(props.model, unref(props.id), description);
   if (success) {

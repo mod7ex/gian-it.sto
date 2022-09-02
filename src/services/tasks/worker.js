@@ -61,14 +61,14 @@ export default () => effectScope().run(() => {
 
   const fetchTasks = async (bool = false) => {
     if (bool) resetStore();
-    // await fill({ user_id: user.value.id, ...cleanUp(filter) }, false);
-    await fill(cleanUp(filter), false);
+    await fill({ user_id: user.value.id, ...cleanUp(filter) }, false);
+    // await fill(cleanUp(filter), false);
   };
 
   const initTimeEdges = () => {
     if (!edge) {
       edge = reactive({
-        from: hyphenatedDateFormat(new Date()),
+        from: hyphenatedDateFormat(new Date(Date.now())),
         to: hyphenatedDateFormat(new Date()),
       });
     }

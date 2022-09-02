@@ -12,7 +12,7 @@ const calcMinsDiff = (end, start) => ((new Date(end)).getTime() - (new Date(star
 //   for (let i = 0; i < logs.length; i++) {
 //     const { created_at, data } = logs[i];
 //     const d = (new Date(created_at.split(' ')[0])).getTime();
-//     if (data?.status === 'done' && d === day) return true;
+//     if (data?.status === 'done' && d === day) return true; // NOT UNIQUE
 //   }
 
 //   return false;
@@ -21,8 +21,11 @@ const calcMinsDiff = (end, start) => ((new Date(end)).getTime() - (new Date(star
 const getClosedTasksNumberIn = (day) => state.raw.filter(({ logs }) => {
   for (let i = 0; i < logs.length; i++) {
     const { created_at, data } = logs[i];
-    const d = (new Date(created_at.split(' ')[0])).getTime();
-    if(data?.status === 'done') return d === day 
+    
+    if(data?.status === 'done') {
+      const d = (new Date(created_at.split(' ')[0])).getTime();
+      return d === day // UNIQUE
+    }
   }
 
   return false;

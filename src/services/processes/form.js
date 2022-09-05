@@ -11,7 +11,7 @@ import formRules from '~/validationsRules/process';
 
 const toaster = useToast();
 
-const { load } = store;
+const { addItem } = store;
 
 let v$;
 let process;
@@ -36,13 +36,13 @@ const saveForm = async () => {
 
   v$.value.$reset();
 
-  const { message, success } = await save.process_category({ ...process, appeal_reason_id: appeal_reason_id.value });
+  const { message, success, data } = await save.process_category({ ...process, appeal_reason_id: appeal_reason_id.value });
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      addItem(data.process_category);
       toaster.success(message);
     }
   }

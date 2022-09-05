@@ -16,6 +16,10 @@ const state = reactive({
   pending: false,
 });
 
+const addItem = (item) => {
+  state.raw.push(item);
+};
+
 const reset = () => {
   state.raw = [];
   state.pages = 100;
@@ -48,5 +52,6 @@ export default {
   load,
   drop,
   fill,
+  addItem,
   options: computed(() => state.raw.map(({ id, name }) => ({ label: name, value: id }))),
 };

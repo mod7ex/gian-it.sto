@@ -7,7 +7,7 @@ import store from '~/store/processes';
 
 const { state, drop, reset, fill } = store;
 
-const { render } = form();
+const { render, appeal_reason_id } = form();
 
 const fields = [
   { label: 'Название', key: 'name' },
@@ -15,10 +15,10 @@ const fields = [
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-
 const fetchProcesses = async (bool = false) => {
   if (bool) reset();
-  await fill();
+  console.log(appeal_reason_id.value)
+  await fill({ appeal_reason_id: appeal_reason_id.value });
 };
 
 await fetchProcesses(true);
@@ -35,8 +35,8 @@ await fetchProcesses(true);
         @edit="render"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id, name} }" >
-            <Link :href="{ name: 'Process', params: {id, name} }"> {{ value }} </Link>
+        <template #td-name="{ value, item: {id, name, appeal_reason} }" > 
+            <Link :href="{ name: 'Process', params: {id, name, why: appeal_reason.id} }"> {{ value }} </Link>
         </template>
 
         <template #td-count_tasks="{ value }" >

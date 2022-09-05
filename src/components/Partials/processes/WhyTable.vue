@@ -32,7 +32,7 @@ await fetchWhys(true);
     >
         <!-- Body -->
         <template #td-name="{ value, item: {id} }" >
-            <Link @click="() => render(id)"> {{ value }} </Link>
+            <Link :href="{name: 'Processes', params: { why: id }}">{{ value }}</Link>
         </template>
 
         <template #td-created_at="{ value }" >

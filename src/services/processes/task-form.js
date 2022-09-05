@@ -45,7 +45,7 @@ const setField = function (key) {
   }
 
   if (key === 'pipelines') {
-    fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage: { id: stage_id } }) => ({ pipeline_id, stage_id })) ?? [{}];
+    fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage }) => ({ pipeline_id, stage_id: stage?.id })) ?? [{}];
     return;
   }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { PlusCircleIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
+import { PlusCircleIcon, MapIcon } from '@heroicons/vue/outline';
 import useSuspense from '~/composables/useSuspense.js';
 import Table from '@/Partials/processes/WhyTable.vue';
 import service from '~/services/processes/why-form';
@@ -15,8 +15,8 @@ const SuspenseArea = useSuspense(Table);
 <template>
   <OfficeLayout title="Причины обращения">
     <template #actions>
-      <Button type="secondary" :link="{name: 'Processes'}">
-        <ArrowLeftIcon class="w-5 h-5 mr-1"/>К процессам
+      <Button type="secondary" :link="{ name: 'DiagnosticCard' }">
+        <MapIcon class="w-5 h-5 mr-1"/>Шаблоны диагностических карт
       </Button>
 
       <Button color="blue" @click="() => render()">

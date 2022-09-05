@@ -70,7 +70,7 @@ const menu = [
   // { label: 'Главная', name: 'Dashboard', icon: PresentationChartLineIcon },
   { label: 'Заказ-наряды', name: 'Orders', icon: ChipIcon },
   { label: 'Задачи', name: 'Tasks', icon: TableIcon },
-  { label: 'Рабочие процессы', name: 'Processes', icon: PuzzleIcon },
+  { label: 'Причины обращения', name: 'Why', icon: PuzzleIcon },
   { label: 'Склад', name: 'Storages', icon: CollectionIcon },
   { label: 'Клиенты', name: 'Clients', icon: UserGroupIcon },
   { label: 'Сотрудники', name: 'Employers', icon: UserGroupIcon },

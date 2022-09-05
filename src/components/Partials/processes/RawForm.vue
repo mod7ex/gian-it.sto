@@ -27,6 +27,7 @@ await (async ()=>{
         />
       </div>
 
+      <!--
       <div>
         <Select
           label="Причина обращения"
@@ -37,5 +38,6 @@ await (async ()=>{
           @blured="v$.appeal_reason_id.$touch"
         />
       </div>
+    -->
     </div>
 </template>

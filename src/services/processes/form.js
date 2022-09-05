@@ -1,4 +1,4 @@
-import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose, ref } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -15,6 +15,7 @@ const { load } = store;
 
 let v$;
 let process;
+let appeal_reason_id;
 
 const setField = function (key) {
   if (key.includes('_id')) {
@@ -35,7 +36,7 @@ const saveForm = async () => {
 
   v$.value.$reset();
 
-  const { message, success } = await save.process_category(process);
+  const { message, success } = await save.process_category({ ...process, appeal_reason_id: appeal_reason_id.value });
 
   try {
     return { message, success };
@@ -50,13 +51,23 @@ const saveForm = async () => {
 const atMounted = async () => {
   const { id } = process;
 
-  if (id) {
+  if (id != null) {
     const cm = await $.process_category(id);
     setForm(cm);
   }
 };
 
-export default () => {
+const clearAppealReason = () => {
+  appeal_reason_id = undefined;
+};
+
+export default (v) => {
+  if (!appeal_reason_id) {
+    if (v != null) {
+      appeal_reason_id = ref(v);
+    }
+  }
+
   const modalUp = (...args) => {
     const scope = effectScope();
 
@@ -72,7 +83,6 @@ export default () => {
           process = reactive({
             id: id ?? '',
             name: '',
-            appeal_reason_id: '',
           });
 
           v$ = useVuelidate(formRules(), process, { $lazy: true });
@@ -81,9 +91,7 @@ export default () => {
 
       render(...args);
 
-      onScopeDispose(() => {
-        process = undefined;
-      });
+      onScopeDispose(() => { process = undefined; });
     });
   };
 
@@ -92,5 +100,7 @@ export default () => {
     process,
     atMounted,
     v$,
+    clearAppealReason,
+    appeal_reason_id,
   };
 };

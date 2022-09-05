@@ -1,12 +1,17 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
+import { userHasAtLeastOnePermission } from '~/lib/permissions';
 
 const state = reactive({ raw: [] });
 
 const reset = () => { state.raw = []; };
 
-const load = async () => { state.raw = await $.order_stages(); };
+const load = async () => {
+  if (userHasAtLeastOnePermission(['crud orders', 'read orders'])) {
+    state.raw = await $.order_stages();
+  }
+};
 
 const drop = async (id) => _$.order_stage(id, (v) => { state.raw.deleteById(v); });
 

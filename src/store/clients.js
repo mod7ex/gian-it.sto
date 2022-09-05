@@ -2,6 +2,9 @@ import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
 import { alphaGroupper, callsCounter } from '~/helpers';
+import { userHasAtLeastOnePermission } from '~/lib/permissions';
+
+const canRead = userHasAtLeastOnePermission(['read clients', 'crud clients']);
 
 const state = reactive({
   raw: [],
@@ -21,12 +24,14 @@ const reset = () => {
 };
 
 const load = async (payload) => {
+  if (!canRead) return;
   state.raw = await $.clients(payload);
   state.loading = false;
 };
 
 const fill = async (payload) => {
   if (state.pending) return;
+  if (!canRead) return;
   if (state.page > state.pages) return;
   state.pending = true;
   const data = await $({ key: 'clients', params: { ...payload, page: state.page } });

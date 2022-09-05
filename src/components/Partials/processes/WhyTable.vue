@@ -31,8 +31,8 @@ await fetchWhys(true);
         @edit="render"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id} }" >
-            <Link :href="{name: 'Processes', params: { why: id }}">{{ value }}</Link>
+        <template #td-name="{ value, item: {id, name} }" >
+            <Link :href="{name: 'Processes', params: { why: id, appeal_reason: name }}">{{ value }}</Link>
         </template>
 
         <template #td-created_at="{ value }" >

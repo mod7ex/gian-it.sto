@@ -19,7 +19,7 @@ onScopeDispose(clearAppealReason);
 </script>
 
 <template>
-  <OfficeLayout title="Рабочие процессы">
+  <OfficeLayout :title="`${params.appeal_reason} / Рабочие процессы`">
     <template #actions>
       <Button type="secondary" :link="{name: 'Why'}">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>К причинам обращения

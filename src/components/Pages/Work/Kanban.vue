@@ -1,0 +1,33 @@
+<script setup>
+import { onScopeDispose } from 'vue';
+import Layout from '@/Layout/Work.vue';
+import Header from '@/UI/Header.vue';
+import Select from '@/UI/Select.vue';
+import WorkerBadge from '~/components/Partials/WorkerBadge.vue';
+import useSuspense from '~/composables/useSuspense';
+import KanBan from '@/Pages/Work/RawKanban.vue';
+import service from '~/services/tasks/kanban';
+
+const SuspenseArea = useSuspense(KanBan);
+
+const { clearMemo, options, theSelectedFunnel } = service();
+
+onScopeDispose(clearMemo);
+
+</script>
+
+<template>
+  <Layout title="Канбан">
+
+    <worker-badge />
+
+    <Header>Канбан</Header>
+
+    <div class="grid grid-cols-12">
+      <Select :options="options" v-model="theSelectedFunnel" class="col-span-4" />
+    </div>
+
+    <suspense-area />
+
+  </Layout>
+</template>

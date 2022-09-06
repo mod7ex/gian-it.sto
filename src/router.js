@@ -80,6 +80,7 @@ const routes = [
   { path: '/w/profile', component: () => import(/* webpackChunkName: "WorkerProfile" */ '@/Pages/Work/Profile.vue'), name: 'WorkerProfile' },
   { path: '/w/times', component: () => import(/* webpackChunkName: "WorkerTimes" */ '@/Pages/Work/Times.vue'), name: 'WorkerTimes' },
   { path: '/w/change', component: () => import(/* webpackChunkName: "ChangeWorker" */ '@/Pages/Work/ChangeWorker.vue'), name: 'ChangeWorker' },
+  { path: '/w/kanban', component: () => import(/* webpackChunkName: "ChangeWorker" */ '@/Pages/Work/Kanban.vue'), name: 'WorderKanban' },
 
   { path: '/:pathMatch(.*)*', component: () => import(/* webpackChunkName: "404" */ '@/Pages/404.vue'), name: '404' },
 ];

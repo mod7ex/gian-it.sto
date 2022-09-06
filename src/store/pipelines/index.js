@@ -42,8 +42,12 @@ const drop = async (id) => _$.pipeline(id, (v) => {
   state.raw.deleteById(v);
 });
 
+const funnelById = (_id) => state.raw.find(({ id }) => _id == id);
+
 export default {
   state: readonly(state),
+
+  funnelById,
 
   options: computed(() => state.raw.map(({ id, name }) => ({ label: name, value: id }))),
   typesOptions: computed(() => Object.entries(state.types).map(([value, label]) => ({ value, label }))),

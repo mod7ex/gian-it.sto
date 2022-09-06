@@ -127,7 +127,7 @@ const userRoleTitle = computed(() => {
           <Dropdown :items="userMenu" direction="justify" class="px-3 mt-4">
             <MenuButton class="group w-full bg-gray-100 rounded-md pl-1 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500" >
               <span class="flex w-full justify-between items-center">
-                <Avatar :image="user.avatar" :title="userFullName" :subtitle="userRoleTitle" class="w-10/12 overflow-hidden" />
+                <Avatar action :image="user.avatar" :title="userFullName" :subtitle="userRoleTitle" class="w-10/12 overflow-hidden" />
                 <SelectorIcon class="h-5 text-gray-400 group-hover:text-gray-500 w-2/12" aria-hidden="true"/>
               </span>
             </MenuButton>

@@ -75,6 +75,8 @@ const drop = async (id) => _$.task(id, (v) => {
 
 const findTask = (_id) => state.raw.find(({ id }) => id == _id);
 
+const tasksInFunnel = (_id) => state.raw.filter(({ pipelines }) => (pipelines.some(({ pipeline: { id } }) => id == _id)));
+
 export default {
   state: readonly(state),
 
@@ -85,6 +87,7 @@ export default {
   sort,
   fill,
   setTask,
+  tasksInFunnel,
   // noOwnerTask: computed(() => (state.raw[0])),
   noOwnerTask: computed(() => (state.raw.filter(({ user: responsible }) => !responsible))[0]),
   options: computed(() => state.raw.map(({ id: value, name: label }) => ({ label, value }))),

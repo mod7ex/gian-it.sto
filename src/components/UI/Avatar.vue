@@ -23,6 +23,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+
+  action: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 
@@ -41,14 +46,14 @@ const props = defineProps({
         <div class="ml-3" v-if="detail">
           <slot name="title">
             <p
-              :class="[props.worker ? 'text-2xl font-bold' : 'text-sm font-medium', 'text-gray-700 cursor-default']"
+              :class="[props.worker ? 'text-2xl font-bold' : 'text-sm font-medium', 'text-gray-700 ', action ? 'cursor-pointer' : 'cursor-default']"
               v-if="props.title"
             >
               {{ props.title }}
             </p>
           </slot>
 
-          <p :class="[props.worker ? 'text-sm' : 'text-xs', 'font-medium text-gray-500 cursor-default']" >
+          <p :class="[props.worker ? 'text-sm' : 'text-xs', 'font-medium text-gray-500 ', action ? 'cursor-pointer' : 'cursor-default']" >
             <slot name="subtitle"> {{ props.subtitle }} </slot>
           </p>
         </div>

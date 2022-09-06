@@ -13,7 +13,6 @@ const { current } = departmentStore;
 const { state: StagesState, load: loadStages } = orderStagesStore;
 
 let columns;
-
 let filter;
 
 const getKanBanPayload = () => {
@@ -75,7 +74,6 @@ const atMounted = async () => {
 export default () => effectScope().run(() => {
   if (!columns) {
     columns = ref({});
-
     filter = reactive({});
   }
 

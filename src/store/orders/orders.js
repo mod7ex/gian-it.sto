@@ -12,6 +12,15 @@ const reset = () => {
   state.raw = [];
 };
 
+const setOrderStage = (order_id, stage) => {
+  for (let i = 0; i < state.raw.length; i++) {
+    if (state.raw[i].id == order_id) {
+      state.raw[i].stage = { ...stage };
+      return;
+    }
+  }
+};
+
 const load = async (payload) => {
   if (userHasAtLeastOnePermission(['crud orders', 'read orders'])) {
     if (!payload.department_id) return;
@@ -26,5 +35,6 @@ export default {
   load,
   drop,
   reset,
+  setOrderStage,
   options: computed(() => state.raw.map(({ id }) => ({ label: `#${generateShapedIdfromId(id)}`, value: id }))),
 };

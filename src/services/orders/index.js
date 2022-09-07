@@ -9,9 +9,9 @@ import tasksStore from '~/store/tasks';
 
 const toaster = useToast();
 
-const { load, state } = store;
+const { load, state, setOrderStage } = store;
 const { current } = departmentStore;
-const { state: StagesState, load: loadStages } = orderStagesStore;
+const { state: stagesState, load: loadStages } = orderStagesStore;
 const { load: loadTasks, reset, state: tasksState, getTaskById } = tasksStore;
 
 let columns;
@@ -36,7 +36,7 @@ const getKanBanPayload = () => {
     return payload;
   }, {});
 
-  StagesState.raw.forEach(({ id, color, name }) => {
+  stagesState.raw.forEach(({ id, color, name }) => {
     if (id in kanban) return;
     kanban[id] = {
       orders: [],
@@ -56,10 +56,8 @@ const log = async (e, cb) => {
   const d = new Date();
   const { item: { id: order_id }, to: { id: order_stage_id } } = e;
 
-  // eslint-disable-next-line
-  const target = state.raw.find(({ id }) => id == order_id);
-  // eslint-disable-next-line
-  if (target.stage?.id == order_stage_id) return;
+  const target_stage = state.raw.find(({ id }) => id == order_id)?.stage?.id;
+  if (target_stage == order_stage_id) return;
 
   const { message, success } = await save({ data: { order_stage_id }, path: `orders/${order_id}/stage` });
 
@@ -68,7 +66,8 @@ const log = async (e, cb) => {
     return fillColumns();
   }
 
-  // Fix : update local ressource
+  setOrderStage(order_id, stagesState.raw.find(({ id }) => id == order_stage_id));
+
   toaster.success('Стадия заказа успешно обновлена');
 
   await cb(d, order_id);

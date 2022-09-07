@@ -26,14 +26,12 @@ await atMounted();
 const tasksShip = reactive({})
 
 const onSuccessMove = async (d, order_id) => {
-  // await Promise.all([load({department_id: current.value}), loadTasks({ order_id, created_after: hyphenatedDateFormat(d) })]).then(() => {
-  //   showModal.value = true;
-  // });
-
-  await Promise.all([load({department_id: current.value}), loadTasks({ })]).then(() => {
+  await Promise.all([load({department_id: current.value}), loadTasks({ order_id, created_after: hyphenatedDateFormat(d) })]).then(() => {
     showModal.value = true;
   });
 }
+
+const modelTasks = computed(() => tasksState.raw.filter(({user}) => !user))
 
 // ****************************************************** Newly created tasks on Order-move in kanban
 const loading = shallowRef(false);
@@ -196,7 +194,7 @@ const fields = [
 
   </div>
 
-  <Teleport to="#sto-modal-teleport" v-if="tasksState.raw.length && showModal">
+  <Teleport to="#sto-modal-teleport" v-if="modelTasks.length && showModal">
     <Transition name="docs-modal">
       <div class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50" >
         <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl w-full max-w-3xl m-6">
@@ -204,12 +202,14 @@ const fields = [
           <div class="p-1 overflow-y-scroll max-h-vw">
             <h1 class="text-lg mb-m text-center">Автоматически созданные задачи</h1>
 
+            <p class="text-xs text-gray-600 text-center">Укажите ответственного для задачи</p>
+
             <p :class="['text-xs text-center my-3 select-none', updateMsg ? 'text-red-500' : 'text-transparent']" >{{ updateMsg ? updateMsg : 'a' }}</p>
 
             <Table
               @bottom-touched="() => {}"
               :fields="fields"
-              :items="tasksState.raw"
+              :items="modelTasks"
               :actions="false"
             >
               <template #td-name="{ value, item: {id} }" >

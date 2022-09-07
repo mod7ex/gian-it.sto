@@ -13,6 +13,22 @@ const state = reactive({
   pending: false,
 });
 
+const setTaskFunnelStage = (task_id, funnel_id, stage) => {
+  const task_index = state.raw.findIndex(({ id }) => id == task_id);
+
+  if (task_index < 0) return;
+
+  const funnels = state.raw[task_index].pipelines;
+
+  if (!funnels) return;
+
+  const funnel_index = funnels.findIndex(({ pipeline: { id } }) => id == funnel_id);
+
+  if (funnel_index < 0) return;
+
+  state.raw[task_index].pipelines[funnel_index].stage = { ...stage };
+};
+
 const getTaskById = (_id) => state.raw.find(({ id }) => _id == id);
 
 const setTask = (payload) => {
@@ -84,6 +100,7 @@ export default {
   findTask,
   load,
   drop,
+  setTaskFunnelStage,
   reset,
   sort,
   fill,

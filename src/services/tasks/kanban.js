@@ -9,7 +9,7 @@ import store from '~/store/tasks';
 const toaster = useToast();
 
 const { state: funnelsState, load: loadFunnels, options, funnelById } = pipelinesStore;
-const { tasksInFunnel, state } = store;
+const { tasksInFunnel, state, setTaskFunnelStage } = store;
 
 let filter;
 let getTasks;
@@ -48,20 +48,26 @@ const fillColumns = (v) => {
 
 const log = async (e) => {
   const { item: { id: task }, to: { id: stage_id } } = e;
+  const funnel_id = theSelectedFunnel.value;
 
   // eslint-disable-next-line
-  const task_stage = state.raw.find(({ id }) => id == task)?.pipelines.find(({ pipeline }) => pipeline.id == theSelectedFunnel.value)?.stage?.id;
+  const task_stage = state.raw.find(({ id }) => id == task)?.pipelines.find(({ pipeline }) => pipeline.id == funnel_id)?.stage?.id;
   // eslint-disable-next-line
   if (task_stage == stage_id) return;
 
-  const { message, success } = await save({ data: { stage_id }, path: `tasks/${task}/pipelines/${theSelectedFunnel.value}/stage` });
+  const { message, success } = await save({ data: { stage_id }, path: `tasks/${task}/pipelines/${funnel_id}/stage` });
 
   if (!success) {
     toaster.danger(message ?? 'Что-то пошло не так');
-    return fillColumns(theSelectedFunnel.value);
+    return fillColumns(funnel_id);
   }
 
-  // Fix : update local ressource
+  const funnel = funnelById(funnel_id);
+
+  const stage = funnel.stages.find(({ id }) => id == stage_id);
+
+  setTaskFunnelStage(task, funnel_id, stage);
+
   return toaster.success('Этап изменен');
 };
 

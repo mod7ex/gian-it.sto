@@ -12,7 +12,7 @@ const toaster = useToast();
 const { load, state } = store;
 const { current } = departmentStore;
 const { state: StagesState, load: loadStages } = orderStagesStore;
-const { load: loadTasks, reset, state: tasksState } = tasksStore;
+const { load: loadTasks, reset, state: tasksState, getTaskById } = tasksStore;
 
 let columns;
 let filter;
@@ -90,10 +90,12 @@ export default () => effectScope().run(() => {
     columns,
     filter,
     log,
+    toaster,
     current,
     tasksState,
     showModal,
     loadTasks,
+    getTaskById,
     sig: computed(() => objectSignature(filter)),
     clearMemo: () => {
       columns = undefined;

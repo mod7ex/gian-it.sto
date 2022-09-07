@@ -25,6 +25,7 @@ module.exports = {
     'func-names': 'off',
     'no-plusplus': 'off',
     'no-param-reassign': 'off',
+    eqeqeq: 'off',
     camelcase: 'off',
     // indent: ['error', 3],
     // 'no-console': 'off',

@@ -1,7 +1,7 @@
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid';
 import Draggable from 'vuedraggable';
-import { computed, shallowRef } from 'vue';
+import { computed, reactive, shallowRef } from 'vue';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import service from '~/services/orders';
@@ -14,21 +14,57 @@ import { userHasAtLeastOnePermission } from '~/lib/permissions'
 import Select from '@/UI/Select.vue';
 import userStore from '~/store/employees'
 import departmentStore from '~/store/departments'
+import { updateTaskUserId } from '~/services/tasks/form';
 
 const { load, options } = userStore
 const { current } = departmentStore
 
-const { columns, log, atMounted, tasksState , showModal ,loadTasks} = service();
+const { columns, log, atMounted, tasksState , showModal ,loadTasks, getTaskById, toaster } = service();
 
 await atMounted();
 
-const onSuccessMove = async (d, order_id) => {
-  // await loadTasks({ order_id, created_after: hyphenatedDateFormat(d) });
+const tasksShip = reactive({})
 
-  await Promise.all([load({department_id: current.value}), loadTasks({ order_id })]).then(() => {
+const onSuccessMove = async (d, order_id) => {
+  // await Promise.all([load({department_id: current.value}), loadTasks({ order_id, created_after: hyphenatedDateFormat(d) })]).then(() => {
+  //   showModal.value = true;
+  // });
+
+  await Promise.all([load({department_id: current.value}), loadTasks({ })]).then(() => {
     showModal.value = true;
   });
 }
+
+// ****************************************************** Newly created tasks on Order-move in kanban
+const loading = shallowRef(false);
+const updateMsg = shallowRef();
+
+const updateTask = async (task_id, user_id) => {
+  if(!user_id) return
+  const _task = getTaskById(task_id)
+  if(!_task) return
+  const { message, success } = await updateTaskUserId(_task, user_id);
+  if(!success && !updateMsg.value) updateMsg.value = `${message ?? 'Что-то пошло не так'} (с этой задачей ${_task.name})`;
+  return { message, success }
+};
+
+const saveOptions = async () => {
+  updateMsg.value = undefined;
+
+  loading.value = true;
+
+  try {
+    await Promise.all(Object.entries(tasksShip).map(([task_id, user_id]) => updateTask(task_id, user_id))).then((res) => {
+      if(res.every(({success}) => success)) {
+        showModal.value = false
+        toaster.success('Задачи успешно сохранены')
+      }
+    })
+  } finally {
+    loading.value = false;
+  }
+}
+// ******************************************************
 
 const kanbanRef = shallowRef();
 
@@ -163,10 +199,12 @@ const fields = [
   <Teleport to="#sto-modal-teleport" v-if="tasksState.raw.length && showModal">
     <Transition name="docs-modal">
       <div class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50" >
-        <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl w-full max-w-3xl overflow-visible">
+        <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl w-full max-w-3xl m-6">
 
-          <div class="p-1">
+          <div class="p-1 overflow-y-scroll max-h-vw">
             <h1 class="text-lg mb-m text-center">Автоматически созданные задачи</h1>
+
+            <p :class="['text-xs text-center my-3 select-none', updateMsg ? 'text-red-500' : 'text-transparent']" >{{ updateMsg ? updateMsg : 'a' }}</p>
 
             <Table
               @bottom-touched="() => {}"
@@ -184,9 +222,9 @@ const fields = [
                 </Badge>
               </template>
 
-              <template #td-user="{ value }" >
+              <template #td-user="{item}" >
                 <Select
-                  label=""
+                  v-model="tasksShip[item.id]"
                   :options="options"
                   class="w-full z-50"
                 />
@@ -195,7 +233,7 @@ const fields = [
 
           </div>
           
-          <form-actions :loading="loading" @close="() => { showModal = false }" @submited="() => { }" />
+          <form-actions :loading="loading" @close="() => { showModal = false }" @submited="() => saveOptions()" />
 
         </div>
       </div>
@@ -206,6 +244,10 @@ const fields = [
 </template>
 
 <style scoped>
+
+.max-h-vw {
+  max-height: 80vh;
+}
 
 .overlay {
   pointer-events: none;

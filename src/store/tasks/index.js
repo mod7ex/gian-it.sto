@@ -13,6 +13,8 @@ const state = reactive({
   pending: false,
 });
 
+const getTaskById = (_id) => state.raw.find(({ id }) => _id == id);
+
 const setTask = (payload) => {
   const i = state.raw.findIndex(({ id }) => id === payload.id);
   if (i < 0) return;
@@ -79,7 +81,6 @@ const tasksInFunnel = (_id) => state.raw.filter(({ pipelines }) => (pipelines.so
 
 export default {
   state: readonly(state),
-
   findTask,
   load,
   drop,
@@ -87,9 +88,8 @@ export default {
   sort,
   fill,
   setTask,
+  getTaskById,
   tasksInFunnel,
-  // noOwnerTask: computed(() => (state.raw[0])),
-  noOwnerTask: computed(() => (state.raw.filter(({ user: responsible }) => !responsible))[0]),
   options: computed(() => state.raw.map(({ id: value, name: label }) => ({ label, value }))),
   map_options: computed(() => state.raw.filter(({ is_map }) => is_map).map(({ id: value, name: label }) => ({ label, value }))),
 };

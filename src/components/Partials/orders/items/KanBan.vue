@@ -6,12 +6,29 @@ import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import service from '~/services/orders';
 import { defaults } from '~/composables/useAvatar';
-import { generateShapedIdfromId } from '~/helpers';
+import { generateShapedIdfromId, hyphenatedDateFormat } from '~/helpers';
 import FormActions from '@/Layout/modal/FormActions.vue';
+import Table from '@/Layout/Table.vue';
+import { canTasks } from '~/lib/permissions';
+import { userHasAtLeastOnePermission } from '~/lib/permissions'
+import Select from '@/UI/Select.vue';
+import userStore from '~/store/employees'
+import departmentStore from '~/store/departments'
 
-const { columns, log, atMounted } = service();
+const { load, options } = userStore
+const { current } = departmentStore
+
+const { columns, log, atMounted, tasksState , showModal ,loadTasks} = service();
 
 await atMounted();
+
+const onSuccessMove = async (d, order_id) => {
+  // await loadTasks({ order_id, created_after: hyphenatedDateFormat(d) });
+
+  await Promise.all([load({department_id: current.value}), loadTasks({ order_id })]).then(() => {
+    showModal.value = true;
+  });
+}
 
 const kanbanRef = shallowRef();
 
@@ -59,6 +76,12 @@ const foo = () => {
   show.value = 2
 }
 
+const fields = [
+  { label: 'Тип', key: 'type' },
+  { label: 'Название', key: 'name' },
+  { label: 'Исполнитель', key: 'user' },
+];
+
 </script>
 
 <template>
@@ -81,7 +104,7 @@ const foo = () => {
           ghost-class="ghost"
           class="tasks-container"
           :id="id"
-          @end="log"
+          @end="e => log(e, onSuccessMove)"
         >
           <template #item="{element}">
             <div class="bg-white shadow rounded px-3 pt-3 my-2 pb-5 border w-full" :key="element.id" :id="element.id" >
@@ -136,28 +159,49 @@ const foo = () => {
     </div>
 
   </div>
-<!--
-  <Teleport to="#sto-modal-teleport">
+
+  <Teleport to="#sto-modal-teleport" v-if="tasksState.raw.length && showModal">
     <Transition name="docs-modal">
-      <div
-        v-if="true"
-        class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50"
-      >
-        <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl w-full max-w-sm">
+      <div class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50" >
+        <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl w-full max-w-3xl overflow-visible">
 
           <div class="p-1">
             <h1 class="text-lg mb-m text-center">Автоматически созданные задачи</h1>
 
+            <Table
+              @bottom-touched="() => {}"
+              :fields="fields"
+              :items="tasksState.raw"
+              :actions="false"
+            >
+              <template #td-name="{ value, item: {id} }" >
+                <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
+              </template>
+
+              <template #td-type="{ item: {is_map} }" >
+                <Badge :point="true" :color="is_map ? 'green' : 'purple'">
+                  {{ is_map ? 'Диагностическая карта' : 'Задачa' }}
+                </Badge>
+              </template>
+
+              <template #td-user="{ value }" >
+                <Select
+                  label=""
+                  :options="options"
+                  class="w-full z-50"
+                />
+              </template>
+            </Table>
+
           </div>
           
-          <form-actions :loading="loading" @close="() => { }" @submited="() => { }" />
+          <form-actions :loading="loading" @close="() => { showModal = false }" @submited="() => { }" />
 
         </div>
-
       </div>
     </Transition>
   </Teleport>
--->
+
 </div>
 </template>
 

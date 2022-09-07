@@ -10,11 +10,10 @@ import employeeStore from '~/store/employees';
 import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
 import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
-import { canTasks } from '~/lib/permissions';
+import { canTasks, userHasAtLeastOnePermission } from '~/lib/permissions';
 import FormActions from '@/Layout/modal/FormActions.vue';
-import save from '~/helpers/save'
-import { updateTaskUserId } from '~/services/tasks/form'
-import { userHasAtLeastOnePermission } from '~/lib/permissions'
+import save from '~/helpers/save';
+import { updateTaskUserId } from '~/services/tasks/form';
 
 const props = defineProps({
   order_id: {
@@ -23,12 +22,12 @@ const props = defineProps({
   },
   is_map: {
     type: Boolean,
-    default: false
+    default: false,
   },
   modelValue: {
     type: [String, Number],
-    required: false
-  }
+    required: false,
+  },
 });
 
 defineEmits(['update:modelValue']);
@@ -38,12 +37,12 @@ const { fetchTasks, removeTask, edit, current } = service();
 const fields = [
   { label: 'Название', key: 'name' },
   // ...[props.order_id ? { label: 'Тип', key: 'type' } :  new Array()],
-   { label: 'Тип', key: 'type' },
+  { label: 'Тип', key: 'type' },
   { label: 'Ответственный', key: 'user' },
   { label: 'Статус', key: 'status' },
   { label: 'Крайний срок', key: 'deadline_at' },
-  ...[!props.order_id ? { label: 'Заказ-наряд', key: 'order' } :  new Array()],
-  { label: 'Дата создания', key: 'created_at' }
+  ...[!props.order_id ? { label: 'Заказ-наряд', key: 'order' } : new Array()],
+  { label: 'Дата создания', key: 'created_at' },
 ];
 
 if (!props.order_id) {
@@ -52,31 +51,30 @@ if (!props.order_id) {
 
 fields.push();
 
-const { state,  options, noOwnerTask } = store;
+const { state, options, noOwnerTask } = store;
 const { options: employees, load } = employeeStore;
 
-await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
+// await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
 
-const no_ownerRef = ref(true)
+const no_ownerRef = ref(true);
 const user_id = ref();
 const loading = ref(false);
 const updateMsg = ref();
 
 const updateTask = async () => {
-  updateMsg.value = ''
-  loading.value = true
-  const { message, success} = await updateTaskUserId(noOwnerTask.value, user_id.value)
-  console.log(message, success)
-  if(success) user_id.value = undefined
-  else updateMsg.value = message ?? 'Something went wrong'
-  loading.value = false
-}
+  updateMsg.value = '';
+  loading.value = true;
+  const { message, success } = await updateTaskUserId(noOwnerTask.value, user_id.value);
+  if (success) user_id.value = undefined;
+  else updateMsg.value = message ?? 'Something went wrong';
+  loading.value = false;
+};
 
 onMounted(async () => {
-  if(noOwnerTask.value) {
-    await load({ department_id: current.value })
+  if (noOwnerTask.value) {
+    await load({ department_id: current.value });
   }
-})
+});
 
 </script>
 
@@ -173,7 +171,7 @@ onMounted(async () => {
 
             <Select label="" :options="employees" v-model="user_id" />
           </div>
-          
+
           <form-actions :loading="loading" @close="() => { no_ownerRef = false }" @submited="() => updateTask()" />
 
         </div>

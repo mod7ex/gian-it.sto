@@ -91,6 +91,11 @@ const isShowMenu = ref(false);
                       {{ item.label }}
                     </router-link>
 
+                    <router-link
+                      :to="{ name: 'WorderKanban' }"
+                      class="block rounded-md px-3 py-2 text-base text-gray-900 font-medium hover:bg-gray-100 hover:text-gray-800"
+                    >Канбан</router-link>
+
                     <Button color="blue" :link="{ name: 'ChangeWorker' }">Завершить смену</Button>
                   </div>
                 </div>

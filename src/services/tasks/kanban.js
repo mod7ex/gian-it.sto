@@ -1,12 +1,12 @@
 import { effectScope, ref, computed } from 'vue';
-// import save from '~/helpers/save';
+import save from '~/helpers/save';
 import pipelinesStore from '~/store/pipelines';
 import { objectSignature } from '~/helpers';
-// import useToast from '~/composables/useToast';
+import useToast from '~/composables/useToast';
 import service from '~/services/tasks/worker';
 import store from '~/store/tasks';
 
-// const toaster = useToast();
+const toaster = useToast();
 
 const { state: funnelsState, load: loadFunnels, options, funnelById } = pipelinesStore;
 const { tasksInFunnel, state } = store;
@@ -14,6 +14,7 @@ const { tasksInFunnel, state } = store;
 let filter;
 let getTasks;
 let theSelectedFunnel;
+let columns;
 
 const getKanBanPayload = (v) => {
   // funnel as an argument
@@ -27,7 +28,7 @@ const getKanBanPayload = (v) => {
   const kanban = funnel.stages.reduce((payload, curr) => {
     const { id, color, name } = curr;
 
-    const tasks = tasks_in_this_funnel.filter(({ pipelines }) => (pipelines.some(({ pipeline, stage }) => (pipeline.id == v && stage.id == id))));
+    const tasks = tasks_in_this_funnel.filter(({ pipelines }) => (pipelines.some(({ pipeline, stage }) => (pipeline?.id == v && stage?.id == id))));
 
     payload[id] = {
       tasks,
@@ -41,22 +42,27 @@ const getKanBanPayload = (v) => {
   return kanban;
 };
 
+const fillColumns = (v) => {
+  columns.value = getKanBanPayload(v);
+};
+
 const log = async (e) => {
-  // const { item: { id: orderId }, to: { id: order_stage_id } } = e;
+  const { item: { id: task }, to: { id: stage_id } } = e;
 
-  // // eslint-disable-next-line
-  // const target = state.raw.find(({ id }) => id == orderId);
-  // // eslint-disable-next-line
-  // if (target.stage?.id == order_stage_id) return;
+  // eslint-disable-next-line
+  const task_stage = state.raw.find(({ id }) => id == task)?.pipelines.find(({ pipeline }) => pipeline.id == theSelectedFunnel.value)?.stage?.id;
+  // eslint-disable-next-line
+  if (task_stage == stage_id) return;
 
-  // const { message, success } = await save({ data: { order_stage_id }, path: `orders/${orderId}/stage` });
+  const { message, success } = await save({ data: { stage_id }, path: `tasks/${task}/pipelines/${theSelectedFunnel.value}/stage` });
 
-  // if (!success) {
-  //   toaster.danger(message ?? 'Что-то пошло не так');
-  //   return fillColumns();
-  // }
+  if (!success) {
+    toaster.danger(message ?? 'Что-то пошло не так');
+    return fillColumns(theSelectedFunnel.value);
+  }
 
-  // return toaster.success('Стадия заказа успешно обновлена');
+  // Fix : update local ressource
+  return toaster.success('Этап изменен');
 };
 
 const atMounted = async () => {
@@ -68,7 +74,8 @@ const atMounted = async () => {
 export default () => effectScope().run(() => {
   const { fetchTasks, filter: _filter, resetFilter } = service();
 
-  if (!filter) {
+  if (!columns) {
+    columns = ref({});
     theSelectedFunnel = ref();
     filter = _filter;
     getTasks = fetchTasks;
@@ -79,14 +86,17 @@ export default () => effectScope().run(() => {
     atMounted,
     filter,
     log,
+    columns,
     state,
     options,
     theSelectedFunnel,
     sig: computed(() => objectSignature(filter)),
+    resetFilter,
+    fillColumns,
     clearMemo: () => {
       filter = undefined;
       getTasks = undefined;
+      columns = undefined;
     },
-    resetFilter,
   };
 });

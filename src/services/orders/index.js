@@ -64,6 +64,7 @@ const log = async (e) => {
     return fillColumns();
   }
 
+  // Fix : update local ressource
   return toaster.success('Стадия заказа успешно обновлена');
 };
 

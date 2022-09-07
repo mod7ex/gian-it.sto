@@ -63,6 +63,7 @@ const workers = computed(() => state.employees.filter(({roles}) => !((roles[0].n
           @click="() => logWorker(worker.email)"
           :title="`${worker.name ?? ''} ${worker.surname ?? ''} ${worker.middlename ?? ''}`"
           :image="worker.avatar"
+          action
         ><template #subtitle >{{ worker.email }}</template>
         </Avatar>
       </div>

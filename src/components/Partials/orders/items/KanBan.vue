@@ -7,6 +7,7 @@ import Link from '@/UI/Link.vue';
 import service from '~/services/orders';
 import { defaults } from '~/composables/useAvatar';
 import { generateShapedIdfromId } from '~/helpers';
+import FormActions from '@/Layout/modal/FormActions.vue';
 
 const { columns, log, atMounted } = service();
 
@@ -61,6 +62,7 @@ const foo = () => {
 </script>
 
 <template>
+<div>
   <div class="my-16 relative">
 
     <div @scroll="() => foo()" id="orders-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5">
@@ -113,7 +115,6 @@ const foo = () => {
                   {{ `${element?.car?.car_model?.car_mark?.name ?? ''} ${element?.car?.car_model?.name ?? '_'}`.substr(0, 20) }}
                 </Badge>
               </div>
-
             </div>
           </template>
         </Draggable>
@@ -135,7 +136,29 @@ const foo = () => {
     </div>
 
   </div>
+<!--
+  <Teleport to="#sto-modal-teleport">
+    <Transition name="docs-modal">
+      <div
+        v-if="true"
+        class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50"
+      >
+        <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl w-full max-w-sm">
 
+          <div class="p-1">
+            <h1 class="text-lg mb-m text-center">Автоматически созданные задачи</h1>
+
+          </div>
+          
+          <form-actions :loading="loading" @close="() => { }" @submited="() => { }" />
+
+        </div>
+
+      </div>
+    </Transition>
+  </Teleport>
+-->
+</div>
 </template>
 
 <style scoped>
@@ -205,5 +228,17 @@ const foo = () => {
 
 .slide-fade-right-enter-from{
   transform: translateX(100px);
+}
+
+/* ***************************** */
+
+.docs-modal-enter-active,
+.docs-modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.docs-modal-enter-from,
+.docs-modal-leave-to {
+  opacity: 0;
 }
 </style>

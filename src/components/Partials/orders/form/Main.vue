@@ -25,8 +25,10 @@ const { options: orderStagesOptions, load: loadOrderStages } = orderStagesStore;
 const { load: loadUsers, options: userOptions } = userStore;
 const { reset: resetClients ,fill: loadClients, options: clientOptions } = clientStore;
 const { fill: loadCars, options: carOptions, reset: resetCars } = carStore;
-const { reset: resetCAppealReasons ,fill: loadAppealReasons, options: appealReasonOptions } = appealReasonStore;
-const { reset: resetProcesses ,fill: loadProcesses, options: processOptions } = processStore;
+const { reset: resetCAppealReasons ,fill: loadAppealReasons, options: appealReasonOptions, state } = appealReasonStore;
+const { reset: resetProcesses ,fill: loadProcesses, state: processState } = processStore;
+
+
 
 const { fields, atMounted, saveOrder, current, log, isEditPage, route, v$ } = service();
 const { render } = carForm(true);
@@ -56,6 +58,9 @@ const handelBlackListedFile = (id) =>  {
   fields.delete_file_ids.push(id)
   fields.files.deleteById(id)
 }
+
+const processOptions = computed(() => processState.raw.filter(({appeal_reason}) => appeal_reason.id == fields.appeal_reason_id).map(({id, name}) => ({value: id, label: name})))
+
 </script>
 
 <template>

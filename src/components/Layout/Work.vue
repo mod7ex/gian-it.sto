@@ -117,7 +117,7 @@ const isShowMenu = ref(false);
     </header>
 
     <main class="py-10">
-      <div class="max-w-3xl lg:max-w-7xl mx-auto sm:px-6 px-2">
+      <div class="max-w-5xl xl:max-w-7xl mx-auto px-2 sm:px-4">
         <slot></slot>
       </div>
     </main>

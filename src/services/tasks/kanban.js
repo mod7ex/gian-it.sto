@@ -73,7 +73,7 @@ const log = async (e) => {
 
 const atMounted = async () => {
   await Promise.all([loadFunnels(), getTasks(true)]).then(() => {
-    theSelectedFunnel.value = funnelsState.raw[0].id;
+    theSelectedFunnel.value = funnelsState.raw[0]?.id;
   });
 };
 

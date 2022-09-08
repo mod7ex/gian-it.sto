@@ -34,7 +34,7 @@ await atMounted().then(async () => {
               <div class="text-sm flex items-center mb-3">
                   <ClockIcon class="w-4 h-4 mr-1"/>
                   <span class="mr-1">Крайний срок:</span>
-                  <span class="text-gray-500">{{ task.deadline_at }}</span>
+                  <span class="text-gray-500">{{ task.deadline_at ?? '' }}</span>
               </div>
 
               <Badge :point="true" :color="tasksColorMap[task.status].color">{{ tasksColorMap[task.status].label }}</Badge>
@@ -47,7 +47,12 @@ await atMounted().then(async () => {
 
           <DescriptionListItem cols="1" label="ГОС номер" :value="task?.order?.car?.number ?? ''" type="columns" />
 
-          <DescriptionListItem cols="1" label="Клиент" :value="`${task?.order?.client?.name} ${task?.order?.client?.surname} ${task?.order?.client?.middle_name ?? ''}`" type="columns" />
+          <DescriptionListItem
+            cols="1"
+            label="Клиент"
+            :value="`${task?.order?.client?.name ?? ''} ${task?.order?.client?.surname ?? ''} ${task?.order?.client?.middle_name ?? ''}`"
+            type="columns"
+          />
 
           <!-- not yet -->
 

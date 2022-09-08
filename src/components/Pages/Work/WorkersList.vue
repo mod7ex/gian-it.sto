@@ -23,7 +23,7 @@ const { call, data, loading, errorMsg, success, reset } = apiRequest('auth/user-
 
 const logWorker = async (email) => {
   if(loading.value) return
-  if(email === user.value.email) return
+  if(email === user.value.email) return back()
 
   await call('auth/user-auth', { method: 'post', data: { email } });
 
@@ -58,7 +58,7 @@ const workers = computed(() => state.employees.filter(({roles}) => !((roles[0].n
     </template>
 
     <div class="max-h-96 overflow-y-scroll z-50 relative">
-      <div v-for="(worker, i) in workers" :key="i" :class="[user.id == worker.id ? 'bg-gray-200' : '', 'py-4 px-4 border-b block']">
+      <div v-for="(worker, i) in workers" :key="i" :class="[user.id == worker.id ? 'bg-gray-200 border-gray-300' : '', 'py-4 px-4 border block']"> 
         <Avatar
           @click="() => logWorker(worker.email)"
           :title="`${worker.name ?? ''} ${worker.surname ?? ''} ${worker.middlename ?? ''}`"

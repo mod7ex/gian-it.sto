@@ -65,7 +65,6 @@ const saveOptions = async () => {
 // ******************************************************
 
 const kanbanRef = shallowRef();
-
 const show = shallowRef(0)
 
 let timer;
@@ -76,6 +75,7 @@ const clearTimer = () => {
     timer = undefined
   }
 }
+
 
 const scrollTo = (right = false) => {
   clearTimer()
@@ -121,12 +121,11 @@ const fields = [
 <template>
 <div>
   <div class="my-16 relative">
-
     <div @scroll="() => foo()" id="orders-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5">
       <div
         v-for="[id, {name, color}] in Object.entries(columns)"
         :key="id"
-        class="rounded-lg p-3 col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 stage"
+        class="rounded-lg p-3 stage"
         :style="{background: color}"
       >
         <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ name }}</p>
@@ -177,7 +176,7 @@ const fields = [
         </Draggable>
       </div>
     </div>
-
+ 
     <div class="overflow-hidden overlay absolute my-auto z-50 right-0 left-0 bottom-0 top-0 flex items-center opacity-30">
       <Transition tag="div" name="slide-fade-left">
         <span v-if="show !== 0" @mouseenter.prevent="() => scrollTo()" @mouseleave="clearTimer" class="chevron chevron-left bg-gray-900 opacity-75 py-5 rounded-r-full top-1/4 left-0 flex items-center" >
@@ -191,7 +190,7 @@ const fields = [
         </span>
       </Transition>
     </div>
-
+ 
   </div>
 
   <Teleport to="#sto-modal-teleport" v-if="modelTasks.length && showModal">
@@ -281,7 +280,6 @@ const fields = [
 }
 
 /* **************************************** */
-
 .slide-fade-left-enter-active {
   transition: all .3s ease-in;
 }

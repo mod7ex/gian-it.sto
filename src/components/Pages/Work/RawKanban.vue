@@ -7,12 +7,15 @@ import Link from '@/UI/Link.vue';
 import service from '~/services/tasks/kanban';
 import { defaults } from '~/composables/useAvatar';
 import { tasksColorMap } from '~/helpers';
+import {userHasPermission} from '~/lib/permissions'
 
 const { log, atMounted, state, getKanBanPayload, theSelectedFunnel, fillColumns, columns } = service();
 
 watch(theSelectedFunnel, fillColumns);
 
 await atMounted();
+
+/*
 
 const kanbanRef = shallowRef();
 
@@ -60,20 +63,22 @@ const foo = () => {
   show.value = 2;
 };
 
+*/
+
 </script>
 
 <template>
-  <div class="my-8 relative">
+  <div class="my-8 relative" v-if="theSelectedFunnel" >
 
-    <div @scroll="() => foo()" id="tasks-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5 shadow-inner p-5">
+    <!-- <div @scroll="() => foo()" id="tasks-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5 shadow-inner p-5"> -->
+    <div class="grid grid-cols-12 gap-3 pb-5">
       <div
         v-for="[id, {name, color}] in Object.entries(columns)"
         :key="id"
-        class="rounded-lg p-3 col-span-12 sm:col-span-6 md:col-span-4 xl:col-span-3 stage"
+        class="rounded-lg p-3 col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 stage"
         :style="{background: color}"
       >
         <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ name }}</p>
-
         <Draggable
           item-key="id"
           v-model="columns[id].tasks"
@@ -82,9 +87,10 @@ const foo = () => {
           class="tasks-container"
           :id="id"
           @end="log"
+          :disabled="!userHasPermission('update tasks')"
         >
           <template #item="{element}">
-            <div class="bg-white shadow rounded px-3 pt-3 my-2 pb-5 border w-full" :key="element.id" :id="element.id" >
+            <div class="bg-white shadow rounded px-3 pt-3 my-2 pb-5 border w-full select-none" :key="element.id" :id="element.id" >
               <div class="flex justify-between">
                 <div>
                   <Link class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'WorkerTask', params: {id: element.id} }" >
@@ -112,7 +118,7 @@ const foo = () => {
         </Draggable>
       </div>
     </div>
-
+<!--
     <div class="overflow-hidden overlay absolute my-auto z-50 right-0 left-0 bottom-0 top-0 flex items-center opacity-30">
       <Transition tag="div" name="slide-fade-left">
         <span v-if="show !== 0" @mouseenter.prevent="() => scrollTo()" @mouseleave="clearTimer" class="chevron chevron-left bg-gray-900 opacity-75 py-5 rounded-r-full top-1/4 left-0 flex items-center" >
@@ -125,81 +131,82 @@ const foo = () => {
           <ChevronRightIcon class="text-white w-16" />
         </span>
       </Transition>
-    </div>
-
-    <!-- <pre>
-      {{ state.raw.map(({pipelines}) => (pipelines)) }}
-    </pre> -->
-
+    </div> 
+-->
   </div>
 </template>
 
 <style scoped>
 
-  .overlay {
-    pointer-events: none;
-  }
+.overlay {
+  pointer-events: none;
+}
 
-  .overlay span {
-    pointer-events: all;
-  }
+.overlay span {
+  pointer-events: all;
+}
 
-  .chevron {
-    min-height: 200px;
-  }
+.chevron {
+  min-height: 200px;
+}
 
-  /*
-  .chevron-left {
+/*
+.chevron-left {
 
-  }
-  */
+}
+*/
 
+.stage{
+  min-width: 300px;
+  min-height: 400px;
+}
+
+@media (min-width: 1920px) {
   .stage{
-    min-width: 300px;
-    min-height: 400px;
+    grid-column: span 2 / span 2;
   }
+}
 
-  .ghost {
-    opacity: 0.1;
-  }
+.ghost {
+  opacity: 0.1;
+}
 
-  .tasks-container {
-    height: calc(100% - 30px);
-  }
+.tasks-container {
+  height: calc(100% - 30px);
+}
 
-  /* **************************************** */
+/* **************************************** */
+/*
+.slide-fade-left-enter-active {
+  transition: all .3s ease-in;
+}
 
-  .slide-fade-left-enter-active {
-    transition: all .3s ease-in;
-  }
+.slide-fade-left-leave-active {
+  transition: all .3s ease-in;
+}
 
-  .slide-fade-left-leave-active {
-    transition: all .3s ease-in;
-  }
+.slide-fade-left-leave-to {
+  transform: translateX(-100px);
+}
 
-  .slide-fade-left-leave-to {
-    transform: translateX(-100px);
-  }
+.slide-fade-left-enter-from{
+  transform: translateX(-100px);
+}
 
-  .slide-fade-left-enter-from{
-    transform: translateX(-100px);
-  }
+.slide-fade-right-enter-active {
+  transition: all .3s ease-in;
+}
 
-  /* Right */
+.slide-fade-right-leave-active {
+  transition: all .3s ease-in;
+}
 
-  .slide-fade-right-enter-active {
-    transition: all .3s ease-in;
-  }
+.slide-fade-right-leave-to {
+  transform: translateX(100px);
+}
 
-  .slide-fade-right-leave-active {
-    transition: all .3s ease-in;
-  }
-
-  .slide-fade-right-leave-to {
-    transform: translateX(100px);
-  }
-
-  .slide-fade-right-enter-from{
-    transform: translateX(100px);
-  }
+.slide-fade-right-enter-from{
+  transform: translateX(100px);
+}
+*/
 </style>

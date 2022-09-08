@@ -2,6 +2,9 @@ import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
 import { alphaGroupper } from '~/helpers';
+import { userHasAtLeastOnePermission } from '~/lib/permissions';
+
+const canRead = userHasAtLeastOnePermission(['read users', 'crud users']);
 
 const state = reactive({
   employees: [],
@@ -26,6 +29,7 @@ const reset = () => {
 };
 
 const load = async (payload) => {
+  if (!canRead) return;
   state.loading = true;
   state.employees = await $.users(payload);
   state.loading = false;

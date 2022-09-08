@@ -60,7 +60,7 @@ const printOut = () => {
 
         <div class="flex gap-3 flex-wrap justify-between items-center border-gray-300 border rounded shadow p-6 px-9 mb-3" v-if="dk_task">
             <Avatar
-              :title="`${dk_task.author.name} ${dk_task.author.surname}`"
+              :title="`${dk_task.author.name ?? ''} ${dk_task.author.middle_name ?? ''}`"
               :subtitle="dk_task.author.office_position"
               :image="dk_task.author.avatar"
             />

@@ -55,7 +55,7 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
   <div v-if="props.is_map">
     <!-- <div class="flex"> -->
       <div class="mx-auto max-w-6xl p-3 bg-gray-50 flex flex-wrap justify-center items-center shadow-inner rounded-md">
-        <p v-if="options.length === 0">Нет задач</p>
+        <p v-if="options.length === 0">Нет диагностической карты</p>
         <Badge
           @click="$emit('update:modelValue', item.value)"
           v-show="item.value != modelValue"
@@ -94,7 +94,7 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
 
     <template #td-user="{ value }" >
       <Avatar
-        :title="`${value?.name ?? ''} ${value?.surname ?? ''}`"
+        :title="`${value?.name ?? ''} ${value?.middle_name ?? ''}`"
         :subtitle="value?.office_position ?? ''"
         :image="value?.avatar"
       />

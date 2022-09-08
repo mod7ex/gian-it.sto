@@ -59,7 +59,7 @@ await load({order_id :route.params.id});
 
       <template #td-user="{ value }" >
         <Avatar
-          :title="`${value.name} ${value.surname}`"
+          :title="`${value.name ?? ''} ${value.middle_name ?? ''}`"
           :subtitle="value.office_position"
           :image="value.avatar"
         />

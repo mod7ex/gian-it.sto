@@ -103,7 +103,7 @@ const foo = () => {
                     <img
                       class="w-8 h-8 rounded-full ml-3"
                       :src="element.user?.avatar ?? defaults.avatar"
-                      :title="`${element.user?.name} ${element.user?.surname}`"
+                      :title="`${element.user?.name} ${element.user?.middle_name}`"
                     >
                   </Link>
                 </div>
@@ -161,7 +161,7 @@ const foo = () => {
   min-height: 400px;
 }
 
-@media (min-width: 1920px) {
+@media (min-width: 3840px) {
   .stage{
     grid-column: span 2 / span 2;
   }

@@ -49,13 +49,13 @@ export default {
   sort,
   select,
   selectedUser,
-  options: computed(() => state.employees.map(({ id: value, name, surname }) => ({ label: `${name} ${surname}`, value }))),
+  options: computed(() => state.employees.map(({ id: value, name, middle_name }) => ({ label: `${name ?? ''} ${middle_name ?? ''}`, value }))),
   count: computed(() => state.employees.length),
   selected: computed(() => !!(selectedUser.value.id)),
-  directory: computed(() => alphaGroupper(state.employees, 'surname', ({ id, name, surname, office_position: op, avatar }) => ({
+  directory: computed(() => alphaGroupper(state.employees, 'middle_name', ({ id, name, middle_name, office_position: op, avatar }) => ({
     id,
-    title: `${name ?? ''} ${surname ?? ''}`,
-    subtitle: `${op || ''}`,
-    image: `${avatar || ''}`,
+    title: `${name ?? ''} ${middle_name ?? ''}`,
+    subtitle: `${op ?? ''}`,
+    image: `${avatar ?? ''}`,
   }))),
 };

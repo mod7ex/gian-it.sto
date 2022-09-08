@@ -1,14 +1,30 @@
 <script setup>
+import { ref, watch } from 'vue';
+
 const props = defineProps({
   items: {
     type: Array,
     required: true,
   },
 });
+
+const feedRef = ref();
+
+watch(() => props.items, () => {
+  const target = feedRef.value ?? document.getElementById('task-feed');
+
+  requestAnimationFrame(() => {
+    target.scroll({
+      top: target.scrollHeight,
+      behavior: 'smooth',
+    });
+  });
+});
+
 </script>
 
 <template>
-  <div class="flow-root">
+  <div class="flow-root" ref="feedRef" id="task-feed" >
     <ul role="list" class="-mb-8">
       <li v-for="(event, eventIdx) in props.items" :key="event.id">
         <div class="relative pb-8">

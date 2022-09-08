@@ -158,7 +158,7 @@ const fields = [
                     <img
                       class="w-8 h-8 rounded-full ml-3"
                       :src="element.user?.avatar ?? defaults.avatar"
-                      :title="`${element.user?.name} ${element.user?.surname}`"
+                      :title="`${element.user?.name} ${element.user?.middle_name}`"
                     >
                   </Link>
                 </div>

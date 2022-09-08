@@ -71,7 +71,9 @@ await getComments();
                 <div>
 
                   <div class="text-sm">
-                    <router-link class="font-medium text-gray-900" :to="{ name: 'EditEmployer', params: { id: comment.user.id } }">{{ comment.user.name }} {{ comment.user.surname }}</router-link>
+                    <router-link class="font-medium text-gray-900" :to="{ name: 'EditEmployer', params: { id: comment.user.id } }">
+                      {{ comment.user.name ?? '' }} {{ comment.user.middle_name ?? '' }}
+                    </router-link>
                   </div>
 
                   <div class="mt-1 text-sm text-gray-700"> <p>{{ comment.description }}</p> </div>

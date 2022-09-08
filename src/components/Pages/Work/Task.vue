@@ -51,8 +51,8 @@ const timeline = computed(() => {
     const dot = {
       id,
       content,
-      target: `${created_user.name ?? ''} ${created_user.surname ?? ''}`,
-      // target: `${created_user.name ?? ''} ${created_user.username ?? ''} ${created_user.middle_name ?? ''}`,
+      target: `${created_user.name ?? ''} ${created_user.middle_name ?? ''}`,
+      // target: `${created_user.name ?? ''} ${created_user.middle_name ?? ''} ${created_user.username ?? ''}`,
       date,
       datetime: created_at,
       data: { ...data },
@@ -140,15 +140,17 @@ const timeline = computed(() => {
 
           <Feeds :items="timeline" class="mt-5 max-h-vh overflow-y-scroll" />
 
-          <div class="mt-6 grid grid-cols-3 gap-x-2" :key="task.status">
-            <Button class="col-span-1 flex justify-center" color="purple" @click="() => ping('process')" blur :disabled="!((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) || !imExecuter" >
+          <div class="mt-6 flex justify-center gap-3" :key="task.status">
+            <Button class="flex justify-center" color="purple" @click="() => ping('process')" blur v-if="!(!((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) || !imExecuter)" :disabled="!((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) || !imExecuter" >
               <!-- <ClockIcon class="w-5 h-5 mr-1"/> -->
               Начать
             </Button>
 
-            <Button class="col-span-1 flex justify-center" @click="() => ping('pause')" color="yellow" :disabled="(task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')  || !imExecuter" >На паузу</Button>
+            <Button class="flex justify-center" @click="() => ping('pause')" color="yellow" v-if="!((task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')  || !imExecuter)" :disabled="(task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')  || !imExecuter" >
+              На паузу
+            </Button>
 
-            <Button class="col-span-1 flex justify-center" color="green" @click="() => ping('done')" blur :disabled="!((task?.status === 'process') || (task?.status === 'pause'))  || !imExecuter" >
+            <Button class="flex justify-center" color="green" @click="() => ping('done')" blur v-if="!(!((task?.status === 'process') || (task?.status === 'pause'))  || !imExecuter)" :disabled="!((task?.status === 'process') || (task?.status === 'pause'))  || !imExecuter" >
               Завершить
             </Button>
           </div>

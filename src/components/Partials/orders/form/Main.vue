@@ -76,7 +76,7 @@ const processOptions = computed(() => processState.raw.filter(({appeal_reason}) 
       </div>
 
       <div class="col-span-12 sm:col-span-4">
-        <sto-select @bottom-touched="() => {}" label="Ответственный" :options="userOptions" v-model="fields.user_id" />
+        <sto-select search @bottom-touched="() => {}" label="Ответственный" :options="userOptions" v-model="fields.user_id" />
       </div>
 
       <div class="col-span-12 sm:col-span-4 flex items-center">

@@ -27,7 +27,7 @@ await atMounted().then(async () => {
   <div>
     <!-- Description list-->
     <section>
-      <DescriptionList :title="task?.name" :subtitle="`Заказ-наряд #${generateShapedIdfromId(task?.order?.id)}`" type="columns">
+      <DescriptionList :title="task?.name" :subtitle="task?.order?.id ? `Заказ-наряд #${generateShapedIdfromId(task?.order?.id)}` : ''" type="columns">
 
         <template #right-title>
           <div class="text-right">
@@ -50,10 +50,9 @@ await atMounted().then(async () => {
           <DescriptionListItem
             cols="1"
             label="Клиент"
-            :value="`${task?.order?.client?.name ?? ''} ${task?.order?.client?.surname ?? ''} ${task?.order?.client?.middle_name ?? ''}`"
+            :value="`${task?.order?.client?.name ?? ''} ${task?.order?.client?.middle_name ?? ''}`"
             type="columns"
           />
-
           <!-- not yet -->
 
           <DescriptionListItem cols="3" label="Задача" type="columns" columns="2" v-if="!task.is_map">

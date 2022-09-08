@@ -102,6 +102,7 @@ onScopeDispose(clearMemo);
           :options="userOptions"
           v-model="filter.user_id"
           class="w-44"
+          search
         />
       </div>
 

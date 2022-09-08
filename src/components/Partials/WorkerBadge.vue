@@ -7,7 +7,7 @@ const { user } = useAuth();
 
 <template>
   <Avatar
-    :title="`${user.name ?? ''} ${user.surname ?? ''} ${user.middlename ?? ''}`"
+    :title="`${user.name ?? ''} ${user.middle_name ?? ''}`"
     :image="user.avatar"
     :worker="true"
   >

@@ -9,7 +9,7 @@ const canRead = userHasAtLeastOnePermission(['read clients', 'crud clients']);
 const state = reactive({
   raw: [],
   pages: undefined,
-  // page: 1,
+  page: 1,
   pending: false,
 });
 
@@ -67,9 +67,9 @@ export default {
     value: item.id,
     label: `${item.name} ${item.surname}`,
   }))),
-  directory: computed(() => alphaGroupper(state.raw, 'surname', ({ id, name, surname, avatar }) => ({
+  directory: computed(() => alphaGroupper(state.raw, 'surname', ({ id, name, middle_name, avatar }) => ({
     id,
-    title: `${name ?? ''} ${surname ?? ''}`,
+    title: `${name ?? ''} ${middle_name ?? ''}`,
     image: `${avatar ?? ''}`,
   }))),
 };

@@ -11,6 +11,7 @@ const { fetchTasks, state } = service();
 const fields = [
   { label: 'Заказ-наряд', key: 'order' },
   { label: 'Название', key: 'name' },
+  { label: 'Тип', key: 'type' },
   { label: 'Ответственный', key: 'user' },
   { label: 'Статус', key: 'status' },
   { label: 'Дата создания', key: 'created_at' },
@@ -36,13 +37,19 @@ await fetchTasks(true);
           <Link :href="{name: 'WorkerTask', params: { id }}" >{{ value }}</Link>
       </template>
 
+      <template #td-type="{ item: {is_map} }" >
+        <Badge :point="true" :color="is_map ? 'green' : 'purple'">
+          {{ is_map ? 'Диагностическая карта' : 'Задачa' }}
+        </Badge>
+      </template>
+
       <template #td-order="{ value }" >
         <Link v-if="value?.id" :disabled="true" :href="{name: 'OrderEdit', params: {id: value?.id}}" >#{{ generateShapedIdfromId(value?.id) }}</Link>
       </template>
 
       <template #td-user="{ value }" >
           <Avatar
-            :title="`${value?.name ?? ''} ${value?.surname ?? ''}`"
+            :title="`${value?.name ?? ''} ${value?.middle_name ?? ''}`"
             :subtitle="value?.office_position"
             :image="value?.avatar"
           />

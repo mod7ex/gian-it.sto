@@ -29,7 +29,7 @@ await atMounted().then(async () => {
         <template #header>
             <div class="flex gap-3 flex-wrap justify-between items-center">
                 <Avatar
-                    :title="`${task.author.name ?? ''} ${task.author.surname ?? ''}`"
+                    :title="`${task.author.name ?? ''} ${task.author.middle_name ?? ''}`"
                     :subtitle="task.author.office_position"
                     :image="task.author.avatar"
                 />

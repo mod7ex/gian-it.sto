@@ -67,7 +67,7 @@ const printOut = () => {
 
             <div class="text-center">
               <p class="text-gray-600">Автомобиль</p>
-              <p>{{ dk_task?.order?.car?.car_model?.car_mark?.name }}</p>
+              <p>{{ `${dk_task?.order.car?.car_model?.car_mark?.name ?? ''} ${dk_task?.order.car?.car_model?.name ?? '_'}` }}</p>
             </div>
 
             <div class="text-right">

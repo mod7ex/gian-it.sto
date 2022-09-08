@@ -152,7 +152,9 @@ onMounted(() => {
 
       <div class="grid grid-cols-12 border-black border">
         <span class="text-left px-9 col-span-4"><b class="mr-6">Дата:</b>{{ task?.end_at }}</span>
-        <span class="text-left px-9 col-span-4 border-l border-black"><b class="mr-6">Авто:</b>{{ task?.order?.car?.car_model?.car_mark?.name }}</span>
+        <span class="text-left px-9 col-span-4 border-l border-black"><b class="mr-6">Авто:</b>
+          {{ `${task?.order.car?.car_model?.car_mark?.name ?? ''} ${task?.order.car?.car_model?.name ?? '_'}` }}
+        </span>
         <span class="text-left px-9 col-span-4 border-l border-black"><b class="mr-6">&#8470;:</b>{{ ' ' }}</span>
       </div>
     </header>

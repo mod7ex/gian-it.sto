@@ -151,17 +151,15 @@ const foo = () => {
 }
 
 /*
-.chevron-left {
-
-}
+.chevron-left {}
 */
 
-.stage{
+.stage {
   min-width: 300px;
   min-height: 400px;
 }
 
-@media (min-width: 3840px) {
+@media (min-width: 2000px) {
   .stage{
     grid-column: span 2 / span 2;
   }

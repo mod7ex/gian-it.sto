@@ -15,8 +15,10 @@ watch(theSelectedFunnel, fillColumns);
 
 await atMounted();
 
-const canDragAndDrop = (userHasPermission('read own tasks') && userHasPermission('update status tasks'))
-  || (userHasPermission('update tasks') && !userHasPermission('read own tasks'))
+const READ_ALL_TASKS_IN_KANBAN = 'read own tasks'
+
+const canDragAndDrop = (userHasPermission(READ_ALL_TASKS_IN_KANBAN) && userHasPermission('update status tasks'))
+  || (userHasPermission('update tasks') && !userHasPermission(READ_ALL_TASKS_IN_KANBAN))
 
 /*
 

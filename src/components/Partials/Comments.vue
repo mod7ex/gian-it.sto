@@ -1,15 +1,18 @@
 <script setup>
 import { QuestionMarkCircleIcon, XCircleIcon } from '@heroicons/vue/outline';
-import {  PaperClipIcon, CameraIcon, VideoCameraIcon } from '@heroicons/vue/solid';
-import { ref, unref, computed } from 'vue';
+import { PaperClipIcon, CameraIcon, VideoCameraIcon } from '@heroicons/vue/solid';
+import { ref, unref } from 'vue';
 import Button from '@/UI/Button.vue';
 import TextArea from '@/UI/TextArea.vue';
 import store from '~/store/comments';
-import { defaults } from '~/composables/useAvatar';
 import useAuth from '~/composables/useAuth';
-import { sto_parse_DMY_T, timeSince } from '~/helpers';
+import { sto_parse_DMY_T, timeSince, dataURItoBlob } from '~/helpers';
 import Avatar from '@/UI/Avatar.vue';
 import { upload } from '~/helpers/save';
+import FormActions from '@/Layout/modal/FormActions.vue';
+import useToast from '~/composables/useToast';
+
+const toaster = useToast()
 
 const { load, save, state, addComment } = store;
 
@@ -24,13 +27,13 @@ const content = ref('');
 const files = ref([]);
 
 const getComments = async () => {
-  if(props.model && props.id) await load(props.model, unref(props.id));
+  if (props.model && props.id) await load(props.model, unref(props.id));
 };
 
 const submitComment = async (description) => {
   const len = files.value?.length ?? 0;
 
-  if(!content.value && !len) return;
+  if (!content.value && !len) return;
 
   const _id = unref(props.id);
 
@@ -41,18 +44,20 @@ const submitComment = async (description) => {
   for (let i = 0; i < len; i++) {
     fileSet.append('files[]', files.value[0]);
   }
-  
+
   fileSet.append('description', description);
 
   const { message, success, data } = await upload(`comments/${props.model}/${_id}`, fileSet);
 
   if (success) {
     content.value = '';
-    files.value = []
+    files.value = [];
     emit('comment', description);
-    addComment(data.comment)
+    addComment(data.comment);
+    toaster.success('Комментарий сохранен')
+  } else {
+    toaster.danger('Не удалось сохранить комментарий');
   }
-
 };
 
 // REMOVE NOT : we may want to restrict later
@@ -68,36 +73,138 @@ const hasCommented = computed(() => {
 });
 */
 
+const VIDEO_EXT = ['WEBM', 'MPG', 'MP2', 'MPEG', 'MPE', 'MPV', 'OGG', 'MP4', 'M4P', 'M4V', 'AVI', 'WMV', 'MOV', 'QT', 'FLV', 'SWF', 'AVCHD'];
+
 const isVideo = (f) => {
-  return f.type.startsWith('video/')
-}
+  if (typeof f === 'string') {
+    const ext = [...f.split('.')].pop();
+    return VIDEO_EXT.includes(ext.toUpperCase());
+  }
 
-const creatUrl = (v) => window.URL.createObjectURL(v)
+  return f?.type?.startsWith('video/');
+};
 
-
+const creatUrl = (v) => window.URL.createObjectURL(v);
 
 const handler = (e) => {
-  files.value = [...e.target.files]
-  console.log(files.value)
+  files.value = [...e.target.files];
+  console.log(files.value);
 };
 
 const removeFile = (file) => {
-  files.value = files.value.filter((_file) => file != _file)
-}
+  files.value = files.value.filter((_file) => file != _file);
+};
 
 await getComments();
 
 const onEnter = (e) => {
-  e.currentTarget.classList.add('current-preview')
-}
+  e.currentTarget.classList.add('current-preview');
+};
 
 const onLeave = (e) => {
-  e.currentTarget.classList.remove('current-preview')
+  e.currentTarget.classList.remove('current-preview');
+};
+
+const groupBy = (arr, i = 0, d = 4) => arr.filter((_, _i) => _i % d === i);
+
+// **************************************************************************************************
+
+const showModal = ref(false);
+const cameraErrMsg = ref();
+
+let video = null;
+let canvas = null;
+// let photo = null;
+let startbutton = null;
+
+const closeCamera = () => {
+  console.log(video.srcObject)
+  video.srcObject.getTracks().forEach((track) => {
+    track.stop();
+  });
+
+  setTimeout(() => {
+    showModal.value = false;
+  })
 }
 
-const groupBy = (i = 0, d = 4) => {
-  return files.value.filter((_, _i) => _i%d === i)
-}
+const handeCamera = () => {
+  showModal.value = true;
+
+  const width = 320;
+  let height = 0;
+
+  let streaming = false;
+
+  function startup() {
+    video = document.getElementById('video');
+    canvas = document.getElementById('canvas');
+    // photo = document.getElementById('photo');
+    startbutton = document.getElementById('startbutton');
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch((err) => {
+        console.error(`An error occurred: ${err}`);
+        cameraErrMsg.value = 'Something went wrong';
+      });
+
+    video.addEventListener('canplay', (ev) => {
+      if (!streaming) {
+        height = video.videoHeight / (video.videoWidth / width);
+
+        if (isNaN(height)) {
+          height = width / (4 / 3);
+        }
+
+        video.setAttribute('width', width);
+        video.setAttribute('height', height);
+        canvas.setAttribute('width', width);
+        canvas.setAttribute('height', height);
+        streaming = true;
+      }
+    }, false);
+
+    startbutton.addEventListener('click', (ev) => {
+      takepicture();
+      ev.preventDefault();
+    }, false);
+
+    clearphoto();
+  }
+
+  function clearphoto() {
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#AAA';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const data = canvas.toDataURL('image/png');
+
+    // photo.setAttribute('src', data);
+  }
+
+  function takepicture() {
+    const context = canvas.getContext('2d');
+    if (width && height) {
+      canvas.width = width;
+      canvas.height = height;
+      context.drawImage(video, 0, 0, width, height);
+
+      const data = canvas.toDataURL('image/png');
+      const blob = dataURItoBlob(data);
+      files.value = [...files.value, blob];
+      // photo.setAttribute('src', data);
+    } else {
+      clearphoto();
+    }
+
+    closeCamera()
+  }
+
+  requestAnimationFrame(startup);
+};
 
 </script>
 
@@ -130,35 +237,35 @@ const groupBy = (i = 0, d = 4) => {
                   <div class="mt-1 flex flex-wrap">
 
                     <div class="column flex flex-col mx-1">
-                      <span v-for="(file, i) in groupBy(0)" :key="i" class="my-1" >
-                        <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file)" autoplay >
-                          <source :src="creatUrl(file)" type="video/mp4">
+                      <span v-for="{id, url, file_name} in groupBy(comment.files, 0)" :key="id" class="my-1" >
+                        <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file_name)" controls autoplay >
+                          <source :src="url" type="video/mp4">
                         </video>
-                        <img class="comment-file-preview rounded shadow-md" :src="creatUrl(file)" v-else />
+                        <img class="comment-file-preview rounded shadow-md" :src="url" v-else />
                       </span>
                     </div>
                     <div class="column flex flex-col mx-1">
-                      <span v-for="(file, i) in groupBy(1)" :key="i" class="my-1" >
-                        <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file)" autoplay >
-                          <source :src="creatUrl(file)" type="video/mp4">
+                      <span v-for="{id, url} in groupBy(comment.files, 1)" :key="id" class="my-1" >
+                        <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file_name)" controls autoplay >
+                          <source :src="url" type="video/mp4">
                         </video>
-                        <img class="comment-file-preview rounded shadow-md" :src="creatUrl(file)" v-else />
+                        <img class="comment-file-preview rounded shadow-md" :src="url" v-else />
                       </span>
                     </div>
                     <div class="column flex flex-col mx-1">
-                      <span v-for="(file, i) in groupBy(2)" :key="i" class="my-1" >
-                        <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file)" autoplay >
-                          <source :src="creatUrl(file)" type="video/mp4">
+                      <span v-for="{id, url} in groupBy(comment.files, 2)" :key="id" class="my-1" >
+                        <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file_name)" controls autoplay >
+                          <source :src="url" type="video/mp4">
                         </video>
-                        <img class="comment-file-preview rounded shadow-md" :src="creatUrl(file)" v-else />
+                        <img class="comment-file-preview rounded shadow-md" :src="url" v-else />
                       </span>
                     </div>
                     <div class="column flex flex-col mx-1">
-                      <span v-for="(file, i) in groupBy(3)" :key="i" class="my-1" >
-                        <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file)" autoplay >
-                          <source :src="creatUrl(file)" type="video/mp4">
+                      <span v-for="{id, url} in groupBy(comment.files, 3)" :key="id" class="my-1" >
+                        <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file_name)" controls autoplay >
+                          <source :src="url" type="video/mp4">
                         </video>
-                        <img class="comment-file-preview rounded shadow-md" :src="creatUrl(file)" v-else />
+                        <img class="comment-file-preview rounded shadow-md" :src="url" v-else />
                       </span>
                     </div>
 
@@ -175,7 +282,6 @@ const groupBy = (i = 0, d = 4) => {
         </div>
       </div>
 
-
       <div class="bg-gray-50 px-4 py-6 sm:px-6">
       <!-- <div class="bg-gray-50 px-4 py-6 sm:px-6" v-if="!hasCommented"> -->
         <div class="flex space-x-3">
@@ -189,7 +295,7 @@ const groupBy = (i = 0, d = 4) => {
               <TextArea :disabled="props.disabled" placeholder="Текст вашего комментария..." rows="3" v-model="content" />
             </div>
             <Transition name="slide-fade">
-              <div v-if="files.length" class="border shadow rounded-md my-1 p-2 flex flex-wrap gap-2" > 
+              <div v-if="files.length" class="border shadow rounded-md my-1 p-2 flex flex-wrap gap-2" >
 
                 <span @mouseenter="onEnter" @mouseleave="onLeave" v-for="(file, i) in files" :key="i" class="relative mx-1 my-1" >
                   <video class="upload-preview rounded shadow-md" v-if="isVideo(file)" autoplay >
@@ -218,19 +324,17 @@ const groupBy = (i = 0, d = 4) => {
                   />
                 </span>
                 <!-- video -->
-                <span>
-                  <label for="attach-video-camera"><VideoCameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" /></label>
-                  <input class="hidden" type="file" id="attach-video-camera" accept="video/*;capture=camera">
-                </span>
+                <label>
+                  <VideoCameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" />
+                </label>
                 <!-- image -->
-                <span>
-                  <label for="attach-image-camera"><CameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" /></label>
-                  <input class="hidden" type="file" id="attach-image-camera" accept="image/*;capture=camera">
-                </span>
+                <label @click="() => handeCamera()" >
+                  <CameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" />
+                </label>
               </div>
               <span class="group inline-flex items-start text-sm space-x-2 text-gray-500 hover:text-gray-900">
                 <QuestionMarkCircleIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
-                <span>Только текст, HTML запрещён</span>
+                <small>Только текст, HTML запрещён</small>
               </span>
               <Button :disabled="props.disabled" color="blue" @click="() => submitComment(content)">Отправить</Button>
             </div>
@@ -238,17 +342,61 @@ const groupBy = (i = 0, d = 4) => {
         </div>
       </div>
 
+      <Teleport to="#sto-modal-teleport" v-if="showModal">
+        <Transition name="docs-modal">
+          <div class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50" >
+            <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl m-6">
+
+              <div class="p-1 max-h-vw">
+                <h1 class="text-lg mb-3 text-center">Take a photo</h1>
+
+                <p v-if="cameraErrMsg" class="mb-3 text-xs text-red-500 text-center" >{{ cameraErrMsg }}</p>
+
+                <div class="camera">
+                  <video autoplay id="video" class="w-full-l" >Video stream not available.</video>
+                </div>
+                <div class="not-visible-area ">
+                  <canvas id="canvas"></canvas>
+                  <!-- <img id="photo" alt="The screen capture will appear in this box."> -->
+                </div>
+
+              </div>
+
+              <!-- Actions -->
+              <div class="mt-4 sm:mt-5 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                <Button
+                  color="blue"
+                  class="w-full inline-flex justify-center  px-4 py-2 sm:col-start-2"
+                  id="startbutton"
+                >
+                  <span>Take a photo</span>
+                </Button>
+
+                <Button
+                  color="gray"
+                  @click.prevent="() => closeCamera()"
+                  class="mt-3 w-full inline-flex justify-center px-4 py-2 sm:mt-0 sm:col-start-1"
+                >{{ 'Закрыть' }}</Button>
+              </div>
+
+            </div>
+          </div>
+        </Transition>
+      </Teleport>
+
     </div>
   </section>
 </template>
 
-
 <style scoped>
+.not-visible-area{
+  position: absolute;
+  bottom: 3000px;
+}
+
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }
-
-
 
 .slide-fade-enter-from {
   transform: translateX(30px);

@@ -1,20 +1,25 @@
 import { effectScope, ref, computed } from 'vue';
 import save from '~/helpers/save';
 import pipelinesStore from '~/store/pipelines';
-import { objectSignature } from '~/helpers';
+import { objectSignature, cleanUp } from '~/helpers';
 import useToast from '~/composables/useToast';
 import service from '~/services/tasks/worker';
 import store from '~/store/tasks';
+import useAuth from '~/composables/useAuth';
+import { userHasPermission } from '~/lib/permissions';
+
+const { user } = useAuth();
 
 const toaster = useToast();
 
 const { state: funnelsState, load: loadFunnels, options, funnelById } = pipelinesStore;
-const { tasksInFunnel, state, setTaskFunnelStage } = store;
+const { tasksInFunnel, state, setTaskFunnelStage, reset, fill } = store;
 
 let filter;
-let getTasks;
 let theSelectedFunnel;
 let columns;
+
+let getTasks;
 
 const getKanBanPayload = (v) => {
   // funnel as an argument
@@ -78,13 +83,16 @@ const atMounted = async () => {
 };
 
 export default () => effectScope().run(() => {
-  const { fetchTasks, filter: _filter, resetFilter } = service();
+  const { filter: _filter, resetFilter } = service();
 
   if (!columns) {
     columns = ref({});
     theSelectedFunnel = ref();
     filter = _filter;
-    getTasks = fetchTasks;
+    getTasks = async (bool = true) => {
+      if (bool) reset();
+      await fill({ ...cleanUp({ user_id: !userHasPermission('read own tasks') ? user.value.id : undefined, ...filter }) }, false);
+    };
   }
 
   return {

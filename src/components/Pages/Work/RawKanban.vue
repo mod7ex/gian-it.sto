@@ -15,6 +15,9 @@ watch(theSelectedFunnel, fillColumns);
 
 await atMounted();
 
+const canDragAndDrop = (userHasPermission('read own tasks') && userHasPermission('update status tasks'))
+  || (userHasPermission('update tasks') && !userHasPermission('read own tasks'))
+
 /*
 
 const kanbanRef = shallowRef();
@@ -87,7 +90,7 @@ const foo = () => {
           class="tasks-container"
           :id="id"
           @end="log"
-          :disabled="!userHasPermission('update tasks')"
+          :disabled="/* !userHasPermission('update tasks') */ !canDragAndDrop"
         >
           <template #item="{element}">
             <div class="bg-white shadow rounded px-3 pt-3 my-2 pb-5 border w-full select-none" :key="element.id" :id="element.id" >

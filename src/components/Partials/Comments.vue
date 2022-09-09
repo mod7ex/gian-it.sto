@@ -9,8 +9,8 @@ import useAuth from '~/composables/useAuth';
 import { sto_parse_DMY_T, timeSince, dataURItoBlob } from '~/helpers';
 import Avatar from '@/UI/Avatar.vue';
 import { upload } from '~/helpers/save';
-import FormActions from '@/Layout/modal/FormActions.vue';
 import useToast from '~/composables/useToast';
+import Spinner from '@/UI/Spinner.vue';
 
 const toaster = useToast()
 
@@ -30,34 +30,43 @@ const getComments = async () => {
   if (props.model && props.id) await load(props.model, unref(props.id));
 };
 
+const pending = ref(false)
+
 const submitComment = async (description) => {
-  const len = files.value?.length ?? 0;
+  if(pending.value) return
 
-  if (!content.value && !len) return;
+  try {
+    const len = files.value?.length ?? 0;
 
-  const _id = unref(props.id);
+    if (!content.value && !len) return;
 
-  if (!_id) return;
+    const _id = unref(props.id);
 
-  const fileSet = new FormData();
+    if (!_id) return;
 
-  for (let i = 0; i < len; i++) {
-    fileSet.append('files[]', files.value[0]);
+    const fileSet = new FormData();
+
+    for (let i = 0; i < len; i++) { fileSet.append('files[]', files.value[0]); }
+
+    fileSet.append('description', description || '_');
+
+    pending.value = true
+
+    const { message, success, data } = await upload(`comments/${props.model}/${_id}`, fileSet);
+
+    if (success) {
+      content.value = '';
+      files.value = [];
+      emit('comment', description);
+      addComment(data.comment);
+      toaster.success('Комментарий сохранен')
+    } else {
+      toaster.danger(message ?? 'Не удалось сохранить комментарий');
+    }
+  } finally {
+    pending.value = false
   }
 
-  fileSet.append('description', description);
-
-  const { message, success, data } = await upload(`comments/${props.model}/${_id}`, fileSet);
-
-  if (success) {
-    content.value = '';
-    files.value = [];
-    emit('comment', description);
-    addComment(data.comment);
-    toaster.success('Комментарий сохранен')
-  } else {
-    toaster.danger('Не удалось сохранить комментарий');
-  }
 };
 
 // REMOVE NOT : we may want to restrict later
@@ -310,8 +319,8 @@ const handeCamera = () => {
 
               </div>
             </Transition>
-            <div class="mt-3 flex items-center justify-between">
-              <div class="flex gap-9" >
+            <div class="mt-3 flex items-center justify-between flex-wrap">
+              <div class="flex gap-9 mb-2" >
                 <span>
                   <label for="attach-file-upload"><PaperClipIcon class="h-7 transform -rotate-45 text-blue-500 hover:text-blue-600 cursor-pointer" /></label>
                   <input
@@ -323,20 +332,23 @@ const handeCamera = () => {
                     accept="image/*, video/*"
                   />
                 </span>
-                <!-- video -->
+<!-- 
                 <label>
                   <VideoCameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" />
                 </label>
-                <!-- image -->
                 <label @click="() => handeCamera()" >
                   <CameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" />
                 </label>
+-->
               </div>
-              <span class="group inline-flex items-start text-sm space-x-2 text-gray-500 hover:text-gray-900">
+              <span class="mb-2 group inline-flex items-start text-sm space-x-2 text-gray-500 hover:text-gray-900">
                 <QuestionMarkCircleIcon class="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" aria-hidden="true" />
                 <small>Только текст, HTML запрещён</small>
               </span>
-              <Button :disabled="props.disabled" color="blue" @click="() => submitComment(content)">Отправить</Button>
+              <Button class="h-9 w-28 flex justify-center" :disabled="props.disabled || pending" color="blue" @click="() => submitComment(content)">
+                <Spinner class="h-1" v-if="pending" />
+                <span v-else>Отправить</span>
+              </Button>
             </div>
           </div>
         </div>

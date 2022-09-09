@@ -332,6 +332,15 @@ const handeCamera = () => {
                     accept="image/*, video/*"
                   />
                 </span>
+
+                <label for="camera-video" >
+                  <VideoCameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" />
+                  <input class="hidden" id="camera-video" type="file" capture accept="video/*" >
+                </label>
+                <label for="camera-image" >
+                  <CameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" />
+                  <input class="hidden" id="camera-image" type="file" capture accept="image/*" >
+                </label>
 <!-- 
                 <label>
                   <VideoCameraIcon class="h-7 text-blue-500 hover:text-blue-600 cursor-pointer" />

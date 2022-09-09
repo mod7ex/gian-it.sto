@@ -61,7 +61,7 @@ const submitComment = async (description) => {
       addComment(data.comment);
       toaster.success('Комментарий сохранен')
     } else {
-      toaster.danger(message ?? 'Не удалось сохранить комментарий');
+      toaster.danger(message || 'Не удалось сохранить комментарий');
     }
   } finally {
     pending.value = false
@@ -117,7 +117,7 @@ const onLeave = (e) => {
 const groupBy = (arr, i = 0, d = 4) => arr.filter((_, _i) => _i % d === i);
 
 // **************************************************************************************************
-
+/*
 const showModal = ref(false);
 const cameraErrMsg = ref();
 
@@ -214,7 +214,7 @@ const handeCamera = () => {
 
   requestAnimationFrame(startup);
 };
-
+*/
 </script>
 
 <template>
@@ -250,7 +250,9 @@ const handeCamera = () => {
                         <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file_name)" controls autoplay >
                           <source :src="url" type="video/mp4">
                         </video>
-                        <img class="comment-file-preview rounded shadow-md" :src="url" v-else />
+                        <a :href="url" target="_blank" v-else>
+                          <img class="comment-file-preview rounded shadow-md" :src="url" />
+                        </a>
                       </span>
                     </div>
                     <div class="column flex flex-col mx-1">
@@ -258,7 +260,9 @@ const handeCamera = () => {
                         <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file_name)" controls autoplay >
                           <source :src="url" type="video/mp4">
                         </video>
-                        <img class="comment-file-preview rounded shadow-md" :src="url" v-else />
+                        <a :href="url" target="_blank" v-else>
+                          <img class="comment-file-preview rounded shadow-md" :src="url" />
+                        </a>
                       </span>
                     </div>
                     <div class="column flex flex-col mx-1">
@@ -266,7 +270,9 @@ const handeCamera = () => {
                         <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file_name)" controls autoplay >
                           <source :src="url" type="video/mp4">
                         </video>
-                        <img class="comment-file-preview rounded shadow-md" :src="url" v-else />
+                        <a :href="url" target="_blank" v-else>
+                          <img class="comment-file-preview rounded shadow-md" :src="url" />
+                        </a>
                       </span>
                     </div>
                     <div class="column flex flex-col mx-1">
@@ -274,7 +280,9 @@ const handeCamera = () => {
                         <video class="comment-file-preview rounded shadow-md" v-if="isVideo(file_name)" controls autoplay >
                           <source :src="url" type="video/mp4">
                         </video>
-                        <img class="comment-file-preview rounded shadow-md" :src="url" v-else />
+                        <a :href="url" target="_blank" v-else>
+                          <img class="comment-file-preview rounded shadow-md" :src="url" />
+                        </a>
                       </span>
                     </div>
 
@@ -307,7 +315,7 @@ const handeCamera = () => {
               <div v-if="files.length" class="border shadow rounded-md my-1 p-2 flex flex-wrap gap-2" >
 
                 <span @mouseenter="onEnter" @mouseleave="onLeave" v-for="(file, i) in files" :key="i" class="relative mx-1 my-1" >
-                  <video class="upload-preview rounded shadow-md" v-if="isVideo(file)" autoplay >
+                  <video class="upload-preview rounded shadow-md" v-if="isVideo(file)" autoplay muted >
                     <source :src="creatUrl(file)" type="video/mp4">
                   </video>
                   <img class="upload-preview rounded shadow-md" :src="creatUrl(file)" v-else />
@@ -362,7 +370,7 @@ const handeCamera = () => {
           </div>
         </div>
       </div>
-
+<!--
       <Teleport to="#sto-modal-teleport" v-if="showModal">
         <Transition name="docs-modal">
           <div class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50" >
@@ -378,12 +386,10 @@ const handeCamera = () => {
                 </div>
                 <div class="not-visible-area ">
                   <canvas id="canvas"></canvas>
-                  <!-- <img id="photo" alt="The screen capture will appear in this box."> -->
                 </div>
 
               </div>
 
-              <!-- Actions -->
               <div class="mt-4 sm:mt-5 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
                 <Button
                   color="blue"
@@ -404,6 +410,7 @@ const handeCamera = () => {
           </div>
         </Transition>
       </Teleport>
+-->
 
     </div>
   </section>

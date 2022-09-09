@@ -12,6 +12,10 @@ const state = reactive({
   pending: false,
 });
 
+const addComment = (c) => {
+  state.raw.push(c);
+};
+
 const sort = (v) => {
   state.raw.sort(v);
 };
@@ -53,7 +57,7 @@ export default {
   sort,
   fill,
   save,
-
+  addComment,
   count: computed(() => state.raw.length),
 
 };

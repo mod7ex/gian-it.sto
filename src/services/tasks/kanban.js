@@ -5,10 +5,7 @@ import { objectSignature, cleanUp } from '~/helpers';
 import useToast from '~/composables/useToast';
 import service from '~/services/tasks/worker';
 import store from '~/store/tasks';
-import useAuth from '~/composables/useAuth';
 import { userHasPermission } from '~/lib/permissions';
-
-const { user } = useAuth();
 
 const toaster = useToast();
 

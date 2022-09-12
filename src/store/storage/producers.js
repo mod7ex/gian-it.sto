@@ -6,6 +6,15 @@ const state = reactive({
   raw: [],
 });
 
+const add = (v) => {
+  const i = state.raw.findIndex(({ id }) => v?.id == id);
+  if (i < 0) {
+    state.raw.push(v);
+  } else {
+    state.raw[i] = v;
+  }
+};
+
 const reset = () => {
   state.raw = [];
 };
@@ -23,6 +32,7 @@ export default {
 
   load,
   drop,
+  add,
   reset,
   producers: computed(() => state.raw.map(({ id, name, created_at }) => ({ id, name, created_at: created_at?.split(' ')[0] }))),
   options: computed(() => state.raw.map(({ id, name }) => ({ value: id, label: name }))),

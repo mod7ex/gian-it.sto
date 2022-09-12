@@ -14,7 +14,7 @@ const paymentWaysOptions = [{ label: 'Наличный', value: 'cache' }, { lab
 
 const toaster = useToast();
 
-const { state, load, drop, setStatus } = store;
+const { state, load, add, drop, setStatus } = store;
 const { current } = departments;
 
 let invoice;
@@ -70,13 +70,13 @@ export default function (order_id) {
           });
 
           saveForm = async () => {
-            const { message, success } = await save.payment(invoice);
+            const { message, success, data } = await save.payment(invoice);
 
             try {
               return { message, success };
             } finally {
               if (success) {
-                await load({ order_id });
+                add(data.payment);
                 toaster.success(message);
               }
             }

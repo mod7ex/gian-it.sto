@@ -6,11 +6,12 @@ import useToast from '~/composables/useToast.js';
 import useModalForm from '~/composables/useModalForm';
 import RawForm from '~/components/Partials/finances/RawForm.vue';
 import communicate from '~/helpers/communicate';
-import service from '~/services/finances/index';
 import departmentStore from '~/store/departments';
 import formRules from '~/validationsRules/finance';
+import store from '~/store/finances/finances';
 
 const { current } = departmentStore;
+const { addFinance } = store;
 
 const toaster = useToast();
 
@@ -44,8 +45,6 @@ const atMountedFinanceForm = async () => {
 };
 
 export default function () {
-  const { fetchFinances } = service();
-
   const saveForm = async () => {
     const isValideForm = await v$.value.$validate();
 
@@ -53,13 +52,13 @@ export default function () {
 
     v$.value.$reset();
 
-    const { message, success } = await save.finance(finance);
+    const { message, success, data } = await save.finance(finance);
 
     try {
       return { message, success };
     } finally {
       if (success) {
-        await fetchFinances(true);
+        addFinance(data.finance);
         toaster.success(message);
       }
     }

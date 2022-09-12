@@ -11,7 +11,7 @@ import { setOrder } from '~/services/orders/form';
 
 const toaster = useToast();
 
-const { load } = store;
+const { add } = store;
 
 let work;
 
@@ -26,13 +26,13 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async (order_id) => {
-  const { message, success } = await save.work(work);
+  const { message, success, data } = await save.work(work);
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load({ order_id });
+      add(data.work);
       await setOrder(order_id);
       toaster.success(message);
     }

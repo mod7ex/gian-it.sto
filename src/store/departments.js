@@ -12,6 +12,15 @@ const state = reactive({
   raw: [],
 });
 
+const addDepartment = (v) => {
+  const i = state.raw.findIndex(({ id }) => v?.id == id);
+  if (i < 0) {
+    state.raw.push(v);
+  } else {
+    state.raw[i] = v;
+  }
+};
+
 const current = ref();
 
 const setCurrent = (id, work = false) => {
@@ -47,6 +56,7 @@ const isCurrent = (id) => id === current.value;
 export default {
   state: readonly(state),
 
+  addDepartment,
   load,
   drop,
   reset,

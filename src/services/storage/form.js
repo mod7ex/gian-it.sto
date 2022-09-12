@@ -12,7 +12,7 @@ import departmentStore from '~/store/departments';
 
 const { current } = departmentStore;
 
-const { load } = store;
+const { add } = store;
 
 const toaster = useToast();
 
@@ -41,13 +41,15 @@ const saveForm = async () => {
 
   v$.value.$reset();
 
-  const { message, success } = await save.storage(storage);
+  const { message, success, data } = await save.storage(storage);
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load({ department_id: current.value });
+      if (data.storage.department?.id == current.value) {
+        add(data.storage);
+      }
       toaster.success(message);
     }
   }

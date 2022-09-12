@@ -11,13 +11,13 @@ import departmentStore from '~/store/departments';
 import service from '~/services/orders';
 import { debounce } from '~/helpers';
 
+const { current } = departmentStore;
+
 const { sig } = service();
 
 const key = ref('random');
 
 watch(sig, debounce(() => { key.value = Date.now(); }));
-
-const { current } = departmentStore;
 
 const SuspenseArea = useSuspense();
 
@@ -42,7 +42,7 @@ const SuspenseArea = useSuspense();
 
     <v-filter />
 
-    <suspense-area :key="`orders-${current}-${key}`" > <kan-ban /> </suspense-area>
+    <suspense-area v-if="current" :key="`orders-${current}-${key}`" > <kan-ban /> </suspense-area>
 
   </OfficeLayout>
 </template>

@@ -8,6 +8,7 @@ import useConfirmDialog from '~/composables/useConfirmDialog.js';
 import useAppRouter from '~/composables/useAppRouter';
 import service from '~/services/orders/work';
 import { setOrder } from '~/services/orders/form';
+import { computed } from '@vue/reactivity';
 
 const { render } = service();
 
@@ -40,12 +41,12 @@ await load({order_id :route.params.id});
 
 <template>
   <Table
+    :key="state.raw.length"
     :fields="fields"
     :items="state.raw"
     @delete="(id) => drop(() => dropWorkThenSet(id))"
     @edit="(id) => render(id)"
     :last="!!state.raw.length"
-
   >
       <!-- Body -->
 
@@ -66,7 +67,7 @@ await load({order_id :route.params.id});
       </template>
 
       <template #td-time="{ value }" >
-        {{ `${value} Ч` ?? '_' }}
+        {{ value ? `${value} Ч` : '_' }}
       </template>
 
       <template #td-comments="{ value }" >
@@ -79,6 +80,6 @@ await load({order_id :route.params.id});
 
       <template #td-last-name="{ }" >суммa</template>
 
-      <template #td-last-sum="{ items }" >{{ items.reduce((prev, curr) => prev + (curr.sum ?? 0), 0) }} ₽</template>
+      <template #td-last-sum="{ items }" >{{ items.reduce((prev, curr) => prev + (parseInt(curr.sum) || 0), 0) }} ₽</template>
   </Table>
 </template>

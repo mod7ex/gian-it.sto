@@ -19,7 +19,7 @@ import { updateTaskUserId } from '~/services/tasks/form';
 const { load, options } = userStore
 const { current } = departmentStore
 
-const { columns, log, atMounted, tasksState , showModal ,loadTasks, getTaskById, toaster } = service();
+const { columns, log, atMounted, tasksState , showModal ,loadTasks, getTaskById, toaster, state } = service();
 
 await atMounted();
 

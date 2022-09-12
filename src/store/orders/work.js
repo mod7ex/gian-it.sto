@@ -6,6 +6,15 @@ const state = reactive({
   raw: [],
 });
 
+const add = (v) => {
+  const i = state.raw.findIndex(({ id }) => v?.id == id);
+  if (i < 0) {
+    state.raw.push(v);
+  } else {
+    state.raw[i] = v;
+  }
+};
+
 const reset = () => {
   state.raw = [];
 };
@@ -20,5 +29,6 @@ export default {
   state: readonly(state),
   load,
   drop,
+  add,
   reset,
 };

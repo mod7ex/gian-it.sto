@@ -9,7 +9,7 @@ import _$ from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 // import formRules from '~/validationsRules/stage';
 
-const { load } = store;
+const { add } = store;
 
 const toaster = useToast();
 
@@ -29,13 +29,13 @@ const saveForm = async () => {
 
   // v$.value.$reset();
 
-  const { message, success } = await _$.order_stage(order_stage);
+  const { message, success, data } = await _$.order_stage(order_stage);
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      add(data.order_stage);
       toaster.success(message);
     }
   }

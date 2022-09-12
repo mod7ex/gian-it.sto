@@ -95,6 +95,7 @@ export default () => effectScope().run(() => {
     showModal,
     loadTasks,
     getTaskById,
+    state,
     sig: computed(() => objectSignature(filter)),
     clearMemo: () => {
       columns = undefined;

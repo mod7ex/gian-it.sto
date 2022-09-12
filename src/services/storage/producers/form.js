@@ -9,7 +9,7 @@ import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import { carMarks as formRules } from '~/validationsRules/carModel';
 
-const { load } = store;
+const { add } = store;
 
 const toaster = useToast();
 
@@ -28,13 +28,13 @@ const saveForm = async () => {
 
   v$.value.$reset();
 
-  const { message, success } = await save.producer(producer);
+  const { message, success, data } = await save.producer(producer);
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      add(data.producer);
       toaster.success(message);
     }
   }

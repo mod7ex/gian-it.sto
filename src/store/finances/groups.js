@@ -13,6 +13,15 @@ const state = reactive({
   pending: false,
 });
 
+const addGroup = (v) => {
+  const i = state.raw.findIndex(({ id }) => v?.id == id);
+  if (i < 0) {
+    state.raw.push(v);
+  } else {
+    state.raw[i] = v;
+  }
+};
+
 const reset = () => {
   state.raw = [];
   state.pages = 100;
@@ -44,6 +53,7 @@ export default {
   state: readonly(state),
 
   load,
+  addGroup,
   fill,
   drop,
   reset,

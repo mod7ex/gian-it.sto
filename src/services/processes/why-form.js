@@ -9,7 +9,7 @@ import RawForm from '~/components/Partials/processes/WhyForm.vue';
 import communicate from '~/helpers/communicate';
 import { whyRules } from '~/validationsRules/process';
 
-const { load } = store;
+const { add } = store;
 
 const toaster = useToast();
 
@@ -28,13 +28,13 @@ const saveForm = async () => {
 
   v$.value.$reset();
 
-  const { message, success } = await save.appeal_reason(why);
+  const { message, success, data } = await save.appeal_reason(why);
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      add(data.appeal_reason);
       toaster.success(message);
     }
   }

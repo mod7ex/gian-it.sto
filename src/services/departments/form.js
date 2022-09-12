@@ -7,7 +7,7 @@ import store from '~/store/departments';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 
-const { load } = store;
+const { addDepartment } = store;
 
 const toaster = useToast();
 
@@ -19,13 +19,13 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
-  const { message, success } = await save.department(department);
+  const { message, success, data } = await save.department(department);
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      addDepartment(data.department);
       toaster.success(message);
     }
   }

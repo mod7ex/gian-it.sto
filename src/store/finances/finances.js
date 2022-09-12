@@ -13,6 +13,15 @@ const state = reactive({
   pending: false,
 });
 
+const addFinance = (v) => {
+  const i = state.raw.findIndex(({ id }) => v?.id == id);
+  if (i < 0) {
+    state.raw.push(v);
+  } else {
+    state.raw[i] = v;
+  }
+};
+
 const reset = () => {
   state.raw = [];
   state.pages = 100;
@@ -51,4 +60,5 @@ export default {
   reset,
   sort,
   fill,
+  addFinance,
 };

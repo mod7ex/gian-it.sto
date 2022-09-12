@@ -10,6 +10,15 @@ const state = reactive({
   pipeline: undefined,
 });
 
+const add = (v) => {
+  const i = state.raw.findIndex(({ id }) => v?.id == id);
+  if (i < 0) {
+    state.raw.push(v);
+  } else {
+    state.raw[i] = v;
+  }
+};
+
 const reset = () => { state.raw = []; };
 
 const load_orders_stages = async () => {
@@ -36,5 +45,6 @@ export default {
   load_orders_stages,
   load,
   reset,
+  add,
   drop,
 };

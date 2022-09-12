@@ -9,7 +9,7 @@ import RawForm from '~/components/Partials/cars/CarMarkRawForm.vue';
 import communicate from '~/helpers/communicate';
 import { carMarks as formRules } from '~/validationsRules/carModel';
 
-const { load } = store;
+const { add } = store;
 
 const toaster = useToast();
 
@@ -22,20 +22,19 @@ const setForm = (payload = {}) => {
 };
 
 const saveForm = async () => {
-  console.log(mark);
   const isValideForm = await v$.value.$validate();
 
   if (!isValideForm) return;
 
   v$.value.$reset();
 
-  const { message, success } = await save.car_mark(mark);
+  const { message, success, data } = await save.car_mark(mark);
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      add(data.car_mark);
       toaster.success(message);
     }
   }

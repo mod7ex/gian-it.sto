@@ -12,6 +12,15 @@ const state = reactive({
   statuses: [],
 });
 
+const add = (v) => {
+  const i = state.raw.findIndex(({ id }) => v?.id == id);
+  if (i < 0) {
+    state.raw.push(v);
+  } else {
+    state.raw[i] = v;
+  }
+};
+
 const dropProduct = (product_id) => {
   if (!product_id) return;
 
@@ -73,6 +82,7 @@ export default {
   loadStatuses,
   productsRequests,
   replace,
+  add,
 
   // eslint-disable-next-line no-unused-vars
   products: computed(() => Object.entries(productsRequests.value).map(([_, [{ product }]]) => product)),

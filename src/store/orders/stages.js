@@ -5,6 +5,15 @@ import { userHasAtLeastOnePermission } from '~/lib/permissions';
 
 const state = reactive({ raw: [] });
 
+const add = (v) => {
+  const i = state.raw.findIndex(({ id }) => v?.id == id);
+  if (i < 0) {
+    state.raw.push(v);
+  } else {
+    state.raw[i] = v;
+  }
+};
+
 const reset = () => { state.raw = []; };
 
 const load = async () => {
@@ -21,6 +30,7 @@ export default {
   options: computed(() => state.raw.map(({ id, name }) => ({ label: name, value: id }))),
 
   load,
+  add,
   reset,
   drop,
 };

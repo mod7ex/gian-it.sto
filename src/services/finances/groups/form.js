@@ -9,7 +9,7 @@ import useModalForm from '~/composables/useModalForm';
 import communicate from '~/helpers/communicate';
 import { carMarks as formRules } from '~/validationsRules/carModel';
 
-const { load } = store;
+const { addGroup } = store;
 
 const toaster = useToast();
 
@@ -28,13 +28,13 @@ const saveForm = async () => {
 
   v$.value.$reset();
 
-  const { message, success } = await save.finance_group(financeGroup);
+  const { message, success, data } = await save.finance_group(financeGroup);
 
   try {
     return { message, success };
   } finally {
     if (success) {
-      await load();
+      addGroup(data.finance_group);
       toaster.success(message);
     }
   }

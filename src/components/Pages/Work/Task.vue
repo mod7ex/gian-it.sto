@@ -28,7 +28,7 @@ const canStart = computed(() => {
 });
 
 const canPause = computed(() => {
-  if ((task.value?.status === 'pause') || (task.value?.status === 'done') || (task.value?.status === 'wait')) {
+  if ((task.value?.status === 'process') || (task.value?.status === 'wait')) {
     if (can || imExecuter.value) return true;
   }
   return false;
@@ -38,6 +38,7 @@ const canEnd = computed(() => {
   if ((task.value?.status === 'process') || (task.value?.status === 'pause')) {
     if (can || imExecuter.value) return true;
   }
+
   return false;
 });
 

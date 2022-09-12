@@ -4,7 +4,7 @@ import { debounce } from '~/helpers';
 import $ from '~/helpers/fetch.js';
 import save from '~/helpers/save';
 import useToast from '~/composables/useToast';
-import { canTasks } from '~/lib/permissions';
+import { canTasks, userHasPermission } from '~/lib/permissions';
 import useAuth from '~/composables/useAuth.js';
 
 const { user } = useAuth();
@@ -22,7 +22,7 @@ export default () => effectScope().run(() => {
     task = ref({});
 
     imExecuter = computed(() => task.value.user?.id == user.value.id);
-    allowed = computed(() => (task.value.status === 'process') && imExecuter.value);
+    allowed = computed(() => (task.value.status === 'process') && (imExecuter.value || userHasPermission('update status tasks')));
   }
 
   const atMounted = async () => {

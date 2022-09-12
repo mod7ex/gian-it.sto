@@ -20,7 +20,6 @@ await atMounted().then(async () => {
   }
 })
 
-
 </script>
 
 <template>

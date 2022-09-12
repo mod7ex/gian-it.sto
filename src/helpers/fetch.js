@@ -51,8 +51,10 @@ export default new Proxy($fetch, {
     // proxy({ toast, config, key }) // path with 's'
     const { toast, params, key } = args[0];
 
-    const { path, ressource } = extract(key);
+    let { path, ressource } = extract(key);
     const fallBackErr = communicate.fetch.error[ressource];
+
+    if (key === 'tasks-own') path = 'tasks-own';
 
     return target.call({}, path, fallBackErr, toast ?? true, { params: cleanUp(params) });
   },

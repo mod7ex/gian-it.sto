@@ -13,7 +13,7 @@ const { user } = useAuth();
 const toaster = useToast();
 
 const { state: funnelsState, load: loadFunnels, options, funnelById } = pipelinesStore;
-const { tasksInFunnel, state, setTaskFunnelStage, reset, fill } = store;
+const { tasksInFunnel, state, setTaskFunnelStage, reset, fill, getMine } = store;
 
 let filter;
 let theSelectedFunnel;
@@ -91,7 +91,13 @@ export default () => effectScope().run(() => {
     filter = _filter;
     getTasks = async (bool = true) => {
       if (bool) reset();
-      await fill({ ...cleanUp({ user_id: !userHasPermission('read own tasks') ? user.value.id : undefined, ...filter }) }, false);
+
+      if (userHasPermission('read own tasks')) { // he means : read all tasks
+        await fill(cleanUp(filter), false);
+        return;
+      }
+
+      await getMine({ ...filter });
     };
   }
 

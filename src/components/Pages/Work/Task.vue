@@ -9,12 +9,37 @@ import service from '~/services/tasks/worker-preview';
 import WorkerPreview from '~/components/Partials/tasks/WorkerPreview.vue';
 import useSuspense from '~/composables/useSuspense';
 import { tasksColorMap, ruMonths } from '~/helpers';
+import { userHasPermission } from '~/lib/permissions';
 
 const SuspenseArea = useSuspense(WorkerPreview);
 
 const { task, clearMemo, ping, imExecuter } = service();
 
 onScopeDispose(clearMemo);
+
+const can = userHasPermission('update status tasks');
+
+const canStart = computed(() => {
+  if (((task.value?.status === 'wait') || (task.value?.status === 'done') || (task.value?.status === 'pause'))) {
+    if (can || imExecuter.value) return true;
+  }
+
+  return false;
+});
+
+const canPause = computed(() => {
+  if ((task.value?.status === 'pause') || (task.value?.status === 'done') || (task.value?.status === 'wait')) {
+    if (can || imExecuter.value) return true;
+  }
+  return false;
+});
+
+const canEnd = computed(() => {
+  if ((task.value?.status === 'process') || (task.value?.status === 'pause')) {
+    if (can || imExecuter.value) return true;
+  }
+  return false;
+});
 
 const EVENTS = {
   TASK_CREATED: { iconBackground: 'bg-gray-400', icon: UserIcon },
@@ -66,58 +91,6 @@ const timeline = computed(() => {
   return v;
 });
 
-// const tm = [
-//   {
-//     id: 1,
-//     content: 'Поставлено',
-//     target: 'на Вася Пупкину',
-//     href: null,
-//     date: '20 сентября',
-//     datetime: '22.10.2020',
-//     icon: UserIcon,
-//     iconBackground: 'bg-gray-400',
-//   },
-//   {
-//     id: 2,
-//     content: 'Принято',
-//     target: 'Василием Пупкином',
-//     href: null,
-//     date: '21 сентября',
-//     datetime: '2020-09-22',
-//     icon: ThumbUpIcon,
-//     iconBackground: 'bg-blue-500',
-//   },
-//   {
-//     id: 3,
-//     content: '1 этап завершён',
-//     target: 'Василием Пупкином',
-//     href: null,
-//     date: '22 сентября',
-//     datetime: '2020-09-28',
-//     icon: CheckIcon,
-//     iconBackground: 'bg-green-500',
-//   },
-//   {
-//     id: 4,
-//     content: 'Изменено',
-//     target: 'руководителем',
-//     href: null,
-//     date: '25 сентября',
-//     datetime: '2020-09-30',
-//     icon: ThumbUpIcon,
-//     iconBackground: 'bg-blue-500',
-//   },
-//   {
-//     id: 5,
-//     content: 'Завершено',
-//     target: 'Василием Пупкином',
-//     href: null,
-//     date: '1 октября',
-//     datetime: '2020-10-04',
-//     icon: CheckIcon,
-//     iconBackground: 'bg-green-500',
-//   },
-// ];
 </script>
 
 <template>
@@ -141,16 +114,37 @@ const timeline = computed(() => {
           <Feeds :items="timeline" class="mt-5 max-h-vh overflow-y-scroll" />
 
           <div class="mt-6 flex justify-center gap-3" :key="task.status">
-            <Button class="flex justify-center" color="purple" @click="() => ping('process')" blur v-if="!(!((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) || !imExecuter)" :disabled="!((task?.status === 'wait') || (task?.status === 'done') || (task?.status === 'pause')) || !imExecuter" >
+            <Button
+              blur
+              class="flex justify-center"
+              color="purple"
+              @click="() => ping('process')"
+              v-if="canStart"
+              :disabled="!canStart"
+            >
               <!-- <ClockIcon class="w-5 h-5 mr-1"/> -->
               Начать
             </Button>
 
-            <Button class="flex justify-center" @click="() => ping('pause')" color="yellow" v-if="!((task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')  || !imExecuter)" :disabled="(task?.status === 'pause') || (task?.status === 'done') || (task?.status === 'wait')  || !imExecuter" >
+            <Button
+              blur
+              class="flex justify-center"
+              @click="() => ping('pause')"
+              color="yellow"
+              v-if="canPause"
+              :disabled="!canPause"
+            >
               На паузу
             </Button>
 
-            <Button class="flex justify-center" color="green" @click="() => ping('done')" blur v-if="!(!((task?.status === 'process') || (task?.status === 'pause'))  || !imExecuter)" :disabled="!((task?.status === 'process') || (task?.status === 'pause'))  || !imExecuter" >
+            <Button
+              blur
+              class="flex justify-center"
+              color="green"
+              @click="() => ping('done')"
+              v-if="canEnd"
+              :disabled="!canEnd"
+            >
               Завершить
             </Button>
           </div>

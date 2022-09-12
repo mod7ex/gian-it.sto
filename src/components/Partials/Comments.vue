@@ -46,7 +46,7 @@ const submitComment = async (description) => {
 
     const fileSet = new FormData();
 
-    for (let i = 0; i < len; i++) { fileSet.append('files[]', files.value[0]); }
+    for (let i = 0; i < len; i++) { fileSet.append('files[]', files.value[i]); }
 
     fileSet.append('description', description || '_');
 
@@ -66,7 +66,6 @@ const submitComment = async (description) => {
   } finally {
     pending.value = false
   }
-
 };
 
 // REMOVE NOT : we may want to restrict later

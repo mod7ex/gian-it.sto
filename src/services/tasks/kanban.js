@@ -5,12 +5,14 @@ import { objectSignature, cleanUp } from '~/helpers';
 import useToast from '~/composables/useToast';
 import service from '~/services/tasks/worker';
 import store from '~/store/tasks';
-import { userHasPermission } from '~/lib/permissions';
+import useAuth from '~/composables/useAuth';
+
+const { user } = useAuth();
 
 const toaster = useToast();
 
 const { state: funnelsState, load: loadFunnels, options, funnelById } = pipelinesStore;
-const { tasksInFunnel, state, setTaskFunnelStage, reset, fill, getMine } = store;
+const { tasksInFunnel, state, setTaskFunnelStage, reset, fill } = store;
 
 let filter;
 let theSelectedFunnel;
@@ -88,13 +90,7 @@ export default () => effectScope().run(() => {
     filter = _filter;
     getTasks = async (bool = true) => {
       if (bool) reset();
-
-      if (userHasPermission('read own tasks')) { // he means : read all tasks
-        await fill(cleanUp(filter), false);
-        return;
-      }
-
-      await getMine({ ...filter });
+      await fill({ ...cleanUp(filter), user_id: user.value?.id }, false);
     };
   }
 

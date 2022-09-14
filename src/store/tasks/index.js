@@ -83,19 +83,6 @@ const fill = async (payload = {}, trackPermissions = true) => {
   state.pending = false;
 };
 
-const getMine = async (payload = {}) => {
-  const me = user.value?.id;
-  if (!me) return;
-  if (state.pending) return;
-  if (state.page > state.pages) return;
-  state.pending = true;
-  const data = await $({ key: 'tasks-own', params: { ...payload, page: state.page } });
-  state.raw = state.raw.concat(data?.tasks ?? []);
-  state.pages = data?.meta?.last_page ?? 100;
-  state.page += 1;
-  state.pending = false;
-};
-
 const sort = (v) => {
   state.raw.sort(v);
 };
@@ -117,7 +104,6 @@ export default {
   reset,
   sort,
   fill,
-  getMine,
   setTask,
   getTaskById,
   tasksInFunnel,

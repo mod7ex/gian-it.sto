@@ -2,10 +2,12 @@ import { reactive, effectScope, customRef } from 'vue';
 import { hyphenatedDateFormat, cleanUp } from '~/helpers';
 import departmentStore from '~/store/departments';
 import useOrder from '~/composables/useOrder.js';
-
+import useAuth from '~/composables/useAuth';
 import store from '~/store/tasks';
 
-const { sort, getMine, reset: resetStore, state } = store;
+const { user } = useAuth();
+
+const { sort, fill, reset: resetStore, state } = store;
 
 const { current } = departmentStore;
 
@@ -59,9 +61,9 @@ export default () => effectScope().run(() => {
   };
 
   const fetchTasks = async (bool = false) => {
-    // Function is used to show worker tasks and to calculate Worker time & Kanban
+    // Function is used to show worker tasks and to calculate Worker time
     if (bool) resetStore();
-    await getMine(cleanUp(filter));
+    await fill({ ...cleanUp(filter), user_id: user.value?.id }, false);
   };
 
   const initTimeEdges = () => {

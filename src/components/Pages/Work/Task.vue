@@ -9,7 +9,6 @@ import service from '~/services/tasks/worker-preview';
 import WorkerPreview from '~/components/Partials/tasks/WorkerPreview.vue';
 import useSuspense from '~/composables/useSuspense';
 import { tasksColorMap, ruMonths } from '~/helpers';
-import { userHasPermission } from '~/lib/permissions';
 
 const SuspenseArea = useSuspense(WorkerPreview);
 
@@ -17,11 +16,9 @@ const { task, clearMemo, ping, imExecuter } = service();
 
 onScopeDispose(clearMemo);
 
-const can = userHasPermission('update status tasks');
-
 const canStart = computed(() => {
   if (((task.value?.status === 'wait') || (task.value?.status === 'done') || (task.value?.status === 'pause'))) {
-    if (can || imExecuter.value) return true;
+    return imExecuter.value;
   }
 
   return false;
@@ -29,14 +26,14 @@ const canStart = computed(() => {
 
 const canPause = computed(() => {
   if ((task.value?.status === 'process') || (task.value?.status === 'wait')) {
-    if (can || imExecuter.value) return true;
+    return imExecuter.value;
   }
   return false;
 });
 
 const canEnd = computed(() => {
   if ((task.value?.status === 'process') || (task.value?.status === 'pause')) {
-    if (can || imExecuter.value) return true;
+    return imExecuter.value;
   }
 
   return false;

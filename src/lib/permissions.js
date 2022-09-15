@@ -111,16 +111,16 @@ export const PERMISSIONS = {
  * @returns {boolean}
  */
 export const canTasks = (item, action = 'update') => {
-  if (action === 'update_status') action = 'update_stage';
+  if (action === 'update_status') action = 'update_stage'; // update_stage is used for both (kanban & status)
 
   const ACTION = action.toUpperCase();
 
-  const task_author = typeof item.author === 'object' ? item.author?.id : item.author_id;
+  const task_user = typeof item.user === 'object' ? item.user?.id : item.user_id;
   const task_department = typeof item.department === 'object' ? item.department?.id : item.department_id;
 
   if (action !== 'delete') {
     if (PERMISSIONS.TASKS[`${ACTION}_OWN`]()) {
-      return task_author == user.value?.id;
+      return task_user == user.value?.id;
     }
 
     if (PERMISSIONS.TASKS[`${ACTION}_DEPARTMENT`]()) {

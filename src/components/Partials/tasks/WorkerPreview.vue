@@ -10,7 +10,7 @@ import Preview from '@/Partials/processes/DiagnosticCardPreview.vue';
 import $ from '~/helpers/fetch';
 import Badge from '@/UI/Badge.vue';
 
-const { task, atMounted, route, checkBox, canTasks, allowed } = service();
+const { task, atMounted, route, checkBox, allowed } = service();
 
 const dc_template = ref({});
 

@@ -90,7 +90,8 @@ export default () => effectScope().run(() => {
     filter = _filter;
     getTasks = async (bool = true) => {
       if (bool) reset();
-      await fill({ ...cleanUp(filter), user_id: user.value?.id }, false);
+      // await fill({ ...cleanUp(filter), user_id: user.value?.id }, false);
+      await fill(cleanUp(filter), false);
     };
   }
 

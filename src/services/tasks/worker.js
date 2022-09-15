@@ -63,7 +63,8 @@ export default () => effectScope().run(() => {
   const fetchTasks = async (bool = false) => {
     // Function is used to show worker tasks and to calculate Worker time
     if (bool) resetStore();
-    await fill({ ...cleanUp(filter), user_id: user.value?.id }, false);
+    await fill(cleanUp(filter), false);
+    // await fill({ ...cleanUp(filter), user_id: user.value?.id }, false);
   };
 
   const initTimeEdges = () => {

@@ -73,7 +73,7 @@ const fill = async (payload = {}, trackPermissions = true) => {
   state.pending = true;
   const data = await $({ key: 'tasks', params: { ...payload, page: state.page } });
   if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
-    const only_my_tasks = data?.tasks?.filter(({ author: { id }, user: { id: u_id } }) => (id == user.value.id || u_id === user.value.id)); // Tasks i created or tasks where i'm the executer
+    const only_my_tasks = data?.tasks?.filter(({ author: { id }, user: { id: u_id } }) => (id == user.value.id || u_id == user.value.id)); // Tasks i created or tasks where i'm the executer
     state.raw = state.raw.concat(only_my_tasks ?? []);
   } else {
     state.raw = state.raw.concat(data?.tasks ?? []);

@@ -12,13 +12,14 @@ import { tasksColorMap, ruMonths } from '~/helpers';
 
 const SuspenseArea = useSuspense(WorkerPreview);
 
-const { task, clearMemo, ping, imExecuter } = service();
+const { task, clearMemo, ping, engagedIn, canTasks } = service();
 
 onScopeDispose(clearMemo);
 
 const canStart = computed(() => {
   if (((task.value?.status === 'wait') || (task.value?.status === 'done') || (task.value?.status === 'pause'))) {
-    return imExecuter.value;
+    // return engagedIn.value || canTasks(task.value, 'update_status');
+    return canTasks(task.value, 'update_status');
   }
 
   return false;
@@ -26,14 +27,16 @@ const canStart = computed(() => {
 
 const canPause = computed(() => {
   if ((task.value?.status === 'process') || (task.value?.status === 'wait')) {
-    return imExecuter.value;
+    // return engagedIn.value || canTasks(task.value, 'update_status');
+    return canTasks(task.value, 'update_status');
   }
   return false;
 });
 
 const canEnd = computed(() => {
   if ((task.value?.status === 'process') || (task.value?.status === 'pause')) {
-    return imExecuter.value;
+    // return engagedIn.value || canTasks(task.value, 'update_status');
+    return canTasks(task.value, 'update_status');
   }
 
   return false;
@@ -74,7 +77,7 @@ const timeline = computed(() => {
     const dot = {
       id,
       content,
-      target: `${created_user.name ?? ''} ${created_user.middle_name ?? ''}`,
+      target: `${created_user?.name ?? ''} ${created_user?.middle_name ?? ''}`,
       // target: `${created_user.name ?? ''} ${created_user.middle_name ?? ''} ${created_user.username ?? ''}`,
       date,
       datetime: created_at,

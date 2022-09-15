@@ -16,10 +16,16 @@ const routesPermissionsMap = {
 
   Why: 'crud processes',
 
-  // Tasks: ['read tasks', 'read department tasks'],
-  // Task: ['read tasks', 'read department tasks'],
-  TaskEdit: 'update tasks',
-  TaskCreate: 'create tasks',
+  Tasks: [
+    'read tasks',
+    'read department tasks',
+    'read own tasks',
+  ],
+  Task: [
+    'read tasks',
+    'read department tasks',
+    'read own tasks',
+  ],
 
   Employers: ['read users', 'crud users'],
   EmployerForm: 'crud users',
@@ -78,40 +84,50 @@ const navigationGuards = (to, from, next) => {
 
 export default navigationGuards;
 
+const has = userHasPermission;
+
 export const PERMISSIONS = {
   TASKS: {
-    READ: () => userHasPermission('read tasks'),
-    READ_DEPARTMENT: () => userHasPermission('read department tasks') && !userHasPermission('read tasks'),
-    READ_OWN: () => !userHasPermission('read department tasks') && !userHasPermission('read tasks'),
+    READ: () => has('read tasks'),
+    READ_DEPARTMENT: () => has('read department tasks') && !has('read tasks'),
+    READ_OWN: () => has('read own tasks') && !has('read tasks') && !has('read department tasks'),
 
-    UPDATE: () => userHasPermission('update tasks'),
+    UPDATE: () => has('update tasks'),
+    UPDATE_DEPARTMENT: () => has('update department tasks') && !has('update tasks'),
+    UPDATE_OWN: () => has('update own tasks') && !has('update tasks') && !has('update department tasks'),
 
-    DELETE: () => userHasPermission('delete tasks'),
+    UPDATE_STAGE: () => has('update stage tasks'),
+    UPDATE_STAGE_DEPARTMENT: () => has('update department stage tasks') && !has('update stage tasks'),
+    UPDATE_STAGE_OWN: () => has('update own stage tasks') && !has('update stage tasks') && !has('update department stage tasks'),
+
+    DELETE: () => has('delete tasks'),
   },
 };
 
 /**
  *
  * @param {Task} item
- * @param {'delete' | 'update'} action
+ * @param {'delete' | 'update' | 'update_stage' | 'update_status'} action
  * @returns {boolean}
  */
 export const canTasks = (item, action = 'update') => {
-  if (action === 'read') {
-    if (PERMISSIONS.TASKS[`${action.toUpperCase()}_OWN`]()) {
-      const theAuthor = typeof item.author === 'object' ? item.author?.id : item.author_id;
-      if (theAuthor != user.value?.id) return false;
-      return true;
+  if (action === 'update_status') action = 'update_stage';
+
+  const ACTION = action.toUpperCase();
+
+  const task_author = typeof item.author === 'object' ? item.author?.id : item.author_id;
+  const task_department = typeof item.department === 'object' ? item.department?.id : item.department_id;
+
+  if (action !== 'delete') {
+    if (PERMISSIONS.TASKS[`${ACTION}_OWN`]()) {
+      return task_author == user.value?.id;
     }
 
-    if (PERMISSIONS.TASKS[`${action.toUpperCase()}_DEPARTMENT`]()) {
-      const theDepartment = typeof item.department === 'object' ? item.department?.id : item.department_id;
-      if (theDepartment != userDepartment.value) return false;
-      return true;
+    if (PERMISSIONS.TASKS[`${ACTION}_DEPARTMENT`]()) {
+      return task_department == userDepartment.value;
     }
   }
 
-  // you're an admin --->
-
-  return PERMISSIONS.TASKS[`${action.toUpperCase()}`]();
+  // you're an admin | delete action
+  return PERMISSIONS.TASKS[`${ACTION}`]();
 };

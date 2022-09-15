@@ -23,7 +23,7 @@ const setOrderStage = (order_id, stage) => {
 
 const load = async (payload) => {
   if (userHasAtLeastOnePermission(['crud orders', 'read orders'])) {
-    if (!payload.department_id) return;
+    if (!payload?.department_id) return;
     state.raw = await $.orders(payload);
   }
 };

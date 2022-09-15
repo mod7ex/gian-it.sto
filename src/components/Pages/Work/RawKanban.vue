@@ -7,7 +7,10 @@ import Link from '@/UI/Link.vue';
 import service from '~/services/tasks/kanban';
 import { defaults } from '~/composables/useAvatar';
 import { tasksColorMap } from '~/helpers';
-import {userHasPermission} from '~/lib/permissions'
+import {canTasks, userHasPermission, userHasAtLeastOnePermission} from '~/lib/permissions'
+import useAuth from '~/composables/useAuth';
+
+const { user } = useAuth();
 
 const { log, atMounted, state, getKanBanPayload, theSelectedFunnel, fillColumns, columns } = service();
 
@@ -15,7 +18,13 @@ watch(theSelectedFunnel, fillColumns);
 
 await atMounted();
 
-const canDragAndDrop = userHasPermission('update tasks')
+const canDragAndDrop = userHasAtLeastOnePermission(['update stage tasks', 'update department stage tasks', 'update own stage tasks'])
+
+const canDrag = (task) => {
+  // const engagedIn = task.user?.id == user.value.id || task.author?.id == user.value.id
+
+  return canTasks(task, 'update_stage');
+}
 
 /*
 
@@ -90,12 +99,13 @@ const foo = () => {
           :id="id"
           @end="log"
           :disabled="/* !userHasPermission('update tasks') */ !canDragAndDrop"
+          draggable=".draggable"
         >
           <template #item="{element}">
-            <div class="bg-white shadow rounded px-3 pt-3 my-2 pb-5 border w-full select-none" :key="element.id" :id="element.id" >
+            <div :class="[' shadow rounded px-3 pt-3 my-2 pb-5 border w-full select-none', canDrag(element) ? 'draggable bg-white' : 'bg-gray-100 opacity-60']" :key="element.id" :id="element.id" >
               <div class="flex justify-between">
                 <div>
-                  <Link class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'WorkerTask', params: {id: element.id} }" >
+                  <Link :disabled="!canDrag(element)" class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'WorkerTask', params: {id: element.id} }" >
                     {{ element.name}}
                   </Link>
                 </div>

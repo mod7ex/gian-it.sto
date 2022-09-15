@@ -13,7 +13,7 @@ const toaster = useToast();
 
 let task;
 let allowed;
-let imExecuter;
+let engagedIn;
 
 export default () => effectScope().run(() => {
   const { route, back } = useAppRouter();
@@ -21,8 +21,9 @@ export default () => effectScope().run(() => {
   if (!task) {
     task = ref({});
 
-    imExecuter = computed(() => task.value.user?.id == user.value.id);
-    allowed = computed(() => (task.value.status === 'process') && imExecuter.value);
+    engagedIn = computed(() => task.value.user?.id == user.value.id || task.value.author?.id == user.value.id);
+    allowed = computed(() => (task.value.status === 'process') && canTasks(task.value, 'update'));
+    // allowed = computed(() => (task.value.status === 'process') && (canTasks(task.value, 'update') || engagedIn.value));
   }
 
   const atMounted = async () => {
@@ -63,7 +64,7 @@ export default () => effectScope().run(() => {
     ping,
     task_id,
     allowed,
-    imExecuter,
+    engagedIn,
     clearMemo: () => { task = undefined; allowed = undefined; },
   };
 });

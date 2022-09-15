@@ -10,6 +10,10 @@ import Preview from '@/Partials/processes/DiagnosticCardPreview.vue';
 import $ from '~/helpers/fetch';
 import Badge from '@/UI/Badge.vue';
 
+/**
+ * to update the task body (checkboxes, browse links ...) we use <allowed>
+ * we have we have the right to update
+ */
 const { task, atMounted, route, checkBox, allowed } = service();
 
 const dc_template = ref({});

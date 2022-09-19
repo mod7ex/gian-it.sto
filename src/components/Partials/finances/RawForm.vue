@@ -5,34 +5,31 @@ import form from '~/services/finances/form';
 import store from '~/store/finances/groups';
 import departmentStore from '~/store/departments';
 import orderStore from '~/store/orders/orders';
+import { computed } from 'vue';
 
 const { options, load } = store;
 const { current, options: depOptions } = departmentStore;
 const { load: loadOrders, options: orderOptions } = orderStore;
 
-const { finance, atMountedFinanceForm, v$ } = form();
+const { finance, atMountedFinanceForm, v$, types, payment_types } = form();
 
-const types = [{ label: 'Приход', value: 'in' }, { label: 'Расход', value: 'out' }];
-
-await Promise.all([load(), loadOrders({ department_id: current.value }), atMountedFinanceForm()]);
+await Promise.all([ load(), loadOrders({ department_id: current.value }), atMountedFinanceForm() ])
 
 </script>
 
 <template>
     <div>
-        <Select
-          label="Заказ-наряд"
-          v-model="finance.order_id"
-          :options="orderOptions"
-          :required="true"
-          :disabled="finance.name.startsWith('Оплата')"
-        />
-
+      <Select
+        label="Заказ-наряд"
+        v-model="finance.order_id"
+        :options="orderOptions"
+        :required="true"
+        :disabled="finance.name.startsWith('Оплата')"
+      />
 <!--
   :error="v$.order_id.$errors[0]?.$message"
   @blured="v$.order_id.$touch"
 -->
-
         <Input
           label="Название финансовой сделки"
           v-model="finance.name"
@@ -59,6 +56,16 @@ await Promise.all([load(), loadOrders({ department_id: current.value }), atMount
           :required="true"
           :error="v$.operation_type.$errors[0]?.$message"
           @blured="v$.operation_type.$touch"
+          :disabled="finance.name.startsWith('Оплата')"
+        />
+
+        <Select
+          label="Вид оплаты"
+          v-model="finance.payment_type"
+          :options="payment_types"
+          :required="true"
+          :error="v$.payment_type.$errors[0]?.$message"
+          @blured="v$.payment_type.$touch"
           :disabled="finance.name.startsWith('Оплата')"
         />
 

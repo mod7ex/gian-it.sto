@@ -2,7 +2,7 @@
 import service from '~/services/orders/payment';
 import { generateShapedIdfromId } from '~/helpers';
 
-const { invoice, atMounted } = service();
+const { invoice, atMounted, typesMapper } = service();
 
 await atMounted();
 
@@ -10,7 +10,6 @@ await atMounted();
 
 <template>
     <div>
-
       <h3 class="flex justify-between mb-3" >
         <span>Заказ наряд: </span>
         <span>№{{ generateShapedIdfromId(invoice?.order_id) }}</span>
@@ -21,8 +20,7 @@ await atMounted();
       </h3>
       <h3 class="flex justify-between mb-3" >
         <span>Вид оплаты: </span>
-        <span>{{ invoice?.type === 'cache' ? 'Наличный' : 'Безналичный' }}</span>
+        <span>{{ typesMapper.payments[invoice?.type] ?? '_' }}</span>
       </h3>
-
     </div>
 </template>

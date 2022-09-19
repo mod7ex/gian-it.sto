@@ -11,7 +11,7 @@ import store from '~/store/orders/payment';
 const { current } = departmentStore;
 const { state } = store;
 
-const { invoice, atMounted, paymentWaysOptions } = service();
+const { invoice, atMounted, payment_types :options } = service();
 const { rawFields, setOrder } = index();
 
 await Promise.all([setOrder(), atMounted()]).then(() => { 
@@ -19,11 +19,6 @@ await Promise.all([setOrder(), atMounted()]).then(() => {
   invoice.order_id = rawFields?.id;
   if( !invoice.id ) invoice.sum = rawFields.total_sum - state.raw.reduce((prev, { sum }) => prev + sum, 0);
 });
-
-const statusOptions = [
-  { label: 'done', value: 'done' },
-  { label: 'wait', value: 'wait' },
-];
 
 const clientOptions = computed(() => ({ value: rawFields?.client?.id, label: `${rawFields?.client?.name ?? ''} ${rawFields?.client?.surname ?? ''} ${rawFields?.client?.middlename ?? ''} ` }));
 
@@ -49,7 +44,7 @@ const clientOptions = computed(() => ({ value: rawFields?.client?.id, label: `${
 
         <Select
           label="Способ оплаты"
-          :options="paymentWaysOptions"
+          :options="options"
           :required="true"
           v-model="invoice.type"
         />

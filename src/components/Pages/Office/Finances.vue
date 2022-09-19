@@ -1,6 +1,6 @@
 <script setup>
 import { PlusCircleIcon, CollectionIcon, RefreshIcon, CheckCircleIcon, CurrencyDollarIcon } from '@heroicons/vue/outline';
-import { ref, watch, computed, onMounted } from 'vue';
+import { ref, watch, computed, onMounted, onScopeDispose } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
@@ -12,10 +12,10 @@ import useSuspense from '~/composables/useSuspense.js';
 import Table from '@/Partials/finances/Table.vue';
 import form from '~/services/finances/form';
 import service from '~/services/finances/index';
-import { debounce, objectSignature } from '~/helpers';
+import { debounce, objectSignature, tasksColorMap } from '~/helpers';
 import $ from '~/helpers/fetch.js';
 
-const { render } = form();
+let { render, types, typesMapper, finance_color_map, payment_types } = form();
 
 const { filter, order, resetFilter, cleanUp, current, state } = service();
 
@@ -55,8 +55,12 @@ onMounted(async () => {
     if (data?.meta?.last_page == page) filled = true;
     else page++;
   }
+});
 
-  console.log(payments.value);
+onScopeDispose(() => {
+  types = undefined;
+  typesMapper = undefined;
+  payment_types = undefined;
 });
 
 </script>
@@ -110,8 +114,16 @@ onMounted(async () => {
           <Label >Статус</Label>
 
           <ButtonGroup>
-            <Button type="secondary" group="left" class="whitespace-nowrap" :class="{'bg-green-100': filter.type === 'in'}" @click="filter.type = 'in'">Приход</Button>
-            <Button type="secondary" group="right" class="whitespace-nowrap" :class="{'bg-red-100': filter.type === 'out'}" @click="filter.type = 'out'">Расход</Button>
+            <Button v-for="(operation_type, i) in types"
+              :key="operation_type.value"
+              type="secondary"
+              :class="['whitespace-nowrap', filter.type === operation_type.value ? `bg-${tasksColorMap[finance_color_map[operation_type.value]]?.color}-100` : '']"
+              :group="i === 0 ? 'left' : (i === (types.length - 1) ? 'right' : undefined)"
+              @click="filter.type = operation_type.value"
+            >
+              {{ operation_type.label }}
+            </Button>
+            <!-- <Button type="secondary" group="right" class="whitespace-nowrap" :class="{'bg-red-100': filter.type === 'out'}" @click="filter.type = 'out'">Расход</Button> -->
           </ButtonGroup>
         </div>
 

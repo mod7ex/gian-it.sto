@@ -15,6 +15,7 @@ import Select from '@/UI/Select.vue';
 import userStore from '~/store/employees'
 import departmentStore from '~/store/departments'
 import { updateTaskUserId } from '~/services/tasks/form';
+import { userHasPermission } from '~/lib/permissions'
 
 const { load, options } = userStore
 const { current } = departmentStore
@@ -138,18 +139,19 @@ const fields = [
           class="tasks-container"
           :id="id"
           @end="e => log(e, onSuccessMove)"
+          :disabled="!userHasPermission('crud orders')"
         >
           <template #item="{element}">
             <div class="bg-white shadow rounded px-3 pt-3 my-2 pb-5 border w-full" :key="element.id" :id="element.id" >
               <div class="flex justify-between">
 
                 <div>
-                  <Link class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'OrderEdit', params: {id: element.id} }" >
+                  <Link :disabled="!userHasPermission('crud orders')" class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'OrderEdit', params: {id: element.id} }" >
                     Заказ-наряд #{{ generateShapedIdfromId(element.id) }}
                   </Link>
 
                   <div class="text-xs">
-                    <Link>Задач: {{ element.count_tasks }}</Link>
+                    <Link :disabled="true" >Задач: {{ element.count_tasks }}</Link>
                   </div>
                 </div>
 

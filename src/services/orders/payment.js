@@ -1,4 +1,4 @@
-import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose, shallowRef } from 'vue';
 import RawForm from '@/Partials/orders/form/Raw/Payment.vue';
 import PayModal from '@/Partials/orders/form/Raw/PayModal.vue';
 import communicate from '~/helpers/communicate';
@@ -10,7 +10,10 @@ import $ from '~/helpers/fetch.js';
 import departments from '~/store/departments';
 import { generateShapedIdfromId } from '~/helpers';
 
-const paymentWaysOptions = [{ label: 'Наличный', value: 'cache' }, { label: 'Безналичный', value: 'cashless' }];
+const options = [
+  { label: 'Наличный', value: 'PAYMENT_CASH' },
+  { label: 'Безналичный', value: 'PAYMENT_ELECTRONICALLY' },
+];
 
 const toaster = useToast();
 
@@ -21,7 +24,14 @@ let invoice;
 let fetchPayments;
 let saveForm;
 
-const clearMemo = () => { fetchPayments = undefined; };
+let typesMapper;
+let payment_types;
+
+const clearMemo = () => {
+  fetchPayments = undefined;
+  typesMapper = undefined;
+  payment_types = undefined;
+};
 
 const setForm = (payload = {}) => {
   invoice.id = payload?.id;
@@ -45,6 +55,8 @@ const atMounted = async () => {
 export default function (order_id) {
   if (!fetchPayments) {
     fetchPayments = async () => { await load({ order_id }); };
+    typesMapper = shallowRef({});
+    payment_types = computed(() => Object.entries(typesMapper.value.payments ?? {}).map(([value, label]) => ({ label, value })));
   }
 
   const modalUp = (...args) => {
@@ -93,6 +105,11 @@ export default function (order_id) {
   const pay = (...args) => {
     const scope = effectScope();
 
+    // scope.cleanups.push(() => {
+    //   typesMapper = undefined;
+    //   payment_types = undefined;
+    // });
+
     scope.run(() => {
       const { render } = useModalForm({
         title: 'Оплатить',
@@ -100,7 +117,7 @@ export default function (order_id) {
         atSubmit: async () => {
           const { message, success } = await save.finance({
             name: `Оплата #${generateShapedIdfromId(invoice.id)}`,
-            operation_type: 'in',
+            operation_type: 'sell',
             sum: invoice.sum,
             // finance_group_id: 1,
             order_id: args[1],
@@ -121,7 +138,9 @@ export default function (order_id) {
             }
           }
         },
+
         atClose: () => scope.stop(),
+
         atOpen: (id) => {
           invoice = reactive({
             id: id ?? '',
@@ -146,9 +165,11 @@ export default function (order_id) {
     atMounted,
     render: modalUp,
     state,
-    paymentWaysOptions,
     dropPayment: drop,
     pay,
     clearMemo,
+    options,
+    typesMapper,
+    payment_types,
   };
 }

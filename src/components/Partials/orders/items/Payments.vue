@@ -4,12 +4,14 @@ import Link from '@/UI/Link.vue';
 import Badge from '@/UI/Badge.vue';
 import service from '~/services/orders/payment';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import $ from '~/helpers/fetch'
+import { onScopeDispose } from '@vue/reactivity';
 
 const { drop } = useConfirmDialog();
 
-const { render, state, fetchPayments, paymentWaysOptions, dropPayment, pay, clearMemo } = service();
+let { render, state, fetchPayments, options, dropPayment, pay, clearMemo, typesMapper } = service();
 
-const paymentWaysMapper = paymentWaysOptions.reduce((obj, item) => ({ ...obj, [item.value]: item.label }), {});
+const paymentWaysMapper = options.reduce((obj, item) => ({ ...obj, [item.value]: item.label }), {});
 
 const fields = [
   { label: 'Плательщик', key: 'client' },
@@ -20,9 +22,15 @@ const fields = [
   { label: 'Статус', key: 'status' },
 ];
 
+await (async () => {
+    const {success, operation_types, payment_types} = await $({key: 'finances/types'});
+    if(success){ typesMapper.value = {operations: operation_types, payments: payment_types}; }
+    console.log(typesMapper.value)
+})()
+
 await fetchPayments();
 
-clearMemo()
+onScopeDispose(clearMemo)
 
 </script>
 

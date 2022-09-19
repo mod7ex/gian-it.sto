@@ -1,4 +1,4 @@
-import { computed, reactive, effectScope, onScopeDispose } from 'vue';
+import { computed, reactive, effectScope, onScopeDispose, shallowRef } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -17,6 +17,10 @@ const toaster = useToast();
 
 let finance;
 let v$;
+
+let types;
+let typesMapper;
+let payment_types;
 
 const setFormField = function (key) {
   if (key.includes('_id')) {
@@ -90,6 +94,7 @@ export default function () {
             id: id ?? '',
             name: '',
             operation_type: '',
+            payment_type: '',
             sum: '',
             finance_group_id: '',
             order_id: '',
@@ -98,7 +103,7 @@ export default function () {
 
           v$ = useVuelidate(formRules(), finance, { $lazy: true });
         },
-      });
+      }, { right: 'Провести' });
 
       render(...args);
 
@@ -109,11 +114,33 @@ export default function () {
     });
   };
 
+  if (!types) {
+    typesMapper = shallowRef({});
+    types = computed(() => Object.entries(typesMapper.value.operations ?? {}).map(([value, label]) => ({ label, value })));
+    payment_types = computed(() => Object.entries(typesMapper.value.payments ?? {}).map(([value, label]) => ({ label, value })));
+  }
+
   return {
     render: modalUp,
     atMountedFinanceForm,
     finance,
     v$,
     current,
+    types,
+    typesMapper,
+    payment_types,
+    finance_color_map: {
+      sell: 'process',
+      sellReturn: 'cancel',
+      buy: 'wait',
+      buyReturn: 'cancel',
+    },
   };
 }
+
+// types: [
+//   { label: 'Возврат прихода', value: 'OPERATION_SELL_RETURN' },
+//   { label: 'Возврат расхода', value: 'OPERATION_BUY_RETURN' },
+//   { label: 'Приход', value: 'OPERATION_BUY' },
+//   { label: 'Расход', value: 'OPERATION_SELL' },
+// ],

@@ -81,8 +81,8 @@ const noActions = (item) => props.noDelete(item) && props.noEdit(item);
                             direction="right"
                             position="center"
                             :items="[[
-                                { label: 'Изменить', click: () => $emit('edit', item.id), icon: PencilIcon, hide: props.noEdit(item) },
-                                { label: 'Удалить', click: () => $emit('delete', item.id), icon: XIcon, hide: props.noDelete(item) },
+                                { label: 'Изменить', click: () => $emit('edit', item.id, item), icon: PencilIcon, hide: props.noEdit(item) },
+                                { label: 'Удалить', click: () => $emit('delete', item.id, item), icon: XIcon, hide: props.noDelete(item) },
                             ]]"
                         >
                             <MenuButton>

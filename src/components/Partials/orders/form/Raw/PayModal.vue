@@ -20,7 +20,7 @@ await atMounted();
       </h3>
       <h3 class="flex justify-between mb-3" >
         <span>Вид оплаты: </span>
-        <span>{{ typesMapper.payments[invoice?.type] ?? '_' }}</span>
+        <span>{{ typesMapper.payments[invoice?.payment_type] ?? '_' }}</span>
       </h3>
     </div>
 </template>

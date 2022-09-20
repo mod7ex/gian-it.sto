@@ -20,10 +20,10 @@ const reset = () => {
   state.raw = [];
 };
 
-const setStatus = (id, st) => {
-  for (let i = 0; i < state.raw.length; i++) {
-    if (id === state.raw[i].id) state.raw[i].status = st;
-  }
+const setStatus = (_id, st) => {
+  const i = state.raw.findIndex(({ id }) => _id == id);
+  if (i < 0) return;
+  state.raw[i].status = st;
 };
 
 const load = async (payload) => {

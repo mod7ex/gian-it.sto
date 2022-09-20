@@ -9,11 +9,7 @@ import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import departments from '~/store/departments';
 import { generateShapedIdfromId } from '~/helpers';
-
-const options = [
-  { label: 'Наличный', value: 'PAYMENT_CASH' },
-  { label: 'Безналичный', value: 'PAYMENT_ELECTRONICALLY' },
-];
+import usePay from '~/composables/usePay';
 
 const toaster = useToast();
 
@@ -37,7 +33,8 @@ const setForm = (payload = {}) => {
   invoice.id = payload?.id;
   invoice.client_id = payload?.client?.id;
   invoice.order_id = payload?.order?.id;
-  invoice.type = payload?.type;
+  invoice.payment_type = payload?.payment_type;
+  invoice.operation_type = payload?.operation_type;
   invoice.comment = payload?.comment;
   invoice.status = payload?.status;
   invoice.sum = payload?.sum;
@@ -73,8 +70,10 @@ export default function (order_id) {
         atOpen: (id) => {
           invoice = reactive({
             id: id ?? '',
-            type: '',
             status: 'wait',
+            payment_type: '',
+            operation_type: 'sell',
+            type: 'in', // remove later
             sum: '',
             comment: '',
             client_id: '',
@@ -102,7 +101,7 @@ export default function (order_id) {
     });
   };
 
-  const pay = (...args) => {
+  const pay = (item) => {
     const scope = effectScope();
 
     // scope.cleanups.push(() => {
@@ -111,50 +110,53 @@ export default function (order_id) {
     // });
 
     scope.run(() => {
+      const { pay: make_payment } = usePay({ resource: 'paymennt', cb: setStatus });
+
       const { render } = useModalForm({
         title: 'Оплатить',
         RawForm: PayModal,
         atSubmit: async () => {
           const { message, success } = await save.finance({
             name: `Оплата #${generateShapedIdfromId(invoice.id)}`,
-            operation_type: 'sell',
+            operation_type: invoice.operation_type ?? 'sell',
+            payment_type: invoice.payment_type ?? 'cash',
             sum: invoice.sum,
             // finance_group_id: 1,
-            order_id: args[1],
+            order_id: invoice.order_id,
             department_id: current.value,
           });
 
           if (!success) return { success, message };
 
-          // this is not accurate
-          const { success: suc, message: msg } = await save.payment({ ...invoice, status: 'done' });
-          if (suc) setStatus(invoice.id, 'done');
+          const { success: suc, payment_log } = await make_payment(invoice?.id);
+          console.log(payment_log);
 
           try {
-            return { message: message || msg, success: success && suc };
+            return { message: message || 'что-то пошло не так', success: suc };
           } finally {
-            if (success && suc) {
-              toaster.success(message || msg);
+            if (suc) {
+              toaster.success(message);
             }
           }
         },
 
         atClose: () => scope.stop(),
 
-        atOpen: (id) => {
+        atOpen: ({ id /* operation_type, payment_type, status, sum, client, comment, order */ }) => {
           invoice = reactive({
-            id: id ?? '',
-            type: '',
-            status: '',
-            sum: '',
-            comment: '',
-            client_id: '',
-            order_id: '',
+            id,
+            // status,
+            // payment_type,
+            // operation_type,
+            // sum,
+            // comment,
+            // client_id: client?.id,
+            // order_id: order?.id,
           });
         },
       }, { left: 'Отменить', right: 'Оплатить' });
 
-      render(...args);
+      render(item);
     });
   };
 
@@ -168,7 +170,6 @@ export default function (order_id) {
     dropPayment: drop,
     pay,
     clearMemo,
-    options,
     typesMapper,
     payment_types,
   };

@@ -46,7 +46,7 @@ const clientOptions = computed(() => ({ value: rawFields?.client?.id, label: `${
           label="Способ оплаты"
           :options="options"
           :required="true"
-          v-model="invoice.type"
+          v-model="invoice.payment_type"
         />
 
         <TextArea

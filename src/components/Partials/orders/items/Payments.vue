@@ -1,21 +1,19 @@
-<script setup> 
+<script setup>
+import { onScopeDispose } from 'vue';
 import Table from '@/Layout/Table.vue';
 import Link from '@/UI/Link.vue';
 import Badge from '@/UI/Badge.vue';
 import service from '~/services/orders/payment';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
-import $ from '~/helpers/fetch'
-import { onScopeDispose } from '@vue/reactivity';
+import $ from '~/helpers/fetch';
 
 const { drop } = useConfirmDialog();
 
-let { render, state, fetchPayments, options, dropPayment, pay, clearMemo, typesMapper } = service();
-
-const paymentWaysMapper = options.reduce((obj, item) => ({ ...obj, [item.value]: item.label }), {});
+const { render, state, fetchPayments, dropPayment, pay, clearMemo, typesMapper } = service();
 
 const fields = [
   { label: 'Плательщик', key: 'client' },
-  { label: 'Способ оплаты', key: 'type' },
+  { label: 'Способ оплаты', key: 'payment_type' },
   { label: 'Сумма (₽)', key: 'sum' },
   { label: 'Комментарий', key: 'comment' },
   { label: 'Дата создания', key: 'created_at' },
@@ -23,14 +21,14 @@ const fields = [
 ];
 
 await (async () => {
-    const {success, operation_types, payment_types} = await $({key: 'finances/types'});
-    if(success){ typesMapper.value = {operations: operation_types, payments: payment_types}; }
-    console.log(typesMapper.value)
-})()
+  const {success, operation_types, payment_types} = await $({key: 'finances/types'});
+  if(success){ typesMapper.value = {operations: operation_types, payments: payment_types}; }
+  console.log(typesMapper.value);
+})();
 
 await fetchPayments();
 
-onScopeDispose(clearMemo)
+onScopeDispose(clearMemo);
 
 </script>
 
@@ -48,16 +46,18 @@ onScopeDispose(clearMemo)
       </Link>
     </template>
 
-    <template #td-type="{ value }" > {{ paymentWaysMapper[value] }} </template>
+    <template #td-payment_type="{ value }" >
+      {{ typesMapper.payments[value] }}
+    </template>
 
     <template #td-sum="{ value }" > {{ value }} ₽ </template>
 
     <template #td-comment="{ value }" > {{ value }} </template>
 
-    <template #td-created_at="{ value }" > {{ value }} </template>
+    <template #td-created_at="{ value }" > {{ value.split(' ')[0] }} </template>
 
-    <template #td-status="{ value, item: { id, order: { id: order_id }} }" >
-      <Link v-if="value === 'wait'" @click="() => pay(id, order_id)" > Оплатить </Link>
+    <template #td-status="{ value, item }" >
+      <Link v-if="value === 'wait'" @click="() => pay(item)" >Оплатить </Link>
       <Badge color="green" :point="true" v-else > Оплаченный </Badge>
     </template>
   </Table>

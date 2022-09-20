@@ -22,6 +22,12 @@ const addFinance = (v) => {
   }
 };
 
+const updateStatus = (v, status) => {
+  const i = state.raw.findIndex(({ id }) => v == id);
+  if (i < 0) return;
+  state.raw[i].status = status;
+};
+
 const reset = () => {
   state.raw = [];
   state.pages = 100;
@@ -60,5 +66,6 @@ export default {
   reset,
   sort,
   fill,
+  updateStatus,
   addFinance,
 };

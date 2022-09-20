@@ -32,8 +32,9 @@ watch(filter, debounce(() => {
 cleanUp();
 
 const reducers = {
-  balance: (b, curr) => b + (curr.sum * (curr.operation_type === 'in' ? 1 : -1)),
-  loss: (b, curr) => b + (curr.sum * (curr.operation_type === 'out' ? 1 : 0)),
+  // typesMapper.operations keys
+  balance: (b, curr) => b + (curr.sum * (curr.operation_type === 'sell' ? 1 : -1)),
+  loss: (b, curr) => b + (curr.sum * (curr.operation_type === 'buy' ? 1 : 0)),
 };
 
 const reducedState = (reducer, initial) => Array.prototype.reduce.apply(state.raw, [reducer, initial]);
@@ -53,7 +54,8 @@ onMounted(async () => {
     const data = await $({ key: 'payments', params: { status: 'wait', page } });
     payments.value = payments.value.concat(data?.payments ?? []);
     if (data?.meta?.last_page == page) filled = true;
-    else page++;
+    if (!data.success) return;
+    page++;
   }
 });
 
@@ -79,6 +81,10 @@ onScopeDispose(() => {
 
       <!-- Summary -->
       <Header>сводка</Header>
+
+      <pre>
+        {{ typesMapper }}
+      </pre>
 
       <div class="flex flex-wrap items-stretch">
         <div class="flex justify-start items-center rounded shadow p-4 flex-grow bg-gray-50">
@@ -156,4 +162,5 @@ onScopeDispose(() => {
 .transactions{
   min-width: 150px;
 }
+
 </style>

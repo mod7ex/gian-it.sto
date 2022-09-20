@@ -66,7 +66,6 @@ await Promise.all([ load(), loadOrders({ department_id: current.value }), atMoun
           :required="true"
           :error="v$.payment_type.$errors[0]?.$message"
           @blured="v$.payment_type.$touch"
-          :disabled="finance.name.startsWith('Оплата')"
         />
 
         <Select

@@ -20,7 +20,8 @@ export default ({ resource = 'finance', cb = () => { } }) => {
       // else toaster.danger('Что-то пошло не так');
       await sleep(5000);
       cb(id, 'ready');
-      return data;
+      return { success: true };
+      // return data;
     } finally {
       statusRef.value = false;
     }
@@ -38,7 +39,8 @@ export default ({ resource = 'finance', cb = () => { } }) => {
       // else toaster.danger('Платеж не прошел');
       await sleep(5000);
       cb(id, 'inprogress');
-      return data;
+      return { success: true };
+      // return data;
     } finally {
       paymentRef.value = false;
     }

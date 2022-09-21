@@ -2,25 +2,44 @@
 import { RefreshIcon } from '@heroicons/vue/outline';
 import Link from '@/UI/Link.vue';
 import Badge from '@/UI/Badge.vue';
-import store from '~/store/finances/finances';
 import usePay from '~/composables/usePay';
 
-defineProps({
+const props = defineProps({
   status: {
     type: [String, null],
   },
+
+  resource: {
+    type: [String, null],
+    default: 'finance',
+  },
+
   id: {
     type: [String, Number],
   },
+
+  cb: {
+    type: Function,
+    default: () => {},
+  },
+
+  paymentWrapper: {
+    type: Function,
+  },
+
 });
 
-const { updateStatus } = store;
-const { statusRef, checkStatus, paymentRef, pay } = usePay({ cb: updateStatus });
+const { statusRef, checkStatus, paymentRef, pay } = usePay({ resource: props.resource, cb: props.cb });
 
 const payment_status_map = {
   inprogress: { color: 'yellow', label: 'Ожидает' },
-  ready: { color: 'green', label: 'оплаченный' },
+  ready: { color: 'green', label: 'Oплаченный' },
   error: { color: 'red', label: 'Отменено' },
+  unknown: { color: 'gray', label: 'Неизвестный' },
+};
+
+const handelClick = async (v) => {
+  await props.paymentWrapper(() => pay(v)); // () => pay(v) returns {success, ...}
 };
 
 </script>
@@ -37,10 +56,12 @@ const payment_status_map = {
     </button>
 
     <Badge v-if="status" :point="true" :color="payment_status_map[status ?? 'ready']?.color" >
-      {{ payment_status_map[status]?.label ?? status }}
+      {{ payment_status_map[status ?? 'unknown']?.label ?? status }}
     </Badge>
 
-    <Link v-if="!status && !paymentRef" @click="() => pay(id)">Оплатить</Link>
+    <Link v-if="!status && !paymentRef" @click="() => handelClick(id)">
+      Оплатить
+    </Link>
   </span>
 </template>
 

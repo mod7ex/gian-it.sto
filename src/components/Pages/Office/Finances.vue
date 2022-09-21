@@ -82,10 +82,6 @@ onScopeDispose(() => {
       <!-- Summary -->
       <Header>сводка</Header>
 
-      <pre>
-        {{ typesMapper }}
-      </pre>
-
       <div class="flex flex-wrap items-stretch">
         <div class="flex justify-start items-center rounded shadow p-4 flex-grow bg-gray-50">
           <div><CurrencyDollarIcon class="w-7 h-7 mr-4 text-gray-500" /></div>

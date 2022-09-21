@@ -9,11 +9,10 @@ import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
 import departments from '~/store/departments';
 import { generateShapedIdfromId } from '~/helpers';
-import usePay from '~/composables/usePay';
 
 const toaster = useToast();
 
-const { state, load, add, drop, setStatus } = store;
+const { state, load, add, drop } = store;
 const { current } = departments;
 
 let invoice;
@@ -70,7 +69,7 @@ export default function (order_id) {
         atOpen: (id) => {
           invoice = reactive({
             id: id ?? '',
-            status: 'wait',
+            status: '',
             payment_type: '',
             operation_type: 'sell',
             type: 'in', // remove later
@@ -101,7 +100,7 @@ export default function (order_id) {
     });
   };
 
-  const pay = (item) => {
+  const pay = (item, make_payment) => {
     const scope = effectScope();
 
     // scope.cleanups.push(() => {
@@ -110,13 +109,16 @@ export default function (order_id) {
     // });
 
     scope.run(() => {
-      const { pay: make_payment } = usePay({ resource: 'paymennt', cb: setStatus });
-
       const { render } = useModalForm({
         title: 'Оплатить',
         RawForm: PayModal,
         atSubmit: async () => {
-          const { message, success } = await save.finance({
+          const res = await make_payment(); // 1 - make payment
+
+          if (!res.success) return { success: true }; // Just close modal the usePay composable will push a notification
+
+          // Bad Practice [this should be done server-side]
+          const { message, success } = await save.finance({ // 2 - create a finance operation
             name: `Оплата #${generateShapedIdfromId(invoice.id)}`,
             operation_type: invoice.operation_type ?? 'sell',
             payment_type: invoice.payment_type ?? 'cash',
@@ -126,17 +128,10 @@ export default function (order_id) {
             department_id: current.value,
           });
 
-          if (!success) return { success, message };
-
-          const { success: suc, payment_log } = await make_payment(invoice?.id);
-          console.log(payment_log);
-
           try {
-            return { message: message || 'что-то пошло не так', success: suc };
+            return { message: message || 'что-то пошло не так', success };
           } finally {
-            if (suc) {
-              toaster.success(message);
-            }
+            if (success) toaster.success(message);
           }
         },
 

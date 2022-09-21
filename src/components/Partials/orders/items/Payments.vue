@@ -5,7 +5,11 @@ import Link from '@/UI/Link.vue';
 import Badge from '@/UI/Badge.vue';
 import service from '~/services/orders/payment';
 import useConfirmDialog from '~/composables/useConfirmDialog.js';
+import VPay from '@/Partials/finances/Pay.vue'
 import $ from '~/helpers/fetch';
+import store from '~/store/orders/payment'
+
+const { setStatus } = store
 
 const { drop } = useConfirmDialog();
 
@@ -57,8 +61,9 @@ onScopeDispose(clearMemo);
     <template #td-created_at="{ value }" > {{ value.split(' ')[0] }} </template>
 
     <template #td-status="{ value, item }" >
-      <Link v-if="value === 'wait'" @click="() => pay(item)" >Оплатить </Link>
-      <Badge color="green" :point="true" v-else > Оплаченный </Badge>
+      <v-pay :id="item.id" :status="value" resource="payment" :cb="setStatus" :paymentWrapper="(v) => pay(item, v)" />
+      <!-- <Link v-if="value === 'wait'" @click="() => pay(item)" >Оплатить </Link> -->
+      <!-- <Badge color="green" :point="true" v-else > Оплаченный </Badge> -->
     </template>
   </Table>
 </template>

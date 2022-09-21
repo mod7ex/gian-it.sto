@@ -14,7 +14,7 @@ const { render, typesMapper, finance_color_map } = form();
 
 const { fetchFinances } = service();
 
-const { state, drop: dropFinance } = store;
+const { state, drop: dropFinance, updateStatus } = store;
 
 const { drop } = useConfirmDialog();
 
@@ -33,6 +33,8 @@ await (async () => {
 })();
 
 await fetchFinances(true);
+
+const wrapper = async (v) => { await v(); }
 
 </script>
 
@@ -70,8 +72,8 @@ await fetchFinances(true);
             </Badge>
         </template>
 
-        <template #td-status="{ item: { id, status } }" >
-            <v-pay :id="id" :status="status" />
+        <template #td-status="{ value, item: { id } }" >
+            <v-pay :id="id" :status="value" :cb="updateStatus" :paymentWrapper="wrapper" />
         </template>
 
         <template #td-created_at="{ value }" >

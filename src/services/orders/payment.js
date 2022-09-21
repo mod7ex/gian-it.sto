@@ -70,9 +70,8 @@ export default function (order_id) {
           invoice = reactive({
             id: id ?? '',
             status: '',
-            payment_type: '',
+            payment_type: 'cash',
             operation_type: 'sell',
-            type: 'in', // remove later
             sum: '',
             comment: '',
             client_id: '',

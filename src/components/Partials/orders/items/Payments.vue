@@ -62,8 +62,6 @@ onScopeDispose(clearMemo);
 
     <template #td-status="{ value, item }" >
       <v-pay :id="item.id" :status="value" resource="payment" :cb="setStatus" :paymentWrapper="(v) => pay(item, v)" />
-      <!-- <Link v-if="value === 'wait'" @click="() => pay(item)" >Оплатить </Link> -->
-      <!-- <Badge color="green" :point="true" v-else > Оплаченный </Badge> -->
     </template>
   </Table>
 </template>

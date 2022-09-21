@@ -51,7 +51,7 @@ onMounted(async () => {
 
   while (!filled) {
     // eslint-disable-next-line no-await-in-loop
-    const data = await $({ key: 'payments', params: { status: 'wait', page } });
+    const data = await $({ key: 'payments', params: { status: null, page } });
     payments.value = payments.value.concat(data?.payments ?? []);
     if (data?.meta?.last_page == page) filled = true;
     if (!data.success) return;
@@ -119,9 +119,9 @@ onScopeDispose(() => {
             <Button v-for="(operation_type, i) in types"
               :key="operation_type.value"
               type="secondary"
-              :class="['whitespace-nowrap', filter.type === operation_type.value ? `bg-${tasksColorMap[finance_color_map[operation_type.value]]?.color}-100` : '']"
+              :class="['whitespace-nowrap', filter.operation_type === operation_type.value ? `bg-${tasksColorMap[finance_color_map[operation_type.value]]?.color}-100` : '']"
               :group="i === 0 ? 'left' : (i === (types.length - 1) ? 'right' : undefined)"
-              @click="filter.type = operation_type.value"
+              @click="filter.operation_type = operation_type.value"
             >
               {{ operation_type.label }}
             </Button>

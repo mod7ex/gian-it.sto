@@ -15,7 +15,7 @@ export default ({ resource = 'finance', cb = () => { } }) => {
     statusRef.value = true;
 
     try {
-      const data = await $({ key: `${resource}s/${id}/payment-status`, toast: false });
+      // const data = await $({ key: `${resource}s/${id}/payment-status`, toast: false });
       // if (data.success) cb(id, data[`${resource}_log`].status ?? 'unknown');
       // else toaster.danger('Что-то пошло не так');
       await sleep(5000);
@@ -33,7 +33,7 @@ export default ({ resource = 'finance', cb = () => { } }) => {
     paymentRef.value = true;
 
     try {
-      const data = await $({ key: `${resource}s/${id}/payment`, toast: false });
+      // const data = await $({ key: `${resource}s/${id}/payment`, toast: false });
       // if (data.success) cb(id, data[`${resource}_log`].status ?? 'unknown');
       // else toaster.danger('Платеж не прошел');
       await sleep(5000);

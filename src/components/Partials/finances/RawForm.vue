@@ -5,15 +5,21 @@ import form from '~/services/finances/form';
 import store from '~/store/finances/groups';
 import departmentStore from '~/store/departments';
 import orderStore from '~/store/orders/orders';
-import { computed } from 'vue';
+import { watch } from 'vue';
 
 const { options, load } = store;
 const { current, options: depOptions } = departmentStore;
-const { load: loadOrders, options: orderOptions } = orderStore;
+const { load: loadOrders, options: orderOptions, state } = orderStore;
 
-const { finance, atMountedFinanceForm, v$, types, payment_types } = form();
+const { finance, atMountedFinanceForm, v$, types, payment_types, isThePage } = form();
 
 await Promise.all([ load(), loadOrders({ department_id: current.value }), atMountedFinanceForm() ])
+
+watch(() => finance.order_id, (_id) => {
+  const _order = state.raw.find(({id}) => id == _id)
+
+  finance.sum = _order?.total_sum ?? 0;
+})
 
 </script>
 
@@ -24,8 +30,8 @@ await Promise.all([ load(), loadOrders({ department_id: current.value }), atMoun
         v-model="finance.order_id"
         :options="orderOptions"
         :required="true"
-        :disabled="finance.name.startsWith('Оплата')"
-      />
+        :disabled="isThePage"
+      /> 
 <!--
   :error="v$.order_id.$errors[0]?.$message"
   @blured="v$.order_id.$touch"
@@ -36,18 +42,18 @@ await Promise.all([ load(), loadOrders({ department_id: current.value }), atMoun
           :required="true"
           :error="v$.name.$errors[0]?.$message"
           @blured="v$.name.$touch"
-          :disabled="finance.name.startsWith('Оплата')"
         />
 
         <Input
+          v-if="!isThePage"
           label="Сумма"
+          :disabled="!!finance.order_id"
           v-model="finance.sum"
           type="number" :min="0" :step="1"
           :required="true"
           :error="v$.sum.$errors[0]?.$message"
           @blured="v$.sum.$touch"
-          :disabled="finance.name.startsWith('Оплата')"
-        />
+        /> 
 
         <Select
           label="Тип операции"
@@ -56,7 +62,6 @@ await Promise.all([ load(), loadOrders({ department_id: current.value }), atMoun
           :required="true"
           :error="v$.operation_type.$errors[0]?.$message"
           @blured="v$.operation_type.$touch"
-          :disabled="finance.name.startsWith('Оплата')"
         />
 
         <Select
@@ -69,22 +74,19 @@ await Promise.all([ load(), loadOrders({ department_id: current.value }), atMoun
         />
 
         <Select
-          v-if="!finance.name.startsWith('Оплата')"
           label="Группа"
           v-model="finance.finance_group_id"
           :options="options"
           :required="true"
           :error="v$.finance_group_id.$errors[0]?.$message"
           @blured="v$.finance_group_id.$touch"
-          :disabled="finance.name.startsWith('Оплата')"
         />
-        <v-can ability="crud departments">
+        <v-can ability="crud departments" v-if="!isThePage" >
           <Select
             label="Отделение"
             v-model="finance.department_id"
             :required="true"
             :options="depOptions"
-            :disabled="finance.name.startsWith('Оплата')"
           />
         </v-can>
     </div>

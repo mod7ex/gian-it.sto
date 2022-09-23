@@ -1,11 +1,13 @@
-import { reactive, onScopeDispose } from 'vue';
+import { reactive } from 'vue';
 import useOrder from '~/composables/useOrder.js';
 import departmentStore from '~/store/departments';
 import store from '~/store/finances/finances';
 
+let fetchFinances;
+
 const { current } = departmentStore;
 
-const { sort, fill, reset: resetStore, state } = store;
+const { sort, fill, reset: resetStore, state, drop } = store;
 
 const DEFAULT_ORDER_CRITERIA = 'id';
 
@@ -20,7 +22,7 @@ const pivot = {
 
 let filter;
 
-export default function () {
+export default function (order_id) {
   if (!filter) {
     filter = reactive({
       name: '',
@@ -44,11 +46,13 @@ export default function () {
     // reset(true);
   };
 
-  const fetchFinances = async (bool = false) => {
-    if (bool) resetStore();
-    await fill({ ...filter, department_id: current.value });
-    // trigger();
-  };
+  if (!fetchFinances) {
+    fetchFinances = async (bool = false) => {
+      if (bool) resetStore();
+      await fill({ ...filter, order_id, department_id: order_id ? undefined : current.value });
+      // trigger();
+    };
+  }
 
   return {
     order,
@@ -57,6 +61,7 @@ export default function () {
     fetchFinances,
     current,
     state,
-    cleanUp: () => onScopeDispose(() => { filter = undefined; }),
+    drop,
+    cleanUp: () => { filter = undefined; fetchFinances = undefined; resetStore(); },
   };
 }

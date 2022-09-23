@@ -9,6 +9,7 @@ import communicate from '~/helpers/communicate';
 import departmentStore from '~/store/departments';
 import formRules from '~/validationsRules/finance';
 import store from '~/store/finances/finances';
+import useAppRouter from '~/composables/useAppRouter';
 
 const { current } = departmentStore;
 const { addFinance } = store;
@@ -21,6 +22,16 @@ let v$;
 let types;
 let typesMapper;
 let payment_types;
+let isThePage;
+
+const cleanUpForm = () => {
+  isThePage = undefined;
+  finance = undefined;
+  v$ = undefined;
+  types = undefined;
+  typesMapper = undefined;
+  payment_types = undefined;
+};
 
 const setFormField = function (key) {
   if (key.includes('_id')) {
@@ -41,14 +52,18 @@ const setForm = (payload = {}) => { Object.keys(finance).forEach(setFormField, p
 
 const atMountedFinanceForm = async () => {
   const { id } = finance;
-
   let f = {};
-  if (id) f = await $.finance(id);
-
-  setForm(f);
+  if (id) {
+    f = await $.finance(id);
+    setForm(f);
+  }
 };
 
 export default function () {
+  const { isThePage: some_boolean } = useAppRouter('OrderEdit');
+
+  if (!isThePage) isThePage = some_boolean;
+
   const saveForm = async () => {
     const isValideForm = await v$.value.$validate();
 
@@ -89,19 +104,21 @@ export default function () {
         RawForm,
         atSubmit: saveForm,
         atClose: () => scope.stop(),
-        atOpen: (id) => {
-          finance = reactive({
-            id: id ?? '',
-            name: '',
-            operation_type: '',
-            payment_type: '',
-            sum: '',
-            finance_group_id: '',
-            order_id: '',
-            department_id: current.value,
-          });
+        atOpen: (id, order_id) => {
+          if (!finance) {
+            finance = reactive({
+              id: id ?? '',
+              name: '',
+              operation_type: '',
+              payment_type: '',
+              sum: '',
+              finance_group_id: '',
+              order_id,
+              department_id: current.value,
+            });
 
-          v$ = useVuelidate(formRules(), finance, { $lazy: true });
+            v$ = useVuelidate(formRules(isThePage.value), finance, { $lazy: true });
+          }
         },
       }, { right: 'Провести' });
 
@@ -129,6 +146,8 @@ export default function () {
     types,
     typesMapper,
     payment_types,
+    cleanUpForm,
+    isThePage,
     finance_color_map: {
       sell: 'process',
       sellReturn: 'cancel',
@@ -137,10 +156,3 @@ export default function () {
     },
   };
 }
-
-// types: [
-//   { label: 'Возврат прихода', value: 'OPERATION_SELL_RETURN' },
-//   { label: 'Возврат расхода', value: 'OPERATION_BUY_RETURN' },
-//   { label: 'Приход', value: 'OPERATION_BUY' },
-//   { label: 'Расход', value: 'OPERATION_SELL' },
-// ],

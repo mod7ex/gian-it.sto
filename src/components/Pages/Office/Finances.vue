@@ -29,8 +29,6 @@ watch(filter, debounce(() => {
   if (current.value) { filterSignature.value = objectSignature(filter); }
 }), { deep: true }); // will work without deep because values are primary
 
-cleanUp();
-
 const reducers = {
   // typesMapper.operations keys
   balance: (b, curr) => b + (curr.sum * (curr.operation_type === 'sell' ? 1 : -1)),
@@ -45,24 +43,25 @@ const loss = computed(() => reducedState(reducers.loss, 0));
 const payments = ref([]);
 const wating = computed(() => payments.value.reduce((prev, { status, sum }) => ((status === 'wait' ? sum : 0) + prev), 0));
 
-onMounted(async () => {
-  let filled = false;
-  let page = 1;
+// onMounted(async () => {
+//   let filled = false;
+//   let page = 1;
 
-  while (!filled) {
-    // eslint-disable-next-line no-await-in-loop
-    const data = await $({ key: 'payments', params: { status: null, page } });
-    payments.value = payments.value.concat(data?.payments ?? []);
-    if (data?.meta?.last_page == page) filled = true;
-    if (!data.success) return;
-    page++;
-  }
-});
+//   while (!filled) {
+//     // eslint-disable-next-line no-await-in-loop
+//     const data = await $({ key: 'payments', params: { status: null, page } });
+//     payments.value = payments.value.concat(data?.payments ?? []);
+//     if (data?.meta?.last_page == page) filled = true;
+//     if (!data.success) return;
+//     page++;
+//   }
+// });
 
 onScopeDispose(() => {
   types = undefined;
   typesMapper = undefined;
   payment_types = undefined;
+  cleanUp();
 });
 
 </script>

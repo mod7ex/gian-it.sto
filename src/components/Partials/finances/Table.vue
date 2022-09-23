@@ -42,7 +42,7 @@ const wrapper = async (v) => { await v(); }
     <Table
         @bottom-touched="()=>fetchFinances()"
         :fields="fields"
-        :items="state.raw"
+        :items="[state.raw[0]]"
         @delete="(id) => drop(() => dropFinance(id))"
         @edit="(id) => render(id)"
     >
@@ -57,6 +57,17 @@ const wrapper = async (v) => { await v(); }
         </template>
 
         <template #td-order="{ value }" >
+<!-- 
+    <pre>
+        {{ value.total_sum }}
+    </pre>
+    <pre>
+        {{ value.works }}
+    </pre>
+    <pre>
+        {{ value.product_requests }}
+    </pre>
+ -->
             <Link :href="{ name: 'OrderEdit', params: { id: value?.id ?? '0' } }" :disabled="!value?.id">
                 {{ value?.id ? `#${generateShapedIdfromId(value?.id)}` : '_' }}
             </Link>

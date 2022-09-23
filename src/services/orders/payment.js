@@ -3,7 +3,7 @@ import RawForm from '@/Partials/orders/form/Raw/Payment.vue';
 import PayModal from '@/Partials/orders/form/Raw/PayModal.vue';
 import communicate from '~/helpers/communicate';
 import useModalForm from '~/composables/useModalForm';
-import store from '~/store/orders/payment';
+import store from '~/store/finances/finances';
 import useToast from '~/composables/useToast.js';
 import save from '~/helpers/save';
 import $ from '~/helpers/fetch.js';
@@ -12,7 +12,7 @@ import { generateShapedIdfromId } from '~/helpers';
 
 const toaster = useToast();
 
-const { state, load, add, drop } = store;
+const { state, load, addFinance, drop } = store;
 const { current } = departments;
 
 let invoice;

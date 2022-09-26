@@ -16,7 +16,7 @@ const state = reactive({
 const addFinance = (v) => {
   const i = state.raw.findIndex(({ id }) => v?.id == id);
   if (i < 0) {
-    state.raw.push(v);
+    state.raw.unshift(v);
   } else {
     state.raw[i] = v;
   }

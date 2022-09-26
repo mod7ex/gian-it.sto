@@ -26,11 +26,20 @@ watch(() => finance.order_id, (_id) => {
 <template>
     <div>
       <Select
+        label="Тип операции"
+        v-model="finance.operation_type"
+        :options="types"
+        :required="true"
+        :error="v$.operation_type.$errors[0]?.$message"
+        @blured="v$.operation_type.$touch"
+      />
+
+      <Select
         label="Заказ-наряд"
         v-model="finance.order_id"
         :options="orderOptions"
+        :disabled="isThePage || finance.operation_type === 'buy' || finance.operation_type === 'buyReturn'"
         :required="true"
-        :disabled="isThePage"
       /> 
 <!--
   :error="v$.order_id.$errors[0]?.$message"
@@ -54,15 +63,6 @@ watch(() => finance.order_id, (_id) => {
           :error="v$.sum.$errors[0]?.$message"
           @blured="v$.sum.$touch"
         /> 
-
-        <Select
-          label="Тип операции"
-          v-model="finance.operation_type"
-          :options="types"
-          :required="true"
-          :error="v$.operation_type.$errors[0]?.$message"
-          @blured="v$.operation_type.$touch"
-        />
 
         <Select
           label="Вид оплаты"

@@ -41,21 +41,20 @@ const balance = computed(() => reducedState(reducers.balance, 0));
 const loss = computed(() => reducedState(reducers.loss, 0));
 
 const payments = ref([]);
-const wating = computed(() => payments.value.reduce((prev, { status, sum }) => ((status === 'wait' ? sum : 0) + prev), 0));
+const wating = computed(() => payments.value.reduce((prev, { sum }) => sum + prev, 0));
 
-// onMounted(async () => {
-//   let filled = false;
-//   let page = 1;
+onMounted(async () => {
+  let page = 1;
 
-//   while (!filled) {
-//     // eslint-disable-next-line no-await-in-loop
-//     const data = await $({ key: 'payments', params: { status: null, page } });
-//     payments.value = payments.value.concat(data?.payments ?? []);
-//     if (data?.meta?.last_page == page) filled = true;
-//     if (!data.success) return;
-//     page++;
-//   }
-// });
+  while (true) {
+    // eslint-disable-next-line no-await-in-loop
+    const data = await $({ key: 'finances', params: { operation_type: 'sell', status: 0, page } });
+    payments.value = payments.value.concat(data?.finances ?? []);
+    if (data?.meta?.last_page == page) return;
+    if (!data.success) return;
+    page++;
+  }
+});
 
 onScopeDispose(() => {
   types = undefined;
@@ -123,8 +122,8 @@ onScopeDispose(() => {
               @click="filter.operation_type = operation_type.value"
             >
               {{ operation_type.label }}
+              <!-- <pre>{{ operation_type }}</pre> -->
             </Button>
-            <!-- <Button type="secondary" group="right" class="whitespace-nowrap" :class="{'bg-red-100': filter.type === 'out'}" @click="filter.type = 'out'">Расход</Button> -->
           </ButtonGroup>
         </div>
 

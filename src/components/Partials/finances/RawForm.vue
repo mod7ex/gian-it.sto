@@ -1,11 +1,11 @@
 <script setup>
+import { computed, watch } from 'vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import form from '~/services/finances/form';
 import store from '~/store/finances/groups';
 import departmentStore from '~/store/departments';
 import orderStore from '~/store/orders/orders';
-import { watch } from 'vue';
 
 const { options, load } = store;
 const { current, options: depOptions } = departmentStore;
@@ -16,10 +16,12 @@ const { finance, atMountedFinanceForm, v$, types, payment_types, isThePage } = f
 await Promise.all([ load(), loadOrders({ department_id: current.value }), atMountedFinanceForm() ])
 
 watch(() => finance.order_id, (_id) => {
-  const _order = state.raw.find(({id}) => id == _id)
+  const _order = state.raw.find(({ id }) => id == _id);
 
   finance.sum = _order?.total_sum ?? 0;
-})
+});
+
+const filter = ({ value }) => !value.startsWith('buy')
 
 </script>
 
@@ -28,7 +30,7 @@ watch(() => finance.order_id, (_id) => {
       <Select
         label="Тип операции"
         v-model="finance.operation_type"
-        :options="types"
+        :options="isThePage ? types.filter(filter) : types"
         :required="true"
         :error="v$.operation_type.$errors[0]?.$message"
         @blured="v$.operation_type.$touch"
@@ -40,7 +42,7 @@ watch(() => finance.order_id, (_id) => {
         :options="orderOptions"
         :disabled="isThePage || finance.operation_type === 'buy' || finance.operation_type === 'buyReturn'"
         :required="true"
-      /> 
+      />
 <!--
   :error="v$.order_id.$errors[0]?.$message"
   @blured="v$.order_id.$touch"
@@ -62,7 +64,7 @@ watch(() => finance.order_id, (_id) => {
           :required="true"
           :error="v$.sum.$errors[0]?.$message"
           @blured="v$.sum.$touch"
-        /> 
+        />
 
         <Select
           label="Вид оплаты"

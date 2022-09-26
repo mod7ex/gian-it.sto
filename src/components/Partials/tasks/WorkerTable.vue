@@ -3,7 +3,7 @@ import Link from '@/UI/Link.vue';
 import Avatar from '@/UI/Avatar.vue';
 import Badge from '@/UI/Badge.vue';
 import Table from '@/Layout/Table.vue';
-import { generateShapedIdfromId, tasksColorMap } from '~/helpers'
+import { generateShapedIdfromId, tasksColorMap, trimExact } from '~/helpers'
 import service from '~/services/tasks/worker';
 
 const { fetchTasks, state } = service();
@@ -33,7 +33,9 @@ await fetchTasks(true);
   >
     <!-- Body -->
     <template #td-name="{ value, item: {id} }" >
-        <Link :href="{name: 'WorkerTask', params: { id }}" >{{ value }}</Link>
+        <span :data-tooltip="value" class="tooltip" >
+          <Link :href="{name: 'WorkerTask', params: { id }}">{{ trimExact(value) }}</Link>
+        </span>
     </template>
 
     <template #td-type="{ item: {is_map} }" >

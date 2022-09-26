@@ -55,6 +55,31 @@ import Loader from '~/components/Partials/Loader.vue';
 
 /* ************ ************ ************ ************ */
 
+.tooltip {
+  position: relative;
+}
+
+.tooltip:hover::before {
+  visibility: visible;
+  transition: opacity 1s ease-out;
+  opacity: 1;
+}
+
+.tooltip::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 5px;
+  color: white;
+  padding: 3px 6px;
+  left: 0%;
+  bottom: 150%;
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* ************ ************ ************ ************ */
+
 ::-webkit-scrollbar {
   width: .3em;
   height: .3em;

@@ -5,7 +5,7 @@ import Avatar from '@/UI/Avatar.vue';
 import store from '~/store/tasks';
 import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
-import { generateShapedIdfromId, tasksColorMap } from '~/helpers';
+import { generateShapedIdfromId, tasksColorMap, trimExact } from '~/helpers';
 import { canTasks, userHasAtLeastOnePermission } from '~/lib/permissions';
 
 const props = defineProps({
@@ -83,7 +83,9 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
     <!-- :actions="!canTasks(item, 'update') && !canTasks(item, 'delete')" -->
     <!-- Body -->
     <template #td-name="{ value, item: {id} }" >
-      <Link :href="{name: 'Task', params: { id }}" >{{ value }}</Link>
+      <span :data-tooltip="value" class="tooltip" >
+        <Link :href="{name: 'Task', params: { id }}">{{ trimExact(value) }}</Link>
+      </span>
     </template>
 
     <template #td-type="{ item: {is_map} }" >

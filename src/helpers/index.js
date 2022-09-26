@@ -127,33 +127,6 @@ export const sto_parse_DMY_T = (payload = '') => {
   return new Date(y, mo - 1, d, h, mi);
 };
 
-export const timeSince = (date) => {
-  const seconds = Math.abs(Math.floor((new Date() - date) / 1000)); // A small issue of Timezone
-
-  let interval = seconds / 31536000;
-
-  if (interval > 1) {
-    return `${Math.floor(interval)} года назад`;
-  }
-  interval = seconds / 2592000;
-  if (interval > 1) {
-    return `${Math.floor(interval)} месяца назад`;
-  }
-  interval = seconds / 86400;
-  if (interval > 1) {
-    return `${Math.floor(interval)} дня назад`;
-  }
-  interval = seconds / 3600;
-  if (interval > 1) {
-    return `${Math.floor(interval)} часа назад`;
-  }
-  interval = seconds / 60;
-  if (interval > 1) {
-    return `${Math.floor(interval)} минуты назад`;
-  }
-  return `${Math.floor(seconds)} секунды назад`;
-};
-
 export const getFileContent = (file, cb, onFail) => {
   const reader = new FileReader();
   reader.readAsText(file, 'UTF-8');
@@ -241,3 +214,41 @@ export function dataURItoBlob(dataurl) {
 
   return new Blob([u8arr], { type: mime });
 }
+
+export const trimExact = (str = '', len = 20) => {
+  if (str.length > len) {
+    return `${str.substring(0, len)} ...`;
+  }
+  return str;
+};
+
+/*
+export const timeSince = (date) => {
+  const seconds = Math.abs(Math.floor((new Date() - date) / 1000)); // A small issue of Timezone
+
+  let interval = seconds / 31536000;
+
+  if (interval > 1) {
+    return `${Math.floor(interval)} года назад`;
+  }
+  interval = seconds / 2592000;
+  if (interval > 1) {
+    return `${Math.floor(interval)} месяца назад`;
+  }
+  interval = seconds / 86400;
+  if (interval > 1) {
+    return `${Math.floor(interval)} дня назад`;
+  }
+  interval = seconds / 3600;
+  if (interval > 1) {
+    return `${Math.floor(interval)} часа назад`;
+  }
+  interval = seconds / 60;
+  if (interval > 1) {
+    return `${Math.floor(interval)} минуты назад`;
+  }
+  return `${Math.floor(seconds)} секунды назад`;
+};
+*/
+
+export const timeSince = (date) => `${hyphenatedDateFormat(date)}`.replace('-', '.');

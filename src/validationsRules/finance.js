@@ -8,8 +8,6 @@ export default function (v) {
 
       operation_type: { required: helpers.withMessage('Выберите тип', required) },
 
-      finance_group_id: { required: helpers.withMessage('Выберите финансовую группу', required) },
-
       payment_type: { required: helpers.withMessage('Выберите Вид оплаты', required) },
 
       // order_id: { required: helpers.withMessage('Выберите Заказ', required) },
@@ -18,6 +16,10 @@ export default function (v) {
     if (!v) {
       rules.sum = {
         required: helpers.withMessage('Укажите сумму', required),
+      };
+
+      rules.finance_group_id = {
+        required: helpers.withMessage('Выберите финансовую группу', required),
       };
     }
 

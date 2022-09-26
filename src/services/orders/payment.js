@@ -43,10 +43,10 @@ export default function (v) {
         title: 'Оплатить',
         RawForm: PayModal,
         atSubmit: async () => {
-          const { success } = await make_payment(); // 1 - make payment
+          const { success, message } = await make_payment(); // 1 - make payment
 
           try {
-            return { message: 'что-то пошло не так', success };
+            return { message: message || 'что-то пошло не так', success: true };
           } finally {
             if (success) toaster.success('Платеж прошел успешно');
           }

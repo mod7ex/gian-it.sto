@@ -29,7 +29,7 @@ const props = defineProps({
 
 });
 
-const { statusRef, checkStatus, paymentRef, pay } = usePay({ resource: props.resource, cb: props.cb });
+const { loading, checkStatus, pay } = usePay({ resource: props.resource, cb: props.cb });
 
 const payment_status_map = {
   inprogress: { color: 'yellow', label: 'Ожидает' },
@@ -47,19 +47,19 @@ const handelClick = async (v) => {
 <template>
   <span class="flex items-center" >
     <button
-      v-if="(!!status && status != 'ready') || paymentRef" :disabled="statusRef"
+      v-if="(!!status && status != 'ready') || loading" :disabled="loading"
       @click="() => checkStatus(id)"
       class="payment_status"
-      :data-tooltip="statusRef ? 'проверка статуса...' : (paymentRef ? 'платеж в процессе' : 'Проверить статус')"
+      :data-tooltip="loading ? 'загрузка...' :'Проверить статус'"
     >
-      <RefreshIcon class="h-4 w-4" :class="{rotating: statusRef || paymentRef}" />
+      <RefreshIcon class="h-4 w-4" :class="{rotating: loading}" />
     </button>
 
     <Badge v-if="status" :point="true" :color="payment_status_map[status ?? 'ready']?.color" >
       {{ payment_status_map[status ?? 'unknown']?.label ?? status }}
     </Badge>
 
-    <Link v-if="!status && !paymentRef" @click="() => handelClick(id)">
+    <Link v-if="!status && !loading" @click="() => handelClick(id)">
       Оплатить
     </Link>
   </span>

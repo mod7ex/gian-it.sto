@@ -91,12 +91,9 @@ export default function () {
 
       const title = computed(() => {
         if (isUpdate.value) {
-          if (finance.name) {
-            return finance.name.startsWith('Оплата') ? 'Подробности' : communicate.modal.update.finance;
-          }
-          return '';
+          return finance.order_id ? 'Подробности' : communicate.modal.update.finance;
         }
-        return communicate.modal.create.finance;
+        return communicate.modal.create[isThePage.value ? 'payment' : 'finance'];
       });
 
       const { render } = useModalForm({

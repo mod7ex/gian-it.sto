@@ -47,25 +47,25 @@ onScopeDispose(() => { v = undefined; });
       :noEdit="({ status }) => status === 'ready'"
     >
       <template #td-name="{ value, item: {id} }" >
-          <Link @click="() => render(id)">{{ value }} </Link>
+        <Link @click="() => render(id)">{{ value }} </Link>
       </template>
 
       <template #td-sum="{ value }" >
-          <span class="font-bold" >{{ value }}  ₽</span>
+        <span class="font-bold" >{{ value }}  ₽</span>
       </template>
 
       <template #td-operation_type="{ value }" >
-          <Badge :point="true" :color="tasksColorMap[finance_color_map[value]]?.color">
-              {{ typesMapper.operations[value] }}
-          </Badge>
+        <Badge :point="true" :color="tasksColorMap[finance_color_map[value]]?.color">
+            {{ typesMapper.operations[value] }}
+        </Badge>
       </template>
 
       <template #td-status="{ value, item }" >
-          <v-pay :id="item?.id" :status="value" :cb="updateStatus" :paymentWrapper="(v) => pay(item, v)" />
+        <v-pay :id="item?.id" :status="value" :cb="updateStatus" :paymentWrapper="(v) => pay(item, v)" />
       </template>
 
       <template #td-created_at="{ value }" >
-          {{ value?.split(' ')[0] }}
+        {{ value?.split(' ')[0] }}
       </template>
     </Table>
 </template>

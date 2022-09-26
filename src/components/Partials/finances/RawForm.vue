@@ -74,6 +74,7 @@ watch(() => finance.order_id, (_id) => {
         />
 
         <Select
+          v-if="!isThePage"
           label="Группа"
           v-model="finance.finance_group_id"
           :options="options"

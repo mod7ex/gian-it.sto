@@ -66,8 +66,8 @@ const noActions = (item) => props.noDelete(item) && props.noEdit(item);
 
                     <Td v-for="field in props.fields" :key="`${field.key}-${i}`">
                         <slot
-                            :name="`td-${field.key}`"
-                            :value="item[field.key]"
+                            :name="`td-${field?.key}`"
+                            :value="item[field?.key]"
                             :item="item"
                             :index="i"
                         >

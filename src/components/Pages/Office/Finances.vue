@@ -37,7 +37,7 @@ const isCreatedToday = ({ created_at }) => {
 
 const balance = computed(() => state.raw.reduce((b, curr) => {
   let inner_sum = b;
-  if (isCreatedToday(curr) && curr.status !== 'ready') {
+  if (isCreatedToday(curr) && curr.status === 'ready') {
     if (curr.operation_type === 'sell') inner_sum += curr.sum;
     if (curr.operation_type === 'sellReturn') inner_sum -= curr.sum;
   }
@@ -47,7 +47,7 @@ const balance = computed(() => state.raw.reduce((b, curr) => {
 const loss = computed(() => state.raw.reduce((b, curr) => {
   let inner_sum = b;
 
-  if (isCreatedToday(curr) && curr.status !== 'ready') {
+  if (isCreatedToday(curr) && curr.status === 'ready') {
     if (curr.operation_type === 'buy') inner_sum += curr.sum;
     if (curr.operation_type === 'buyReturn') inner_sum -= curr.sum;
   }

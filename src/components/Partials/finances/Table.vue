@@ -65,7 +65,6 @@ const wrapper = async (v) => { await v(); }
         </template>
 
         <template #td-operation_type="{ value }" >
-            {{ value }} 
             <Badge :point="true" :color="tasksColorMap[finance_color_map[value]]?.color">
                {{ typesMapper.operations[value] }}
             </Badge>

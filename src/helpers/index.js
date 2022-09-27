@@ -251,4 +251,8 @@ export const timeSince = (date) => {
 };
 */
 
-export const timeSince = (date) => `${hyphenatedDateFormat(date)}`.replace('-', '.');
+export const timeSince = (date) => {
+  [date] = date.toISOString().split('T');
+  const [y, m, d] = date.split('-');
+  return `${d}-${m}-${y}`;
+};

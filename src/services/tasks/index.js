@@ -15,10 +15,12 @@ const DEFAULT_ORDER_CRITERIA = 'id';
 const pivot = {
   id: { label: 'По умолчанию', sort: (a, b) => (a.id - b.id) },
   name: { label: 'По имени', sort: (a, b) => (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)) },
+  status: { label: 'По статусу', sort: (a, b) => (a.status - b.status) },
+  user_id: { label: 'По пользователю', sort: (a, b) => (a.user?.id - b.user?.id) },
+  date: { label: 'По дате', sort: (a, b) => ((new Date(a.created_at).getTime()) - (new Date(b.created_at).getTime())) },
   // department: { label: 'По отделам', sort: (a, b) => ((b.department?.id ?? 0) - (a.department?.id ?? 0)) },
   // type: { label: 'По типу', sort: (a, b) => (a.operation_type > b.operation_type ? 1 : (a.operation_type < b.operation_type ? -1 : 0)) },
   // sum: { label: 'По сумме', sort: (a, b) => (a.sum - b.sum) },
-  date: { label: 'По дате', sort: (a, b) => ((new Date(a.created_at).getTime()) - (new Date(b.created_at).getTime())) },
 };
 
 let filter;
@@ -28,14 +30,11 @@ const clearMemo = () => { filter = undefined; };
 export default () => effectScope().run(() => {
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
-  const { reset, trigger } = order;
-
   if (!filter) {
     filter = reactive({
       name: '',
       status: '',
       user_id: '',
-      // user_id: '',
       order_id: '',
       pipeline_id: '',
       department_id: current,
@@ -48,8 +47,6 @@ export default () => effectScope().run(() => {
         filter[key] = '';
       }
     });
-
-    reset(true);
   };
 
   const fetchTasks = async (bool = false, order_id, is_map) => {
@@ -60,7 +57,6 @@ export default () => effectScope().run(() => {
     if (!filter.department_id) return;
     if (bool) resetStore();
     await fill(cleanUp(filter));
-    trigger();
   };
 
   const { drop } = useConfirmDialog();

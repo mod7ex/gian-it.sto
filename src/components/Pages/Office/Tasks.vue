@@ -1,7 +1,7 @@
 <script setup>
 import { PlusCircleIcon, RefreshIcon, ViewBoardsIcon } from '@heroicons/vue/outline';
 import { onScopeDispose, ref, watch } from 'vue';
-import { debounce, objectSignature } from '~/helpers';
+import { debounce, objectSignature, hyphenatedDateFormat } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
@@ -19,9 +19,7 @@ import StoSelect from '@/UI/StoSelect.vue';
 
 const SuspenseArea = useSuspense(Table);
 
-const { order, filter, resetFilter, current, clearMemo } = service();
-
-const { criteriaOptions, criteria } = order;
+const { order: { criteriaOptions }, filter, resetFilter, current, clearMemo } = service();
 
 const { options, load: loadFunnels } = pipelineStore;
 const { options: userOptions, load: loadUsers } = userStore;
@@ -75,6 +73,9 @@ onScopeDispose(clearMemo);
       <div class="w-48">
         <Input label="Название"  v-model="filter.name"/>
       </div>
+
+      <Input label="Дата от" type="date" v-model="filter.start_date" :max="hyphenatedDateFormat(new Date())" />
+      <Input label="Дата до" type="date" v-model="filter.end_date" :max="hyphenatedDateFormat(new Date())" />
 
       <div>
         <Label class="mb-1">Статус</Label>
@@ -130,7 +131,7 @@ onScopeDispose(clearMemo);
         <Select
           label="Сортировать"
           :options="criteriaOptions"
-          v-model="criteria"
+          v-model="filter.order"
           class="w-44"
         />
       </div>

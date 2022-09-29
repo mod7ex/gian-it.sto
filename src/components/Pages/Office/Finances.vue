@@ -1,6 +1,6 @@
 <script setup>
 import { PlusCircleIcon, CollectionIcon, RefreshIcon, CheckCircleIcon, CurrencyDollarIcon } from '@heroicons/vue/outline';
-import { ref, watch, computed, onScopeDispose } from 'vue';
+import { ref, watch, onScopeDispose } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Header from '@/UI/Header.vue';
 import Button from '@/UI/Button.vue';
@@ -12,7 +12,7 @@ import useSuspense from '~/composables/useSuspense.js';
 import Table from '@/Partials/finances/Table.vue';
 import form from '~/services/finances/form';
 import service from '~/services/finances/index';
-import { debounce, objectSignature, tasksColorMap, hyphenatedDateFormat } from '~/helpers';
+import { debounce, objectSignature, tasksColorMap } from '~/helpers';
 import $ from '~/helpers/fetch.js';
 
 let { render, types, typesMapper, finance_color_map, payment_types } = form();
@@ -29,51 +29,17 @@ watch(filter, debounce(() => {
   if (current.value) { filterSignature.value = objectSignature(filter); }
 }), { deep: true }); // will work without deep because values are primary
 
-const isCreatedToday = ({ created_at }) => {
-  const d = (new Date(hyphenatedDateFormat(created_at.split(' ')[0]))).getTime();
-  const [_today] = (new Date().toISOString()).split('T');
-  return d === new Date(_today).getTime();
-};
+const summary = ref({});
 
-const balance = computed(() => state.raw.reduce((b, curr) => {
-  let inner_sum = b;
-  if (isCreatedToday(curr) && curr.status === 'ready') {
-    if (curr.operation_type === 'sell') inner_sum += curr.sum;
-    if (curr.operation_type === 'sellReturn') inner_sum -= curr.sum;
-  }
-  return inner_sum;
-}, 0));
+watch(() => state.raw.length, debounce(async () => {
+  const data = await $({ key: 'finances/summaries' });
 
-const loss = computed(() => state.raw.reduce((b, curr) => {
-  let inner_sum = b;
-
-  if (isCreatedToday(curr) && curr.status === 'ready') {
-    if (curr.operation_type === 'buy') inner_sum += curr.sum;
-    if (curr.operation_type === 'buyReturn') inner_sum -= curr.sum;
-  }
-  return inner_sum;
-}, 0));
-
-const payments = ref([]);
-const wating = computed(() => payments.value.reduce((prev, { sum }) => sum + prev, 0));
-
-const fillWaiting = debounce(async (department_id) => {
-  if (!department_id) return;
-
-  payments.value = [];
-
-  let page = 1;
-  while (true) {
-    // eslint-disable-next-line no-await-in-loop
-    const data = await $({ key: 'finances', params: { operation_type: 'sell', status: 0, page, department_id, start_date: hyphenatedDateFormat(new Date()) } });
-    payments.value = payments.value.concat(data?.finances ?? []);
-    if (data?.meta?.last_page == page) return;
-    if (!data.success) return;
-    page++;
-  }
-});
-
-watch(() => state.raw.length, () => fillWaiting(current.value));
+  summary.value = {
+    balance: data?.balance || 0,
+    expected: data?.expected || 0,
+    expense: data?.expense || 0,
+  };
+}));
 
 onScopeDispose(() => {
   types = undefined;
@@ -104,21 +70,21 @@ onScopeDispose(() => {
           <div><CurrencyDollarIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
           <div>
             <h5 class="text-gray-500 font-semibold">Баланс</h5>
-            <h2 class="font-bold text-lg transactions">{{ balance }} &#8381;</h2>
+            <h2 class="font-bold text-lg transactions">{{ summary?.balance ?? 0 }} &#8381;</h2>
           </div>
         </div>
         <div class="md:mx-6 flex justify-start items-center rounded shadow p-4 flex-grow bg-gray-50">
           <div><RefreshIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
           <div>
             <h5 class="text-gray-500 font-semibold">Траты</h5>
-            <h2 class="font-bold text-lg transactions">{{ loss }} &#8381;</h2>
+            <h2 class="font-bold text-lg transactions">{{ summary?.expense ?? 0 }} &#8381;</h2>
           </div>
         </div>
         <div class="flex justify-start items-center rounded shadow p-4 flex-grow bg-gray-50">
           <div><CheckCircleIcon class="w-7 h-7 mr-4 text-gray-500" /></div>
           <div>
             <h5 class="text-gray-500 font-semibold">Ожидается</h5>
-            <h2 class="font-bold text-lg transactions">{{ wating }} &#8381;</h2>
+            <h2 class="font-bold text-lg transactions">{{ summary?.expected ?? 0 }} &#8381;</h2>
           </div>
         </div>
       </div>

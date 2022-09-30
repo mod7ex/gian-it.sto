@@ -83,6 +83,27 @@ const fill = async (payload = {}, trackPermissions = true) => {
   state.pending = false;
 };
 
+const fillArchived = async (payload = {}, trackPermissions = true) => {
+  if (state.pending) return;
+  if (state.page > state.pages) return;
+
+  if (trackPermissions && PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
+    if (payload.department_id != userDepartment.value) return;
+  }
+
+  state.pending = true;
+  const data = await $({ key: 'tasks/history', params: { ...payload, page: state.page } });
+  if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
+    const only_my_tasks = data?.tasks?.filter(({ author: { id }, user: { id: u_id } }) => (id == user.value.id || u_id == user.value.id)); // Tasks i created or tasks where i'm the executer
+    state.raw = state.raw.concat(only_my_tasks ?? []);
+  } else {
+    state.raw = state.raw.concat(data?.tasks ?? []);
+  }
+  state.pages = data?.meta?.last_page ?? 100;
+  state.page += 1;
+  state.pending = false;
+};
+
 const sort = (v) => {
   state.raw.sort(v);
 };
@@ -107,6 +128,7 @@ export default {
   setTask,
   getTaskById,
   tasksInFunnel,
+  fillArchived,
   options: computed(() => state.raw.map(({ id: value, name: label }) => ({ label, value }))),
   map_options: computed(() => state.raw.filter(({ is_map }) => is_map).map(({ id: value, name: label }) => ({ label, value }))),
 };

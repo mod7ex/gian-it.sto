@@ -1,5 +1,6 @@
 <script setup>
-import { PlusCircleIcon, RefreshIcon, ViewBoardsIcon } from '@heroicons/vue/outline';
+import { PlusCircleIcon, RefreshIcon, ViewBoardsIcon, ArchiveIcon } from '@heroicons/vue/outline';
+import { ArrowLeftIcon } from '@heroicons/vue/solid';
 import { onScopeDispose, ref, watch } from 'vue';
 import { debounce, objectSignature, hyphenatedDateFormat } from '~/helpers';
 import OfficeLayout from '@/Layout/Office.vue';
@@ -16,10 +17,13 @@ import pipelineStore from '~/store/pipelines';
 import userStore from '~/store/employees';
 import orderStore from '~/store/orders/orders';
 import StoSelect from '@/UI/StoSelect.vue';
+import useAppRouter from '~/composables/useAppRouter';
+
+const { isThePage } = useAppRouter('TasksArchive');
 
 const SuspenseArea = useSuspense(Table);
 
-const { order: { criteriaOptions }, filter, resetFilter, current, clearMemo } = service();
+const { order: { criteriaOptions }, filter, resetFilter, current, clearMemo } = service(isThePage);
 
 const { options, load: loadFunnels } = pipelineStore;
 const { options: userOptions, load: loadUsers } = userStore;
@@ -53,13 +57,21 @@ onScopeDispose(clearMemo);
   <OfficeLayout title="Задачи">
 
     <template #actions>
+      <Button type="secondary" :link="{ name: 'Tasks' }" v-if="isThePage" >
+        <ArrowLeftIcon class="w-5 h-5 mr-1"/>Назад
+      </Button>
+
+      <Button :link="{ name: 'TasksArchive' }" v-else>
+        <ArchiveIcon class="w-5 h-5 mr-1"/>Архив
+      </Button>
+
       <v-can ability="crud pipelines">
         <Button type="secondary" :link="{ name: 'Funnels' }">
           <ViewBoardsIcon class="w-5 h-5 mr-1"/>Воронка
         </Button>
       </v-can>
 
-      <v-can ability="create tasks">
+      <v-can ability="create tasks" >
         <Button color="blue" :link="{ name: 'TaskCreate' }">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>Создать
         </Button>
@@ -77,10 +89,10 @@ onScopeDispose(clearMemo);
       <Input label="Дата от" type="date" v-model="filter.start_date" :max="hyphenatedDateFormat(new Date())" />
       <Input label="Дата до" type="date" v-model="filter.end_date" :max="hyphenatedDateFormat(new Date())" />
 
-      <div>
+      <div v-if="!isThePage" >
         <Label class="mb-1">Статус</Label>
 
-        <ButtonGroup>
+        <ButtonGroup >
           <Button
             type="secondary"
             @click="filter.status = 'process'"
@@ -145,7 +157,7 @@ onScopeDispose(clearMemo);
     </div>
 
     <!-- Table -->
-    <suspense-area :key="`tab-${filterSignature}-${current}`" />
+    <suspense-area :key="`tab-${filterSignature}-${current}-${isThePage ? 'archived' : ''}`" />
 
   </OfficeLayout>
 </template>

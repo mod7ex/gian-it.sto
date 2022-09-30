@@ -6,7 +6,7 @@ import useConfirmDialog from '~/composables/useConfirmDialog';
 import useAppRouter from '~/composables/useAppRouter';
 import { cleanUp } from '~/helpers';
 
-const { load, sort, fill, reset: resetStore, drop: dropTask } = store;
+const { load, sort, fill, reset: resetStore, drop: dropTask, fillArchived } = store;
 
 const { current } = departmentStore;
 
@@ -24,11 +24,22 @@ const pivot = {
 };
 
 let filter;
+let archived;
 
-const clearMemo = () => { filter = undefined; };
+const clearMemo = () => { filter = undefined; archived = undefined; };
 
-export default () => effectScope().run(() => {
+export default (_archived) => effectScope().run(() => {
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
+
+  // console.log('_archived', _archived);
+  // console.log('archived', archived);
+
+  if (_archived != null) {
+    archived = _archived;
+
+    // console.log('inside --> _archived', _archived);
+    // console.log('inside --> archived', archived);
+  }
 
   if (!filter) {
     filter = reactive({
@@ -54,9 +65,15 @@ export default () => effectScope().run(() => {
       await load({ order_id, is_map });
       return;
     }
+
     if (!filter.department_id) return;
     if (bool) resetStore();
-    await fill(cleanUp(filter));
+
+    if (archived.value) {
+      await fillArchived(cleanUp(filter));
+    } else {
+      await fill(cleanUp(filter));
+    }
   };
 
   const { drop } = useConfirmDialog();

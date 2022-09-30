@@ -16,6 +16,7 @@ const routes = [
   { path: '/order-stages', component: () => import(/* webpackChunkName: "OrderStages" */ '@/Pages/Office/OrderStages.vue'), name: 'OrderStages' },
 
   { path: '/tasks', component: () => import(/* webpackChunkName: "Tasks" */ '@/Pages/Office/Tasks.vue'), name: 'Tasks' },
+  { path: '/tasks/archive', component: () => import(/* webpackChunkName: "Tasks" */ '@/Pages/Office/Tasks.vue'), name: 'TasksArchive' },
   { path: '/tasks/:id', component: () => import(/* webpackChunkName: "Task" */ '@/Pages/Office/Task.vue'), name: 'Task' },
   { path: '/tasks/update/:id', component: () => import(/* webpackChunkName: "TaskForm" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskEdit' },
   { path: '/tasks/create', component: () => import(/* webpackChunkName: "TaskForm" */ '@/Pages/Office/TaskForm.vue'), name: 'TaskCreate' },

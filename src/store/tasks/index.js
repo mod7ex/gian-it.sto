@@ -114,7 +114,7 @@ const drop = async (id) => _$.task(id, (v) => {
 
 const findTask = (_id) => state.raw.find(({ id }) => id == _id);
 
-const tasksInFunnel = (_id) => state.raw.filter(({ pipelines }) => (pipelines.some(({ pipeline: { id } }) => id == _id)));
+const tasksInFunnel = (_id) => state.raw.filter(({ pipelines }) => (pipelines?.some(({ pipeline: { id } }) => id == _id)));
 
 export default {
   state: readonly(state),

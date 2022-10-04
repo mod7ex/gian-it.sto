@@ -8,11 +8,12 @@ import storageStore from '~/store/storage';
 import storageRequestsStore from '~/store/orders/storage-requests';
 import departmentStore from '~/store/departments';
 import service from '~/services/orders/storage-requests';
+import StoSelect from '@/UI/StoSelect.vue';
 import { tasksColorMap } from '~/helpers';
 
 const { items, atMounted, products_request } = service();
 const { current } = departmentStore;
-const { load, options } = store;
+const { fill, options } = store;
 const { load: loadStorages, options: storageOptions } = storageStore;
 const { loadStatuses, state } = storageRequestsStore;
 
@@ -25,7 +26,7 @@ await Promise.all([loadStorages({ department_id: current.value }), loadStatuses(
 
 // const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
-watch(() => products_request.storage_id, async (storage_id) => { await load({ storage_id }); }, {immediate: true});
+watch(() => products_request.storage_id, async (storage_id) => { await fill({ storage_id }); }, {immediate: true});
 
 </script>
 
@@ -39,13 +40,15 @@ watch(() => products_request.storage_id, async (storage_id) => { await load({ st
           class="m-3 sm:col-span-6 col-span-12"
         />
 
-        <Select
+        <sto-select
           :disabled="!products_request.storage_id"
           label="Товар"
+          :search="true"
           :options="options"
           :required="true"
           v-model="products_request.product_id"
           class="m-3 sm:col-span-6 col-span-12"
+          @bottom-touched="() => fill({ client_id: fields.client_id })"
         />
 
         <Input

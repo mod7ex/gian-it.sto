@@ -55,7 +55,7 @@ const selectedProduct = computed(() => ss.raw.find(({id}) => products_request.pr
         />
 
         <div class="mb-6">
-          <span>цена</span>
+          <span class="block text-sm font-medium text-gray-700 text-left" >цена</span>
           <span class="rounded shadow p-2 block" >
             {{ !selectedProduct?.output_sum ? '_' : `${selectedProduct?.output_sum} ₽` }}
           </span>

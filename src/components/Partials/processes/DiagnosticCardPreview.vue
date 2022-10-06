@@ -170,7 +170,8 @@ onMounted(() => {
     <div>
       <div v-for="({ data, type, token }, i) in fields" :key="i" class="mb-9" >
 
-        <div v-if="type === 'check_list' && userHasPermission('crud processes')" class="flex justify-center flex-col" >
+        <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
+        <!-- <div v-if="type === 'check_list' && userHasPermission('crud processes')" class="flex justify-center flex-col" > -->
           <!-- {{ answers.data[findFieldIndex(token, type)] }} -->
           <h3 class="font-bold text-xl mb-3">{{ data?.title }}</h3>
           <div :class="['mx-auto print-mode-checklist gap-3', for_worker ? 'flex flex-col' : 'grid grid-cols-12']">

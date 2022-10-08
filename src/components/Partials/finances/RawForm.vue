@@ -58,7 +58,6 @@ const filter = ({ value }) => !value.startsWith('buy')
         <Input
           v-if="!isThePage"
           label="Сумма"
-          :disabled="!!finance.order_id"
           v-model="finance.sum"
           type="number" :min="0" :step="1"
           :required="true"

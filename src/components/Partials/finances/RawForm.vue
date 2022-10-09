@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch } from 'vue';
+import { computed, shallowRef, watch } from 'vue';
 import Input from '@/UI/Input.vue';
 import Select from '@/UI/Select.vue';
 import form from '~/services/finances/form';
@@ -13,15 +13,31 @@ const { load: loadOrders, options: orderOptions, state } = orderStore;
 
 const { finance, atMountedFinanceForm, v$, types, payment_types, isThePage } = form();
 
-await Promise.all([ load(), loadOrders({ department_id: current.value }), atMountedFinanceForm() ])
+await Promise.all([ load(), loadOrders({ department_id: current.value }), atMountedFinanceForm() ]);
+
+const fullyPaid = shallowRef(true)
+
+const isUpdate = computed(() => finance.id != null && finance.id != '')
+const isStatus = computed(() => finance.status == 'inProgress' || finance.status == 'ready')
 
 watch(() => finance.order_id, (_id) => {
   const _order = state.raw.find(({ id }) => id == _id);
 
-  finance.sum = _order?.total_sum ?? 0;
-});
+  if(isUpdate.value) { // UPDATE
+    console.log(_order.total_sum, _order.total_paid_sum)
+    if((_order.total_paid_sum ?? 0) < (_order.total_sum ?? 0)) {
+      finance.sum = (_order.total_sum ?? 0) - (_order.total_paid_sum ?? 0)
+      fullyPaid.value = false
+    }
+    else fullyPaid.value = true
+  } else { // CREATE
+    finance.sum = _order?.total_sum ?? 0;
+    fullyPaid.value = true
+  }
 
-const filter = ({ value }) => !value.startsWith('buy')
+}, {immediate: true});
+
+const filter = ({ value }) => !value.startsWith('buy');
 
 </script>
 
@@ -34,14 +50,15 @@ const filter = ({ value }) => !value.startsWith('buy')
         :required="true"
         :error="v$.operation_type.$errors[0]?.$message"
         @blured="v$.operation_type.$touch"
+        :disabled="isUpdate && isStatus"
       />
 
       <Select
+        :required="true"
         label="Заказ-наряд"
         v-model="finance.order_id"
         :options="orderOptions"
-        :disabled="isThePage || finance.operation_type === 'buy' || finance.operation_type === 'buyReturn'"
-        :required="true"
+        :disabled="(isUpdate && isStatus) || (isThePage || finance.operation_type === 'buy' || finance.operation_type === 'buyReturn')"
       />
 <!--
   :error="v$.order_id.$errors[0]?.$message"
@@ -61,8 +78,9 @@ const filter = ({ value }) => !value.startsWith('buy')
           v-model="finance.sum"
           type="number" :min="0" :step="1"
           :required="true"
-          :error="v$.sum.$errors[0]?.$message"
+          :error="v$.sum.$errors[0]?.$message ?? (fullyPaid ? '' : `Нужно доплатить: ${finance.sum} ₽`)"
           @blured="v$.sum.$touch"
+          :disabled="disabledSum"
         />
 
         <Select
@@ -83,6 +101,7 @@ const filter = ({ value }) => !value.startsWith('buy')
           :error="v$.finance_group_id.$errors[0]?.$message"
           @blured="v$.finance_group_id.$touch"
         />
+
         <v-can ability="crud departments" v-if="!isThePage" >
           <Select
             label="Отделение"

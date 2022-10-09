@@ -22,6 +22,7 @@ const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Заказ-наряд', key: 'order' },
   { label: 'Сумма (₽)', key: 'sum' },
+  { label: 'Оплаченная сумма (₽)', key: 'paid_sum' },
   { label: 'Тип операции', key: 'operation_type' },
   { label: 'Статус', key: 'status' },
   { label: 'Дата создания', key: 'created_at' },
@@ -36,6 +37,12 @@ await fetchFinances(true);
 
 const wrapper = async (v) => { await v(); }
 
+const disableEdit = (finance) => {
+    if(finance.operation_type == 'buy') return true;
+    if(finance.operation_type == 'buyReturn') return finance.status == 'inProgress' || finance.status == 'ready'
+    return false
+}
+
 </script>
 
 <template>
@@ -45,13 +52,14 @@ const wrapper = async (v) => { await v(); }
         :items="state.raw"
         @delete="(id) => drop(() => dropFinance(id))"
         @edit="(id) => render(id)"
+        :noEdit="disableEdit"
     >
         <template #th-sum="{ label }" >
             <span class="font-bold" >{{ label }}</span>
         </template>
 
-        <template #td-name="{ value, item: {id} }" >
-            <Link @click="() => render(id)">{{ value }} </Link>
+        <template #td-name="{ value, item }" >
+            <Link :disabled="disableEdit(item)" @click="() => render(item.id)">{{ value }} </Link>
         </template>
 
         <template #td-order="{ value }" >
@@ -64,10 +72,15 @@ const wrapper = async (v) => { await v(); }
             <span class="font-bold" >{{ value }}  ₽</span>
         </template>
 
+        <template #td-paid_sum="{ item: { order } }" >
+            <span class="font-bold" >{{ order?.total_paid_sum ?? '_' }}  ₽</span>
+        </template>
+
         <template #td-operation_type="{ value }" >
             <Badge :point="true" :color="tasksColorMap[finance_color_map[value]]?.color">
                {{ typesMapper.operations[value] }}
             </Badge>
+            <!-- {{ value }} -->
         </template>
 
         <template #td-status="{ value, item: { id } }" >

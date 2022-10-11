@@ -162,10 +162,11 @@ onMounted(() => { close(); reset(); });
 
                             <button @click="() => ping(request, target?.id)" type="button" class="ml-6 bg-white rounded-md text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Выдать</button>
                         </div>
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center mb-2">
                             <p class="text-xs">Заказ-наряд: {{ request?.order_id != null ? `#${generateShapedIdfromId(request?.order_id)}` : '' }}</p>
                             <p class="text-xs">Kоличество: {{ request?.count }}</p>
                         </div>
+                        <p class="text-xs" v-if="request?.sum" >Цена в зн: {{ request?.sum }} &#8381;</p>
                     </li>
                 </ul>
 

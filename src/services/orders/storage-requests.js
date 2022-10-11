@@ -77,6 +77,7 @@ export default function () {
             order_id: route.params.id,
             product_id: '',
             storage_id: '',
+            sum: '',
           });
         },
       });

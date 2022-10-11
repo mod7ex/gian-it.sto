@@ -11,6 +11,8 @@ const state = reactive({
   pending: false,
 });
 
+const findProduct = (v) => state.raw.find(({ id }) => v == id);
+
 const IndexById = (_id) => {
   for (let i = 0; i < state.raw.length; i++) {
     // eslint-disable-next-line
@@ -103,6 +105,7 @@ export default {
   reset,
   fill,
   select,
+  findProduct,
   replace,
   selected: computed(() => !!(state.selectedId)),
   products,

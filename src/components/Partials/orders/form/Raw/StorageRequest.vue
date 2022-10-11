@@ -13,7 +13,7 @@ import { tasksColorMap } from '~/helpers';
 
 const { items, atMounted, products_request } = service();
 const { current } = departmentStore;
-const { fill, options, state: ss } = store;
+const { load, options, findProduct } = store;
 const { load: loadStorages, options: storageOptions } = storageStore;
 const { loadStatuses, state } = storageRequestsStore;
 
@@ -27,9 +27,11 @@ await Promise.all([loadStorages({ department_id: current.value }), loadStatuses(
 
 // const statusOptions = Object.entries(tasksColorMap).map(([value, { label }]) => ({ label, value }));
 
-watch(() => products_request.storage_id, async (storage_id) => { await fill({ storage_id }); }, {immediate: true});
+watch(() => products_request.storage_id, async (storage_id) => { await load({ storage_id }); });
 
-const selectedProduct = computed(() => ss.raw.find(({id}) => products_request.product_id == id))
+const selectedProduct = computed(() => findProduct(products_request.product_id))
+
+watch(selectedProduct, (v) => { products_request.sum = v?.output_sum });
 
 </script>
 
@@ -54,12 +56,14 @@ const selectedProduct = computed(() => ss.raw.find(({id}) => products_request.pr
           @bottom-touched="() => fill({ client_id: fields.client_id })"
         />
 
-        <div class="mb-6">
-          <span class="block text-sm font-medium text-gray-700 text-left" >цена</span>
-          <span class="rounded shadow p-2 block" >
-            {{ !selectedProduct?.output_sum ? '_' : `${selectedProduct?.output_sum} ₽` }}
-          </span>
-        </div> 
+        <Input
+          :disabled="!products_request.product_id"
+          label="цена в зн"
+          type="number"
+          :required="true"
+          v-model="products_request.sum"
+          class="mb-3 sm:col-span-6 col-span-12"
+        />
 
 
         <Input

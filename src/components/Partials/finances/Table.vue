@@ -80,7 +80,7 @@ const disableEdit = (finance) => {
             <Badge :point="true" :color="tasksColorMap[finance_color_map[value]]?.color">
                {{ typesMapper.operations[value] }}
             </Badge>
-            <!-- {{ value }} -->
+            {{ value }}
         </template>
 
         <template #td-status="{ value, item: { id } }" >

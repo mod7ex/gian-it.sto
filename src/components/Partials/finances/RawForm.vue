@@ -24,12 +24,18 @@ watch(() => finance.order_id, (_id) => {
   const _order = state.raw.find(({ id }) => id == _id);
 
   if(isUpdate.value) { // UPDATE
-    console.log(_order.total_sum, _order.total_paid_sum)
-    if((_order.total_paid_sum ?? 0) < (_order.total_sum ?? 0)) {
+
+    if(_order.total_paid_sum == 0) {
+      fullyPaid.value = true;
+      return 
+    }
+
+    if(((_order.total_paid_sum ?? 0) < (_order.total_sum ?? 0)) && (finance.operation_type != 'sellReturn')) {
       finance.sum = (_order.total_sum ?? 0) - (_order.total_paid_sum ?? 0)
       fullyPaid.value = false
+    } else {
+      fullyPaid.value = true
     }
-    else fullyPaid.value = true
   } else { // CREATE
     finance.sum = _order?.total_sum ?? 0;
     fullyPaid.value = true

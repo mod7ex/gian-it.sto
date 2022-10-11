@@ -1,6 +1,6 @@
 <script setup>
 import { ArrowLeftIcon, XIcon } from '@heroicons/vue/outline';
-import { ref, defineAsyncComponent, onScopeDispose, computed, watch } from 'vue';
+import { ref, defineAsyncComponent, onScopeDispose, computed, watch, onMounted } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import Tabs from '@/UI/Tabs.vue';
@@ -14,7 +14,9 @@ const { drop } = useConfirmDialog();
 
 const { current: department } = departmentStore;
 
-const { fields, isEditPage, clearMemory, dropOrder, route, router } = service();
+const { fields, isEditPage, clearMemory, dropOrder, route, router, atMounted } = service();
+
+onMounted(async () => { if (!fields?.id) { await atMounted(); } });
 
 const suspenseArea = useSuspense();
 

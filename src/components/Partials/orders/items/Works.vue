@@ -30,7 +30,7 @@ const dropWorkThenSet = async (v) => {
 const fields = [
   { label: 'Вид работы', key: 'name' },
   { label: 'Исполнитель', key: 'user' },
-  { label: 'Сумма', key: 'sum' },
+  { label: 'Стоимость', key: 'sum' },
   { label: 'Время', key: 'time' },
   { label: 'Комментарии', key: 'comments' },
 ];

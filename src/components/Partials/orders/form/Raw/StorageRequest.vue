@@ -38,7 +38,7 @@ watch(selectedProduct, (v) => { products_request.sum = v?.output_sum });
 <template>
     <div>
         <Select
-          label="склад"
+          label="Склад"
           :options="storageOptions"
           :required="true"
           v-model="products_request.storage_id"
@@ -58,7 +58,7 @@ watch(selectedProduct, (v) => { products_request.sum = v?.output_sum });
 
         <Input
           :disabled="!products_request.product_id"
-          label="цена в зн"
+          label="Цена продажи"
           type="number"
           :required="true"
           v-model="products_request.sum"

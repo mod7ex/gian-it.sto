@@ -166,7 +166,7 @@ onMounted(() => { close(); reset(); });
                             <p class="text-xs">Заказ-наряд: {{ request?.order_id != null ? `#${generateShapedIdfromId(request?.order_id)}` : '' }}</p>
                             <p class="text-xs">Kоличество: {{ request?.count }}</p>
                         </div>
-                        <p class="text-xs" v-if="request?.sum" >Цена в зн: {{ request?.sum }} &#8381;</p>
+                        <p class="text-xs" v-if="request?.sum" >Цена продажи: {{ request?.sum }} &#8381;</p>
                     </li>
                 </ul>
 

@@ -11,19 +11,6 @@ const { current } = departmentStore;
 
 const { atMounted, work } = service();
 
-/*
-
-Вид работы (наименование работы)
-Количество
-Исполнитель (кто делал сотрудник)
-Норма времени ( количество требуемого времени)
-Цена
-Сумма
-Субподряд ( работу делал наш контрагент, где то делали на удаленки, нам нужно выбрать контрагента)
-Материалы (материалы используемые при ремонте за которые клиент не платит, а. они просто списываются со склада по закупочной стоимости) выбираем номенклатуру по складу
-
-*/
-
 await Promise.all([atMounted(), load({department_id: current.value})]);
 
 </script>
@@ -38,7 +25,7 @@ await Promise.all([atMounted(), load({department_id: current.value})]);
         />
 
         <Input
-          label="Сумма"
+          label="Стоимость"
           type="number"
           :required="true"
           v-model="work.sum"

@@ -28,7 +28,7 @@ const dropRequestThenSet = async (v) => {
 const cols = [
   { label: 'Товар', key: 'product' },
   { label: 'Цена закупки (₽)', key: 'buy' },
-  { label: 'Цена продажи (₽)', key: 'sell' },
+  { label: 'Цена продажи (₽)', key: 'sum' },
   { label: 'Kоличество', key: 'count' },
   //   { label: 'Комментарий', key: 'comment' },
   { label: 'Статус', key: 'status' },
@@ -61,8 +61,8 @@ await load({ order_id: route.params.id });
           <span class="font-bold" >{{ product?.input_sum }} ₽</span>
       </template>
 
-      <template #td-sell="{ item: { product } }" >
-          <span class="font-bold" >{{ product?.output_sum }} ₽</span>
+      <template #td-sum="{ value }" >
+          <span class="font-bold" >{{ value }} ₽</span>
       </template>
 
       <!-- <template #td-comment="{ value }" > {{ value ?? '_' }} </template> -->
@@ -85,7 +85,7 @@ await load({ order_id: route.params.id });
 
       <template #td-last-buy="{ items }" >{{ items.reduce((prev, curr) => prev + ((curr.product.input_sum ?? 0) * curr.count), 0) }} ₽</template>
       
-      <template #td-last-sell="{ items }" >{{ items.reduce((prev, curr) => prev + ((curr.product.output_sum ?? 0) * curr.count), 0) }} ₽</template>
+      <template #td-last-sum="{ items }" >{{ items.reduce((prev, curr) => prev + ((curr.sum ?? 0) * curr.count), 0) }} ₽</template>
 
   </Table>
 </template>

@@ -25,10 +25,10 @@ watch(() => finance.order_id, (_id) => {
 
   if(isUpdate.value) { // UPDATE
 
-    if(_order.total_paid_sum == 0) {
-      fullyPaid.value = true;
-      return 
-    }
+    // if(_order.total_paid_sum == 0) {
+    //   fullyPaid.value = true;
+    //   return 
+    // }
 
     if(((_order.total_paid_sum ?? 0) < (_order.total_sum ?? 0)) && (finance.operation_type != 'sellReturn')) {
       // finance.sum = (_order.total_sum ?? 0) - (_order.total_paid_sum ?? 0)

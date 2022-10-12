@@ -88,7 +88,6 @@ const setForm = async (payload) => {
 export const setOrder = async (order_id, check = false) => {
   if (check && fields.id) return;
   const order = await $.order(order_id ?? orderId);
-  console.log('------------>', fields.total_sum);
   setForm(order);
 };
 

@@ -10,14 +10,12 @@ export default function (v) {
 
       payment_type: { required: helpers.withMessage('Выберите Вид оплаты', required) },
 
+      sum: { required: helpers.withMessage('Укажите сумму', required) },
+
       // order_id: { required: helpers.withMessage('Выберите Заказ', required) },
     };
 
     if (!v) {
-      rules.sum = {
-        required: helpers.withMessage('Укажите сумму', required),
-      };
-
       rules.finance_group_id = {
         required: helpers.withMessage('Выберите финансовую группу', required),
       };

@@ -16,10 +16,7 @@ const SuspenseArea = useSuspense(Payments);
 
 const { render, cleanUpForm } = form(route.params.id);
 
-onScopeDispose(() => {
-  cleanUpForm();
-  cleanUp();
-});
+onScopeDispose(() => { cleanUpForm(); cleanUp(); });
 
 </script>
 

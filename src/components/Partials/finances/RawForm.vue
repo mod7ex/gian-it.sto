@@ -31,7 +31,8 @@ watch(() => finance.order_id, (_id) => {
     }
 
     if(((_order.total_paid_sum ?? 0) < (_order.total_sum ?? 0)) && (finance.operation_type != 'sellReturn')) {
-      finance.sum = (_order.total_sum ?? 0) - (_order.total_paid_sum ?? 0)
+      // finance.sum = (_order.total_sum ?? 0) - (_order.total_paid_sum ?? 0)
+      finance.sum = _order.total_pay_sum
       fullyPaid.value = false
     } else {
       fullyPaid.value = true
@@ -79,7 +80,6 @@ const filter = ({ value }) => !value.startsWith('buy');
         />
 
         <Input
-          v-if="!isThePage"
           label="Сумма"
           v-model="finance.sum"
           type="number" :min="0" :step="1"

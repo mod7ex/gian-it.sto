@@ -22,6 +22,7 @@ let { pay,typesMapper: v } = payment(typesMapper);
 const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Сумма (₽)', key: 'sum' },
+  { label: 'Оплаченная сумма (₽)', key: 'paid_sum' },
   { label: 'Тип операции', key: 'operation_type' },
   { label: 'Статус', key: 'status' },
   { label: 'Дата создания', key: 'created_at' },
@@ -52,6 +53,10 @@ onScopeDispose(() => { v = undefined; });
 
       <template #td-sum="{ value }" >
         <span class="font-bold" >{{ value }}  ₽</span>
+      </template>
+
+      <template #td-paid_sum="{ value }" >
+        <span class="font-bold" >{{ value ? `${value} ₽` : '_' }}</span>
       </template>
 
       <template #td-operation_type="{ value }" >

@@ -11,7 +11,7 @@ const { fetchTasks, state, edge } = service();
 
 // const tasksWhereImExecutor = computed(() => state.raw.filter((item) => user.value?.id == item?.user?.id))
 
-console.log(state.raw.map(({user}) => user))
+// console.log(state.raw.map(({user}) => user))
 
 const calcMinsDiff = (end, start) => ((new Date(end)).getTime() - (new Date(start)).getTime()) / (1000 * 60);
 
@@ -25,6 +25,8 @@ const calcMinsDiff = (end, start) => ((new Date(end)).getTime() - (new Date(star
 // }).length;
 
 const getClosedTasksNumberIn = (day) => state.raw.filter(({ logs }) => {
+  if(!logs) return
+
   for (let i = 0; i < logs.length; i++) {
     const { created_at, data } = logs[i];
     
@@ -41,6 +43,8 @@ const getWorkedHoursNumberIn = (day) => {
   let workedHours = 0;
 
   state.raw.forEach(({ logs }) => {
+    if(!logs) return
+
     const taskWorkedHours = [];
 
     for (let i = 0; i < logs.length; i++) {

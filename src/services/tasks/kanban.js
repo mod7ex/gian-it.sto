@@ -26,6 +26,8 @@ const getKanBanPayload = (v) => {
 
   const tasks_in_this_funnel = tasksInFunnel(v);
 
+  console.log(tasks_in_this_funnel);
+
   const kanban = funnel.stages.reduce((payload, curr) => {
     const { id, color, name } = curr;
 

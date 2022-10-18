@@ -72,7 +72,7 @@ const setFieldFor = (target, key, from) => {
 
   if (key === 'checkboxes') {
     target.checkboxes = from.checkboxes ?? defaults.checkboxes;
-    if (target.checkboxes.length === 0) target.checkboxes.push('');
+    if (target.checkboxes?.length === 0) target.checkboxes.push('');
     return;
   }
 

@@ -101,8 +101,8 @@ const userRoleTitle = computed(() => {
   <div class="relative h-screen flex overflow-hidden bg-white">
     <Sidebar :open="sidebarOpen" @close="sidebarOpen = false">
       <!-- Mobile logo -->
-      <div class="flex-shrink-0 flex items-center px-4 w-32 mx-auto">
-        <Logo class="w-auto" />
+      <div class="flex-shrink-0 flex items-center px-4 w-32 mx-auto logo-w">
+        <Logo />
       </div>
 
       <!-- Mobile Nav -->
@@ -120,7 +120,7 @@ const userRoleTitle = computed(() => {
     <div class="hidden lg:flex lg:flex-shrink-0">
       <div class="flex flex-col w-64 border-r border-gray-200 pt-3 pb-4 bg-gray-100">
         <!-- Logo -->
-        <div class="flex items-center justify-center flex-shrink-0 px-6 h-20 w-30 mx-auto mb-4"><Logo /></div>
+        <div class="flex items-center justify-center flex-shrink-0 px-6 h-20 w-30 mx-auto mb-4 logo-w"><Logo /></div>
 
         <!-- Sidebar -->
         <div class="h-0 flex-1 flex flex-col overflow-y-auto" id="sidebar-holder">
@@ -219,5 +219,9 @@ const userRoleTitle = computed(() => {
 <style scoped>
   #sidebar-holder::-webkit-scrollbar {
     display: none;
+  }
+
+  .logo-w  {
+    max-width: 130px;
   }
 </style>

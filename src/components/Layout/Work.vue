@@ -38,10 +38,9 @@ const isShowMenu = ref(false);
     <header class="bg-white shadow">
       <div class="header-inner max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div class="flex justify-between h-16">
-          <div class="flex px-2 lg:px-0">
-            <div class="flex-shrink-0 flex items-center">
-              <router-link class="h-14 w-auto" :to="{ name: 'Orders' }"><Logo /></router-link>
-              <!-- <router-link class="h-14 w-auto" :to="{ name: 'Dashboard' }"><Logo /></router-link> -->
+          <div class="flex justify-between px-2 py-1 lg:px-0">
+            <div class="logo-w">
+              <router-link class="h-14 w-3" :to="{ name: 'Orders' }"><Logo /></router-link>
             </div>
 
             <nav aria-label="Global" class="hidden lg:ml-6 lg:flex lg:items-center lg:space-x-4">
@@ -72,9 +71,9 @@ const isShowMenu = ref(false);
               <div class="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 bg-white divide-y divide-gray-200">
                 <div class="pt-3 pb-2">
                   <div class="flex items-center justify-between px-4">
-                    <div class="flex-shrink-0 flex items-center">
+                    <div class="logo-w flex-shrink-0 flex items-center">
                       <!-- <router-link class="h-14 w-auto" :to="{ name: 'Dashboard' }"><Logo /></router-link> -->
-                      <router-link class="h-14 w-auto" :to="{ name: 'Orders' }"><Logo /></router-link>
+                      <router-link class="h-14" :to="{ name: 'Orders' }"><Logo /></router-link>
                     </div>
                     <div class="mr-2">
                       <button type="button" class="bg-white rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500" @click="isShowMenu = false">
@@ -104,7 +103,7 @@ const isShowMenu = ref(false);
           </div>
 
           <div class="hidden lg:ml-4 lg:flex lg:items-center">
-            <div class="mt-6 flex flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
+            <div class="mt-6 flex items-center flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
               <slot name="actions"></slot>
 
               <Button type="secondary" :link="{ name: 'WorderKanban' }">Канбан</Button>
@@ -133,5 +132,9 @@ const isShowMenu = ref(false);
   .main-inner{
     max-width: 120rem;
   }
+}
+
+.logo-w {
+  max-width: 60px;
 }
 </style>

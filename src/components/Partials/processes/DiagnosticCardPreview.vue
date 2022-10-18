@@ -147,7 +147,7 @@ onMounted(() => {
 
 <template>
   <div v-if="ready" :id="props.id" class="relative text-center border-gray-300 border rounded shadow p-6 px-9 mx-auto max-w-6xl select-none">
-    <header v-if="!noHead" class="mb-6 py-3">
+    <header v-if="!noHead" class="mb-6 py-3 mx-auto">
       <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ task_id ?  generateShapedIdfromId(task_id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
 
       <div class="grid grid-cols-12 border-black border">
@@ -167,7 +167,7 @@ onMounted(() => {
 -->
 
     <!-- Fields -->
-    <div>
+    <div class="mx-auto" >
       <div v-for="({ data, type, token }, i) in fields" :key="i" class="mb-9" >
 
         <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
@@ -253,7 +253,19 @@ onMounted(() => {
 }
 
 @media print {
+
+    @page {
+        size: 210mm;
+        margin: 0;
+    }
+
+    html, body {
+        width: 210mm;
+        height: 100%;
+    }
+
   body #printable {
+    background-color: white;
     position: absolute;
     top: 0;
     left: 0;

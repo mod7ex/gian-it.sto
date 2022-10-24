@@ -254,15 +254,15 @@ onMounted(() => {
 
 @media print {
 
-    @page {
-        size: 210mm;
-        margin: 0;
-    }
+  @page {
+      size: 210mm;
+      margin: 0;
+  }
 
-    html, body {
-        width: 210mm;
-        height: 100%;
-    }
+  html, body {
+      width: 210mm;
+      height: 100%;
+  }
 
   body #printable {
     background-color: white;

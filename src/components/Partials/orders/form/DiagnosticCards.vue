@@ -82,7 +82,6 @@ const printOut = () => {
         </div>
 
         <preview
-          id="printable"
           v-if="dc_template"
           :task_id="dk_task.id"
           :map_answer="dk_task.map_answer"
@@ -94,15 +93,3 @@ const printOut = () => {
       </div>
     </div>
 </template>
-
-<style>
-  @media print {
-    body * {
-      visibility: hidden;
-    }
-
-    body #printable * {
-      visibility: visible;
-    }
-  }
-</style>

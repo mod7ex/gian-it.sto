@@ -136,7 +136,7 @@ onMounted(() => {
     </header>
 
     <!-- Fields -->
-    <!-- <div class="mx-auto" >
+    <div class="mx-auto" >
       <div v-for="({ data, type, token }, i) in fields" :key="i" class="mb-9" >
 
         <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
@@ -184,15 +184,16 @@ onMounted(() => {
         </div>
 
       </div>
-    </div> -->
+    </div>
 
-    <diagnostic-card-print :fields="fields" :answers="answers" />
+    <Teleport to="#printable">
+      <diagnostic-card-print :fields="fields" :answers="answers" :task="task" />
+    </Teleport>
 
   </div>
 </template>
 
 <style scoped>
-
 .for_worker {
   align-items: center !important;
 }

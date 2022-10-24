@@ -115,6 +115,11 @@ onMounted(() => { close(); reset(); });
                         <dt class="text-gray-500">Стоимость продажи</dt>
                         <dd class="text-gray-900">{{ target.output_sum }} ₽</dd>
                     </div>
+
+                    <div class="py-3 flex justify-between text-sm font-medium">
+                        <dt class="text-gray-500">Артикул</dt>
+                        <dd class="text-gray-900">{{ target.sku }}</dd>
+                    </div>
                 </dl>
             </div>
 

@@ -1,6 +1,6 @@
 <script setup>
 import { ArrowLeftIcon, ViewListIcon, ViewGridIcon, PlusCircleIcon } from '@heroicons/vue/outline';
-import { onMounted, ref, onScopeDispose } from 'vue';
+import { onMounted, ref, onScopeDispose, shallowRef } from 'vue';
 import OfficeLayout from '@/Layout/Office.vue';
 import Button from '@/UI/Button.vue';
 import ButtonGroup from '@/UI/ButtonGroup.vue';
@@ -17,11 +17,13 @@ const { setAvailability, state } = store;
 const suspenseArea = useSuspense();
 
 const { fetchProducts, isThePage, clearMemo, selected } = service();
+
 const { route } = useAppRouter();
 
 const grid = ref(true);
 
 const currentStorage = ref();
+const search = shallowRef('');
 
 onMounted(async () => { currentStorage.value = isThePage.value ? 'Запрошенные запчасти' : (await $.storage(route.params.id))?.name; });
 
@@ -36,11 +38,7 @@ onScopeDispose(clearMemo);
         <Button type="secondary" :link="{ name: 'Storages' }">
           <ArrowLeftIcon class="w-5 h-5 mr-1"/>Назад
         </Button>
-<!--
-        <Button color="blue">
-          <SaveAsIcon class="w-5 h-5 mr-1"/>Приход
-        </Button>
--->
+
         <Button v-if="!isThePage" color="blue" :link="{ name: 'StorageForm', params: { id: route.params?.id } }">
           <PlusCircleIcon class="w-5 h-5 mr-1"/>Добавить позицию
         </Button>
@@ -52,7 +50,7 @@ onScopeDispose(clearMemo);
           <div class="flex-1 overflow-y-auto">
 
             <div class="justify-between flex px-3 lg:px-5 mt-4">
-              <div class="flex">
+              <div class="flex items-stretch gap-3">
                 <ButtonGroup :key="state.inStock ? 'inStock' : 'notInStock'">
                   <Button
                     :type="state.inStock ? 'primary' : 'secondary'"
@@ -67,7 +65,10 @@ onScopeDispose(clearMemo);
                     group="right"
                   >Нет в наличии
                   </Button>
+
                 </ButtonGroup>
+
+                <input type="text" class="rounded h-full" placeholder="Поиск ..." v-model="search" />
               </div>
 
               <div class="flex">
@@ -90,7 +91,7 @@ onScopeDispose(clearMemo);
             </div>
 
             <suspense-area loadingMsg="получение товаров..." >
-              <products-list :grid="grid" @bottom-touched="()=>fetchProducts()" />
+              <products-list :grid="grid" @bottom-touched="()=>fetchProducts()" :search="search" />
             </suspense-area>
 
           </div>

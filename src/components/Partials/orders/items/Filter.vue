@@ -38,6 +38,7 @@ onMounted(async () => {
           :options="options"
           class="w-full"
           @bottom-touched="() => fill({ department_id: current })"
+          search
         />
       </div>
 
@@ -48,6 +49,7 @@ onMounted(async () => {
           :options="carOptions"
           class="w-full"
           @bottom-touched="() => loadCars()"
+          search
         />
       </div>
 

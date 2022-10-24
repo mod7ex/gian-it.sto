@@ -4,12 +4,13 @@ import Badge from '@/UI/Badge.vue';
 import Table from '@/Layout/Table.vue';
 import store from '~/store/processes/tasks';
 import useAppRouter from '~/composables/useAppRouter';
+import useConfirmDialog from '~/composables/useConfirmDialog';
 
 const { route, redirectTo } = useAppRouter();
 
 const { id } = route.params;
 
-const { state, fill, reset, drop } = store;
+const { state, fill, reset, drop: dropTask } = store;
 
 const fields = [
   { label: 'Название', key: 'name' },
@@ -26,6 +27,8 @@ const fetchTasks = async (bool = false) => {
 
 await fetchTasks(true);
 
+const { drop } = useConfirmDialog();
+
 </script>
 
 <template>
@@ -33,7 +36,7 @@ await fetchTasks(true);
         @bottom-touched="() => fetchTasks()"
         :fields="fields"
         :items="state.raw"
-        @delete="drop"
+        @delete="(id) => drop(() => dropTask(id))"
         @edit="(task) => redirectTo({ name: 'ProcessTaskEdit', params: { task, id } })"
     >
         <!-- Body -->

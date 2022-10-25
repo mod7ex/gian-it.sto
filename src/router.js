@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import navigationGuards from '~/lib/permissions.js';
 import { pingLoader } from '~/composables/useAppLoader.js';
-import { userHasAtLeastOnePermission } from '~/lib/permissions';
+// import { userHasAtLeastOnePermission } from '~/lib/permissions';
+import useAuth from '~/composables/useAuth';
+
+const { userRole } = useAuth();
 
 const routes = [
   { path: '/', component: () => import(/* webpackChunkName: "login-page" */ '@/Pages/Login/Login.vue'), name: 'Login', meta: { guest: true } },
@@ -93,10 +96,14 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  // if (from.fullPath.startsWith('/w/') && !to.fullPath.startsWith('/w/')) {
-  if (!to.fullPath.startsWith('/w/')) {
-    if (userHasAtLeastOnePermission(['crud orders'])) return next();
+  // if (!to.fullPath.startsWith('/w/')) {
+  //   if (userHasAtLeastOnePermission(['crud orders'])) return next();
+  //   return router.push({ name: 'WorkerTasks' });
+  // }
+
+  if (userRole.value?.name === 'slecar' && !to.fullPath.startsWith('/w/')) {
     return router.push({ name: 'WorkerTasks' });
+    // return router.back()
   }
 
   if (to.name === '404') {

@@ -38,6 +38,7 @@ const { pixel, container } = useIntersectionObserver(() => emit('bottomTouched')
 const fields = [
   { label: 'Название', key: 'name' },
   { label: 'Количество', key: 'count' },
+  { label: 'Артикул', key: 'sku' },
   { label: 'Место', key: 'place' },
 ];
 
@@ -67,9 +68,9 @@ onScopeDispose(() => reset(true));
 
                     <div class="p-4">
                         <Badge v-if="isThePage" :point="true" color="yellow">Запрошено</Badge>
-                        <div class="flex items-center justify-between" >
+                        <div class="flex items-center justify-between flex-wrap" >
                             <p class="mb-1 mt-2 block text-sm font-medium text-gray-900 truncate pointer-events-none">{{ item.name }}</p>
-                            <b><small>Артикул: {{ item?.sku }}</small></b>
+                            <p class="mb-1 text-sm font-medium text-gray-500 pointer-events-none" >Артикул: {{ item?.sku }}</p>
                         </div>
                         <p :key="item.count" class="mb-1 block text-sm font-medium text-gray-500 pointer-events-none">В наличии: {{ item.count }}</p>
                         <p class="mb-1 block text-sm font-medium text-gray-500 pointer-events-none">Место: {{ item.place }}</p>
@@ -90,6 +91,10 @@ onScopeDispose(() => reset(true));
             </template>
 
             <template #td-count="{ value }" >
+                <p>{{ value }}</p>
+            </template>
+
+            <template #td-sku="{ value }" >
                 <p>{{ value }}</p>
             </template>
 

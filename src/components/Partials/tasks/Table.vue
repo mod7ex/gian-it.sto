@@ -7,6 +7,9 @@ import Table from '@/Layout/Table.vue';
 import service from '~/services/tasks';
 import { generateShapedIdfromId, tasksColorMap, trimExact } from '~/helpers';
 import { canTasks, userHasAtLeastOnePermission } from '~/lib/permissions';
+import useAppRouter from '~/composables/useAppRouter';
+
+const { isThePage } = useAppRouter('OrderEdit')
 
 const props = defineProps({
   order_id: {
@@ -74,7 +77,7 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
     @bottom-touched="()=>fetchTasks(false, props.order_id)"
     :fields="fields"
     :items="state.raw"
-    @delete="removeTask"
+    @delete="(v) => removeTask(v, !isThePage)"
     @edit="edit"
     :noEdit="(item) => !canTasks(item, 'update')"
     :noDelete="(item) => !canTasks(item, 'delete')"

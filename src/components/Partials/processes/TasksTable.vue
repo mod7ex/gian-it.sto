@@ -14,6 +14,7 @@ const { state, fill, reset, drop: dropTask } = store;
 
 const fields = [
   { label: 'Название', key: 'name' },
+  { label: 'Этап заказ наряда', key: 'order_stage' },
   { label: 'Тип', key: 'type' },
   { label: 'Ответственная роль', key: 'role' },
   { label: 'Порядок', key: 'position' },
@@ -45,10 +46,14 @@ const { drop } = useConfirmDialog();
           <Link v-else :href="{ name: 'ProcessTaskEdit', params: { task, id } }"> {{ value }} </Link>
         </template>
 
-        <template #td-role="{ value }" >
+        <template #td-role="{ value, item }" >
           <Badge :point="true" color="blue">
             {{ value.title }}
           </Badge>
+        </template>
+
+        <template #td-order_stage="{ value }" >
+            {{ value.name }}
         </template>
 
         <template #td-type="{ item }" >

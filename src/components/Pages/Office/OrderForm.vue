@@ -69,12 +69,9 @@ onScopeDispose(clearMemory);
       <Tabs v-model="current" :tabs="labels" class="px-3 sm:px-4 lg:px-5" />
     </template>
 
-    <!-- <p>TODO: get rid of re-rendring</p> -->
-
-    <suspense-area v-if="current" :key="`order-form-${current}-${department}-${route.params?.id ?? 'none'}`">
+    <suspense-area v-if="current && department" :key="`order-form-${current}-${department}-${route.params?.id ?? 'none'}`">
       <component :is="theTab.component" v-bind="theTab.props" />
     </suspense-area>
-    <!-- ISSUE : solved using the v-show directive ,but there might still a small issue !  -->
 
   </OfficeLayout>
 </template>

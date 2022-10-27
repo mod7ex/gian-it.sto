@@ -57,7 +57,7 @@ const handelBlackListedFile = (id) =>  {
         </div>
 
         <div class="col-span-12 sm:col-span-4">
-            <Input label="Порядок" type="number" v-model="fields.position" />
+            <Input label="Позиция" type="number" v-model="fields.position" />
         </div>
 
         <div class="col-span-12 sm:col-span-4">

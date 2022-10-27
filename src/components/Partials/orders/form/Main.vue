@@ -3,11 +3,9 @@ import { CheckIcon, PlusCircleIcon } from '@heroicons/vue/outline';
 import { computed, watch, onMounted, ref } from 'vue';
 import Button from '@/UI/Button.vue';
 import TextArea from '@/UI/TextArea.vue';
-import Upload from '@/UI/Upload.vue';
 import Input from '@/UI/Input.vue';
 import StoSelect from '@/UI/StoSelect.vue';
 // import TextArea from '@/UI/TextArea.vue';
-import Select from '@/UI/Select.vue';
 import service from '~/services/orders/form';
 import userStore from '~/store/employees';
 import clientStore from '~/store/clients';
@@ -25,10 +23,8 @@ const { options: orderStagesOptions, load: loadOrderStages } = orderStagesStore;
 const { load: loadUsers, options: userOptions } = userStore;
 const { reset: resetClients ,fill: loadClients, options: clientOptions } = clientStore;
 const { fill: loadCars, options: carOptions, reset: resetCars } = carStore;
-const { reset: resetCAppealReasons ,fill: loadAppealReasons, options: appealReasonOptions, state } = appealReasonStore;
+const { reset: resetCAppealReasons ,fill: loadAppealReasons, options: appealReasonOptions } = appealReasonStore;
 const { reset: resetProcesses ,fill: loadProcesses, state: processState } = processStore;
-
-
 
 const { fields, atMounted, saveOrder, current, log, isEditPage, route, v$ } = service();
 const { render } = carForm(true);
@@ -42,13 +38,15 @@ watch(() => fields.client_id, async (client_id) => {resetCars(); await loadCars(
 
 const ID = ref('');
 
+const department_id = current.value 
+
 await Promise.all([
   async () => {resetClients(); resetCAppealReasons(); resetProcesses(), resetCars()},
   loadOrderStages(),
   loadAppealReasons(),
-  loadProcesses(),
-  loadUsers({ department_id: current.value }),
-  loadClients({ department_id: current.value }),
+  loadProcesses(), 
+  loadUsers({ department_id }),
+  loadClients({ department_id }),
   atMounted(),
 ]).then(() => { if(isEditPage.value) {ID.value = `#${generateShapedIdfromId(route.params.id)}`} });
 
@@ -60,6 +58,10 @@ const handelBlackListedFile = (id) =>  {
 }
 
 const processOptions = computed(() => processState.raw.filter(({appeal_reason}) => appeal_reason.id == fields.appeal_reason_id).map(({id, name}) => ({value: id, label: name})))
+
+onMounted(() => {
+  fields.order_stage_id = orderStagesOptions.value[0].value
+}) 
 
 </script>
 
@@ -80,7 +82,7 @@ const processOptions = computed(() => processState.raw.filter(({appeal_reason}) 
       </div>
 
       <div class="col-span-12 sm:col-span-4 flex items-center">
-        <sto-select :search="true" class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" @bottom-touched="() => loadClients({ department_id: current })" />
+        <sto-select :search="true" class="flex-grow mr-1" label="Клиент" :options="clientOptions" v-model="fields.client_id" @bottom-touched="() => loadClients({ department_id })" />
         <PlusCircleIcon class="w-6 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => modalUp()" />
       </div>
 

@@ -246,6 +246,29 @@ const fields = [
 
 <style scoped>
 
+#orders-kanban::-webkit-scrollbar {
+  width: 1em;
+  height: 1em;
+}
+
+#orders-kanban::-webkit-scrollbar-track {
+  box-shadow: none;
+}
+
+#orders-kanban::-webkit-scrollbar-track:hover {
+  box-shadow: inset 0 0 7px 3px rgba(0, 0, 0, 0.1);
+}
+
+#orders-kanban::-webkit-scrollbar-thumb {
+  background-color: darkgray;
+}
+
+#orders-kanban::-webkit-scrollbar-thumb:hover {
+  background-color: #2563EB;
+}
+
+/* ***************************************************** */
+
 .max-h-vw {
   max-height: 80vh;
 }
@@ -261,12 +284,6 @@ const fields = [
 .chevron {
   min-height: 200px;
 }
-
-/*
-.chevron-left {
-
-}
-*/
 
 .stage{
   min-width: 300px;

@@ -1,7 +1,7 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
-import { alphaGroupper, callsCounter } from '~/helpers';
+import { alphaGroupper } from '~/helpers';
 import { userHasAtLeastOnePermission } from '~/lib/permissions';
 
 const canRead = userHasAtLeastOnePermission(['read clients', 'crud clients']);
@@ -40,16 +40,6 @@ const fill = async (payload) => {
   state.page += 1;
   state.pending = false;
 };
-
-// const fill = callsCounter(async (payload, page) => {
-//   if (state.pending) return;
-//   if (state.pages != null && page > state.pages) return;
-//   state.pending = true;
-//   const data = await $({ key: 'clients', params: { ...payload, page } });
-//   state.raw = state.raw.concat(data?.clients ?? []);
-//   state.pages = data?.meta?.last_page;
-//   state.pending = false;
-// });
 
 const drop = async (id) => _$.client(id, (v) => {
   state.raw.deleteById(v);

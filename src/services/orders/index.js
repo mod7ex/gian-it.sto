@@ -74,7 +74,7 @@ const log = async (e, cb) => {
 };
 
 const atMounted = async () => {
-  await Promise.all([async () => reset(), load({ ...filter, department_id: current.value, history: 'order' }), loadStages()]).then(fillColumns);
+  await Promise.all([async () => reset(), load({ ...filter, department_id: current.value }), loadStages()]).then(fillColumns);
 };
 
 export default () => effectScope().run(() => {

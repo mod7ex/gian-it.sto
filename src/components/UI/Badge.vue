@@ -30,8 +30,8 @@ const props = defineProps({
     `bg-${props.color}-100`,
     `text-${props.color}-800 ${props.margin ? 'm-1' : ''}`,
     `text-${props.size}`,
-    $attrs.class,
-    (props.size === 'xs' ? 'px-2.5' : 'px-3')
+    (props.size === 'xs' ? 'px-2.5' : 'px-3'),
+    $attrs.class
   ]">
     <svg
       :class="[ 'mr-1.5 h-2 w-2', `text-${props.color}-400`, (props.size === 'xs' ? '-ml-0.5' : '-ml-1') ]"

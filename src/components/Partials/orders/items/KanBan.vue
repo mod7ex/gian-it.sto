@@ -164,12 +164,11 @@ const fields = [
                     >
                   </Link>
                 </div>
-
               </div>
 
-              <div class="flex mt-4 justify-between items-center">
+              <div class="flex mt-4 justify-between items-center flex-wrap">
                 <span class="text-sm text-gray-600">{{ element.created_at.split(' ')[0] }}</span>
-                <Badge color="blue" :point="true" v-if="element?.car?.car_model?.car_mark?.name || element?.car?.car_model?.name" >
+                <Badge color="blue" class="text-lg" :point="true" v-if="element?.car?.car_model?.car_mark?.name || element?.car?.car_model?.name" >
                   {{ `${element?.car?.car_model?.car_mark?.name ?? ''} ${element?.car?.car_model?.name ?? '_'}`.substr(0, 20) }}
                 </Badge>
               </div>

@@ -62,7 +62,7 @@ export default (_archived) => effectScope().run(() => {
 
   const fetchTasks = async (bool = false, order_id, is_map) => {
     if (order_id) {
-      await load({ order_id, is_map });
+      await load({ order_id, is_map, history: 'order' });
       return;
     }
 

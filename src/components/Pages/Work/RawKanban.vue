@@ -121,6 +121,14 @@ const foo = () => {
                 </div>
               </div>
 
+              <!-- 
+              <div>
+                <Badge color="blue" :point="true" v-if="element?.car?.car_model?.car_mark?.name || element?.car?.car_model?.name" >
+                  {{ `${element?.car?.car_model?.car_mark?.name ?? ''} ${element?.car?.car_model?.name ?? '_'}`.substr(0, 20) }}
+                </Badge>
+              </div>
+               -->
+
               <div class="flex mt-4 justify-between items-center">
                 <span class="text-sm text-gray-600">{{ element.created_at.split(' ')[0] }}</span>
                 <Badge :point="true" :color="tasksColorMap[element.status].color">{{ tasksColorMap[element.status].label }}</Badge>

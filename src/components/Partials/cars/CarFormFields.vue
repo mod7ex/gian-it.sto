@@ -1,4 +1,5 @@
 <script setup>
+import { PlusCircleIcon } from '@heroicons/vue/outline';
 import { computed, onMounted, shallowRef, watch } from 'vue';
 import Input from '@/UI/Input.vue';
 import TextArea from '@/UI/TextArea.vue';
@@ -11,6 +12,11 @@ import fuelStore from '~/store/cars/fuels';
 import clientStore from '~/store/clients';
 import departmentStore from '~/store/departments';
 import StoSelect from '@/UI/StoSelect.vue'; 
+import carModelForm from '~/services/cars/carModelForm';
+import carMarkForm from '~/services/cars/carMarkForm';
+
+const { render: renderModalForm } = carModelForm()
+const { render: renderMarkFom } = carMarkForm()
 
 const props = defineProps({
   inModal: {
@@ -88,11 +94,13 @@ onMounted(() => {
                 @input="v$.year.$touch"
             />
         </div>
-        <div class="col-span-12 sm:col-span-6 md:col-span-4">
-            <sto-select @bottom-touched="() => {}" label="Марка" :options="markOptions" v-model="theSelectedCarMark" />
+
+        <div class="col-span-12 sm:col-span-6 md:col-span-4 flex items-center justify-center">
+            <sto-select @bottom-touched="() => {}" label="Марка" :options="markOptions" v-model="theSelectedCarMark" class="flex-grow mr-1" />
+            <PlusCircleIcon class="w-6 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => renderMarkFom()" />
         </div>
 
-        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+        <div class="col-span-12 sm:col-span-6 md:col-span-4 flex items-center justify-center">
             <Select
                 label="Модель"
                 :disabled="!theSelectedCarMark"
@@ -101,7 +109,9 @@ onMounted(() => {
                 :required="true"
                 :error="v$.car_model_id.$errors[0]?.$message"
                 @blured="v$.car_model_id.$touch"
+                class="flex-grow mr-1"
             />
+            <PlusCircleIcon class="w-6 text-gray-600 cursor-pointer hover:text-gray-800" @click="() => renderModalForm()" />
         </div>
 
         <div class="col-span-12 sm:col-span-6 md:col-span-3">

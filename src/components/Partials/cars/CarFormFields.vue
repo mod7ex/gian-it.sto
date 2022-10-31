@@ -113,7 +113,7 @@ onMounted(() => {
             <div class="border border-gray-300 rounded flex items-center" >
                 <span class="h-9 w-16 text-center border-r border-gray-300 font-light text-xl rounded py-1 px-3" >{{ engineOptions[engineVolumeIndex]?.label }}</span>
                 <span class="px-3 flex-grow flex flex-col items-center" >
-                    <input class="w-full" id="engine-volume" type="range" list="number" :max="engineOptions.length - 1" v-model="engineVolumeIndex">
+                    <input class="w-full" id="engine-volume" type="range" :max="engineOptions.length - 1" v-model="engineVolumeIndex">
                 </span>
             </div>
             <!-- <Select label="Двигатель" :options="engineOptions" v-model="carFields.engine_volume_id" /> -->

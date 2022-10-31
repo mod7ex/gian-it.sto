@@ -1,16 +1,12 @@
 <script setup>
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/solid';
 import Draggable from 'vuedraggable';
-import { shallowRef, watch } from 'vue';
+import { watch } from 'vue';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import service from '~/services/tasks/kanban';
 import { defaults } from '~/composables/useAvatar';
-import { tasksColorMap } from '~/helpers';
-import {canTasks, userHasPermission, userHasAtLeastOnePermission} from '~/lib/permissions'
-import useAuth from '~/composables/useAuth';
-
-const { user } = useAuth();
+import { tasksColorMap, generateShapedIdfromId } from '~/helpers';
+import {canTasks, userHasAtLeastOnePermission} from '~/lib/permissions'
 
 const { log, atMounted, state, getKanBanPayload, theSelectedFunnel, fillColumns, columns } = service();
 
@@ -20,61 +16,7 @@ await atMounted();
 
 const canDragAndDrop = userHasAtLeastOnePermission(['update stage tasks', 'update department stage tasks', 'update own stage tasks'])
 
-const canDrag = (task) => {
-  // const engagedIn = task.user?.id == user.value.id || task.author?.id == user.value.id
-
-  return canTasks(task, 'update_stage');
-}
-
-/*
-
-const kanbanRef = shallowRef();
-
-const show = shallowRef(0);
-
-let timer;
-
-const clearTimer = () => {
-  if (timer != null) {
-    clearInterval(timer);
-    timer = undefined;
-  }
-};
-
-const scrollTo = (right = false) => {
-  clearTimer();
-  timer = setInterval(() => {
-    const target = kanbanRef.value ?? document.getElementById('tasks-kanban');
-    const step = 70;
-    const left = right ? target.scrollLeft + step : target.scrollLeft - step;
-
-    requestAnimationFrame(() => {
-      target.scroll({
-        left,
-        behavior: 'smooth',
-      });
-    });
-  }, 60);
-};
-
-const foo = () => {
-  const target = kanbanRef.value ?? document.getElementById('tasks-kanban');
-  if (target.scrollLeft === 0) {
-    clearTimer();
-    show.value = 0;
-    return;
-  }
-
-  if (target.scrollLeft + target.clientWidth >= target.scrollWidth - 1) {
-    clearTimer();
-    show.value = 1;
-    return;
-  }
-
-  show.value = 2;
-};
-
-*/
+const canDrag = (task) => { return canTasks(task, 'update_stage'); }
 
 </script>
 
@@ -121,15 +63,17 @@ const foo = () => {
                 </div>
               </div>
 
-              <!-- 
+              <div class="mb-2" >
+                <span class="text-sm text-gray-600">Заказ-наряд #{{ generateShapedIdfromId(element.order?.id) }}</span>
+              </div>
+
               <div>
-                <Badge color="blue" :point="true" v-if="element?.car?.car_model?.car_mark?.name || element?.car?.car_model?.name" >
-                  {{ `${element?.car?.car_model?.car_mark?.name ?? ''} ${element?.car?.car_model?.name ?? '_'}`.substr(0, 20) }}
+                <Badge color="blue" :point="true" >
+                  {{ `${element?.order?.car?.car_model?.car_mark?.name ?? ''} ${element?.order?.car?.car_model?.name ?? '_'}` }}
                 </Badge>
               </div>
-               -->
 
-              <div class="flex mt-4 justify-between items-center">
+              <div class="flex mt-2 justify-between items-center">
                 <span class="text-sm text-gray-600">{{ element.created_at.split(' ')[0] }}</span>
                 <Badge :point="true" :color="tasksColorMap[element.status].color">{{ tasksColorMap[element.status].label }}</Badge>
               </div>
@@ -138,21 +82,6 @@ const foo = () => {
         </Draggable>
       </div>
     </div>
-<!--
-    <div class="overflow-hidden overlay absolute my-auto z-50 right-0 left-0 bottom-0 top-0 flex items-center opacity-30">
-      <Transition tag="div" name="slide-fade-left">
-        <span v-if="show !== 0" @mouseenter.prevent="() => scrollTo()" @mouseleave="clearTimer" class="chevron chevron-left bg-gray-900 opacity-75 py-5 rounded-r-full top-1/4 left-0 flex items-center" >
-          <ChevronLeftIcon class="text-white w-16" />
-        </span>
-      </Transition>
-
-      <Transition tag="div" name="slide-fade-right">
-        <span v-if="show !== 1" @mouseenter="() => scrollTo(true)" @mouseleave="clearTimer" class="ml-auto chevron chevron-right bg-gray-900 opacity-75 py-5 rounded-l-full top-1/4 right-0 flex items-center" >
-          <ChevronRightIcon class="text-white w-16" />
-        </span>
-      </Transition>
-    </div> 
--->
   </div>
 </template>
 
@@ -169,10 +98,6 @@ const foo = () => {
 .chevron {
   min-height: 200px;
 }
-
-/*
-.chevron-left {}
-*/
 
 .stage {
   min-width: 300px;
@@ -193,38 +118,4 @@ const foo = () => {
   height: calc(100% - 30px);
 }
 
-/* **************************************** */
-/*
-.slide-fade-left-enter-active {
-  transition: all .3s ease-in;
-}
-
-.slide-fade-left-leave-active {
-  transition: all .3s ease-in;
-}
-
-.slide-fade-left-leave-to {
-  transform: translateX(-100px);
-}
-
-.slide-fade-left-enter-from{
-  transform: translateX(-100px);
-}
-
-.slide-fade-right-enter-active {
-  transition: all .3s ease-in;
-}
-
-.slide-fade-right-leave-active {
-  transition: all .3s ease-in;
-}
-
-.slide-fade-right-leave-to {
-  transform: translateX(100px);
-}
-
-.slide-fade-right-enter-from{
-  transform: translateX(100px);
-}
-*/
 </style>

@@ -20,5 +20,5 @@ export default {
   options: computed(() => state.raw.map(({ id, value }) => ({
     value: id,
     label: value,
-  }))),
+  })).sort((a, b) => a.value - b.value)),
 };

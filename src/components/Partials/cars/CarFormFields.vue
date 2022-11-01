@@ -15,9 +15,6 @@ import StoSelect from '@/UI/StoSelect.vue';
 import carModelForm from '~/services/cars/carModelForm';
 import carMarkForm from '~/services/cars/carMarkForm';
 
-const { render: renderModalForm } = carModelForm('#sto-modal-upper')
-const { render: renderMarkFom } = carMarkForm('#sto-modal-upper')
-
 const props = defineProps({
   inModal: {
     type: Boolean,
@@ -46,8 +43,17 @@ watch(engineVolumeIndex, (v) => {
     carFields.engine_volume_id = engineOptions.value[v]?.value
 })
 
-onMounted(() => {
-    engineVolumeIndex.value = engineOptions.value.findIndex(({value}) => carFields.engine_volume_id == value)
+onMounted(() => { engineVolumeIndex.value = engineOptions.value.findIndex(({value}) => carFields.engine_volume_id == value) })
+
+const { render: renderModalForm } = carModelForm('#sto-modal-upper' , (v) => {
+    carFields.car_model_id = v.car_model?.id
+    // console.log(v)
+})
+
+const { render: renderMarkFom } = carMarkForm('#sto-modal-upper' , (v) => {
+    theSelectedCarMark.value = v.car_mark?.id
+
+    // console.log(v)
 })
 
 </script>

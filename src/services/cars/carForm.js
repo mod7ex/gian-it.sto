@@ -1,4 +1,4 @@
-import { ref, reactive, onScopeDispose, effectScope, computed } from 'vue';
+import { reactive, onScopeDispose, effectScope, computed, shallowRef } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import formRules from '~/validationsRules/carForm.js';
 import useAppRouter from '~/composables/useAppRouter.js';
@@ -79,7 +79,7 @@ const prepare = (clientId) => {
     car_model_id: '',
   });
 
-  theSelectedCarMark = ref();
+  theSelectedCarMark = shallowRef();
 
   v$ = useVuelidate(formRules(), carFields, { $lazy: true });
 };

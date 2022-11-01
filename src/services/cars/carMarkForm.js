@@ -31,7 +31,7 @@ const saveForm = async () => {
   const { message, success, data } = await save.car_mark(mark);
 
   try {
-    return { message, success };
+    return { message, success, data };
   } finally {
     if (success) {
       add(data.car_mark);
@@ -49,7 +49,7 @@ const atMountedCarMarksForm = async () => {
   }
 };
 
-export default function (mount_point) {
+export default function (mount_point, cb) {
   const modalUp = (...args) => {
     const scope = effectScope();
 
@@ -60,7 +60,11 @@ export default function (mount_point) {
         title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].car_mark),
         RawForm,
         mount_point,
-        atSubmit: saveForm,
+        atSubmit: async () => {
+          const { data } = await saveForm();
+          if (cb) cb(data);
+          return data;
+        },
         atClose: () => scope.stop(),
         atOpen: (id) => {
           mark = reactive({

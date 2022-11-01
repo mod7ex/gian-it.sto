@@ -15,8 +15,8 @@ import StoSelect from '@/UI/StoSelect.vue';
 import carModelForm from '~/services/cars/carModelForm';
 import carMarkForm from '~/services/cars/carMarkForm';
 
-const { render: renderModalForm } = carModelForm()
-const { render: renderMarkFom } = carMarkForm()
+const { render: renderModalForm } = carModelForm('#sto-modal-upper')
+const { render: renderMarkFom } = carMarkForm('#sto-modal-upper')
 
 const props = defineProps({
   inModal: {

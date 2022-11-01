@@ -50,7 +50,7 @@ const atMountedCarModelsForm = async () => {
   }
 };
 
-export default function carModelFormService() {
+export default function carModelFormService(mount_point) {
   const modalUp = (...args) => {
     const scope = effectScope();
 
@@ -60,6 +60,7 @@ export default function carModelFormService() {
       const { render } = useModalForm({
         title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].car_model),
         RawForm,
+        mount_point,
         atSubmit: saveForm,
         atClose: () => scope.stop(),
         atOpen: (id) => {

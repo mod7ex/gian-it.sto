@@ -49,7 +49,7 @@ const atMountedCarMarksForm = async () => {
   }
 };
 
-export default function () {
+export default function (mount_point) {
   const modalUp = (...args) => {
     const scope = effectScope();
 
@@ -59,6 +59,7 @@ export default function () {
       const { render } = useModalForm({
         title: computed(() => communicate.modal[isUpdate.value ? 'update' : 'create'].car_mark),
         RawForm,
+        mount_point,
         atSubmit: saveForm,
         atClose: () => scope.stop(),
         atOpen: (id) => {

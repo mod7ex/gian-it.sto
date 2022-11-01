@@ -4,8 +4,10 @@ import useSuspense from '~/composables/useSuspense';
 import { sleep } from '~/helpers';
 import Modal from '@/Layout/modal/Modal.vue';
 
+const MOUNT_POINT = '#sto-modal';
+
 // atSubmit is a function that has an object return containing the success and message result
-export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } = {}, { left, right } = {}) => ({
+export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit, mount_point = MOUNT_POINT }, { left, right } = {}) => ({
   render: async (...args) => {
     let app;
 
@@ -62,7 +64,7 @@ export default ({ title, RawForm, atSubmit, atClose, atOpen, keepAfterSubmit } =
 
     if (atOpen instanceof Function) await atOpen(...args);
 
-    app.mount('#sto-modal');
+    app.mount(mount_point ?? MOUNT_POINT);
 
     show.value = true;
   },

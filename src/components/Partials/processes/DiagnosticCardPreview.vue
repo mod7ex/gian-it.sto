@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, reactive, watch, ref } from 'vue';
+import { computed, onMounted, reactive, watch, ref, shallowRef } from 'vue';
 import { generateShapedIdfromId, debounce } from '~/helpers';
 import save from '~/helpers/save';
 import DiagnosticCardPrint from './DiagnosticCardPrint.vue';
@@ -94,6 +94,9 @@ const shapeAnswers = (payload) => {
   return shappedAnswer;
 };
 
+const saving = shallowRef(false);
+const failed = shallowRef(false);
+
 onMounted(() => {
   const { task_id: ts_id } = props;
 
@@ -114,7 +117,19 @@ onMounted(() => {
   if (!answers.task_id && answers.task_id != 0) return;
 
   watch(() => answers.data, debounce(async () => {
-    const { data: { map_answer } } = await save.map_answer(answers);
+    saving.value = true;
+    failed.value = false;
+
+    const { data, success } = await save.map_answer(answers);
+
+    saving.value = false;
+
+    if (!success) {
+      failed.value = true;
+    }
+
+    const { map_answer } = data;
+
     if (map_answer?.id && !answers.id) answers.id = map_answer?.id;
   }), { deep: true });
 });
@@ -122,7 +137,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="ready" :id="props.id" class="relative text-center border-gray-300 border rounded shadow p-6 px-9 mx-auto max-w-6xl select-none">
+  <div
+    v-if="ready"
+    :id="props.id"
+    :class="[saving ? 'blur' : '', failed ? 'shadow-err' : '']"
+    class="relative text-center border-gray-300 border rounded shadow p-6 px-9 mx-auto max-w-6xl select-none"
+  >
+
+    <div v-if="saving" class="absolute top-0 bottom-0 left-0 right-0 z-50 bg-gray-200 opacity-50">
+    </div>
+
     <header v-if="!noHead" class="mb-6 py-3 mx-auto">
       <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ task_id ?  generateShapedIdfromId(task_id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
 
@@ -205,5 +229,18 @@ onMounted(() => {
 
 .sto-mt-7{
   margin-top: 7px;
+}
+
+.blur {
+  filter: blur(2px);
+}
+
+.shadow-err {
+  box-shadow: inset 0 0 100px 3px rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.1);
+}
+
+.shadow-err textarea, .shadow-err input[type="text"] {
+  background-color: transparent;
 }
 </style>

@@ -9,6 +9,9 @@ import service from '~/services/tasks/worker-preview';
 import WorkerPreview from '~/components/Partials/tasks/WorkerPreview.vue';
 import useSuspense from '~/composables/useSuspense';
 import { tasksColorMap, ruMonths } from '~/helpers';
+import useAppRouter from '~/composables/useAppRouter';
+
+const { query } = useAppRouter();
 
 const SuspenseArea = useSuspense(WorkerPreview);
 
@@ -97,7 +100,7 @@ const timeline = computed(() => {
 <template>
   <Layout :title="task?.name">
     <template #actions>
-      <Button type="secondary" :link="{ name: 'WorkerTasks' }">
+      <Button v-if="query.from === 'tasks'" type="secondary" :link="{ name: 'WorkerTasks' }">
         <ArrowLeftIcon class="w-5 h-5 mr-1"/>К задачам
       </Button>
     </template>
@@ -108,8 +111,8 @@ const timeline = computed(() => {
         <suspense-area />
       </div>
 
-      <section aria-labelledby="timeline-title" class="lg:col-start-5 lg:col-span-2">
-        <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
+      <section aria-labelledby="timeline-title" class="lg:col-start-5 lg:col-span-2 relative">
+        <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6 sticky top-3">
           <h2 id="timeline-title" class="text-lg font-medium text-gray-900">Выполнено по текущему процессу</h2>
 
           <Feeds :items="timeline" class="mt-5 max-h-vh overflow-y-scroll" />

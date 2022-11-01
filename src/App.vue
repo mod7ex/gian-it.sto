@@ -5,8 +5,10 @@ import Loader from '~/components/Partials/Loader.vue';
 
 <template>
 
-  <Loader />
-  <router-view />
+  <div>
+    <Loader />
+    <router-view />
+  </div>
 
 </template>
 
@@ -79,6 +81,10 @@ import Loader from '~/components/Partials/Loader.vue';
 }
 
 /* ************ ************ ************ ************ */
+
+.no-scrol-scroll-thum::-webkit-scrollbar {
+  display: none;
+}
 
 ::-webkit-scrollbar {
   width: .3em;

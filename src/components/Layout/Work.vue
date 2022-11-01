@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { MenuIcon, XIcon } from '@heroicons/vue/outline';
+import { MenuIcon, XIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
 import { setTitle } from '~/lib/meta.js';
 import Logo from '@/Partials/Logo.vue';
 import Button from '@/UI/Button.vue';
@@ -20,7 +20,7 @@ const props = defineProps({
   title: { type: String, required: false },
 });
 
-const { isCurrentFullPath } = useAppRouter();
+const { isCurrentFullPath, query } = useAppRouter();
 
 watch(() => props.title, (v) => setTitle(v));
 
@@ -93,7 +93,9 @@ const isShowMenu = ref(false);
                     <router-link
                       :to="{ name: 'WorderKanban' }"
                       class="block rounded-md px-3 py-2 text-base text-gray-900 font-medium hover:bg-gray-100 hover:text-gray-800"
-                    >Канбан</router-link>
+                    >
+                      <ArrowLeftIcon v-if="query.from === 'kanban'" class="w-5 h-5 mr-1"/>{{ query.from === 'kanban' ?  'К Канбан' : 'Канбан' }}
+                    </router-link>
 
                     <Button color="blue" :link="{ name: 'ChangeWorker' }">Завершить смену</Button>
                   </div>
@@ -106,7 +108,9 @@ const isShowMenu = ref(false);
             <div class="mt-6 flex items-center flex-col-reverse justify-stretch space-y-4 space-y-reverse sm:flex-row-reverse sm:justify-end sm:space-x-reverse sm:space-y-0 sm:space-x-3 md:mt-0 md:flex-row md:space-x-3">
               <slot name="actions"></slot>
 
-              <Button type="secondary" :link="{ name: 'WorderKanban' }">Канбан</Button>
+              <Button type="secondary" :link="{ name: 'WorderKanban' }">
+                <ArrowLeftIcon v-if="query.from === 'kanban'" class="w-5 h-5 mr-1"/>{{ query.from === 'kanban' ?  'К Канбан' : 'Канбан' }}
+              </Button>
 
               <Button type="secondary" :link="{ name: 'ChangeWorker' }">Завершить смену</Button>
             </div>

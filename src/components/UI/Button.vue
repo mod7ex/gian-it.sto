@@ -36,11 +36,10 @@ const props = defineProps({
     type: [String, Object],
     required: false,
   },
-  blur: {
+  bur: {
     type: Boolean,
     default: false,
   },
-
   disabled: {
     type: Boolean,
     default: false,

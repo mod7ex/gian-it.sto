@@ -28,7 +28,7 @@ const canDrag = (task) => { return canTasks(task, 'update_stage'); }
       <div
         v-for="[id, {name, color}] in Object.entries(columns)"
         :key="id"
-        class="rounded-lg p-3 col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 stage"
+        class="rounded-lg p-3 col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3 stage overflow-y-scroll no-scrol-scroll-thum"
         :style="{background: color}"
       >
         <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ name }}</p>
@@ -47,7 +47,7 @@ const canDrag = (task) => { return canTasks(task, 'update_stage'); }
             <div :class="[' shadow rounded px-3 pt-3 my-2 pb-5 border w-full select-none', canDrag(element) ? 'draggable bg-white' : 'bg-gray-100 opacity-60']" :key="element.id" :id="element.id" >
               <div class="flex justify-between">
                 <div>
-                  <Link :disabled="!canDrag(element)" class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'WorkerTask', params: {id: element.id} }" >
+                  <Link :disabled="!canDrag(element)" class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'WorkerTask', params: {id: element.id} , query: { from: 'kanban' }}" >
                     {{ element.name}}
                   </Link>
                 </div>
@@ -99,9 +99,9 @@ const canDrag = (task) => { return canTasks(task, 'update_stage'); }
   min-height: 200px;
 }
 
-.stage {
+.stage{
   min-width: 300px;
-  min-height: 400px;
+  height: 730px;
 }
 
 @media (min-width: 2000px) {

@@ -126,7 +126,7 @@ const fields = [
       <div
         v-for="[id, {name, color}] in Object.entries(columns)"
         :key="id"
-        class="rounded-lg p-3 stage"
+        class="rounded-lg p-3 stage overflow-y-scroll no-scrol-scroll-thum"
         :style="{background: color}"
       >
         <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ name }}</p>
@@ -286,7 +286,7 @@ const fields = [
 
 .stage{
   min-width: 300px;
-  min-height: 400px;
+  height: 730px;
 }
 
 .ghost {

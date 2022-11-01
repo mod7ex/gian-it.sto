@@ -34,7 +34,7 @@ await fetchTasks(true);
     <!-- Body -->
     <template #td-name="{ value, item: {id} }" >
         <span :data-tooltip="value" class="tooltip" >
-          <Link :href="{name: 'WorkerTask', params: { id }}">{{ trimExact(value) }}</Link>
+          <Link :href="{ name: 'WorkerTask', params: { id }, query: { from: 'tasks' } }">{{ trimExact(value) }}</Link>
         </span>
     </template>
 

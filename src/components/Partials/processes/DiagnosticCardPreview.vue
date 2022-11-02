@@ -1,8 +1,10 @@
 <script setup>
 import { computed, onMounted, reactive, watch, ref, shallowRef } from 'vue';
-import { generateShapedIdfromId, debounce } from '~/helpers';
+import { generateShapedIdfromId, debounce, uuidGen } from '~/helpers';
 import save from '~/helpers/save';
 import DiagnosticCardPrint from './DiagnosticCardPrint.vue';
+
+const uuid = uuidGen('dk-worker');
 
 const props = defineProps({
   id: String,
@@ -134,6 +136,12 @@ onMounted(() => {
   }), { deep: true });
 });
 
+// const uuids = props.fields.filter(({ type }) => type === 'check_list').map(({ data }) => data.items.map(() => uuid())).flat();
+const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((prev, { data }) => data.items.reduce((_prev, _curr) => ({
+  ..._prev,
+  [_curr]: uuid(),
+}), prev), {});
+
 </script>
 
 <template>
@@ -161,24 +169,26 @@ onMounted(() => {
 
     <!-- Fields -->
     <div class="mx-auto" >
-      <div v-for="({ data, type, token }, i) in fields" :key="i" class="mb-9" >
+      <div v-for="({ data, type, token }, i) in fields" :key="i" class="mb-16" >
 
         <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
           <h3 class="font-bold text-xl mb-3">{{ data?.title }}</h3>
-          <div :class="['mx-auto gap-3', for_worker ? 'flex flex-col' : 'grid grid-cols-12']">
+          <div :class="['mx-auto gap-6', for_worker ? 'flex flex-wrap' : 'grid grid-cols-12']">
             <div
               v-for="(item, j) in data.items"
               :key="`${j}-item`"
               :class="[
-                'checklist-item relative col-span-12 flex items-start justify-center content-center',
+                'checklist-item relative col-span-12 flex',
                 data.items.length < 3 ? 'sm:col-span-6' : '',
                 data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
                 data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '',
                 for_worker ? 'for_worker' : ''
               ]"
             >
-              <input type="checkbox" class="rounded mr-2 sto-mt-7 bg-gray-50 p-2" v-model="answers.data[findFieldIndex(token, type)].data[j]" :disabled="blocked" >
-              <span class="text-left w-full -mb-2">{{ item }}</span>
+              <label :for="uuids[item]" class="flex items-center" >
+                <input type="checkbox" :id="uuids[item]" class="rounded mr-2 bg-gray-50 p-2" v-model="answers.data[findFieldIndex(token, type)].data[j]" :disabled="blocked" >
+                <span class="text-left w-full whitespace-nowrap">{{ item }}</span>
+              </label>
             </div>
           </div>
         </div>
@@ -225,10 +235,6 @@ onMounted(() => {
 .for_worker input {
   padding: 1em;
   border-radius: 50%;
-}
-
-.sto-mt-7{
-  margin-top: 7px;
 }
 
 .blur {

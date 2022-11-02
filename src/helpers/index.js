@@ -256,3 +256,15 @@ export const timeSince = (date) => {
   const [y, m, d] = date.split('-');
   return `${d}-${m}-${y}`;
 };
+
+export const uuidGen = (sig) => {
+  let i = 0;
+
+  return (_sig) => {
+    const uuid = `${Date.now()}-${sig ?? 'empty'}-${_sig ?? 'empty'}-${i}`;
+
+    i++;
+
+    return uuid;
+  };
+};

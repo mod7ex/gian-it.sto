@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, shallowRef } from 'vue';
 import { MenuIcon, XIcon, ArrowLeftIcon } from '@heroicons/vue/outline';
 import { setTitle } from '~/lib/meta.js';
 import Logo from '@/Partials/Logo.vue';
@@ -31,6 +31,7 @@ const menu = [
 ].map(({ label, href }) => ({ label, href, current: isCurrentFullPath({ name: href.name }) }));
 
 const isShowMenu = ref(false);
+
 </script>
 
 <template>
@@ -121,7 +122,7 @@ const isShowMenu = ref(false);
 
     <main class="py-10">
       <div class="main-inner max-w-7xl xl:max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
-        <slot></slot>
+        <slot ></slot>
       </div>
     </main>
   </div>

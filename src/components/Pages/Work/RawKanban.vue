@@ -10,7 +10,7 @@ import {canTasks, userHasAtLeastOnePermission} from '~/lib/permissions'
 
 const { log, atMounted, state, getKanBanPayload, theSelectedFunnel, fillColumns, columns } = service();
 
-watch(theSelectedFunnel, fillColumns);
+watch(theSelectedFunnel, fillColumns, { immediate: true });
 
 await atMounted();
 
@@ -21,7 +21,7 @@ const canDrag = (task) => { return canTasks(task, 'update_stage'); }
 </script>
 
 <template>
-  <div class="my-8 relative" v-if="theSelectedFunnel" >
+  <div class="mb-8 relative" v-if="theSelectedFunnel" >
 
     <!-- <div @scroll="() => foo()" id="tasks-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5 shadow-inner p-5"> -->
     <div class="grid grid-cols-12 gap-3 pb-5">
@@ -63,11 +63,11 @@ const canDrag = (task) => { return canTasks(task, 'update_stage'); }
                 </div>
               </div>
 
-              <div class="mb-2" >
+              <div class="mb-2" v-if="element.order?.id" >
                 <span class="text-sm text-gray-600">Заказ-наряд #{{ generateShapedIdfromId(element.order?.id) }}</span>
               </div>
 
-              <div>
+              <div v-if="element?.order?.car?.car_model" >
                 <Badge color="blue" :point="true" >
                   {{ `${element?.order?.car?.car_model?.car_mark?.name ?? ''} ${element?.order?.car?.car_model?.name ?? '_'}` }}
                 </Badge>
@@ -101,7 +101,7 @@ const canDrag = (task) => { return canTasks(task, 'update_stage'); }
 
 .stage{
   min-width: 300px;
-  height: 730px;
+  max-height: 590px;
 }
 
 @media (min-width: 2000px) {

@@ -17,17 +17,17 @@ onScopeDispose(clearMemo);
 </script>
 
 <template>
-  <Layout title="Канбан">
+  <Layout title="Канбан" >
 
-    <worker-badge />
+      <worker-badge />
 
-    <Header>Канбан</Header>
+      <Header>Канбан</Header>
 
-    <div class="grid grid-cols-12">
-      <Select :options="options" v-model="theSelectedFunnel" class="col-span-4" />
-    </div>
+      <div class="grid grid-cols-12 ">
+        <Select :options="options" v-model="theSelectedFunnel" class="col-span-4 mb-0" />
+      </div>
 
-    <suspense-area />
+      <suspense-area />
 
   </Layout>
 </template>

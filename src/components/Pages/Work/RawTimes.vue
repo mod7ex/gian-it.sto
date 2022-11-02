@@ -39,7 +39,7 @@ const getClosedTasksNumberIn = (day) => state.raw.filter(({ logs }) => {
   return false;
 }).length;
 
-const getWorkedHoursNumberIn = (day) => {
+const getWorkedMinsNumberIn = (day) => {
   let workedHours = 0;
 
   state.raw.forEach(({ logs }) => {
@@ -48,7 +48,7 @@ const getWorkedHoursNumberIn = (day) => {
     const taskWorkedHours = [];
 
     for (let i = 0; i < logs.length; i++) {
-      const { created_at, data, type } = logs[i];
+      const { created_at, data, type } = logs[i]; // add a funnel-to-etape map in API
       if (type === 'task_status') {
         const d = (new Date(created_at.split(' ')[0])).getTime();
         // no need to check if 'status' in data
@@ -92,7 +92,7 @@ const createDays = () => {
   const days = [];
 
   while (start <= end) {
-    const mins = getWorkedHoursNumberIn(start);
+    const mins = getWorkedMinsNumberIn(start);
     const worked_hours = `${Math.floor(mins / 60)}ч ${Math.floor(mins % 60)}мин`;
     days.push({ day: start, worked_hours, closed_tasks: getClosedTasksNumberIn(start) });
     start += 24 * 60 * 60 * 1000; // next day
@@ -114,6 +114,9 @@ await fetchTasks(true, {user_id: user.value.id});
 </script>
 
 <template>
+  <pre>
+    {{ state.raw }}
+  </pre>
   <Table
     :fields="fields"
     :items="times"

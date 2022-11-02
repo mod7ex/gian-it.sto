@@ -44,19 +44,19 @@ const findFieldIndex = (tk, tp) => findFieldInexIn(props.answers.data, tk, tp);
 
         <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
           <h3 class="text-center font-bold text-xl mb-3">{{ data?.title }}</h3>
-          <div :class="['mx-auto flex flex-col border-t border-l border-black']">
+          <div :class="['mx-auto flex flex-wrap content-center border-l border-black']">
             <div
               v-for="(item, j) in data.items"
               :key="`${j}-item`"
               :class="[
                 'checklist-item relative col-span-12 flex items-stretch justify-center border-r border-b border-black',
-                data.items.length < 3 ? 'sm:col-span-6' : '',
-                data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
-                data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '',
               ]"
             >
-              <span class="text-left w-full border-r border-black p-3">{{ item }}</span>
-              <span class="flex items-center justify-center w-10 text-3xl py-3">
+            <!-- data.items.length < 3 ? 'sm:col-span-6' : '',
+            data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
+            data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '', -->
+              <span class="text-left w-full border-r border-t border-black p-3 flex items-center justify-center">{{ item }}</span>
+              <span class="flex items-center justify-center w-10 text-3xl py-3 px-6 border-t border-black">
                 {{ answers.data[findFieldIndex(token, type)].data[j] ? '&#10003;' : ' ' }}
               </span>
             </div>
@@ -113,4 +113,5 @@ body #printable {
   }
 
 }
+
 </style>

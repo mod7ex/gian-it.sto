@@ -26,8 +26,6 @@ const getKanBanPayload = (v) => {
 
   const tasks_in_this_funnel = tasksInFunnel(v);
 
-  console.log(tasks_in_this_funnel);
-
   const kanban = funnel.stages.reduce((payload, curr) => {
     const { id, color, name } = curr;
 
@@ -76,16 +74,17 @@ const log = async (e) => {
 
 const atMounted = async () => {
   await Promise.all([loadFunnels(), getTasks(true)]).then(() => {
-    theSelectedFunnel.value = funnelsState.raw[0]?.id;
+    if (theSelectedFunnel.value == null) theSelectedFunnel.value = funnelsState.raw[0]?.id;
   });
 };
 
 export default () => effectScope().run(() => {
   const { filter: _filter, resetFilter } = service();
 
+  if (!theSelectedFunnel) theSelectedFunnel = ref();
+
   if (!columns) {
     columns = ref({});
-    theSelectedFunnel = ref();
     filter = _filter;
     getTasks = async (bool = true) => {
       if (bool) reset();

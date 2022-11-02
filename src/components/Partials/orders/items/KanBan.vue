@@ -121,7 +121,7 @@ const fields = [
 
 <template>
 <div>
-  <div class="my-16 relative">
+  <div class="mb-16 relative">
     <div @scroll="() => foo()" id="orders-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5">
       <div
         v-for="[id, {name, color}] in Object.entries(columns)"
@@ -286,7 +286,7 @@ const fields = [
 
 .stage{
   min-width: 300px;
-  height: 730px;
+  max-height: 590px;
 }
 
 .ghost {

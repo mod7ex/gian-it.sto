@@ -29,8 +29,7 @@ const taskFramedLogs = (task, from, to) => {
   const start = toMs(from);
   const end = toMs(to);
 
-  const filterer = ({ created_at, type }) => ((start <= toMs(created_at) <= end) && type == 'task_status');
-  // const filterer = ({ created_at, type }) => ((start <= toMs(created_at) <= end) && (type == 'task_status' || type === 'task_created'));
+  const filterer = ({ created_at, type }) => ((start <= toMs(created_at) <= end) && (type == 'task_status' || type === 'task_created'));
 
   return task?.logs?.filter(filterer).map(({ created_at, data, type }) => {
     const stage_id = logStageId({ data });
@@ -42,7 +41,7 @@ const taskFramedLogs = (task, from, to) => {
 };
 
 /**
- * frame all the tasks logs
+ * frame all the tasks <logs>
  */
 const tasksWithFramedLogs = (v, from, to) => v?.map((task) => taskFramedLogs(task, from, to));
 
@@ -89,7 +88,7 @@ const wasItClosed = (framedLogs) => { return framedLogs.some(({ status }) => sta
 
 const payload = computed(() => {
 
-  const framedLogsOfAllTasksOfTheSelectedUser = tasksWithFramedLogs(tasks.value, edge.from, edge.to) ?? []
+  const tasksFramedLogs = tasksWithFramedLogs(tasks.value, edge.from, edge.to) ?? []
 
   let start = toMs(edge.from);
   const end = toMs(edge.to);
@@ -97,11 +96,12 @@ const payload = computed(() => {
   const _payload = [];
 
   while (start <= end) {
-    let mins = (framedLogsOfAllTasksOfTheSelectedUser.reduce((prev, curr) => { prev + oneDayWorkTimeFromFramedLogs(curr, start) }, 0) ?? 0) / (1000 * 60);
+    let mins = tasksFramedLogs.reduce((prev, curr) => (prev + oneDayWorkTimeFromFramedLogs(curr, start)), 0);
+    mins = (mins ?? 0) / (1000 * 60);
 
     const work_time = mins ?  `${Math.floor(mins / 60)}ч ${Math.floor(mins % 60)}мин` : 0;
 
-    const closed_tasks = framedLogsOfAllTasksOfTheSelectedUser.reduce((prev, curr) => { prev + wasItClosed(curr) }, 0) ?? 0
+    const closed_tasks = tasksFramedLogs.reduce((prev, curr) => (prev + wasItClosed(curr)), 0) ?? 0
 
     _payload.push({ day: start, work_time, closed_tasks }); // Fix
 
@@ -122,32 +122,34 @@ await (async () => { tasks.value = await $.tasks({ pipeline_id: selection.funnel
 </script>
 
 <template>
-<!--
-  <pre>
+ 
+<!-- 
+    <pre>
+    {{ JSON.stringify(tasksWithFramedLogs(tasks, edge.from, edge.to), null, 1) }}
     {{ JSON.stringify(payload, null, 1) }}
-    {{ JSON.stringify(selection, null, 1) }}
   </pre>
--->
+ -->
+ 
 
-  <div>
-    <small>NB: в выбранный период времени, даже если задача закрывалась много раз, засчитывается только один раз</small>
-
-    <Table
-      :fields="fields"
-      :items="payload"
-      :actions="false"
-    >
-      <template #td-day="{ value }" >
-        {{ new Date(value).getDate() }} {{ ruMonths[new Date(value).getMonth()] }}
-      </template>
-      
-      <template #td-work_time="{ value }" >
-        {{ value }}
-      </template>
-      
-      <template #td-closed_tasks="{ value }" >
-        {{ value }}
-      </template>
-    </Table>
-  </div>
+    <div>
+      <small>NB: в выбранный период времени, даже если задача закрывалась много раз, засчитывается только один раз</small>
+  
+      <Table
+        :fields="fields"
+        :items="payload"
+        :actions="false"
+      >
+        <template #td-day="{ value }" >
+          {{ new Date(value).getDate() }} {{ ruMonths[new Date(value).getMonth()] }}
+        </template>
+        
+        <template #td-work_time="{ value }" >
+          {{ value }}
+        </template>
+        
+        <template #td-closed_tasks="{ value }" >
+          {{ value }}
+        </template>
+      </Table>
+    </div>
 </template>

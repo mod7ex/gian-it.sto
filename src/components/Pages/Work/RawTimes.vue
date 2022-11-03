@@ -15,7 +15,13 @@ const logStageId = (log) => log?.data?.pipelines?.filter(({ pipeline_id }) => pi
 
 const toMs = (v) => new Date(v)?.getTime();
 
-const logsByDay = (logs, day) => { return logs?.filter(({ timestamp }) => (ONE_DAY_IN_MS > timestamp - day >= 0)) ?? [] };
+const msToDayOfMonth = (v) => new Date(v).getDate();
+
+const logsByDay = (logs, day) => {
+  day = msToDayOfMonth(day);
+
+  return logs?.filter(({ timestamp }) => msToDayOfMonth(timestamp) === day) ?? [];
+};
 
 /**
  * 
@@ -53,14 +59,14 @@ const tasksWithFramedLogs = (v, from, to) => v?.map((task) => taskFramedLogs(tas
 const oneDayWorkTimeFromFramedLogs = (framedLogs, day) => {
   let workTime = 0;
 
-  if (framedLogs.length) {
+  if (framedLogs?.length) {
     // sort & filter only logs recorded in <day>
-    const logs = logsByDay(framedLogs.sort((a, b) => a.timestamp - b.timestamp), day)
+    const logs = logsByDay(framedLogs.sort((a, b) => a.timestamp - b.timestamp), day);
 
     if (logs.length) {
       // worker didn't pause or finish the task the starting of the day
       const { status: status_f, timestamp: timestamp_f } = logs[0];
-      if (status_f === 'process') workTime += timestamp_f - day;
+      if (status_f !== 'process' && status_f !== 'wait') workTime += timestamp_f - day;
 
       // worker didn't pause or finish the task at the end of the day
       const { status: status_l, timestamp: timestamp_l } = logs[logs.length - 1];
@@ -84,7 +90,7 @@ const oneDayWorkTimeFromFramedLogs = (framedLogs, day) => {
   return workTime;
 };
 
-const wasItClosed = (framedLogs) => { return framedLogs.some(({ status }) => status === 'done') ? 1 : 0; }
+const oneDayClosedTasks = (framedLogs, day) => { return logsByDay(framedLogs, day)?.some(({ status }) => status === 'done') ? 1 : 0; }
 
 const payload = computed(() => {
 
@@ -101,7 +107,7 @@ const payload = computed(() => {
 
     const work_time = mins ?  `${Math.floor(mins / 60)}ч ${Math.floor(mins % 60)}мин` : 0;
 
-    const closed_tasks = tasksFramedLogs.reduce((prev, curr) => (prev + wasItClosed(curr)), 0) ?? 0
+    const closed_tasks = tasksFramedLogs.reduce((prev, curr) => (prev + oneDayClosedTasks(curr, start)), 0) ?? 0
 
     _payload.push({ day: start, work_time, closed_tasks }); // Fix
 
@@ -124,15 +130,17 @@ await (async () => { tasks.value = await $.tasks({ pipeline_id: selection.funnel
 <template>
  
 <!-- 
-    <pre>
+  <pre>
     {{ JSON.stringify(tasksWithFramedLogs(tasks, edge.from, edge.to), null, 1) }}
     {{ JSON.stringify(payload, null, 1) }}
   </pre>
- -->
+-->
  
 
-    <div>
-      <small>NB: в выбранный период времени, даже если задача закрывалась много раз, засчитывается только один раз</small>
+      <div>
+      <small><b>NB</b> : в один день, даже если задача закрывалась много раз, засчитывается только один раз</small>
+      <br>
+      <small><b>NB</b> : если другой пользователь играл с вашими задачами, здесь будет отображаться, что вы работали над этими задачами, даже если вы их не трогали</small>
   
       <Table
         :fields="fields"
@@ -140,7 +148,7 @@ await (async () => { tasks.value = await $.tasks({ pipeline_id: selection.funnel
         :actions="false"
       >
         <template #td-day="{ value }" >
-          {{ new Date(value).getDate() }} {{ ruMonths[new Date(value).getMonth()] }}
+          {{ msToDayOfMonth(value) }} {{ ruMonths[new Date(value).getMonth()] }}
         </template>
         
         <template #td-work_time="{ value }" >

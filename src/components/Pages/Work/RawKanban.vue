@@ -14,9 +14,9 @@ watch(theSelectedFunnel, fillColumns, { immediate: true });
 
 await atMounted();
 
-const canDragAndDrop = userHasAtLeastOnePermission(['update stage tasks', 'update department stage tasks', 'update own stage tasks'])
+const canDragAndDrop = userHasAtLeastOnePermission(['update stage tasks', 'update department stage tasks', 'update own stage tasks']);
 
-const canDrag = (task) => { return canTasks(task, 'update_stage'); }
+const canDrag = (task) => { return canTasks(task, 'update_stage') && task.status !== 'process'; }
 
 </script>
 
@@ -42,10 +42,10 @@ const canDrag = (task) => { return canTasks(task, 'update_stage'); }
           @end="log"
           :disabled="/* !userHasPermission('update tasks') */ !canDragAndDrop"
           draggable=".draggable"
-        >
+          >
           <template #item="{element}">
             <div :class="[' shadow rounded px-3 pt-3 my-2 pb-5 border w-full select-none', canDrag(element) ? 'draggable bg-white' : 'bg-gray-100 opacity-60']" :key="element.id" :id="element.id" >
-              <div class="flex justify-between">
+              <div class="flex justify-between"> 
                 <div>
                   <Link :disabled="!canDrag(element)" class="font-semibold font-sans tracking-wide text-sm" :href="{ name: 'WorkerTask', params: {id: element.id} , query: { from: 'kanban' }}" >
                     {{ element.name}}

@@ -1,5 +1,5 @@
 <script setup>
-import { onScopeDispose } from 'vue';
+import { computed, onMounted, onScopeDispose } from 'vue';
 import Layout from '@/Layout/Work.vue';
 import Header from '@/UI/Header.vue';
 import Input from '@/UI/Input.vue';
@@ -7,15 +7,23 @@ import WorkerBadge from '~/components/Partials/WorkerBadge.vue';
 import useSuspense from '~/composables/useSuspense';
 import RawTimes from '@/Pages/Work/RawTimes.vue';
 import service from '~/services/tasks/worker';
+import Select from '@/UI/Select.vue';
 import { hyphenatedDateFormat } from '~/helpers';
+import userStore from '~/store/employees';
 
-const { clearMemo, initTimeEdges } = service();
+const { options: users, load } = userStore;
+
+const { clearMemo, initTimeEdges, options, selection, loadFunnels, funnelById } = service();
 
 const SuspenseArea = useSuspense(RawTimes);
 
 onScopeDispose(clearMemo);
 
 const edge = initTimeEdges();
+
+onMounted(async () => { await loadFunnels(); await load(); selection.funnel = options.value[0]?.value; selection.user = users.value[0]?.value; });
+
+const stageOptions = computed(() => funnelById(selection.funnel)?.stages.map(({ id, name }) => ({ label: name, value: id })));
 
 </script>
 
@@ -29,9 +37,12 @@ const edge = initTimeEdges();
     <div class="flex flex-wrap gap-2 items-end mt-4">
       <Input label="Дата от" v-model="edge.from" type="date" :max="hyphenatedDateFormat(new Date(edge.to))" />
       <Input label="Дата до" v-model="edge.to" type="date" :max="hyphenatedDateFormat(new Date())" :min="hyphenatedDateFormat(new Date(edge.from))" />
+      <Select label="Сотрудник" :options="users" v-model="selection.user" class="col-span-4" />
+      <Select label="Воронка" :options="options" v-model="selection.funnel" class="col-span-4" />
+      <Select label="Этап" :options="stageOptions" v-model="selection.etape" class="col-span-4" />
     </div>
 
-    <suspense-area />
+    <suspense-area :key="`${selection.funnel}-${selection.user}`" />
 
   </Layout>
 </template>

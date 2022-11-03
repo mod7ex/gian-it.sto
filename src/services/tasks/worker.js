@@ -1,8 +1,11 @@
-import { reactive, effectScope, customRef } from 'vue';
+import { reactive, effectScope /* , customRef */ } from 'vue';
 import { hyphenatedDateFormat, cleanUp } from '~/helpers';
 import departmentStore from '~/store/departments';
 import useOrder from '~/composables/useOrder.js';
 import store from '~/store/tasks';
+import pipelinesStore from '~/store/pipelines';
+
+const { state: funnelState, load: loadFunnels, options, funnelById } = pipelinesStore;
 
 const { sort, fill, reset: resetStore, state } = store;
 
@@ -18,6 +21,7 @@ const pivot = {
 
 let filter;
 let edge;
+let selection;
 
 const clearMemo = () => { filter = undefined; edge = undefined; };
 
@@ -39,6 +43,29 @@ const createRefEdges = () => {
 
 */
 
+const fetchTasks = async (bool = false, payload) => {
+  // Function is used to show worker tasks and to calculate Worker time
+  if (bool) resetStore();
+  await fill({ ...cleanUp(filter), ...payload }, false);
+};
+
+const initTimeEdges = () => {
+  if (!edge) {
+    edge = reactive({
+      from: hyphenatedDateFormat(new Date(Date.now())),
+      to: hyphenatedDateFormat(new Date()),
+    });
+  }
+
+  return edge;
+};
+
+const resetFilter = () => {
+  Object.keys(filter).forEach((key) => {
+    filter[key] = '';
+  });
+};
+
 export default () => effectScope().run(() => {
   const order = useOrder(pivot, DEFAULT_ORDER_CRITERIA, (v) => { sort(v); }, 1);
 
@@ -51,28 +78,7 @@ export default () => effectScope().run(() => {
     });
   }
 
-  const resetFilter = () => {
-    Object.keys(filter).forEach((key) => {
-      filter[key] = '';
-    });
-  };
-
-  const fetchTasks = async (bool = false, payload) => {
-    // Function is used to show worker tasks and to calculate Worker time
-    if (bool) resetStore();
-    await fill({ ...cleanUp(filter), ...payload }, false);
-  };
-
-  const initTimeEdges = () => {
-    if (!edge) {
-      edge = reactive({
-        from: hyphenatedDateFormat(new Date(Date.now())),
-        to: hyphenatedDateFormat(new Date()),
-      });
-    }
-
-    return edge;
-  };
+  if (!selection) selection = reactive({});
 
   return {
     order,
@@ -84,5 +90,10 @@ export default () => effectScope().run(() => {
     state,
     initTimeEdges,
     edge,
+    options,
+    selection,
+    loadFunnels,
+    funnelState,
+    funnelById,
   };
 });

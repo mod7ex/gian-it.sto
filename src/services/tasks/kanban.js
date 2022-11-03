@@ -73,9 +73,8 @@ const log = async (e) => {
 };
 
 const atMounted = async () => {
-  await Promise.all([loadFunnels(), getTasks(true)]).then(() => {
-    if (theSelectedFunnel.value == null) theSelectedFunnel.value = funnelsState.raw[0]?.id;
-  });
+  await getTasks(true, { pipeline_id: theSelectedFunnel.value });
+  fillColumns(theSelectedFunnel.value);
 };
 
 export default () => effectScope().run(() => {
@@ -86,10 +85,9 @@ export default () => effectScope().run(() => {
   if (!columns) {
     columns = ref({});
     filter = _filter;
-    getTasks = async (bool = true) => {
+    getTasks = async (bool = true, payload) => {
       if (bool) reset();
-      // await fill({ ...cleanUp(filter), user_id: user.value?.id }, false);
-      await fill(cleanUp(filter), false);
+      await fill({ ...cleanUp(filter), ...payload }, false);
     };
   }
 
@@ -104,7 +102,7 @@ export default () => effectScope().run(() => {
     theSelectedFunnel,
     sig: computed(() => objectSignature(filter)),
     resetFilter,
-    fillColumns,
+    loadFunnels,
     clearMemo: () => {
       filter = undefined;
       getTasks = undefined;

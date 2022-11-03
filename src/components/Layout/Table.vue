@@ -51,7 +51,7 @@ const noActions = (item) => props.noDelete(item) && props.noEdit(item);
 
 <template>
     <div :ref="(v)=>container = v">
-        <Table class="mt-5">
+        <Table :class="[$attrs.class, 'mt-5']">
             <THead>
                 <Tr>
                     <Th v-for="field in props.fields" :key="field.key">
@@ -103,7 +103,6 @@ const noActions = (item) => props.noDelete(item) && props.noEdit(item);
 
             </TBody>
         </Table>
-
         <pixel />
     </div>
 </template>

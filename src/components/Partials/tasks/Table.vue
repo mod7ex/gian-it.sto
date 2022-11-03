@@ -1,4 +1,5 @@
 <script setup>
+import { CogIcon } from '@heroicons/vue/outline'
 import Link from '@/UI/Link.vue';
 import Badge from '@/UI/Badge.vue';
 import Avatar from '@/UI/Avatar.vue';
@@ -34,6 +35,7 @@ const fields = [
   { label: 'Название', key: 'name' },
   // ...[props.order_id ? { label: 'Тип', key: 'type' } :  new Array()],
   { label: 'Тип', key: 'type' },
+  { label: 'Bоронка-этап', key: 'funnel_etap' },
   { label: 'Ответственный', key: 'user' },
   { label: 'Статус', key: 'status' },
   { label: 'Крайний срок', key: 'deadline_at' },
@@ -41,15 +43,15 @@ const fields = [
   { label: 'Дата создания', key: 'created_at' },
 ];
 
-if (!props.order_id) {
-  fields.push();
-}
+if (!props.order_id) { fields.push(); }
 
 fields.push();
 
 const { state, options } = store;
 
 await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
+
+const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, stage }) => { return prev + `${pipeline.name} - ${stage.name}<br />` }, '');
 
 </script>
 
@@ -82,6 +84,7 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
     :noEdit="(item) => !canTasks(item, 'update')"
     :noDelete="(item) => !canTasks(item, 'delete')"
     :actions="userHasAtLeastOnePermission(['update tasks', 'delete tasks'])"
+    class="relative"
   >
     <!-- :actions="!canTasks(item, 'update') && !canTasks(item, 'delete')" -->
     <!-- Body -->
@@ -109,6 +112,13 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
         <Badge :point="true" :color="tasksColorMap[value].color">{{ tasksColorMap[value].label }}</Badge>
     </template>
 
+    <template #td-funnel_etap="{ item }" >
+      <span :data-tooltip="createFunnelEtapeMapHTML(item.pipelines)" class="funnel-etap-map relative" > 
+        <p class="absolute -top-10 -left-12" v-html="createFunnelEtapeMapHTML(item.pipelines)" ></p>
+        <CogIcon class="w-6 h-6" />
+      </span>
+    </template>
+
     <template #td-created_at="{ value }" >
         {{ value.split(' ')[0] }}
     </template>
@@ -126,3 +136,27 @@ await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
   </Table>
 
 </template>
+
+<style>
+
+.funnel-etap-map {
+  z-index: 100;
+}
+.funnel-etap-map p {
+  visibility: hidden;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 5px;
+  color: white;
+  padding: 3px 6px;
+  transition: opacity 1s ease-out;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.funnel-etap-map:hover p {
+  visibility: visible;
+  opacity: 1;
+}
+
+</style>

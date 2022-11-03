@@ -4,6 +4,7 @@ import service from '~/services/tasks/worker';
 import { ruMonths } from '~/helpers';
 import Table from '@/Layout/Table.vue';
 import $ from '~/helpers/fetch.js';
+import stage from '~/validationsRules/stage';
 
 const { edge, selection } = service();
 
@@ -39,6 +40,7 @@ const taskFramedLogs = (task, from, to) => {
 
   return task?.logs?.filter(filterer).map(({ created_at, data, type }) => {
     const stage_id = logStageId({ data });
+    console.log(data)
     const status = data?.status;
     const timestamp = toMs(created_at);
 
@@ -128,36 +130,34 @@ await (async () => { tasks.value = await $.tasks({ pipeline_id: selection.funnel
 </script>
 
 <template>
- 
 <!-- 
   <pre>
     {{ JSON.stringify(tasksWithFramedLogs(tasks, edge.from, edge.to), null, 1) }}
     {{ JSON.stringify(payload, null, 1) }}
   </pre>
 -->
- 
 
-      <div>
-      <small><b>NB</b> : в один день, даже если задача закрывалась много раз, засчитывается только один раз</small>
-      <br>
-      <small><b>NB</b> : если другой пользователь играл с вашими задачами, здесь будет отображаться, что вы работали над этими задачами, даже если вы их не трогали</small>
-  
-      <Table
-        :fields="fields"
-        :items="payload"
-        :actions="false"
-      >
-        <template #td-day="{ value }" >
-          {{ msToDayOfMonth(value) }} {{ ruMonths[new Date(value).getMonth()] }}
-        </template>
-        
-        <template #td-work_time="{ value }" >
-          {{ value }}
-        </template>
-        
-        <template #td-closed_tasks="{ value }" >
-          {{ value }}
-        </template>
-      </Table>
-    </div>
+  <div>
+    <small><b>NB</b> : в один день, даже если задача закрывалась много раз, засчитывается только один раз</small>
+    <br>
+    <small><b>NB</b> : если другой пользователь играл с вашими задачами, здесь будет отображаться, что вы работали над этими задачами, даже если вы их не трогали</small>
+
+    <Table
+      :fields="fields"
+      :items="payload"
+      :actions="false"
+    >
+      <template #td-day="{ value }" >
+        {{ msToDayOfMonth(value) }} {{ ruMonths[new Date(value).getMonth()] }}
+      </template>
+      
+      <template #td-work_time="{ value }" >
+        {{ value }}
+      </template>
+      
+      <template #td-closed_tasks="{ value }" >
+        {{ value }}
+      </template>
+    </Table>
+  </div>
 </template>

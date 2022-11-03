@@ -1,6 +1,5 @@
 <script setup>
 import Draggable from 'vuedraggable';
-import { watch } from 'vue';
 import Badge from '@/UI/Badge.vue';
 import Link from '@/UI/Link.vue';
 import service from '~/services/tasks/kanban';
@@ -8,9 +7,7 @@ import { defaults } from '~/composables/useAvatar';
 import { tasksColorMap, generateShapedIdfromId } from '~/helpers';
 import {canTasks, userHasAtLeastOnePermission} from '~/lib/permissions'
 
-const { log, atMounted, state, getKanBanPayload, theSelectedFunnel, fillColumns, columns } = service();
-
-watch(theSelectedFunnel, fillColumns, { immediate: true });
+const { log, atMounted, state, columns } = service();
 
 await atMounted();
 
@@ -21,7 +18,7 @@ const canDrag = (task) => { return canTasks(task, 'update_stage') && task.status
 </script>
 
 <template>
-  <div class="mb-8 relative" v-if="theSelectedFunnel" >
+  <div class="mb-8 relative" >
 
     <!-- <div @scroll="() => foo()" id="tasks-kanban" :ref="el => kanbanRef = el" class="flex gap-5 items-stretch overflow-x-scroll pb-5 shadow-inner p-5"> -->
     <div class="grid grid-cols-12 gap-3 pb-5">
@@ -86,7 +83,6 @@ const canDrag = (task) => { return canTasks(task, 'update_stage') && task.status
 </template>
 
 <style scoped>
-
 .overlay {
   pointer-events: none;
 }

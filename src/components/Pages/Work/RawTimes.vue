@@ -5,24 +5,7 @@ import { ruMonths } from '~/helpers';
 import Table from '@/Layout/Table.vue';
 import $ from '~/helpers/fetch.js';
 
-const { state, edge, loadFunnels, selection } = service();
-
-/*
-
-const createDays = () => {
-  let start = (new Date(edge.from)).getTime();
-  const end = (new Date(edge.to)).getTime();
-  const days = [];
-  while (start <= end) {
-    const mins = getWorkedMinsNumberIn(start);
-    const work_time = `${Math.floor(mins / 60)}ч ${Math.floor(mins % 60)}мин`;
-    days.push({ day: start, work_time, closed_tasks: getClosedTasksNumberIn(start) });
-    start += ONE_DAY_IN_MS; // next day
-  }
-  return days;
-};
-
-*/
+const { edge, selection } = service();
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -32,12 +15,12 @@ const logStageId = (log) => log?.data?.pipelines?.filter(({ pipeline_id }) => pi
 
 const toMs = (v) => new Date(v)?.getTime();
 
-const stages = [81, 82, 83, 84];
+const logsByDay = (logs, day) => { return logs?.filter(({ timestamp }) => (ONE_DAY_IN_MS > timestamp - day >= 0)) ?? [] };
 
 /**
  * 
  * this function takes only the logs of a task, that were recorded from <from> to <to>
- * and shapes them out for better usage
+ * and shapes them out for better usage, just think of framedLogs as a task
  * @param {*} task 
  * @param {*} from 
  * @param {*} to 
@@ -50,7 +33,7 @@ const taskFramedLogs = (task, from, to) => {
   // const filterer = ({ created_at, type }) => ((start <= toMs(created_at) <= end) && (type == 'task_status' || type === 'task_created'));
 
   return task?.logs?.filter(filterer).map(({ created_at, data, type }) => {
-    const stage_id = logStageId({ data }) ?? stages[Math.floor(Math.random() * 4)]; // for test
+    const stage_id = logStageId({ data });
     const status = data?.status;
     const timestamp = toMs(created_at);
 
@@ -59,7 +42,7 @@ const taskFramedLogs = (task, from, to) => {
 };
 
 /**
- * filter by user and frame all his tasks logs
+ * frame all the tasks logs
  */
 const tasksWithFramedLogs = (v, from, to) => v?.map((task) => taskFramedLogs(task, from, to));
 
@@ -73,7 +56,7 @@ const oneDayWorkTimeFromFramedLogs = (framedLogs, day) => {
 
   if (framedLogs.length) {
     // sort & filter only logs recorded in <day>
-    const logs = framedLogs.sort((a, b) => a.timestamp - b.timestamp).filter(({ timestamp }) => ONE_DAY_IN_MS > timestamp - day >= 0 );
+    const logs = logsByDay(framedLogs.sort((a, b) => a.timestamp - b.timestamp), day)
 
     if (logs.length) {
       // worker didn't pause or finish the task the starting of the day
@@ -102,11 +85,8 @@ const oneDayWorkTimeFromFramedLogs = (framedLogs, day) => {
   return workTime;
 };
 
-const oneDayClosedTasks = (framedLogs, day) => {
-  return framedLogs?.filter(({ timestamp }) => ONE_DAY_IN_MS > timestamp - day >= 0)?.some(({ status }) => status === 'done') ? 1 : 0;
-}
+const wasItClosed = (framedLogs) => { return framedLogs.some(({ status }) => status === 'done') ? 1 : 0; }
 
-// const payload = computed(() => tasksWithFramedLogs(tasks.value, edge.from, edge.to));
 const payload = computed(() => {
 
   const framedLogsOfAllTasksOfTheSelectedUser = tasksWithFramedLogs(tasks.value, edge.from, edge.to) ?? []
@@ -121,7 +101,7 @@ const payload = computed(() => {
 
     const work_time = mins ?  `${Math.floor(mins / 60)}ч ${Math.floor(mins % 60)}мин` : 0;
 
-    const closed_tasks = framedLogsOfAllTasksOfTheSelectedUser.reduce((prev, curr) => { prev + oneDayClosedTasks(curr, start) }, 0) ?? 0
+    const closed_tasks = framedLogsOfAllTasksOfTheSelectedUser.reduce((prev, curr) => { prev + wasItClosed(curr) }, 0) ?? 0
 
     _payload.push({ day: start, work_time, closed_tasks }); // Fix
 
@@ -137,35 +117,37 @@ const fields = [
   { label: 'Количество закрытых задач', key: 'closed_tasks' },
 ];
 
-await (async () => {
-  tasks.value = await $.tasks({ pipeline_id: selection.funnel, user_id: selection.user })
-})();
+await (async () => { tasks.value = await $.tasks({ pipeline_id: selection.funnel, user_id: selection.user }) })();
 
 </script>
 
 <template>
-  <!-- <pre>
+<!--
+  <pre>
     {{ JSON.stringify(payload, null, 1) }}
     {{ JSON.stringify(selection, null, 1) }}
-  </pre> -->
+  </pre>
+-->
 
-  <Table
-    :fields="fields"
-    :items="payload"
-    :actions="false"
-  >
-    <template #td-day="{ value }" >
-      {{ new Date(value).getDate() }} {{ ruMonths[new Date(value).getMonth()] }}
-    </template>
-    
-    <template #td-work_time="{ value }" >
-      {{ value }}
-    </template>
-    
-    <!-- 
+  <div>
+    <small>NB: в выбранный период времени, даже если задача закрывалась много раз, засчитывается только один раз</small>
+
+    <Table
+      :fields="fields"
+      :items="payload"
+      :actions="false"
+    >
+      <template #td-day="{ value }" >
+        {{ new Date(value).getDate() }} {{ ruMonths[new Date(value).getMonth()] }}
+      </template>
+      
+      <template #td-work_time="{ value }" >
+        {{ value }}
+      </template>
+      
       <template #td-closed_tasks="{ value }" >
         {{ value }}
       </template>
-    -->
-  </Table>
+    </Table>
+  </div>
 </template>

@@ -82,6 +82,8 @@ const findFieldIndex = (tk, tp) => findFieldInexIn(props.answers.data, tk, tp);
           </ul>
         </div>
 
+        <div :class="(i + 1)%3 == 0 ? 'pagebreak' : ''"> </div>
+
       </div>
     </div>
   </div>
@@ -93,6 +95,11 @@ body #printable {
 }
 
 @media print {
+
+  .pagebreak {
+    clear: both;
+    page-break-after: always; /* page-break-before works, as well */
+  }
 
   @page {
     size: 210mm;

@@ -173,7 +173,7 @@ const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((p
 
         <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
           <h3 class="font-bold text-xl mb-3">{{ data?.title }}</h3>
-          <div :class="['mx-auto gap-6', for_worker ? 'flex flex-wrap' : 'grid grid-cols-12']">
+          <div :class="['mx-auto gap-6 flex flex-wrap']">
             <div
               v-for="(item, j) in data.items"
               :key="`${j}-item`"
@@ -205,14 +205,14 @@ const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((p
 
         <div v-if="type === 'indication'" class="border border-black flex mt-6">
           <span class="px-4 p-1 flex items-center justify-start">Показания</span>
-          <ul :class="['flex-grow', for_worker ? 'flex-col' : 'grid grid-cols-2']">
-            <li class="col-span-1 flex" :class="[for_worker ? 'border-b border-black' : '']">
-              <span :class="[for_worker ? 'w-64' : '', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
-              <input type="text" class=" w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
+          <ul :class="['flex-grow', for_worker ? 'flex-col' : 'flex flex-wrap']">
+            <li class="flex-grow col-span-1 flex" :class="['border-b border-black']">
+              <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
+              <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
             </li>
-            <li class="col-span-1 flex">
-              <span :class="[for_worker ? 'w-64' : '', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
-              <input type="text" class=" w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
+            <li class="flex-grow col-span-1 flex">
+              <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
+              <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
             </li>
           </ul>
         </div>

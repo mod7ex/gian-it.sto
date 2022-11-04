@@ -51,7 +51,7 @@ const { state, options } = store;
 
 await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
 
-const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, stage }) => { return prev + `<span>&#8226;</span> ${pipeline.name} - ${stage.name}<br />` }, '');
+const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, stage }) => { return prev + `<span>&#8226;</span> <small>${pipeline.name} - <b>${stage.name}</b></small><br />` }, '');
 
 </script>
 
@@ -96,7 +96,7 @@ const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, 
 
     <template #td-type="{ item: {is_map} }" >
       <Badge :point="true" :color="is_map ? 'green' : 'purple'">
-        {{ is_map ? 'Диагностическая карта' : 'Задачa' }}
+        {{ is_map ? 'Дк' : 'Задачa' }}
       </Badge>
     </template>
 

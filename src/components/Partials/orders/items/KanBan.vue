@@ -286,6 +286,7 @@ const fields = [
 
 .stage{
   min-width: 300px;
+  min-height: 300px;
   max-height: 590px;
 }
 

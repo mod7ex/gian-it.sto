@@ -108,10 +108,14 @@ await atMounted().then(async () => {
             </ul>
           </DescriptionListItem>
 
+          <DescriptionListItem cols="3" label="Комментарий заказ наряда" type="columns" columns="1" v-if="task.order?.comment">
+            <p>{{task.order?.comment}}</p>
+          </DescriptionListItem>
+
         </DescriptionListItems>
       </DescriptionList>
     </section>
 
-    <Comments model="task" :id="route.params.id" class="mt-2" />
+    <Comments title="Комментарии к задаче / Заментки" model="task" :id="route.params.id" class="mt-2" />
   </div>
 </template>

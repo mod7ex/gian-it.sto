@@ -98,6 +98,6 @@ await atMounted().then(async () => {
 
     </Card>
 
-    <Comments model="task" :id="route.params.id" class="mt-2" :disabled="!canTasks(task, 'update')" />
+    <Comments title="Комментарии к задаче / Заментки" model="task" :id="route.params.id" class="mt-2" :disabled="!canTasks(task, 'update')" />
 </div>
 </template>

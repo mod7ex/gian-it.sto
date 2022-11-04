@@ -10,6 +10,9 @@ import service from '~/services/tasks/worker';
 import Select from '@/UI/Select.vue';
 import { debounce, hyphenatedDateFormat } from '~/helpers';
 import userStore from '~/store/employees';
+import useAuth from '~/composables/useAuth';
+
+const { userRole, user } = useAuth();
 
 const { options: users, load } = userStore;
 
@@ -25,11 +28,13 @@ const stageOptions = computed(() => funnelById(selection.funnel)?.stages.map(({ 
 
 const key = shallowRef('');
 
+const isAllowedToSelectUser = computed(() => (userRole.value?.name === 'admin') || (userRole.value?.name === 'director'));
+
 onMounted(async () => {
   await loadFunnels();
   await load();
   selection.funnel = options.value[0]?.value;
-  selection.user = users.value[0]?.value;
+  selection.user = isAllowedToSelectUser.value ? users.value[0]?.value : user.value?.id;
   watch(selection, debounce(() => { key.value = `${selection.funnel}-${selection.user}`; }));
 });
 
@@ -45,7 +50,7 @@ onMounted(async () => {
     <div class="flex flex-wrap gap-2 items-end mt-4">
       <Input label="Дата от" v-model="edge.from" type="date" :max="hyphenatedDateFormat(new Date(edge.to))" />
       <Input label="Дата до" v-model="edge.to" type="date" :max="hyphenatedDateFormat(new Date())" :min="hyphenatedDateFormat(new Date(edge.from))" />
-      <Select label="Сотрудник" :options="users" v-model="selection.user" class="col-span-4" />
+      <Select label="Сотрудник" :options="users" v-model="selection.user" :disabled="!isAllowedToSelectUser" class="col-span-4" />
       <Select label="Воронка" :options="options" v-model="selection.funnel" class="col-span-4" />
       <Select label="Этап" :options="stageOptions" v-model="selection.etape" class="col-span-4" />
     </div>

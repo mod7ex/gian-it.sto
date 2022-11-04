@@ -51,7 +51,7 @@ const { state, options } = store;
 
 await fetchTasks(true, props.order_id, props.is_map ? 1 : undefined);
 
-const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, stage }) => { return prev + `${pipeline.name} - ${stage.name}<br />` }, '');
+const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, stage }) => { return prev + `<span>&#8226;</span> ${pipeline.name} - ${stage.name}<br />` }, '');
 
 </script>
 
@@ -113,9 +113,12 @@ const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, 
     </template>
 
     <template #td-funnel_etap="{ item }" >
-      <span :data-tooltip="createFunnelEtapeMapHTML(item.pipelines)" class="funnel-etap-map relative" > 
+      <!-- <span :data-tooltip="createFunnelEtapeMapHTML(item.pipelines)" class="funnel-etap-map relative" > 
         <p class="absolute -top-10 -left-12" v-html="createFunnelEtapeMapHTML(item.pipelines)" ></p>
         <CogIcon class="w-6 h-6" />
+      </span> -->
+      <span :data-tooltip="createFunnelEtapeMapHTML(item.pipelines)" class="funnel-etap-map" > 
+        <p v-html="createFunnelEtapeMapHTML(item.pipelines)"/>
       </span>
     </template>
 
@@ -138,7 +141,7 @@ const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, 
 </template>
 
 <style>
-
+/* 
 .funnel-etap-map {
   z-index: 100;
 }
@@ -157,6 +160,6 @@ const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, 
 .funnel-etap-map:hover p {
   visibility: visible;
   opacity: 1;
-}
+} */
 
 </style>

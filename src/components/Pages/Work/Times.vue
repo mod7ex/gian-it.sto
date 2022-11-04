@@ -21,13 +21,17 @@ onScopeDispose(clearMemo);
 
 const edge = initTimeEdges();
 
-onMounted(async () => { await loadFunnels(); await load(); selection.funnel = options.value[0]?.value; selection.user = users.value[0]?.value; });
-
 const stageOptions = computed(() => funnelById(selection.funnel)?.stages.map(({ id, name }) => ({ label: name, value: id })));
 
 const key = shallowRef('');
 
-watch(selection, debounce(() => { key.value = `${selection.funnel}-${selection.user}`; }));
+onMounted(async () => {
+  await loadFunnels();
+  await load();
+  selection.funnel = options.value[0]?.value;
+  selection.user = users.value[0]?.value;
+  watch(selection, debounce(() => { key.value = `${selection.funnel}-${selection.user}`; }));
+});
 
 </script>
 

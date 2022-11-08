@@ -59,9 +59,7 @@ const handelBlackListedFile = (id) =>  {
 
 const processOptions = computed(() => processState.raw.filter(({appeal_reason}) => appeal_reason.id == fields.appeal_reason_id).map(({id, name}) => ({value: id, label: name})))
 
-onMounted(() => {
-  fields.order_stage_id = orderStagesOptions.value[0].value
-}) 
+onMounted(() => { if(!isEditPage.value) fields.order_stage_id = orderStagesOptions.value[0].value }) 
 
 </script>
 

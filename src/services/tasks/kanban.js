@@ -8,7 +8,12 @@ import store from '~/store/tasks';
 
 const toaster = useToast();
 
-const { state: funnelsState, load: loadFunnels, options, funnelById } = pipelinesStore;
+const {
+  state: funnelsState,
+  load: loadFunnels,
+  options,
+  funnelById,
+} = pipelinesStore;
 const { tasksInFunnel, state, setTaskFunnelStage, reset, fill } = store;
 
 let filter;
@@ -26,10 +31,12 @@ const getKanBanPayload = (v) => {
 
   const tasks_in_this_funnel = tasksInFunnel(v);
 
-  const kanban = funnel.stages.reduce((payload, curr) => {
+  const kanban = funnel?.stages.reduce((payload, curr) => {
     const { id, color, name } = curr;
 
-    const tasks = tasks_in_this_funnel.filter(({ pipelines }) => (pipelines.some(({ pipeline, stage }) => (pipeline?.id == v && stage?.id == id))));
+    const tasks = tasks_in_this_funnel.filter(({ pipelines }) => pipelines.some(
+      ({ pipeline, stage }) => pipeline?.id == v && stage?.id == id,
+    ));
 
     payload[id] = {
       tasks,
@@ -48,15 +55,28 @@ const fillColumns = (v) => {
 };
 
 const log = async (e) => {
-  const { item: { id: task }, to: { id: stage_id } } = e;
+  const { item: { id: task_id }, to: { id: stage_id } } = e;
+
   const funnel_id = theSelectedFunnel.value;
 
+  const maybeTask = state.raw.find(({ id }) => id == task_id);
+
+  if (!maybeTask) return fillColumns(funnel_id);
+
+  if (maybeTask?.status === 'process') {
+    toaster.warn('Вы не можете изменить этап, пока задача активна', '');
+    return fillColumns(funnel_id);
+  }
+
   // eslint-disable-next-line
-  const task_stage = state.raw.find(({ id }) => id == task)?.pipelines.find(({ pipeline }) => pipeline.id == funnel_id)?.stage?.id;
+  const task_stage = maybeTask?.pipelines.find( ({ pipeline }) => pipeline.id == funnel_id )?.stage?.id;
   // eslint-disable-next-line
   if (task_stage == stage_id) return;
 
-  const { message, success } = await save({ data: { stage_id }, path: `tasks/${task}/pipelines/${funnel_id}/stage` });
+  const { message, success } = await save({
+    data: { stage_id },
+    path: `tasks/${task_id}/pipelines/${funnel_id}/stage`,
+  });
 
   if (!success) {
     toaster.danger(message ?? 'Что-то пошло не так');
@@ -67,7 +87,7 @@ const log = async (e) => {
 
   const stage = funnel.stages.find(({ id }) => id == stage_id);
 
-  setTaskFunnelStage(task, funnel_id, stage);
+  setTaskFunnelStage(task_id, funnel_id, stage);
 
   return toaster.success('Этап изменен');
 };

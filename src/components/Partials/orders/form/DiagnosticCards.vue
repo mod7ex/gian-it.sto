@@ -31,9 +31,7 @@ watch(dk_task, async (v) => {
 const SuspenseArea = useSuspense();
 const { route } = useAppRouter();
 
-const printOut = () => {
-  window.print();
-};
+const printOut = () => { window.print(); };
 
 </script>
 

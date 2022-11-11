@@ -220,6 +220,8 @@ const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((p
       </div>
     </div>
 
+    <!-- <diagnostic-card-print :fields="fields" :answers="answers" :task="task" /> -->
+
     <Teleport to="#printable">
       <diagnostic-card-print :fields="fields" :answers="answers" :task="task" />
     </Teleport>

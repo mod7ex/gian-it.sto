@@ -25,7 +25,7 @@ const findFieldIndex = (tk, tp) => findFieldInexIn(props.answers.data, tk, tp);
 </script>
 
 <template>
-  <div :class="[$attrs.class, 'mx-auto px-5 pt-5 pb-2']" >
+  <div :class="[$attrs.class, 'mx-auto px-20 py-5']" >
 
     <header class="mb-6 py-3 mx-auto">
       <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ task?.id ?  generateShapedIdfromId(task?.id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
@@ -39,25 +39,20 @@ const findFieldIndex = (tk, tp) => findFieldInexIn(props.answers.data, tk, tp);
       </div>
     </header>
 
-    <div >
-      <div v-for="({ data, type, token }, i) in fields" :key="i" class="mb-9" >
+    <div>
+      <div v-for="({ data, type, token }, i) in fields" :key="i" class="my-9" >
 
-        <div v-if="type === 'check_list'" class="flex justify-center flex-col" >
+        <div v-if="type === 'check_list'" class="flex justify-center flex-col items-center" >
           <h3 class="text-center font-bold text-xl mb-3">{{ data?.title }}</h3>
-          <div :class="['mx-auto flex flex-wrap content-center border-l border-black']">
+          <div :class="[' border-t border-l border-black grid grid-cols-12']">
             <div
               v-for="(item, j) in data.items"
               :key="`${j}-item`"
-              :class="[
-                'checklist-item relative col-span-12 flex items-stretch justify-center border-r border-b border-black',
-              ]"
+              :class="['checklist-item flex items-stretch border-r border-b border-black col-span-4']"
             >
-            <!-- data.items.length < 3 ? 'sm:col-span-6' : '',
-            data.items.length === 3 ? 'sm:col-span-6 md:col-span-4' : '',
-            data.items.length >= 4 ? 'sm:col-span-6 md:col-span-4 xl:col-span-3' : '', -->
-              <span class="text-left w-full border-r border-t border-black p-3 flex items-center justify-center">{{ item }}</span>
-              <span class="flex items-center justify-center w-10 text-3xl py-3 px-6 border-t border-black">
-                {{ answers.data[findFieldIndex(token, type)].data[j] ? '&#10003;' : ' ' }}
+              <span class="text-left p-1 flex items-center">{{ item }}</span>
+              <span class="w-12 relative border-black border-l ml-auto check_area">
+                <p :class="['absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center text-2xl', answers.data[findFieldIndex(token, type)].data[j] ? 'text-black' : 'text-transparent']" >{{ '&#10003;'  }}</p>
               </span>
             </div>
           </div>
@@ -68,21 +63,23 @@ const findFieldIndex = (tk, tp) => findFieldInexIn(props.answers.data, tk, tp);
           <p class="text-center pl-2" >{{ answers.data[findFieldIndex(token, type)].data }}</p>
         </div>
 
-        <div v-if="type === 'indication'" class="border border-black flex">
-          <span class="px-4 p-1 flex items-center justify-start">Показания</span>
-          <ul :class="['flex-grow flex-col']">
-            <li class="col-span-1 flex border-b border-black">
-              <span :class="['w-64 border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
-              <span class="text-left pl-1 flex items-center flex-grow bg-gray-50" >{{ answers.data[findFieldIndex(token, type)].data[0] }}</span>
-            </li>
-            <li class="col-span-1 flex">
-              <span :class="['w-64 border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
-              <span class="text-left pl-1 flex items-center flex-grow bg-gray-50" >{{ answers.data[findFieldIndex(token, type)].data[1] }}</span>
-            </li>
-          </ul>
+        <div v-if="type === 'indication'" class="flex items-center justify-center">
+          <div class="border border-black flex items-center justify-center mx-auto" >
+            <span class="px-4 p-1 flex items-center justify-start">Показания</span>
+            <ul :class="['flex-col']">
+              <li class="col-span-1 flex border-b border-black">
+                <span :class="['w-64 border-l border-r border-black p-1 flex items-center justify-start']" >{{ data[0] }}</span>
+                <span class="pl-1 flex items-center flex-grow bg-gray-50 pr-1" >{{ answers.data[findFieldIndex(token, type)].data[0] }}</span>
+              </li>
+              <li class="col-span-1 flex">
+                <span :class="['w-64 border-l border-r border-black p-1 flex items-center justify-start']" >{{ data[1] }}</span>
+                <span class="pl-1 flex items-center flex-grow bg-gray-50 pr-1" >{{ answers.data[findFieldIndex(token, type)].data[1] }}</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div :class="(i + 1)%3 == 0 ? 'pagebreak' : ''"> </div>
+        <div :class="(i + 1)%7 == 0 ? 'pagebreak' : ''"> </div>
 
       </div>
     </div>
@@ -90,6 +87,11 @@ const findFieldIndex = (tk, tp) => findFieldInexIn(props.answers.data, tk, tp);
 </template>
 
 <style>
+
+.check_area {
+  min-width: 50px !important;
+}
+
 body #printable {
   display: none;
 }
@@ -109,6 +111,7 @@ body #printable {
   html, body {
     width: 210mm;
     height: 100%;
+    font-size: 8px;
   }
 
   body #app {

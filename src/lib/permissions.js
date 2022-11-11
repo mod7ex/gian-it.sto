@@ -1,7 +1,7 @@
 // import { computed } from 'vue';
 import useAuth from '~/composables/useAuth.js';
 
-const { isUserLogged, user, userDepartment } = useAuth();
+const { isUserLogged, user, userDepartment, userRole } = useAuth();
 
 const routesPermissionsMap = {
   // Todo: copy all pages from router and add permissions the router can catch some forgotten things
@@ -73,13 +73,15 @@ const navigationGuards = (to, from, next) => {
   if (!isUserLogged.value) {
     // none-auth users  ------ order matters
     if (isRouteForGuests) return next();
-    if (!isRouteForGuests) return next('/');
+    if (!isRouteForGuests) return next(`/?target=${window.location.pathname}`);
   }
 
+  const nextRoute = userRole.value?.name === 'slecar' ? { name: 'WorkerTasks' } : to.query.target ?? '/orders'; /* 'dashboard' */
+
   // auth users  ------ order matters
-  if (isRouteForGuests) return next('/dashboard');
+  if (isRouteForGuests) return next(nextRoute);
   if (accessable) return next();
-  if (!accessable) return next('/dashboard');
+  if (!accessable) return next(nextRoute);
 };
 
 export default navigationGuards;

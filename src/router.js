@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import navigationGuards from '~/lib/permissions.js';
+import { isRouteAccessableForCurrentUser } from '~/lib/permissions.js';
 import { pingLoader } from '~/composables/useAppLoader.js';
 // import { userHasAtLeastOnePermission } from '~/lib/permissions';
 import useAuth from '~/composables/useAuth';
 
-const { userRole } = useAuth();
+const { userRole, isUserLogged } = useAuth();
 
 const routes = [
   { path: '/', component: () => import(/* webpackChunkName: "login-page" */ '@/Pages/Login/Login.vue'), name: 'Login', meta: { guest: true } },
@@ -92,27 +92,46 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  // if (!to.fullPath.startsWith('/w/')) {
-  //   if (userHasAtLeastOnePermission(['crud orders'])) return next();
-  //   return router.push({ name: 'WorkerTasks' });
-  // }
+// router.beforeEach(navigationGuards);
 
-  if (userRole.value?.name === 'slecar' && !to.fullPath.startsWith('/w/')) {
-    return router.push({ name: 'WorkerTasks' });
-    // return router.back()
+router.beforeEach((to, from, next) => {
+  const isRouteForGuests = !!to.meta.guest;
+  const accessable = isRouteAccessableForCurrentUser(to.name);
+
+  if (!isUserLogged.value) {
+    // none-auth users  ------ order matters
+    if (isRouteForGuests) return next();
+    return next(`/?target=${window.location.pathname}`);
+  }
+
+  const isSlesar = userRole.value?.name === 'slecar';
+
+  const nextRoueFunc = () => {
+    if (isSlesar) return { name: 'WorkerTasks' };
+
+    return to.query.target ?? { name: 'Orders' };
+  };
+
+  const nextRoute = nextRoueFunc();
+
+  // auth users  ------ order matters
+  if (isRouteForGuests) return next(nextRoute);
+
+  // route isn't for guests
+  if (!accessable) return next(nextRoute);
+
+  if (isSlesar && !to.path.startsWith('/w/')) {
+    return next(nextRoute);
   }
 
   if (to.name === '404') {
     // if (from.name === undefined) return next({ name: 'Dashboard' });
-    if (from.name === undefined) return next({ name: 'Orders' });
+    if (from.name === undefined) return next(nextRoute);
     return;
   }
 
   next();
 });
-
-router.beforeEach(navigationGuards);
 
 router.beforeEach((to, from) => pingLoader(true, to, from));
 

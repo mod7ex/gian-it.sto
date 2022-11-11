@@ -19,10 +19,6 @@ const SuspenseArea = useSuspense(Table);
           <ArrowLeftIcon class="w-5 h-5 mr-1"/>К списку процессов
         </Button>
 
-        <Button color="blue" :link="{ name: 'DcForm', params: {id: route.params.id} }" >
-          <PlusCircleIcon class="w-5 h-5 mr-1" />Добавить Диагностическую карту
-        </Button>
-
         <Button color="blue" :link="{ name: 'ProcessTaskForm', params: {id: route.params.id} }" >
           <PlusCircleIcon class="w-5 h-5 mr-1" />Добавить задачу
         </Button>

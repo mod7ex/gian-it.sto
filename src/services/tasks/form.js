@@ -88,44 +88,6 @@ const setField = function (key) {
   setFieldFor(fields, key, this);
 };
 
-// export const setField = function (key) {
-//   if (key.includes('_id')) {
-//     if (key === 'temp_file_ids') return;
-//     if (key === 'delete_file_ids') return;
-
-//     if (key === 'map_id') {
-//       fields.map_id = this.task_map?.map_id;
-//       return;
-//     }
-
-//     fields[key] = this[key.replace('_id', '')]?.id;
-//     return;
-//   }
-
-//   if (key === 'is_map') {
-//     fields.is_map = this.is_map ? 'true' : 'false';
-//     return;
-//   }
-
-//   if (key === 'pipelines') {
-//     fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage }) => ({ pipeline_id, stage_id: stage?.id })) ?? [{}];
-//     return;
-//   }
-
-//   if (key === 'checkboxes') {
-//     fields.checkboxes = this.checkboxes ?? defaults.checkboxes;
-//     if (fields.checkboxes.length === 0) fields.checkboxes.push('');
-//     return;
-//   }
-
-//   if (['end_at', 'start_at', 'deadline_at'].includes(key)) {
-//     fields[key] = hyphenatedDateFormat(this[key]);
-//     return;
-//   }
-
-//   fields[key] = (this[key] ?? defaults[key]) ?? deepDefaults[key];
-// };
-
 const setForm = async (payload) => {
   Object.keys(fields).forEach(setField, payload ?? {});
 };

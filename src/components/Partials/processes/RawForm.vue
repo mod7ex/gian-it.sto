@@ -8,10 +8,7 @@ const { options, load } = store;
 
 const { process, atMounted, v$ } = form();
 
-await (async ()=>{
-    await load();
-    await atMounted();
-})();
+await (async ()=>{ await load(); await atMounted(); })();
 
 </script>
 
@@ -26,18 +23,5 @@ await (async ()=>{
           @blured="v$.name.$touch"
         />
       </div>
-
-      <!--
-      <div>
-        <Select
-          label="Причина обращения"
-          :options="options"
-          v-model="process.appeal_reason_id"
-          :required="true"
-          :error="v$.appeal_reason_id.$errors[0]?.$message"
-          @blured="v$.appeal_reason_id.$touch"
-        />
-      </div>
-    -->
     </div>
 </template>

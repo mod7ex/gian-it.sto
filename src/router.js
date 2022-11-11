@@ -32,9 +32,6 @@ const routes = [
   { path: '/appeal-reasons/:why/processes/:id', component: () => import(/* webpackChunkName: "Process" */ '@/Pages/Office/Process.vue'), name: 'Process' },
   { path: '/appeal-reasons/:why/processes/:id/create', component: () => import(/* webpackChunkName: "ProcessTaskForm" */ '@/Pages/Office/ProcessForm.vue'), name: 'ProcessTaskForm' },
   { path: '/appeal-reasons/:why/processes/:id/update/:task', component: () => import(/* webpackChunkName: "ProcessTaskForm" */ '@/Pages/Office/ProcessForm.vue'), name: 'ProcessTaskEdit' },
-  // next tow routes might be removed later
-  { path: '/appeal-reasons/:why/processes/:id/diagnostic-card-task/create', component: () => import(/* webpackChunkName: "DcForm" */ '@/Pages/Office/DcForm.vue'), name: 'DcForm' },
-  { path: '/appeal-reasons/:why/processes/:id/diagnostic-card-task/update/:dk', component: () => import(/* webpackChunkName: "DcForm" */ '@/Pages/Office/DcForm.vue'), name: 'DcEdit' },
 
   { path: '/diagnostic-card', component: () => import(/* webpackChunkName: "DiagnosticCard" */ '@/Pages/Office/DiagnosticCard.vue'), name: 'DiagnosticCard' },
   { path: '/diagnostic-card/create', component: () => import(/* webpackChunkName: "DiagnosticCardForm" */ '@/Pages/Office/DiagnosticCardForm.vue'), name: 'DiagnosticCardForm' },

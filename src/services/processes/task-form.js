@@ -14,13 +14,13 @@ const defaults = {
   id: '',
   name: '',
   description: '',
-  // order_id: undefined,
-  // user_id: '',
   role_id: '',
   order_stage_id: '',
   position: '',
   files: '',
   time: '',
+  is_map: 'false',
+  map_id: '',
 };
 
 const deepDefaults = {
@@ -44,14 +44,26 @@ const setField = function (key) {
     return;
   }
 
+  if (key === 'is_map') {
+    fields.is_map = this.is_map ? 'true' : 'false';
+    return;
+  }
+
   if (key === 'pipelines') {
-    fields.pipelines = this.pipelines?.map(({ pipeline: { id: pipeline_id }, stage }) => ({ pipeline_id, stage_id: stage?.id })) ?? [{}];
+    fields.pipelines = this.pipelines?.map(
+      ({ pipeline: { id: pipeline_id }, stage }) => ({
+        pipeline_id,
+        stage_id: stage?.id,
+      }),
+    ) ?? [{}];
     return;
   }
 
   if (key === 'process_checkboxes') {
     fields.process_checkboxes = this.process_checkboxes ?? defaults.process_checkboxes;
-    if (fields.process_checkboxes.length === 0) fields.process_checkboxes.push('');
+    if (fields.process_checkboxes.length === 0) {
+      fields.process_checkboxes.push('');
+    }
     return;
   }
 
@@ -63,9 +75,13 @@ const setField = function (key) {
   fields[key] = this[key] ?? defaults[key];
 };
 
-const setForm = async (payload) => { Object.keys(fields).forEach(setField, payload ?? {}); };
+const setForm = async (payload) => {
+  Object.keys(fields).forEach(setField, payload ?? {});
+};
 
-const log = (e) => { files.value = e.target.files; };
+const log = (e) => {
+  files.value = e.target.files;
+};
 
 export default (process_category) => effectScope().run(() => {
   const toaster = useToast();
@@ -77,12 +93,17 @@ export default (process_category) => effectScope().run(() => {
     try {
       return { success, message };
     } finally {
-      success && redirectTo({ name: 'Process', params: { id: process_category } });
+      success
+          && redirectTo({ name: 'Process', params: { id: process_category } });
     }
   };
 
   if (!fields) {
-    fields = reactive({ ...deepCopyObj(defaults), ...deepDefaults, process_categories: [process_category] }); // FIX: issue with deep
+    fields = reactive({
+      ...deepCopyObj(defaults),
+      ...deepDefaults,
+      process_categories: [process_category],
+    }); // FIX: issue with deep
     files = ref();
   }
 
@@ -97,21 +118,36 @@ export default (process_category) => effectScope().run(() => {
         fileSet.append('files[]', files.value[0]);
       }
 
-      const { message: msg, success: suc, data } = await upload('temp/files', fileSet);
+      const {
+        message: msg,
+        success: suc,
+        data,
+      } = await upload('temp/files', fileSet);
 
       if (suc) toaster.success('Файлы успешно загружены');
-      else toaster.danger(msg ?? 'Что-то пошло не так, не удалось загрузить файлы');
+      else {
+        toaster.danger(
+          msg ?? 'Что-то пошло не так, не удалось загрузить файлы',
+        );
+      }
 
       if (suc) fields.temp_file_ids = data?.files?.map(({ id }) => id);
       else {
         // eslint-disable-next-line no-void
-        return void (0);
+        return void 0;
       }
     }
 
-    const { data, success } = await save.process_task(fields, null, true);
+    if (fields.is_map === 'true') {
+      delete fields.description;
+      delete fields.process_checkboxes;
+      delete fields.temp_file_ids;
+    }
 
-    success && redirectTo({ name: 'Process', params: { id: process_category } });
+    const { success } = await save.process_task({ ...fields, is_map: fields.is_map == 'true', department_id: current.value }, null, true);
+
+    success
+        && redirectTo({ name: 'Process', params: { id: process_category } });
     // success && redirectTo({ name: 'ProcessTaskEdit', params: { task: data?.process_task?.id, id: process_category } });
   };
 

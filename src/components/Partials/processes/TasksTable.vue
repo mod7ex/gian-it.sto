@@ -41,9 +41,8 @@ const { drop } = useConfirmDialog();
         @edit="(task) => redirectTo({ name: 'ProcessTaskEdit', params: { task, id } })"
     >
         <!-- Body -->
-        <template #td-name="{ value, item: {id: task, is_map} }" >
-          <Link v-if="is_map" :href="{ name: 'DcEdit', params: { dk: task, id } }"> {{ value }} </Link>
-          <Link v-else :href="{ name: 'ProcessTaskEdit', params: { task, id } }"> {{ value }} </Link>
+        <template #td-name="{ value, item: {id: task} }" >
+          <Link :href="{ name: 'ProcessTaskEdit', params: { task, id } }"> {{ value }} </Link>
         </template>
 
         <template #td-role="{ value, item }" >

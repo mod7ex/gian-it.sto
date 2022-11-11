@@ -203,7 +203,21 @@ const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((p
           ></textarea>
         </div>
 
-        <div v-if="type === 'indication'" class="border border-black flex mt-6">
+        <div v-if="type === 'indication'" class="border border-black flex flex-col md:flex-row mt-6">
+          <span class="px-4 p-1 flex items-center justify-start border-b border-black md:border-b-0">Показания</span>
+          <ul :class="['flex-grow', for_worker ? 'flex-col' : 'flex flex-wrap']">
+            <li class="flex-grow col-span-1 flex" :class="['border-b border-black']">
+              <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'md:border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
+              <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
+            </li>
+            <li class="flex-grow col-span-1 flex">
+              <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'md:border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
+              <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
+            </li>
+          </ul>
+        </div>
+
+        <!-- <div v-if="type === 'indication'" class="border border-black flex mt-6">
           <span class="px-4 p-1 flex items-center justify-start">Показания</span>
           <ul :class="['flex-grow', for_worker ? 'flex-col' : 'flex flex-wrap']">
             <li class="flex-grow col-span-1 flex" :class="['border-b border-black']">
@@ -215,7 +229,7 @@ const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((p
               <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
             </li>
           </ul>
-        </div>
+        </div> -->
 
       </div>
     </div>

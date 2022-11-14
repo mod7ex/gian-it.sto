@@ -159,11 +159,11 @@ const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((p
       <h2 class="text-center font-bold text-xl mb-6">Диагностическая карта <span>&#8470;</span> <span>{{ task_id ?  generateShapedIdfromId(task_id) : '&#95;&#95;&#95;&#95;&#95;' }}</span></h2>
 
       <div class="grid grid-cols-12 border-black border">
-        <span class="text-left px-9 col-span-4"><b class="mr-6">Дата:</b>{{ task?.end_at }}</span>
-        <span class="text-left px-9 col-span-4 border-l border-black"><b class="mr-6">Авто:</b>
+        <span class="text-left px-9 col-span-12 md:col-span-4"><b class="mr-6">Дата:</b>{{ task?.end_at }}</span>
+        <span class="text-left px-9 col-span-12 md:col-span-4 border-l-0 md:border-l border-black border-t md:border-t-0 border-b md:border-b-0"><b class="mr-6">Авто:</b>
           {{ `${task?.order.car?.car_model?.car_mark?.name ?? ''} ${task?.order.car?.car_model?.name ?? '_'}` }}
         </span>
-        <span class="text-left px-9 col-span-4 border-l border-black"><b class="mr-6">&#8470;:</b>{{ ' ' }}</span>
+        <span class="text-left px-9 col-span-12 md:col-span-4 border-l-0 md:border-l border-black"><b class="mr-6">&#8470;:</b>{{ ' ' }}</span>
       </div>
     </header>
 
@@ -187,7 +187,7 @@ const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((p
             >
               <label :for="uuids[item]" class="flex items-center" >
                 <input type="checkbox" :id="uuids[item]" class="rounded mr-2 bg-gray-50 p-2" v-model="answers.data[findFieldIndex(token, type)].data[j]" :disabled="blocked" >
-                <span class="text-left w-full whitespace-nowrap">{{ item }}</span>
+                <span class="text-left w-full md:whitespace-nowrap">{{ item }}</span>
               </label>
             </div>
           </div>
@@ -206,30 +206,32 @@ const uuids = props.fields.filter(({ type }) => type === 'check_list').reduce((p
         <div v-if="type === 'indication'" class="border border-black flex flex-col md:flex-row mt-6">
           <span class="px-4 p-1 flex items-center justify-start border-b border-black md:border-b-0">Показания</span>
           <ul :class="['flex-grow', for_worker ? 'flex-col' : 'flex flex-wrap']">
-            <li class="flex-grow col-span-1 flex" :class="['border-b border-black']">
-              <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'md:border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
+            <li class="flex-grow col-span-1 flex flex-wrap md:flex-nowrap" :class="['border-b border-black']">
+              <span :class="[for_worker ? 'w-64' : 'md:whitespace-nowrap', 'border-b md:border-b-0 flex-grow md:flex-grow-0 md:border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
               <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
             </li>
-            <li class="flex-grow col-span-1 flex">
-              <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'md:border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
+            <li class="flex-grow col-span-1 flex flex-wrap md:flex-nowrap">
+              <span :class="[for_worker ? 'w-64' : 'md:whitespace-nowrap', 'border-b md:border-b-0 flex-grow md:flex-grow-0 md:border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
               <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
             </li>
           </ul>
         </div>
 
-        <!-- <div v-if="type === 'indication'" class="border border-black flex mt-6">
-          <span class="px-4 p-1 flex items-center justify-start">Показания</span>
-          <ul :class="['flex-grow', for_worker ? 'flex-col' : 'flex flex-wrap']">
-            <li class="flex-grow col-span-1 flex" :class="['border-b border-black']">
-              <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
-              <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
-            </li>
-            <li class="flex-grow col-span-1 flex">
-              <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
-              <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
-            </li>
-          </ul>
-        </div> -->
+        <!--
+          <div v-if="type === 'indication'" class="border border-black flex mt-6">
+            <span class="px-4 p-1 flex items-center justify-start">Показания</span>
+            <ul :class="['flex-grow', for_worker ? 'flex-col' : 'flex flex-wrap']">
+              <li class="flex-grow col-span-1 flex" :class="['border-b border-black']">
+                <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[0] }}</span>
+                <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[0]" :disabled="blocked" >
+              </li>
+              <li class="flex-grow col-span-1 flex">
+                <span :class="[for_worker ? 'w-64' : 'whitespace-nowrap', 'border-l border-r border-black px-4 p-1 flex items-center justify-start']" >{{ data[1] }}</span>
+                <input type="text" class="block w-full flex-grow bg-gray-50 border-none" v-model="answers.data[findFieldIndex(token, type)].data[1]" :disabled="blocked" >
+              </li>
+            </ul>
+          </div>
+        -->
 
       </div>
     </div>

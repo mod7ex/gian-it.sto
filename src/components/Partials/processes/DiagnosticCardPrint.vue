@@ -79,7 +79,7 @@ const findFieldIndex = (tk, tp) => findFieldInexIn(props.answers.data, tk, tp);
           </div>
         </div>
 
-        <div :class="(i + 1)%7 == 0 ? 'pagebreak' : ''"> </div>
+        <div :class="(i + 1)%6 == 0 ? 'pagebreak' : ''"> </div>
 
       </div>
     </div>
@@ -104,14 +104,16 @@ body #printable {
   }
 
   @page {
-    size: 210mm;
-    margin: 0;
+    /* A4 */
+    size: 7in 9.25in;
+    margin: 3mm 3mm 3mm 3mm;
   }
 
   html, body {
-    width: 210mm;
-    height: 100%;
-    font-size: 8px;
+    /* width: 210mm; */
+    /* height: 100%; */
+    font-size: 7pt;
+    font-family: Arial, Helvetica, sans-serif;
   }
 
   body #app {

@@ -113,10 +113,7 @@ const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, 
     </template>
 
     <template #td-funnel_etap="{ item }" >
-      <!-- <span :data-tooltip="createFunnelEtapeMapHTML(item.pipelines)" class="funnel-etap-map relative" > 
-        <p class="absolute -top-10 -left-12" v-html="createFunnelEtapeMapHTML(item.pipelines)" ></p>
-        <CogIcon class="w-6 h-6" />
-      </span> -->
+      <!-- <pre>{{ item.pipelines }}</pre> -->
       <span :data-tooltip="createFunnelEtapeMapHTML(item.pipelines)" class="funnel-etap-map" > 
         <p v-html="createFunnelEtapeMapHTML(item.pipelines)"/>
       </span>

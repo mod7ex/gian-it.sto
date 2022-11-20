@@ -29,7 +29,7 @@ defineEmits(['outclick']);
         @click.self="$emit('outclick')"
       >
 
-      <div class="bg-white rounded-md p-7 pb-9 m-3 mt-96 sm:mt-3 shadow-2xl">
+      <div class="bg-white rounded-md p-7 pb-9 m-3 mt-96 sm:mt-3 shadow-2xl modal-content">
       <!-- <div class="bg-white rounded-md p-7 shadow-2xl max-w-sm w-full"> -->
         <slot name="icon"></slot>
 
@@ -61,5 +61,15 @@ defineEmits(['outclick']);
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
+}
+
+.modal-content {
+  margin-top: 800px;
+}
+
+@media (min-width: 640px) {
+  .modal-content {
+  margin-top: 12px;
+}
 }
 </style>

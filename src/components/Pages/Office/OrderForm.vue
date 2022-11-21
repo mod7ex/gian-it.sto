@@ -9,6 +9,7 @@ import service from '~/services/orders/form';
 import departmentStore from '~/store/departments';
 import useConfirmDialog from '~/composables/useConfirmDialog';
 import { userHasAtLeastOnePermission } from '~/lib/permissions.js';
+import { generateShapedIdfromId } from '~/helpers';
 
 const { drop } = useConfirmDialog();
 
@@ -51,7 +52,7 @@ onScopeDispose(clearMemory);
 </script>
 
 <template>
-  <OfficeLayout title="Создание нового заказ наряда">
+  <OfficeLayout :title="isEditPage ? `#${generateShapedIdfromId(route.params.id)}` : 'Создание нового заказ наряда'">
 
     <template #actions>
       <div class="mr-2 text-lg">Сумма: <span class="font-bold">{{ fields?.total_sum ?? ' ..., ... ' }} ₽</span></div>

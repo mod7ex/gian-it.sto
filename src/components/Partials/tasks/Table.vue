@@ -88,7 +88,7 @@ const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, 
   >
     <!-- :actions="!canTasks(item, 'update') && !canTasks(item, 'delete')" -->
     <!-- Body -->
-    <template #td-name="{ value, item: {id} }" >
+    <template #td-name="{ value, item: {id, department} }" >
       <span :data-tooltip="value" class="tooltip" >
         <Link :href="{name: 'Task', params: { id }}">{{ trimExact(value) }}</Link>
       </span>
@@ -100,7 +100,7 @@ const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, 
       </Badge>
     </template>
 
-    <template #td-user="{ value }" >
+    <template #td-user="{ value, item }" >
       <Avatar
         :title="`${value?.name ?? ''} ${value?.middle_name ?? ''}`"
         :subtitle="value?.office_position ?? ''"

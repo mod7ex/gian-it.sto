@@ -61,13 +61,14 @@ export default (_archived) => effectScope().run(() => {
   };
 
   const fetchTasks = async (bool = false, order_id, is_map) => {
+    if (bool) resetStore();
+
     if (order_id) {
-      await load({ order_id, is_map, history: 'order' });
+      await load({ order_id, is_map, history: 'order' }, false);
       return;
     }
 
     if (!filter.department_id) return;
-    if (bool) resetStore();
 
     if (archived.value) {
       await fillArchived(cleanUp(filter));

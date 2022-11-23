@@ -52,7 +52,7 @@ onScopeDispose(clearMemory);
 </script>
 
 <template>
-  <OfficeLayout :title="isEditPage ? `#${generateShapedIdfromId(route.params.id)}` : 'Создание нового заказ наряда'">
+  <OfficeLayout :title="isEditPage ? `Заказ-наряд #${generateShapedIdfromId(route.params.id)}` : 'Создание нового заказ наряда'">
 
     <template #actions>
       <div class="mr-2 text-lg">Сумма: <span class="font-bold">{{ fields?.total_sum ?? ' ..., ... ' }} ₽</span></div>

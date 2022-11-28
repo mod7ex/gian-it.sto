@@ -12,7 +12,7 @@ const toaster = useToast();
 const { load, state, setOrderStage } = store;
 const { current } = departmentStore;
 const { state: stagesState, load: loadStages } = orderStagesStore;
-const { load: loadTasks, reset, state: tasksState, getTaskById } = tasksStore;
+const { load: loadTasks, reset, state: tasksState, getTaskById, options: taskOptions } = tasksStore;
 
 let columns;
 let filter;
@@ -96,6 +96,8 @@ export default () => effectScope().run(() => {
     loadTasks,
     getTaskById,
     state,
+    reset,
+    taskOptions,
     sig: computed(() => objectSignature(filter)),
     clearMemo: () => {
       columns = undefined;

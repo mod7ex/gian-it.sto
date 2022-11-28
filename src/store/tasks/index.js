@@ -1,10 +1,10 @@
 import { computed, reactive, readonly } from 'vue';
 import $ from '~/helpers/fetch.js';
 import _$ from '~/helpers/drop';
-import useAuth from '~/composables/useAuth';
-import { PERMISSIONS } from '~/lib/permissions.js';
+// import useAuth from '~/composables/useAuth';
+// import { PERMISSIONS } from '~/lib/permissions.js';
 
-const { userDepartment, user } = useAuth();
+// const { userDepartment, user } = useAuth();
 
 const state = reactive({
   raw: [],
@@ -46,38 +46,46 @@ const reset = () => {
 const load = async (payload = {}, trackPermissions = true) => {
   if (state.pending) return;
 
+  /*
+
   if (trackPermissions && PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
     if (payload.department_id != userDepartment.value) return;
   }
+
+*/
 
   state.pending = true;
   const data = await $.tasks(payload);
   state.pending = false;
 
-  if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
-    const only_my_tasks = data?.filter(({ author: { id } }) => id === user.value.id) ?? [];
-    state.raw = only_my_tasks;
-  } else {
-    state.raw = data ?? [];
-  }
+  // if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
+  //   const only_my_tasks = data?.filter(({ author: { id } }) => id === user.value.id) ?? [];
+  //   state.raw = only_my_tasks;
+  // } else {
+  //   state.raw = data ?? [];
+  // }
+  state.raw = data ?? [];
 };
 
 const fill = async (payload = {}, trackPermissions = true) => {
   if (state.pending) return;
   if (state.page > state.pages) return;
 
+  /*
   if (trackPermissions && PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
     if (payload.department_id != userDepartment.value) return;
   }
+*/
 
   state.pending = true;
   const data = await $({ key: 'tasks', params: { ...payload, page: state.page } });
-  if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
-    const only_my_tasks = data?.tasks?.filter(({ author: { id }, user: { id: u_id } }) => (id == user.value.id || u_id == user.value.id)); // Tasks i created or tasks where i'm the executer
-    state.raw = state.raw.concat(only_my_tasks ?? []);
-  } else {
-    state.raw = state.raw.concat(data?.tasks ?? []);
-  }
+  // if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
+  //   const only_my_tasks = data?.tasks?.filter(({ author, user: u }) => (author?.id == user.value.id || u?.id == user.value.id)); // Tasks i created or tasks where i'm the executer
+  //   state.raw = state.raw.concat(only_my_tasks ?? []);
+  // } else {
+  //   state.raw = state.raw.concat(data?.tasks ?? []);
+  // }
+  state.raw = state.raw.concat(data?.tasks ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
   state.pending = false;
@@ -87,18 +95,19 @@ const fillArchived = async (payload = {}, trackPermissions = true) => {
   if (state.pending) return;
   if (state.page > state.pages) return;
 
-  if (trackPermissions && PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
-    if (payload.department_id != userDepartment.value) return;
-  }
+  // if (trackPermissions && PERMISSIONS.TASKS.READ_DEPARTMENT()) { // ==> department PERMISSION
+  //   if (payload.department_id != userDepartment.value) return;
+  // }
 
   state.pending = true;
   const data = await $({ key: 'tasks/history', params: { ...payload, page: state.page } });
-  if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
-    const only_my_tasks = data?.tasks?.filter(({ author: { id }, user: { id: u_id } }) => (id == user.value.id || u_id == user.value.id)); // Tasks i created or tasks where i'm the executer
-    state.raw = state.raw.concat(only_my_tasks ?? []);
-  } else {
-    state.raw = state.raw.concat(data?.tasks ?? []);
-  }
+  // if (trackPermissions && PERMISSIONS.TASKS.READ_OWN()) { // ==> Only_My PERMISSION
+  //   const only_my_tasks = data?.tasks?.filter(({ author: { id }, user: { id: u_id } }) => (id == user.value.id || u_id == user.value.id)); // Tasks i created or tasks where i'm the executer
+  //   state.raw = state.raw.concat(only_my_tasks ?? []);
+  // } else {
+  //   state.raw = state.raw.concat(data?.tasks ?? []);
+  // }
+  state.raw = state.raw.concat(data?.tasks ?? []);
   state.pages = data?.meta?.last_page ?? 100;
   state.page += 1;
   state.pending = false;

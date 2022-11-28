@@ -9,8 +9,6 @@ import { defaults } from '~/composables/useAvatar';
 import { generateShapedIdfromId, hyphenatedDateFormat } from '~/helpers';
 import FormActions from '@/Layout/modal/FormActions.vue';
 import Table from '@/Layout/Table.vue';
-import { canTasks } from '~/lib/permissions';
-import { userHasAtLeastOnePermission } from '~/lib/permissions'
 import Select from '@/UI/Select.vue';
 import userStore from '~/store/employees'
 import departmentStore from '~/store/departments'
@@ -20,19 +18,21 @@ import { userHasPermission } from '~/lib/permissions'
 const { load, options } = userStore
 const { current } = departmentStore
 
-const { columns, log, atMounted, tasksState , showModal ,loadTasks, getTaskById, toaster, state } = service();
+const { columns, log, atMounted, tasksState , showModal ,loadTasks, getTaskById, toaster, taskOptions, reset} = service();
 
 await atMounted();
 
-const tasksShip = reactive({})
+const tasksShip = reactive({});
 
 const onSuccessMove = async (d, order_id) => {
-  await Promise.all([load({department_id: current.value}), loadTasks({ order_id, created_after: hyphenatedDateFormat(d) })]).then(() => {
-    showModal.value = true;
+  await Promise.all([load({department_id: current.value}), reset(), loadTasks({ department_id: current.value, order_id, created_after: hyphenatedDateFormat(d) }, false)]).then(() => {
+    if(taskOptions.value.length){
+      showModal.value = true;
+    }
   });
 }
 
-const modelTasks = computed(() => tasksState.raw.filter(({user}) => !user))
+const modalTasks = computed(() => tasksState.raw.filter(({user}) => !user));
 
 // ****************************************************** Newly created tasks on Order-move in kanban
 const loading = shallowRef(false);
@@ -194,7 +194,7 @@ const fields = [
  
   </div>
 
-  <Teleport to="#sto-modal-teleport" v-if="modelTasks.length && showModal">
+  <Teleport to="#sto-modal-teleport" v-if="modalTasks.length && showModal">
     <Transition name="docs-modal">
       <div class="absolute p-9 bg-gray-600 inset-0 flex justify-center items-center bg-opacity-75 z-50" >
         <div class="bg-white rounded-md px-3 py-6 mt-12 shadow-2xl w-full max-w-3xl m-6">
@@ -209,7 +209,7 @@ const fields = [
             <Table
               @bottom-touched="() => {}"
               :fields="fields"
-              :items="modelTasks"
+              :items="modalTasks"
               :actions="false"
             >
               <template #td-name="{ value, item: {id} }" >

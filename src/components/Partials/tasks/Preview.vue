@@ -29,9 +29,9 @@ await atMounted().then(async () => {
         <template #header>
             <div class="flex gap-3 flex-wrap justify-between items-center">
                 <Avatar
-                    :title="`${task.author.name ?? ''} ${task.author.middle_name ?? ''}`"
-                    :subtitle="task.author.office_position"
-                    :image="task.author.avatar"
+                    :title="`${task.author?.name ?? ''} ${task.author?.middle_name ?? ''}`"
+                    :subtitle="task.author?.office_position"
+                    :image="task.author?.avatar"
                 />
 
                 <div class="text-right">
@@ -41,7 +41,7 @@ await atMounted().then(async () => {
                         <span class="text-gray-500">{{ task.deadline_at }}</span>
                     </div>
 
-                    <Badge :point="true" :color="tasksColorMap[task.status].color">{{ tasksColorMap[task.status].label }}</Badge>
+                    <Badge :point="true" :color="tasksColorMap[task.status]?.color">{{ tasksColorMap[task.status]?.label }}</Badge>
                 </div>
             </div>
         </template>

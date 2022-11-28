@@ -35,7 +35,7 @@ export default function useSuspense(Comp, FallbackComp) {
       const errorMessage = ref();
 
       onErrorCaptured((e) => {
-        console.log('From Suspense', e);
+        console.log('[From Suspense]', e);
         errorMessage.value = e.message || errorMsg;
       });
 

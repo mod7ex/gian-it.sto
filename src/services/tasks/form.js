@@ -166,7 +166,6 @@ export default () => effectScope().run(() => {
     }
 
     // fields.is_map = (fields.is_map == 'true');
-
     // if (fields.is_map) {
     //   delete fields.checkboxes;
     //   delete fields.pipelines;

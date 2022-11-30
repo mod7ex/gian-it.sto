@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, shallowRef } from 'vue';
+import { computed, ref } from 'vue';
 import Button from '@/UI/Button.vue';
 import useIntersectionObserver from '~/composables/useIntersectionObserver';
 import useClickOutside from '~/composables/useClickOutside';
@@ -106,10 +106,11 @@ const handelBlur = (e, force = false) => {
 
 */
 
-const containerRef = shallowRef();
-const btnRef = shallowRef();
+const containerRef = ref();
+const btnRef = ref();
 
 useClickOutside(containerRef, (e) => {
+  console.log('clicked outside');
   if (btnRef.value.contains(e.target)) return;
 
   if (!up.value) return;

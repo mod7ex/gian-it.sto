@@ -119,8 +119,18 @@ const createFunnelEtapeMapHTML = (payload) => payload.reduce((prev, { pipeline, 
       </span>
     </template>
 
-    <template #td-created_at="{ value }" >
-        {{ value.split(' ')[0] }}
+    <template #td-created_at="{ value, item }" >
+<!-- 
+      <div  >
+        <pre>
+          department_id: {{ item.department_id }}
+        </pre>
+        <pre>
+          author_id: {{ item.author?.id }}
+        </pre>
+      </div>
+-->
+      {{ value.split(' ')[0] }}
     </template>
 
     <template #td-deadline_at="{ value }" >

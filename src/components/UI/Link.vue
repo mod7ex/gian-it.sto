@@ -15,24 +15,24 @@ const props = defineProps({
 
 <template>
 
-  <component
-    :is="props.href ? 'router-link' : 'span'"
-    :to="props.href"
-    class="inline-block font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
-    :class="{ disabled: props.disabled }"
-  >
-    <slot></slot>
-  </component>
-
-<!--
     <router-link
+      v-if="props.href"
       :to="props.href"
       class="inline-block font-medium text-blue-600 hover:text-blue-500"
       :class="{ disabled: props.disabled }"
     >
       <slot></slot>
     </router-link>
--->
+
+  <span
+    v-else
+    :to="props.href"
+    class="inline-block font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
+    :class="{ disabled: props.disabled }"
+  >
+    <slot></slot>
+  </span>
+<!--     :is="props.href ? 'router-link' : 'span'"  -->
 </template>
 
 <style>

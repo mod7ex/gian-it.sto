@@ -23,7 +23,7 @@ const { loginUser, v$, loading, success, errorMsg } = loginHandler();
 
           <div class="flex items-center justify-between">
             <div class="text-sm">
-              <Link to="/forgot-password">Забыли пароль?</Link>
+              <Link href="/forgot-password">Забыли пароль?</Link>
             </div>
           </div>
 
@@ -47,5 +47,3 @@ const { loginUser, v$, loading, success, errorMsg } = loginHandler();
     </div>
   </LoginLayout>
 </template>
-
-<style scoped></style>

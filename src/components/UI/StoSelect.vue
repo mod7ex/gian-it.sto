@@ -110,7 +110,6 @@ const containerRef = ref();
 const btnRef = ref();
 
 useClickOutside(containerRef, (e) => {
-  console.log('clicked outside');
   if (btnRef.value.contains(e.target)) return;
 
   if (!up.value) return;

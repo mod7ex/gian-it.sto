@@ -33,7 +33,7 @@ const { refreshPassword, v$, data, form, loading, success, errorMsg, ready } = u
             <!-- We need this button to make form generally submittable -->
             <button class="hidden" type="submit">accessible submit button</button>
 
-            <Link to="/" class="flex text-sm">
+            <Link href="/" class="flex text-sm">
               <ArrowNarrowLeftIcon class="h-5 w-5 mr-1" aria-hidden="true" />
               На страницу входа
             </Link>

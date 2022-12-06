@@ -51,7 +51,7 @@ const foo = (state, { id }) => {
             v-model="permissions[perm.id]"
             @update:modelValue="e => foo(e, perm)"
           />
-          {{ perm.id }}<br>{{ permissions[perm.id] }}
+          <!-- {{ perm.id }}<br>{{ permissions[perm.id] }} -->
         </div>
       </div>
     </div>

@@ -124,19 +124,21 @@ onMounted(() => { if(!isEditPage.value) fields.order_stage_id = orderStagesOptio
         <TextArea label="Комментарий" v-model="fields.comment" />
       </div>
 
-      <div class="col-span-12">
-        <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>
-        <ul>
-            <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
-                <span class="w-5 pt-2">{{ i + 1 }}</span>
-                <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i]" />
-                <Button color="red" size="sm" @click="removeItem(i)">Удалить</Button>
-            </li>
-        </ul>
-        <Button size="xs" class="mt-4" @click="fields.checkboxes.push('')">Добавить</Button>
-      </div>
+      <!-- 
+          <div class="col-span-12">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Чек лист</label>
+            <ul>
+                <li v-for="(c, i) in fields.checkboxes" :key="'input-'+i" class="flex items-start mb-2">
+                    <span class="w-5 pt-2">{{ i + 1 }}</span>
+                    <Input rows="1" class="flex-grow mx-2" placeholder="Текст задачи" v-model="fields.checkboxes[i]" />
+                    <Button color="red" size="sm" @click="removeItem(i)">Удалить</Button>
+                </li>
+            </ul>
+            <Button size="xs" class="mt-4" @click="fields.checkboxes.push('')">Добавить</Button>
+          </div>
+      -->
 
-      <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" />
+      <!-- <sto-files :log="log" :files="fields.files" @file-dropped="(id) => simple(() => handelBlackListedFile(id))" /> -->
 
     </div>
   </div>
